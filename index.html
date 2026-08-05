@@ -18,21 +18,20 @@
      «i» — нарисована, поэтому её акцент не зависит от метрик шрифта;
      остаток слова остаётся текстом и берёт шрифт кита.
 
-     Знака рядом больше нет: его вертикальный ряд точек спорил с точкой над
-     «i». Одна точка на замок — она же точка состояния, которой размечен
-     весь кит, и она же фавикон. */
+     Знака рядом нет: его вертикальный ряд точек спорил с точкой над «i».
+     Одна точка на замок — она же точка состояния, которой размечен весь
+     кит, и она же фавикон. */
   .logo { display: flex; align-items: center; padding: var(--space-3);
           margin-block-end: var(--space-3); border-radius: var(--radius-md);
           color: var(--text-primary); text-decoration: none; }
   .logo:hover { background: var(--surface-hover); }
-  .logo-svg { inline-size: 103px; block-size: 22px; overflow: visible; }
+  .logo-svg { inline-size: 112px; block-size: 20px; overflow: visible; }
   .logo-dot { fill: var(--accent-solid); }
   .logo-stem { fill: currentColor; }
-  .logo-word { fill: currentColor; font-family: var(--font-sans); font-size: 17px;
-               font-weight: var(--weight-medium); letter-spacing: -0.01em; }
-  .logo-ui { fill: var(--text-muted); font-family: var(--font-sans); font-size: 13px;
+  .logo-word { fill: currentColor; font-family: var(--font-mono); font-size: 15px;
+               font-weight: var(--weight-medium); }
+  .logo-ui { fill: var(--text-muted); font-family: var(--font-mono); font-size: 15px;
              font-weight: var(--weight-medium); }
-               font-weight: var(--weight-medium); letter-spacing: -0.01em; }
   .theme-picker { inline-size: 11rem; flex: 0 1 11rem; min-inline-size: 0; }
 
   /* Пометки о JS. Кит должен честно говорить, что работает без скрипта, а
@@ -45,11 +44,6 @@
   }
   .needs-js { background: var(--warn-bg); color: var(--warn-text); }
   .sub > .needs-js, h2 > .needs-js { margin-inline-start: var(--space-4); }
-
-  .legend-js { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center;
-               padding: var(--space-4) var(--pad-panel); margin-block-end: var(--space-8);
-               border: var(--hairline) solid var(--border); border-radius: var(--radius-md);
-               font-size: var(--text-xs); color: var(--text-secondary); }
 
   section { margin-block: var(--space-9); scroll-margin-block-start: var(--space-5); }
   section:first-of-type { margin-block-start: 0; }
@@ -147,21 +141,21 @@
 
   <aside class="shell-aside">
       <a class="logo" href="#main">
-        <svg class="logo-svg" viewBox="0 0 103 22" role="img" aria-label="instrument UI">
+        <svg class="logo-svg" viewBox="0 0 112 20" role="img" aria-label="instrument UI">
           <title>instrument UI</title>
 
-          <!-- «i» нарисована стойкой и точкой, а не набрана: только так её
-               точку можно покрасить акцентом. Это та же точка состояния, что
-               размечает весь кит, и здесь она единственная — знак со своим
-               рядом точек с ней конфликтовал.
+          <!-- Моноширинное начертание — вторая гарнитура кита, и здесь оно
+               работает как подпись: инструмент, а не приложение. Побочная
+               выгода: у всех глифов одна ширина (8.79 при 15px), поэтому
+               «i» сидит в своей ячейке по центру и посадка не зависит от
+               того, какой моношрифт нашёлся в системе.
 
-               Посадка отмерена по шрифту: ширина «i» 4.44, стойка 1.9,
-               поэтому боковые просветы по 1.27 и текст начинается ровно на
-               4.44 — как если бы «i» была набрана. -->
-          <rect class="logo-stem" x="1.27" y="9" width="1.9" height="9" rx="0.95"/>
-          <circle class="logo-dot" cx="2.22" cy="6.7" r="1.7"/>
-          <text class="logo-word" x="4.44" y="18">nstrument</text>
-          <text class="logo-ui" x="89.2" y="18">UI</text>
+               Точка над «i» нарисована — только так её красит акцент. Это
+               та же точка состояния, которой размечен весь кит. -->
+          <rect class="logo-stem" x="3.5" y="8" width="1.8" height="8" rx="0.9"/>
+          <circle class="logo-dot" cx="4.4" cy="4.9" r="1.7"/>
+          <text class="logo-word" x="8.79" y="16">nstrument</text>
+          <text class="logo-ui" x="93.9" y="16">ui</text>
         </svg>
       </a>
 
@@ -234,10 +228,13 @@
   <main class="shell-main" id="main">
     <div class="container">
 
-    <div class="legend-js">
-      <span><b>Компоненты работают без скрипта.</b> Метка стоит только там, где
-      без него компонент неполон, и говорит, что именно требует JS:</span>
-      <span class="needs-js">нужен JS</span>
+    <div class="banner" data-tone="neutral">
+      <div class="banner-body">
+        <div class="banner-title">Компоненты работают без скрипта</div>
+        <div class="banner-text">Метка стоит только там, где без JS компонент неполон,
+          и в подсказке говорит, что именно требует скрипта.</div>
+      </div>
+      <div class="banner-actions"><span class="needs-js">нужен JS</span></div>
     </div>
 
     <!-- ══ Начало ══════════════════════════════════════════════════════ -->

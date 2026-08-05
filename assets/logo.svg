@@ -1,19 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 103 22" width="103" height="22"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 20" width="112" height="20"
      role="img" aria-label="instrument UI">
   <title>instrument UI</title>
 
-  <!-- «i» нарисована стойкой и точкой: только так её точку можно покрасить
-       акцентом, не завися от метрик шрифта. Посадка отмерена по шрифту —
-       ширина «i» 4.44, стойка 1.9, боковые просветы по 1.27. -->
-  <rect x="1.27" y="9" width="1.9" height="9" rx="0.95" fill="#161513"/>
-  <circle cx="2.22" cy="6.7" r="1.7" fill="#0a77cb"/>
+  <!-- Моноширинное начертание — вторая гарнитура кита. Побочная выгода: у всех
+       глифов одна ширина (8.79 при 15px), поэтому нарисованная «i» сидит в
+       своей ячейке по центру независимо от того, какой моношрифт в системе. -->
+  <rect x="3.5" y="8" width="1.8" height="8" rx="0.9" fill="#161513"/>
+  <circle cx="4.4" cy="4.9" r="1.7" fill="#0a77cb"/>
 
-  <!-- В экспортированном файле цвета захардкожены намеренно: он живёт вне
-       кита, где токенов нет. -->
-  <text x="4.44" y="18" fill="#161513" font-size="17" font-weight="500" letter-spacing="-0.17"
-        font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+  <!-- Цвета захардкожены намеренно: файл живёт вне кита, где токенов нет. -->
+  <text x="8.79" y="16" fill="#161513" font-size="15" font-weight="500"
+        font-family="ui-monospace, 'Cascadia Code', 'JetBrains Mono', 'SF Mono', Consolas, monospace"
   >nstrument</text>
-  <text x="89.2" y="18" fill="#84817e" font-size="13" font-weight="500"
-        font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
-  >UI</text>
+  <text x="93.9" y="16" fill="#84817e" font-size="15" font-weight="500"
+        font-family="ui-monospace, 'Cascadia Code', 'JetBrains Mono', 'SF Mono', Consolas, monospace"
+  >ui</text>
 </svg>
