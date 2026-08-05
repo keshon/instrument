@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 113 22" width="113" height="22"
+     role="img" aria-label="instrument">
+  <title>instrument</title>
+
+  <!-- Знак: вертикальный ряд точек состояния и строки работы рядом с ними. -->
+  <circle cx="4" cy="4.5" r="1.7" fill="#0a77cb"/>
+  <circle cx="4" cy="11" r="1.7" fill="#a2a09c"/>
+  <circle cx="4" cy="17.5" r="1.7" fill="#a2a09c"/>
+  <path d="M8.6 4.5h8M8.6 11h5.4M8.6 17.5h6.6" fill="none" stroke="#84817e"
+        stroke-width="1.6" stroke-linecap="round"/>
+
+  <!-- «i» нарисована стойкой и точкой: только так её точку можно покрасить
+       акцентом, не завися от метрик шрифта. Это та же точка, что в знаке. -->
+  <rect x="27.6" y="9" width="1.9" height="9" rx="0.95" fill="#161513"/>
+  <circle cx="28.55" cy="6.7" r="1.7" fill="#0a77cb"/>
+
+  <!-- Остаток слова остаётся текстом. В экспортированном файле цвета
+       захардкожены намеренно: он живёт вне кита, где токенов нет. -->
+  <text x="32.05" y="18" fill="#161513" font-size="17" font-weight="500"
+        letter-spacing="-0.17"
+        font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+  >nstrument</text>
+</svg>
