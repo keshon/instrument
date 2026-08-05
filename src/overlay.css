@@ -1,0 +1,285 @@
+/* ==========================================================================
+   agentic-ui — оверлеи
+
+   Строка «поповер, тултип и модалка — им нужен JS» в конституции устарела.
+   Popover API (`popover` + `popovertarget`) даёт верхний слой, лёгкое
+   закрытие по клику вне и по Escape, и управление фокусом — ПОЛНОСТЬЮ
+   декларативно, без единой строки скрипта. Это Baseline с 2024 года.
+
+   Этот файл наконец применяет то, что было объявлено и не использовалось
+   ни разу: --shadow-popover, --shadow-modal, --surface-overlay, --scrim и
+   все четыре z-индекса.
+
+   Что здесь прогрессивное, а что обязательное:
+
+   · popover, :popover-open, ::backdrop, @starting-style,
+     transition-behavior: allow-discrete — безопасно, на этом строим.
+   · position-area (привязка к вызвавшей кнопке) — прогрессивно. Под
+     @supports: где есть — поповер встаёт под кнопкой, где нет — по центру
+     экрана. Деградирует, а не ломается.
+   · <dialog> открывается одной строкой JS (showModal). Декларативный
+     command/commandfor пока прогрессивен, поэтому в контракт не берётся.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Поповер
+
+   Разметка:
+     <button class="btn" popovertarget="menu-1">Действия</button>
+     <div class="popover" id="menu-1" popover>…</div>
+
+   Всё остальное — платформа: верхний слой, закрытие по Escape и по клику
+   мимо, возврат фокуса на кнопку.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.popover {
+  margin: 0;
+  padding: var(--space-2);
+  inline-size: max-content;
+  min-inline-size: 11rem;
+  max-inline-size: min(22rem, 100vw - var(--space-8));
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-overlay);
+  color: var(--text-primary);
+  /* Тень наконец при деле: она означает «плавает сверху и сейчас исчезнет»,
+     и это ровно то, что делает поповер.                                   */
+  box-shadow: var(--shadow-popover);
+
+  /* Появление и исчезновение без JS. allow-discrete нужен, чтобы переход
+     доигрывал на display и overlay, — иначе поповер пропадает мгновенно,
+     не дождавшись собственной анимации.                                  */
+  opacity: 0;
+  translate: 0 calc(var(--space-1) * -1);
+  transition: opacity var(--dur-2) var(--ease-out),
+              translate var(--dur-2) var(--ease-out),
+              display var(--dur-2) allow-discrete,
+              overlay var(--dur-2) allow-discrete;
+}
+
+.popover:popover-open { opacity: 1; translate: 0 0; }
+
+/* Стартовое состояние для входящего перехода. */
+@starting-style {
+  .popover:popover-open { opacity: 0; translate: 0 calc(var(--space-1) * -1); }
+}
+
+/* У поповера подложки нет: он не блокирует страницу. */
+.popover::backdrop { background: transparent; }
+
+/* Привязка к вызвавшей кнопке. Неявный якорь — сама кнопка с
+   popovertarget, поэтому имена якорей заводить не нужно.                 */
+@supports (position-area: block-end) {
+  .popover--anchored {
+    /* «Под кнопкой, растёт в сторону конца строки» — то есть начальный край
+       поповера совпадает с начальным краем кнопки. В RTL это зеркалится
+       само, потому что область логическая.                                */
+    position-area: block-end span-inline-end;
+    margin-block-start: var(--space-2);
+    /* Если снизу или сбоку не помещается — перевернуться, а не вылезти. */
+    position-try-fallbacks: flip-block, flip-inline;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Меню — содержимое поповера
+
+   Разметка: role="menu" на контейнере, role="menuitem" на пунктах.
+   Стрелки и бегущий tabindex — слой приложения; закрытие и фокус
+   платформа берёт на себя.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.menu-label {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  line-height: var(--leading-ui);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-inline);
+  inline-size: 100%;
+  min-block-size: var(--control-h-sm);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  text-align: start;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover { background: var(--surface-hover); }
+
+  &[aria-checked="true"], &[aria-current]:not([aria-current="false"]) {
+    color: var(--accent-text);
+    font-weight: var(--weight-medium);
+  }
+
+  &[data-tone="error"] { color: var(--err-text); }
+  &[data-tone="error"]:hover { background: var(--err-bg); }
+
+  &:disabled, &[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
+}
+
+/* Горячая клавиша прижимается к дальнему краю и тише подписи: она
+   подсказка, а не второе название пункта.                                */
+.menu-shortcut { margin-inline-start: auto; padding-inline-start: var(--space-6); color: var(--text-muted); }
+
+.menu-sep {
+  block-size: var(--hairline);
+  margin-block: var(--space-2);
+  background: var(--border-subtle);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Тултип
+
+   Намеренно БЕЗ Popover API и без привязки якорем: тултип должен работать
+   везде одинаково, а это единственный оверлей, которому хватает обычного
+   позиционирования.
+
+   Контракт: подпись несёт role="tooltip" и id, триггер — aria-describedby.
+   Тултип не заменяет подпись и не содержит того, без чего нельзя обойтись:
+   он не открывается с клавиатуры на сенсорном экране.
+
+   ОГРАНИЧЕНИЕ: внутри .panel с overflow: hidden тултип обрежется. Там
+   нужен .popover, который живёт в верхнем слое.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.tooltip { position: relative; display: inline-flex; }
+
+.tooltip-text {
+  position: absolute;
+  z-index: var(--z-popover);
+  inset-block-end: calc(100% + var(--space-3));
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  padding: var(--space-2) var(--space-3);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-overlay);
+  box-shadow: var(--shadow-popover);
+  color: var(--text-primary);
+  font-size: var(--text-xs);
+  line-height: var(--leading-ui);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-1) var(--ease-out);
+}
+
+.tooltip:hover > .tooltip-text,
+.tooltip:focus-within > .tooltip-text { opacity: 1; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Модалка
+
+   Стилизуется нативный <dialog>. Открытие — одна строка: dlg.showModal().
+   Закрытие декларативно: кнопка с formmethod="dialog" внутри формы или
+   атрибут closedby="any".
+
+   Модалка — второй и последний носитель тени в ките.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.dialog {
+  margin: auto;
+  padding: 0;
+  inline-size: min(34rem, 100vw - var(--space-8));
+  max-block-size: min(80dvh, 100dvh - var(--space-8));
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-overlay);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+}
+
+/* Раскладка задаётся только открытому: у <dialog> закрытое состояние — это
+   display: none, и безусловный display: flex показал бы модалку всегда.  */
+.dialog[open] { display: flex; flex-direction: column; }
+
+.dialog::backdrop { background: var(--scrim); }
+
+/* Блокировка прокрутки фона — и она тоже без JS.
+
+   showModal() делает содержимое под модалкой инертным для КЛИКОВ, но
+   прокрутку не останавливает: колесо продолжает крутить фон, и пользователь
+   теряет место, к которому вернётся после закрытия. :has() решает это одним
+   правилом.
+
+   ЧТО ЭТО ДЕЛАЕТ И ЧЕГО НЕ ДЕЛАЕТ. Пользовательская прокрутка (колесо,
+   тачпад, клавиши) останавливается. Программный scrollTo — нет, и это
+   правильно: приложению может понадобиться подвести фон к нужному месту,
+   пока модалка открыта.
+
+   ПЛАТА. Если прокручивается сам ДОКУМЕНТ, в момент открытия исчезает
+   полоса прокрутки и содержимое сдвигается вбок на её ширину.
+   scrollbar-gutter здесь не спасает: резерв места действует только при
+   overflow auto/scroll, а у нас hidden.
+
+   В приложении на .shell документ не прокручивается вообще — прокручивается
+   .shell-main, — поэтому сдвига нет и платить не за что. Если у вас
+   прокручивается именно документ, поставьте `scrollbar-gutter: stable` на
+   html постоянно: место будет зарезервировано заранее и ширина не изменится.
+   Кит не делает этого сам, потому что на нескроллящемся экране это была бы
+   пустая полоса в 10px у правого края.                                     */
+html:has(dialog[open]) { overflow: hidden; }
+
+.dialog-head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-inline);
+  flex: none;
+  padding: var(--space-5) var(--pad-card);
+  border-block-end: var(--hairline) solid var(--border-subtle);
+}
+
+.dialog-title { font-size: var(--text-md); font-weight: var(--weight-medium); }
+.dialog-close { margin-inline-start: auto; }
+
+.dialog-body {
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+  padding: var(--pad-card);
+}
+
+.dialog-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  flex: none;
+  padding: var(--space-5) var(--pad-card);
+  border-block-start: var(--hairline) solid var(--border-subtle);
+}
+
+.dialog-foot--end { justify-content: flex-end; }
+.dialog-foot-note { margin-inline-end: auto; font-size: var(--text-xs); color: var(--text-muted); }
+
+/* ── Шторка ─────────────────────────────────────────────────────────────────
+   Тот же <dialog>, другая раскладка: во всю высоту у края. Для длинных
+   форм и подробностей, которые не хочется терять из контекста.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.sheet {
+  margin: 0;
+  margin-inline-start: auto;
+  inline-size: min(28rem, 100vw);
+  block-size: 100dvh;
+  max-block-size: 100dvh;
+  border: none;
+  border-inline-start: var(--hairline) solid var(--border);
+  border-radius: 0;
+}
+
+.sheet--start { margin-inline-start: 0; margin-inline-end: auto; border-inline: none; border-inline-end: var(--hairline) solid var(--border); }

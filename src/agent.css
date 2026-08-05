@@ -1,0 +1,495 @@
+/* ==========================================================================
+   agentic-ui — агентный слой
+
+   То, из чего на самом деле состоит интерфейс агента. Очередь задач, лог и
+   инспектор в components.css закрывают инструментальную половину; здесь —
+   вторая, без которой название кита было бы авансом.
+
+   Порядок в файле — по частоте появления на экране, а не по алфавиту.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Запрос подтверждения
+
+   Определяющее взаимодействие агентных систем: агент останавливается и
+   спрашивает разрешения. Всё остальное можно проскроллить, это — нельзя,
+   поэтому блок единственный в ките, кто имеет право останавливать глаз.
+
+   Три вещи обязаны быть в разметке, иначе компонент не выполняет работу:
+   ЧТО именно будет сделано, ЧТО это затронет, и решение одним нажатием.
+
+   После ответа блок не исчезает и не гаснет — он отступает, как и
+   завершённая задача: история решений остаётся читаемой.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.approval {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-inline);
+  padding: var(--pad-card);
+  border: var(--hairline) solid var(--accent-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  /* Единственный акцент, который кит ставит на границу блока: это точка,
+     где система ждёт человека.                                           */
+  box-shadow: inset var(--space-1) 0 0 0 var(--accent-solid);
+}
+
+.approval-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.approval-head::before {
+  content: "";
+  flex: none;
+  inline-size: var(--size-icon);
+  block-size: var(--size-icon);
+  background: var(--accent-text);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M6.2 6.3a1.8 1.8 0 1 1 2.2 2.2v1.1' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='11.6' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Само действие — моноширинным, потому что это команда, путь или вызов,
+   и его будут читать посимвольно.                                        */
+.approval-what {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  overflow-wrap: anywhere;
+}
+
+.approval-effects {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+
+  & > li { display: flex; align-items: flex-start; gap: var(--space-3); }
+  & > li::before {
+    content: "";
+    flex: none;
+    inline-size: var(--size-dot);
+    block-size: var(--size-dot);
+    /* Та же формула, что у значков сноски и баннера: центр точки совпадает
+       с центром первой строки пункта при любом кегле.                     */
+    margin-block-start: calc((1lh - var(--size-dot)) / 2);
+    border-radius: var(--radius-full);
+    background: var(--text-faint);
+  }
+  /* Необратимое отмечается формой и словом, а не только цветом. */
+  & > li[data-tone="warn"]::before, & > li[data-tone="error"]::before {
+    background: var(--tone-ink);
+    border-radius: 0;
+    rotate: 45deg;
+  }
+}
+
+.approval-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+/* Решение принято — блок отступает: снимается акцентная граница и
+   выделение, остаётся читаемая запись о том, что было решено.            */
+.approval:not([data-state="pending"]) {
+  border-color: var(--border);
+  box-shadow: none;
+  background: transparent;
+}
+.approval:not([data-state="pending"]) .approval-actions { display: none; }
+.approval[data-state="denied"] .approval-what { text-decoration: line-through; color: var(--text-muted); }
+
+.approval-verdict { font-size: var(--text-xs); color: var(--text-muted); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Шаг — вызов инструмента
+
+   Свёрнутая строка, раскрывающаяся в аргументы и результат. Построен на
+   <details>/<summary>: раскрытие, клавиатура и роль достаются от платформы,
+   и компонент работает до того, как приедет JS.
+
+   Это НЕ строка задачи: .task — плоская строка очереди, .step — шаг с
+   телом. Разные работы, разные компоненты.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.step {
+  border-radius: var(--radius-sm);
+
+  &[open] { background: var(--surface-hover); }
+}
+
+.step + .step { margin-block-start: var(--space-1); }
+
+.step-head {
+  display: grid;
+  grid-template-columns: var(--size-chevron) var(--size-dot) auto 1fr auto;
+  align-items: center;
+  gap: var(--gap-inline);
+  padding: var(--row-pad-y) var(--pad-cell-x);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker { display: none; }
+  &:hover { background: var(--surface-hover); }
+}
+
+.step-twist {
+  inline-size: var(--size-chevron);
+  block-size: var(--size-chevron);
+  background: var(--text-muted);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: rotate var(--dur-1) var(--ease-out);
+}
+
+.step[open] > .step-head > .step-twist { rotate: 90deg; }
+
+/* Имя инструмента — моноширинное: это идентификатор, а не слово. */
+.step-name { font-family: var(--font-mono); font-size: var(--text-xs); }
+.step-sub  { color: var(--text-muted); font-size: var(--text-xs); min-inline-size: 0; }
+.step-meta { color: var(--text-muted); font-size: var(--text-xs); white-space: nowrap; }
+
+.step-body {
+  padding: var(--space-2) var(--pad-cell-x) var(--pad-cell-x);
+  padding-inline-start: calc(var(--pad-cell-x) + var(--size-chevron) + var(--gap-inline));
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+}
+
+.step[data-state="running"] { --tone-ink: var(--accent-text); }
+.step[data-state="ok"]      { --tone-ink: var(--ok-text); }
+.step[data-state="failed"]  { --tone-ink: var(--err-text); }
+.step[data-state="running"] .dot { animation: au-pulse 1.6s var(--ease-in-out) infinite; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Диф
+
+   Основной артефакт работы агента. Знак в первой колонке — не украшение:
+   он носитель смысла наравне с подсветкой, потому что «зелёное и красное»
+   не работает ни для дальтоника, ни для распечатки.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.diff {
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.diff-head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-inline);
+  padding: var(--space-3) var(--pad-cell-x);
+  border-block-end: var(--hairline) solid var(--border-subtle);
+  font-size: var(--text-xs);
+}
+
+.diff-path { font-family: var(--font-mono); min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.diff-stat { margin-inline-start: auto; color: var(--text-muted); white-space: nowrap; }
+.diff-stat > .is-add { color: var(--ok-text); }
+.diff-stat > .is-del { color: var(--err-text); }
+
+.diff-body {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  background: var(--surface-sunken);
+}
+
+/* Каждая ячейка размещена ЯВНО, и это обязательно.
+
+   Псевдоэлемент ::before участвует в автопотоке грида наравне с элементами
+   и идёт первым. Стоило поставить ему grid-column: 3, как авторазмещение
+   переставало попадать в колонки и раскидывало номера и код по новым
+   строкам. Явные grid-column + grid-row делают раскладку детерминированной
+   независимо от того, сколько узлов реально пришло в строку.
+
+   overflow-wrap: anywhere живёт ТОЛЬКО на колонке кода. Он уменьшает
+   минимальную внутреннюю ширину до одного знака, и на всей строке это
+   схлопывало колонки: код переносился по одному символу в столбик. */
+
+.diff-line {
+  display: grid;
+  grid-template-columns: 5ch 5ch 2ch minmax(0, 1fr);
+  gap: 0;
+
+  &::before {
+    content: "";
+    grid-column: 3;
+    grid-row: 1;
+    text-align: center;
+    color: var(--text-muted);
+    user-select: none;
+  }
+
+  &[data-kind="add"] { background: var(--ok-bg); }
+  &[data-kind="del"] { background: var(--err-bg); }
+  &[data-kind="add"]::before { content: "+"; color: var(--ok-text); }
+  &[data-kind="del"]::before { content: "−"; color: var(--err-text); }
+}
+
+.diff-num {
+  grid-row: 1;
+  color: var(--text-faint);
+  text-align: end;
+  padding-inline-end: var(--space-3);
+  white-space: nowrap;
+  user-select: none;
+
+  &:first-child { grid-column: 1; }
+  &:nth-child(2) { grid-column: 2; }
+}
+
+.diff-code {
+  grid-column: 4;
+  grid-row: 1;
+  min-inline-size: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.diff-fold {
+  padding: var(--space-2) var(--pad-cell-x);
+  color: var(--text-muted);
+  background: var(--surface-raised);
+  border-block: var(--hairline) solid var(--border-subtle);
+  font-size: var(--text-2xs);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Вывод со свёрткой
+
+   Лог агента почти всегда длиннее экрана. Молча обрезать нельзя — это
+   такая же ложь пользователю, как определённая полоса, застрявшая на 90%:
+   сколько именно скрыто, должно быть написано словами.
+
+   Затухание сделано МАСКОЙ, а не наложенным градиентом: наложение
+   пришлось бы красить в цвет подложки, то есть захардкодить тему.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.output { position: relative; }
+
+.output[data-truncated="true"] > .output-body {
+  max-block-size: 12lh;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 3lh), transparent);
+}
+
+.output-more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--accent-text);
+  cursor: pointer;
+
+  &:hover { text-decoration: underline; }
+}
+
+.output[data-truncated="false"] > .output-more::after { content: " ↑"; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Бюджет
+
+   Токены и деньги — первоклассная сущность агентного интерфейса, а не
+   число в ячейке. Компонент существует ради одной вещи, которой нет ни у
+   меры, ни у метрики: соотношения «истрачено из отпущенного» и прогноза.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.budget { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.budget-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--gap-inline);
+  font-size: var(--text-sm);
+}
+
+.budget-value { font-weight: var(--weight-medium); }
+
+/* «из 250 000» — часть числа, а не сосед: мельче и тише, ровно как единица
+   измерения у метрики.                                                    */
+.budget-of { font-size: var(--text-xs); font-weight: var(--weight-normal); color: var(--text-muted); }
+
+.budget-note { font-size: var(--text-xs); color: var(--text-muted); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Скелетон
+
+   Кит про ожидание обязан иметь примитив ожидания содержимого.
+
+   Пульсация прозрачностью, а не бегущий блик: блик — это градиент, а
+   градиенты в ките запрещены. Спокойнее и честнее: блок не притворяется
+   заполняющимся.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.skeleton {
+  background: var(--surface-sunken);
+  border-radius: var(--radius-xs);
+  block-size: 1lh;
+  animation: au-fade 1.6s var(--ease-in-out) infinite;
+}
+
+.skeleton--title { block-size: 1lh; inline-size: 40%; }
+.skeleton--line  { inline-size: 100%; }
+.skeleton--short { inline-size: 62%; }
+
+@keyframes au-fade {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Отказ с восстановлением
+
+   Сноска сообщает. Этот блок сообщает И даёт выход. Разница в том, что у
+   отказа обязано быть действие: без кнопки повтора пользователь остаётся
+   с текстом ошибки и без хода.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.failure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--pad-card);
+  border: var(--hairline) solid color-mix(in oklab, var(--err-text) 35%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--err-bg);
+}
+
+.failure-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--err-text);
+}
+
+.failure-head::before {
+  content: "";
+  flex: none;
+  inline-size: var(--size-icon);
+  block-size: var(--size-icon);
+  background: var(--err-text);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.failure-reason {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.failure-tried { font-size: var(--text-xs); color: var(--text-muted); }
+.failure-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-2); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Дорожки параллельных прогонов
+
+   Когда агентов больше одного, вопрос «что чем перекрывается по времени»
+   не читается из списка. Отрезок позиционируется двумя долями от 0 до 1,
+   поэтому шкалу считает вызывающая сторона, а компонент остаётся тупым.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.lanes { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.lane {
+  display: grid;
+  grid-template-columns: var(--label-col) 1fr;
+  align-items: center;
+  gap: var(--gap-inline);
+  font-size: var(--text-xs);
+}
+
+.lane-label { color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.lane-track {
+  position: relative;
+  block-size: var(--size-meter);
+  border-radius: var(--radius-xs);
+  background: var(--track);
+  box-shadow: inset 0 0 0 var(--hairline) var(--border);
+}
+
+.lane-span {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(var(--from) * 100%);
+  inline-size: calc((var(--to) - var(--from)) * 100%);
+  border-radius: var(--radius-xs);
+  background: var(--tone-mark, var(--accent-mark));
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Копирование
+
+   Лог и блок кода без копирования заставляют выделять мышью то, что и так
+   принадлежит машине.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.copyable { position: relative; }
+
+.copyable > .copy {
+  position: absolute;
+  inset-block-start: var(--space-3);
+  inset-inline-end: var(--space-3);
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease-out);
+}
+
+.copyable:hover > .copy,
+.copyable:focus-within > .copy { opacity: 1; }
+
+/* ==========================================================================
+   Принудительные цвета (Windows High Contrast)
+
+   Целевая платформа — Windows, а весь кит построен на «хайрлайн плюс
+   перепад поверхностей». В forced-colors фоны и альфа-рамки сбрасываются
+   на системные, и без этого блока панели, поля, карточки и выделение
+   схлопываются в одну плоскость.
+   ========================================================================== */
+
+@media (forced-colors: active) {
+  .panel, .card, .input, .textarea, .select, .num-field, .btn,
+  .badge, .approval, .failure, .diff, .meter, .lane-track {
+    border: var(--stroke) solid CanvasText;
+  }
+
+  .checkbox > input, .radio > input, .switch > input {
+    border: var(--stroke) solid CanvasText;
+  }
+
+  /* Заливки, которые несут значение, обязаны пережить сброс. */
+  .meter-fill, .lane-span, .switch > input:checked, .dot {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+
+  .task[aria-selected="true"], .tree-item[aria-selected="true"],
+  .table tbody tr[aria-selected="true"] td {
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  /* Маскированные глифы в forced-colors теряют цвет фона — переводим их
+     на системный текст.                                                  */
+  .tree-twist, .step-twist, .select-wrap::after,
+  .note::before, .approval-head::before, .failure-head::before {
+    background: CanvasText;
+  }
+}

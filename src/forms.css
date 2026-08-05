@@ -1,0 +1,611 @@
+/* ==========================================================================
+   agentic-ui — формы
+
+   Админка — это на 70% формы, поэтому у них свой файл. Слой тот же, что у
+   компонентов: разделены концерны, а не приоритеты.
+
+   Два правила, которым здесь подчиняется всё:
+
+   · Валидацию показывает ПЛАТФОРМА. :user-invalid срабатывает не пока
+     печатают, а когда поле покинули с ошибкой, — это ровно то поведение,
+     ради которого раньше писали скрипт.
+   · readonly и disabled — разные вещи. Одно нельзя изменить, но можно
+     прочитать и скопировать; другое недоступно целиком. Пока они выглядели
+     одинаково, пользователь не мог понять, ждать ему разблокировки или нет.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Поля ввода
+
+   Поле стоит во ВРЕЗЕ (--surface-field), а не на цвете панели. Пока фон
+   поля совпадал с фоном панели, его единственной границей была рамка на
+   1.31:1 — поля на панели просто не было видно.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.input, .textarea, .select {
+  inline-size: 100%;
+  min-block-size: var(--control-h-md);
+  padding-inline: var(--control-pad-sm);
+  border: var(--hairline) solid var(--border-control);
+  border-radius: var(--radius-md);
+  background: var(--surface-field);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
+
+  &::placeholder { color: var(--text-muted); }
+  &:focus-visible { border-color: var(--accent-border); }
+  /* Прозрачность, а не серая заливка с серым текстом — тот же закон, что у
+     кнопки: контрол сохраняет идентичность, и видно, какое именно поле
+     недоступно. Заодно это единственное, что отличает его от readonly:
+     пока оба красились во врез и приглушённый текст, пользователь не мог
+     понять, ждать ему разблокировки или значение неизменяемо в принципе. */
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+/* ── Порядок состояний ──────────────────────────────────────────────────────
+   отключено > ошибка > фокус > наведение
+
+   Наведение стоит в самом низу, и оно единственное, кому приходится уступать
+   явно: у `:hover:not(:disabled)` специфичность (0,3,0), а у `:user-invalid`
+   всего (0,2,0), поэтому курсор над невалидным полем прятал красную рамку и
+   показывал обычную. Порядок состояний — вопрос корректности, и записывать
+   его надо селектором, а не надеждой на порядок строк.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:is(.input, .textarea, .select):is(:user-invalid, [aria-invalid="true"]) {
+  border-color: var(--err-text);
+}
+
+:is(.input, .textarea, .select):hover:not(:disabled):not(:user-invalid):not([aria-invalid="true"]) {
+  border-color: var(--text-muted);
+}
+
+.input--sm, .select--sm { min-block-size: var(--control-h-sm); font-size: var(--text-xs); }
+
+.textarea {
+  min-block-size: calc(var(--control-h-md) * 2.5);
+  padding-block: var(--space-3);
+  line-height: var(--leading-ui);
+  resize: vertical;
+}
+
+/* Селект требует обёртки, и это осознанная плата. Шеврон рисуется маской
+   на псевдоэлементе обёртки: только так его цвет остаётся токеном, а
+   положение — логическим (в RTL уезжает вместе с текстом). Прежние два
+   linear-gradient давали сплошной треугольник, прибитый к физическому
+   правому краю.                                                           */
+.select-wrap {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+
+  & > .select {
+    appearance: none;
+    padding-inline-end: var(--space-7);
+    cursor: pointer;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    inset-inline-end: var(--control-pad-sm);
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    inline-size: var(--size-chevron);
+    block-size: var(--size-chevron);
+    background: var(--text-muted);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.75 6 7.75 9 4.75' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+}
+
+/* Подпись отстоит от поля дальше, чем подсказка: подсказка принадлежит полю
+   теснее, и одинаковый зазор склеивал три разные вещи в одну. Разница
+   получается из базового зазора плюс отбивки подписи — без вычитания
+   отрицательным полем, которое ломалось от любой перестановки узлов.     */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field > .label { margin-block-end: var(--space-2); }
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+  line-height: var(--leading-ui);
+}
+
+/* Подсказка и ошибка занимают один слот: ошибка заменяет подсказку, а не
+   сдвигает форму вниз. Форма не перекладывается в момент заполнения.      */
+.field-hint  { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); }
+.field-error { font-size: var(--text-xs); color: var(--err-text);   line-height: var(--leading-ui); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Чекбокс, радио, свитч
+
+   Построены на нативном input — клавиатура, отправка формы и скринридеры
+   достаются бесплатно. Метка рисуется маской на псевдоэлементе самого
+   input: форма из data-URI, цвет из --accent-on. Раньше в data-URI стоял
+   stroke='white', то есть цвет был захардкожен ровно так, как запрещает
+   второй закон кита.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.checkbox, .radio, .switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-inline);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  user-select: none;
+
+  &:has(> input:disabled) { opacity: 0.5; cursor: not-allowed; }
+}
+
+.checkbox > input, .radio > input {
+  appearance: none;
+  position: relative;
+  flex: none;
+  inline-size: var(--size-check);
+  block-size: var(--size-check);
+  margin: 0;
+  border: var(--stroke) solid var(--border-control);
+  background: var(--surface-field);
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+
+  &:checked, &:indeterminate {
+    background: var(--accent-solid);
+    border-color: var(--accent-solid);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--accent-on);
+    opacity: 0;
+    transition: opacity var(--dur-1) var(--ease-out);
+  }
+  &:checked::after, &:indeterminate::after { opacity: 1; }
+}
+
+.checkbox > input {
+  border-radius: var(--radius-xs);
+
+  &::after {
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.3 4.9 8.6 9.4 3.9' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 78% no-repeat;
+  }
+  &:indeterminate::after {
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.2 6h5.6' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+}
+
+.radio > input {
+  border-radius: var(--radius-full);
+  &::after {
+    background: radial-gradient(circle, var(--accent-on) 0 32%, transparent 33%);
+  }
+}
+
+.switch > input {
+  appearance: none;
+  position: relative;
+  flex: none;
+  inline-size: var(--size-switch-w);
+  block-size: var(--size-switch-h);
+  margin: 0;
+  border-radius: var(--radius-full);
+  background: var(--track);
+  /* Кольцо несущей рамки: у свитча граница И ЕСТЬ контрол. Без него
+     выключенный свитч жил на контрасте 1.25 — «выключено» было не отличить
+     от «элемента нет».                                                    */
+  box-shadow: inset 0 0 0 var(--stroke) var(--border-control);
+  cursor: pointer;
+  transition: background var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 2px;
+    translate: 0 -50%;
+    inline-size: calc(var(--size-switch-h) - 4px);
+    block-size: calc(var(--size-switch-h) - 4px);
+    border-radius: var(--radius-full);
+    background: var(--surface-raised);
+    /* Логическое смещение, а не translate: в RTL ручка обязана ехать в
+       другую сторону, а логического аналога у translate нет.             */
+    transition: inset-inline-start var(--dur-2) var(--ease-out);
+  }
+
+  &:checked {
+    background: var(--accent-solid);
+    box-shadow: inset 0 0 0 var(--stroke) var(--accent-solid);
+    &::after { inset-inline-start: calc(100% - var(--size-switch-h) + 2px); }
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Слайдер
+   ────────────────────────────────────────────────────────────────────────── */
+
+.slider {
+  appearance: none;
+  inline-size: 100%;
+  block-size: var(--size-icon);
+  background: transparent;
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    block-size: var(--size-track);
+    border-radius: var(--radius-full);
+    background: var(--track);
+    box-shadow: inset 0 0 0 var(--hairline) var(--border);
+  }
+  &::-moz-range-track {
+    block-size: var(--size-track);
+    border-radius: var(--radius-full);
+    background: var(--track);
+    box-shadow: inset 0 0 0 var(--hairline) var(--border);
+  }
+  /* Бегунок несёт кольцо цвета поверхности, чтобы оставаться читаемым,
+     когда наезжает на заполненную часть собственной дорожки.             */
+  &::-webkit-slider-thumb {
+    appearance: none;
+    inline-size: var(--size-thumb);
+    block-size: var(--size-thumb);
+    margin-block-start: calc((var(--size-track) - var(--size-thumb)) / 2);
+    border-radius: var(--radius-full);
+    background: var(--accent-mark);
+    box-shadow: 0 0 0 2px var(--surface-raised);
+    transition: scale var(--dur-1) var(--ease-out);
+  }
+  &::-moz-range-thumb {
+    inline-size: var(--size-thumb);
+    block-size: var(--size-thumb);
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--accent-mark);
+    box-shadow: 0 0 0 2px var(--surface-raised);
+  }
+  &:active::-webkit-slider-thumb { scale: 1.15; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Раскладка формы
+
+   Два варианта, и выбор между ними не вкусовой. Подпись СВЕРХУ — когда поля
+   разнородны и их читают по одному. Подпись СБОКУ — когда полей много и они
+   однотипны: колонка подписей превращает форму в таблицу, которую можно
+   просканировать, не читая каждую строку.
+
+   Колонка подписей — тот же --label-col, что у инспектора: два способа
+   показать пару «имя — значение» не имеют права разъезжаться по метрике.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-panel);
+}
+
+:is(.field--side, .form--side > .field) {
+  display: grid;
+  grid-template-columns: var(--label-col) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-2) var(--gap-inline);
+
+  & > .label {
+    grid-column: 1;
+    grid-row: 1;
+    margin-block-end: 0;
+    /* Подпись выравнивается по первой строке контрола, а не по его верху. */
+    padding-block-start: var(--space-2);
+  }
+  & > :not(.label) { grid-column: 2; }
+}
+
+/* Обязательность несёт и знак, и слово: звёздочка в одиночку работает только
+   для тех, кто уже знает соглашение. В длинных формах помечать выгоднее
+   необязательные — их обычно меньше.                                       */
+.required { color: var(--err-text); margin-inline-start: 2px; }
+.optional {
+  color: var(--text-muted);
+  font-weight: var(--weight-normal);
+  font-size: var(--text-xs);
+  margin-inline-start: var(--space-2);
+}
+
+/* Группа полей. min-inline-size обязателен: у fieldset собственная
+   минимальная ширина по содержимому, и без сброса он не даёт колонкам
+   сжиматься — это его давняя особенность, а не наша ошибка.               */
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-panel);
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--pad-card);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-md);
+
+  & > legend {
+    padding-inline: var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--text-secondary);
+  }
+}
+
+/* Полоса действий длинной формы. Липнет к низу области прокрутки, поэтому
+   «Сохранить» не приходится искать в конце трёх экранов.                   */
+.form-actions {
+  position: sticky;
+  inset-block-end: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: var(--pad-panel);
+  border-block-start: var(--hairline) solid var(--border);
+  background: var(--surface-page);
+}
+
+.form-actions--end { justify-content: flex-end; }
+.form-actions-note { margin-inline-end: auto; font-size: var(--text-xs); color: var(--text-muted); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Группа с приставками
+
+   Единица, валюта, иконка, кнопка вплотную. Рамка живёт на ГРУППЕ, а не на
+   поле: иначе на стыке получаются две линии, а фокус подсвечивает только
+   половину контрола.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.input-group {
+  display: flex;
+  align-items: stretch;
+  min-block-size: var(--control-h-md);
+  border: var(--hairline) solid var(--border-control);
+  border-radius: var(--radius-md);
+  background: var(--surface-field);
+  overflow: hidden;
+
+  &:hover { border-color: var(--text-muted); }
+  &:focus-within { border-color: var(--accent-border); }
+
+  /* Поле внутри группы отдаёт рамку и фон наружу. */
+  & > :is(.input, .select) {
+    flex: 1;
+    min-inline-size: 0;
+    min-block-size: auto;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  & > .btn {
+    min-block-size: auto;
+    border-radius: 0;
+    border-block: none;
+    border-inline-end: none;
+  }
+  & > .btn:first-child { border-inline-start: none; }
+}
+
+.input-affix {
+  display: flex;
+  align-items: center;
+  flex: none;
+  padding-inline: var(--control-pad-sm);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Поиск
+
+   Нативный input[type=search] несёт собственную кнопку очистки — её надо не
+   прятать, а привести к тону кита. Своя кнопка потребовала бы JS.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.search {
+  position: relative;
+  display: block;
+
+  & > .input {
+    padding-inline-start: calc(var(--control-pad-sm) + var(--size-icon) + var(--space-3));
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    inset-inline-start: var(--control-pad-sm);
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    inline-size: var(--size-icon);
+    block-size: var(--size-icon);
+    background: var(--text-muted);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='7' cy='7' r='4.6' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='m10.4 10.4 3 3' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+}
+
+.search > input[type="search"]::-webkit-search-cancel-button {
+  appearance: none;
+  inline-size: var(--size-chevron);
+  block-size: var(--size-chevron);
+  background: var(--text-muted);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  cursor: pointer;
+}
+
+.search > input[type="search"]::-webkit-search-cancel-button:hover { background: var(--text-primary); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Состояния поля
+
+   :user-invalid, а не :invalid. Разница принципиальная: :invalid горит
+   красным с первой секунды, ещё до того, как в поле что-то ввели, — форма
+   встречает пользователя россыпью ошибок, которых он не совершал.
+   :user-invalid срабатывает только после взаимодействия, и это ровно то
+   поведение, ради которого раньше писали скрипт.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Ошибка заменяет подсказку в том же слоте — форма не перекладывается. */
+.field:has(:user-invalid) > .field-hint { display: none; }
+.field-error[data-when="invalid"] { display: none; }
+.field:has(:user-invalid) > .field-error[data-when="invalid"] { display: block; }
+
+/* readonly — не disabled. Значение можно прочитать, выделить и скопировать,
+   поэтому оно сохраняет цвет текста; недоступен только ввод. Пока они
+   выглядели одинаково, пользователь не мог понять, ждать ему разблокировки
+   или значение неизменяемо в принципе.                                     */
+:is(.input, .textarea):read-only:not(:disabled) {
+  background: var(--surface-sunken);
+  border-color: var(--border);
+  cursor: default;
+}
+
+:is(.input, .textarea):read-only:not(:disabled):hover { border-color: var(--border); }
+
+/* Нативные поля даты и времени. Иконка календаря следует за color-scheme,
+   который уже выставлен в токенах, поэтому перекрашивать её не нужно —
+   достаточно привести к общей тишине.                                      */
+.input::-webkit-calendar-picker-indicator {
+  opacity: 0.55;
+  cursor: pointer;
+}
+.input::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+
+/* Список с множественным выбором. Шеврон обёртки ему не положен: он ничего
+   не раскрывает.                                                           */
+.select[multiple] {
+  min-block-size: calc(var(--control-h-md) * 3);
+  /* Внутренний отступ списка плюс отступ пункта дают ровно --control-pad-sm,
+     то есть текст встаёт по той же вертикали, что и в обычном поле.
+
+     ВЫСОТУ задавайте block-size или min-block-size, а НЕ атрибутом size:
+     size считает высоту по UA-метрике строки и ничего не знает про наши
+     отступы, поэтому последняя строка обрезается на несколько пикселей. */
+  padding: var(--space-1);
+}
+
+.select[multiple] option {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-xs);
+}
+
+/* Зазор ставится МЕЖДУ соседями, а не вокруг каждого. Симметричный
+   margin-block складывался с отступом самого списка сверху и снизу, но не
+   по бокам, — подсветка отступала от рамки сверху вдвое дальше, чем слева.
+   Тот же приём, что у строк очереди и узлов дерева.                      */
+.select[multiple] option + option { margin-block-start: var(--space-1); }
+
+/* Системная подсветка выбранного — серый, не имеющий отношения к киту: он
+   не совпадает ни с выделенной строкой таблицы, ни с выбранной карточкой.
+   Переопределяется без !important, проверено.                            */
+.select[multiple] option:checked {
+  background-color: var(--surface-selected);
+  color: var(--accent-text);
+}
+
+.select-wrap:has(> .select[multiple])::after { content: none; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Выбираемая карточка
+
+   Радио или чекбокс, у которого есть заголовок и объяснение. В админках это
+   основной способ выбрать режим: голой радиокнопки с подписью в одну строку
+   не хватает, когда у вариантов есть последствия.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.choice-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--gap-inline);
+  padding: var(--pad-card);
+  border: var(--hairline) solid var(--border-control);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
+
+  &:hover { border-color: var(--text-muted); }
+
+  /* Выбор несёт не только цвет: у края встаёт та же несущая метка, что у
+     текущего пункта навигации.                                            */
+  &:has(> input:checked) {
+    border-color: var(--accent-border);
+    background: var(--accent-bg);
+    box-shadow: inset var(--size-marker) 0 0 0 var(--accent-solid);
+  }
+
+  &:has(> input:focus-visible) {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 1px;
+  }
+
+  &:has(> input:disabled) { opacity: 0.5; cursor: not-allowed; }
+}
+
+.choice-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
+.choice-card-desc { font-size: var(--text-xs); color: var(--text-secondary); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Файл
+
+   Пунктир — единственное место в ките, где линия не сплошная, и это
+   осознанно: пунктирная рамка означает «сюда можно положить», и другого
+   настолько же понятного знака нет.
+
+   Перетаскивание — это JS. Без него компонент остаётся кнопкой выбора
+   файла, и она работает.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.file {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-7) var(--pad-card);
+  border: var(--stroke) dashed var(--border-control);
+  border-radius: var(--radius-md);
+  background: var(--surface-field);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-align: center;
+  cursor: pointer;
+
+  &:hover { border-color: var(--accent-border); background: var(--accent-bg); }
+  &:has(> input:focus-visible) { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+  &:has(> input:disabled) { opacity: 0.5; cursor: not-allowed; }
+
+  & > input[type="file"] {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  &::before {
+    content: "";
+    inline-size: var(--size-icon);
+    block-size: var(--size-icon);
+    background: var(--text-muted);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 10.4V2.6M5 5.6 8 2.6l3 3' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M2.6 10v2.4a1 1 0 0 0 1 1h8.8a1 1 0 0 0 1-1V10' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+}
+
+.file-hint { font-size: var(--text-xs); color: var(--text-muted); }

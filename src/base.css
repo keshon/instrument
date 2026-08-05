@@ -1,0 +1,185 @@
+/* ==========================================================================
+   agentic-ui — base
+   Сброс и умолчания элементов. Всё, что здесь есть, иначе повторялось бы в
+   каждом компоненте.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+/* Единственный !important во всём ките, и он назван поимённо. Это вопрос
+   корректности, а не оформления: без него любой .row { display: flex }
+   у приложения делает hidden-элемент видимым. Все остальные случаи, где
+   киту нужно перебить компонент, решаются порядком слоёв — см. kit.css. */
+[hidden] { display: none !important; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Не smooth по умолчанию: scroll-behavior воюет с навигацией с клавиатуры
+     и делает длинные логи вязкими. Включается точечно, на конкретное
+     взаимодействие.                                                        */
+}
+
+body {
+  font-family: var(--font-sans);
+  /* База — интерфейс, а не проза. 13/1.4 это частый случай: подписи, ячейки,
+     кнопки, строки задач. Когда базой была проза 15/1.65, каждый компонент
+     был обязан переобъявить размер, а любой div приложения без класса
+     наследовал не тот кегль.                                               */
+  font-size: var(--text-sm);
+  line-height: var(--leading-ui);
+  font-weight: var(--weight-normal);
+  color: var(--text-primary);
+  background: var(--surface-page);
+}
+
+/* Цифры табличные везде по умолчанию. В инструментальном интерфейсе почти
+   любое число либо стоит в колонке, либо обновляется на месте, и
+   пропорциональные цифры дёргают оба случая.                              */
+body { font-variant-numeric: tabular-nums; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+h4, h5, h6 { font-size: var(--text-md); }
+
+/* ── Проза ────────────────────────────────────────────────────────────────
+   Опт-ин, а не умолчание. Тело ответа агента, описание, документация — всё,
+   что читают абзацами, а не сканируют глазом.                             */
+
+.prose {
+  font-size: var(--text-md);
+  line-height: var(--leading-prose);
+  font-variant-numeric: proportional-nums;
+  max-inline-size: 68ch;
+
+  & p { text-wrap: pretty; }
+  & > * + * { margin-block-start: var(--space-5); }
+  & ul, & ol { padding-inline-start: var(--space-7); }
+  & li + li { margin-block-start: var(--space-2); }
+}
+
+a {
+  color: var(--accent-text);
+  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+  text-underline-offset: 0.15em;
+  transition: text-decoration-color var(--dur-1) var(--ease-out);
+
+  &:hover { text-decoration-color: currentColor; }
+}
+
+/* Оптическая поправка объявлена ОДИН раз на весь список, включая .u-mono.
+   Когда у утилиты было своё правило, <code class="u-mono"> получал
+   0.925 × 0.925 и уезжал под объявленный пол в 11px.                      */
+code, kbd, samp, pre, .u-mono {
+  font-family: var(--font-mono);
+  font-size: 0.925em;   /* моно оптически крупнее санса на том же кегле */
+  font-variant-ligatures: none;
+}
+
+/* Внутри блока кода поправка уже применена контейнером — второй раз не надо. */
+.code code, pre code { font-size: inherit; }
+
+/* Инструмент живёт на клавиатуре, поэтому клавиша — элемент интерфейса,
+   а не безымянный моноширинный кусок.                                     */
+kbd {
+  display: inline-flex;
+  align-items: center;
+  min-inline-size: 1.6em;
+  justify-content: center;
+  padding: 1px var(--space-2);
+  border: var(--hairline) solid var(--border-control);
+  border-radius: var(--radius-xs);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+img, svg, video, canvas { display: block; max-width: 100%; }
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button { background: none; border: none; padding: 0; }
+
+hr {
+  border: none;
+  border-top: var(--hairline) solid var(--border);
+}
+
+/* ── Фокус ────────────────────────────────────────────────────────────────
+   Одно кольцо, везде, только с клавиатуры. Отступ важен: кольцо впритык к
+   контролу читается как изменение рамки, а не как фокус.
+
+   Радиус здесь НЕ задаётся: border-radius в этом правиле менял бы форму
+   самого элемента, а не обводки. Современная обводка и так следует радиусу
+   элемента — задавать его отдельно и незачем, и вредно.                    */
+
+:focus { outline: none; }
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent-solid) 22%, transparent);
+}
+
+/* ── Скроллбары ───────────────────────────────────────────────────────────
+   Тонкие и нейтральные. Скроллбар — это хром; он не должен быть самым
+   контрастным элементом на панели приглушённого текста.                   */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+  border: 3px solid transparent;
+  background-clip: content-box;
+
+  &:hover { background: var(--text-faint); background-clip: content-box; }
+}
+
+/* ── Утилиты ──────────────────────────────────────────────────────────────
+   Нарочно крошечный набор. Это не утилитарный фреймворк; если понадобилась
+   пятая утилита — ответ обычно «компонент».                               */
+
+.u-visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.u-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.u-prose-nums { font-variant-numeric: proportional-nums; }
+
+.u-dim { color: var(--text-secondary); }

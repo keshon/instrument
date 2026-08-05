@@ -1,0 +1,431 @@
+/* ==========================================================================
+   agentic-ui — раскладка и навигация
+
+   Ярус, которого не было. Кит умел нарисовать что угодно внутри панели и не
+   умел расположить сами панели: оболочка, контейнер, сетка, стопка и ряд
+   жили в лесах живой спецификации, то есть у каждого нового экрана была бы
+   своя раскладка.
+
+   ── Стратегия адаптивности ──────────────────────────────────────────────
+
+   Три уровня, в порядке предпочтения:
+
+   1. ИНТРИНСИК. Раскладка перестраивается сама, без единого запроса:
+      auto-fit у сетки, flex-wrap с порогом у сплита. Работает всегда, в том
+      числе там, где контейнера-предка нет.
+   2. @container. Компонент отвечает на ширину СВОЕЙ области, а не окна.
+      Для панельного кита это единственный правильный ответ: одна и та же
+      панель стоит и в узкой колонке инспектора, и во всю ширину дашборда.
+   3. @media. Только оболочка приложения. Она и есть то единственное, что
+      действительно зависит от размера окна.
+
+   Контейнер не должен получать ширину от своего содержимого: container-type
+   отключает интринсик по инлайновой оси. Поэтому им объявлены только те
+   области, ширина которых всегда приходит снаружи.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Пропуск к содержимому — первое, что встречает клавиатура
+   ────────────────────────────────────────────────────────────────────────── */
+
+.skip-link {
+  position: absolute;
+  z-index: var(--z-modal);
+  inset-inline-start: var(--space-4);
+  inset-block-start: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  font-size: var(--text-sm);
+
+  &:not(:focus-visible) {
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Оболочка приложения
+
+   Боковая колонка, шапка, рабочая область. Каждая прокручивается сама:
+   боковая навигация не уезжает, пока читают таблицу.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.shell {
+  display: grid;
+  grid-template-areas: "aside header" "aside main";
+  grid-template-columns: var(--aside-w) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  block-size: 100dvh;
+}
+
+.shell-aside {
+  grid-area: aside;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-panel);
+  min-block-size: 0;
+  overflow: auto;
+  padding: var(--pad-panel);
+  border-inline-end: var(--hairline) solid var(--border);
+  background: var(--surface-sunken);
+}
+
+.shell-header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-inline);
+  padding: var(--space-4) var(--pad-panel);
+  border-block-end: var(--hairline) solid var(--border);
+  background: var(--surface-page);
+}
+
+.shell-main {
+  grid-area: main;
+  min-block-size: 0;
+  overflow: auto;
+  /* Вертикальный воздух даёт рабочая область, горизонтальный — .container
+     внутри неё. Без этого заголовок экрана прилипал к линии шапки.       */
+  padding-block: var(--pad-panel);
+  /* Область, по ширине которой отвечают компоненты внутри. */
+  container: app / inline-size;
+}
+
+/* Единственный @media во всём ките. На узком боковая колонка становится
+   горизонтальной полосой над содержимым: это работает без JS. Вариант со
+   шторкой приедет вместе с поповером — там он получается декларативно. */
+@media (width < 60rem) {
+  .shell {
+    grid-template-areas: "header" "aside" "main";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .shell-aside {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--gap-inline);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: var(--space-3) var(--pad-panel);
+    border-inline-end: none;
+    border-block-end: var(--hairline) solid var(--border);
+
+    & .nav { flex-direction: row; }
+    & .nav-group { flex-direction: row; }
+    & .nav-group + .nav-group { margin-block-start: 0; margin-inline-start: var(--space-5); }
+    & .nav-label { display: none; }
+    & .nav-item { white-space: nowrap; }
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Контейнер — потолок ширины
+
+   Ограничивает не «дизайн», а меру читаемости: строка длиннее ~90 знаков
+   теряется на возврате к началу.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.container {
+  inline-size: 100%;
+  max-inline-size: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--pad-panel);
+  container: content / inline-size;
+}
+
+.container--narrow { --container-max: 44rem; }
+.container--prose  { --container-max: 68ch; }
+.container--full   { --container-max: none; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Примитивы потока
+
+   Три штуки, и у каждой три шага зазора, названные намерением, а не
+   числом. Это осознанный отказ от утилит вида `mt-3`: шкала кита нарочно
+   разрежена сверху, чтобы «чуть побольше» не было доступным решением, а
+   двести утилит отступов возвращают его первым классом.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-panel);
+}
+.stack--tight { gap: var(--gap-row); }
+.stack--loose { gap: var(--space-7); }
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-inline);
+}
+.cluster--tight { gap: var(--space-2); }
+.cluster--loose { gap: var(--pad-panel); }
+/* Прижать хвост группы к противоположному краю. */
+.cluster-spacer { margin-inline-start: auto; }
+
+/* Сетка карточек. Перестраивается сама, без запросов: min() не даёт
+   колонке вылезти за контейнер на узком экране.                          */
+.grid {
+  display: grid;
+  gap: var(--pad-panel);
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--col-min), 100%), 1fr));
+}
+.grid--wide { --col-min: 380px; }
+.grid--tight { --col-min: 180px; }
+
+/* Сплит: боковая часть желаемой ширины плюс основная. Переносится сам,
+   когда основной части перестаёт хватать порога, — без единого запроса. */
+.split {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pad-panel);
+}
+.split-side { flex: 1 1 var(--split-side); }
+.split-main {
+  flex: 999 1 0;
+  min-inline-size: min(var(--split-main), 100%);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Шапка экрана и секция
+   ────────────────────────────────────────────────────────────────────────── */
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--gap-inline) var(--pad-panel);
+}
+
+.page-header-main {
+  flex: 1 1 20rem;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.page-title { font-size: var(--text-xl); }
+.page-desc { font-size: var(--text-sm); color: var(--text-secondary); max-inline-size: 68ch; }
+.page-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gap-inline);
+}
+
+/* Подпись секции — обычное предложение и тише данных, как и заголовок
+   панели. Капса здесь нет по той же причине, что и везде.                */
+.section-title { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text-secondary); }
+.section-actions { margin-inline-start: auto; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Навигация
+
+   Текущий пункт помечен не только цветом: у края стоит несущая метка.
+   Разметка: <nav><ul>, текущий пункт несёт aria-current="page".
+   ────────────────────────────────────────────────────────────────────────── */
+
+.nav { display: flex; flex-direction: column; gap: var(--space-1); }
+.nav-group { display: flex; flex-direction: column; gap: var(--space-1); }
+.nav-group + .nav-group { margin-block-start: var(--pad-panel); }
+
+.nav-label {
+  padding-inline: var(--space-3);
+  font-size: var(--text-2xs);
+  color: var(--text-muted);
+  line-height: var(--leading-ui);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-inline);
+  min-block-size: var(--control-h-md);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+
+  &:hover { background: var(--surface-hover); color: var(--text-primary); }
+
+  &[aria-current]:not([aria-current="false"]) {
+    background: var(--surface-selected);
+    color: var(--accent-text);
+    font-weight: var(--weight-medium);
+    box-shadow: inset var(--size-marker) 0 0 0 var(--accent-solid);
+  }
+}
+
+.nav-count { margin-inline-start: auto; }
+
+/* ── Крошки ─────────────────────────────────────────────────────────────── */
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+
+  & > li { display: flex; align-items: center; gap: var(--space-2); }
+
+  & > li + li::before {
+    content: "";
+    flex: none;
+    inline-size: var(--size-chevron);
+    block-size: var(--size-chevron);
+    background: var(--text-faint);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  & a { color: inherit; text-decoration: none; }
+  & a:hover { color: var(--text-primary); text-decoration: underline; }
+  & [aria-current="page"] { color: var(--text-primary); }
+}
+
+/* ── Вкладки ────────────────────────────────────────────────────────────────
+   На ссылках: переключение экрана — это роутинг, и JS ему не нужен.
+   role="tablist" ставится ТОЛЬКО если вкладки настоящие, то есть
+   переключают панели внутри одной страницы.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.tabs {
+  display: flex;
+  gap: var(--space-6);
+  border-block-end: var(--hairline) solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { block-size: 0; }
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  margin-block-end: calc(var(--hairline) * -1);
+  border-block-end: var(--size-marker) solid transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover { color: var(--text-primary); }
+
+  /* Подчёркивание — носитель наравне с цветом. */
+  &[aria-current]:not([aria-current="false"]),
+  &[aria-selected="true"] {
+    color: var(--text-primary);
+    font-weight: var(--weight-medium);
+    border-block-end-color: var(--accent-solid);
+  }
+}
+
+/* ── Постраничная навигация ─────────────────────────────────────────────── */
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pager-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: var(--control-h-sm);
+  min-block-size: var(--control-h-sm);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover { background: var(--surface-hover); color: var(--text-primary); }
+
+  &[aria-current="page"] {
+    background: var(--surface-selected);
+    color: var(--accent-text);
+    font-weight: var(--weight-medium);
+    box-shadow: inset 0 0 0 var(--hairline) var(--accent-border);
+  }
+
+  &[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
+}
+
+.pager-gap { padding-inline: var(--space-2); color: var(--text-faint); font-size: var(--text-xs); }
+
+/* ── Шаги мастера ───────────────────────────────────────────────────────────
+   Состояние несёт СЛОВО под подписью, а не только цвет полосы: «готово»,
+   «сейчас», «дальше» читаются и на распечатке.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-inline);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stepper-item {
+  flex: 1 1 10rem;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block-start: calc(var(--size-marker) + var(--space-4));
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    block-size: var(--size-marker);
+    border-radius: var(--radius-full);
+    background: var(--track);
+  }
+
+  &[data-state="done"]::before,
+  &[data-state="current"]::before { background: var(--accent-mark); }
+}
+
+.stepper-name { font-size: var(--text-sm); color: var(--text-secondary); }
+.stepper-note { font-size: var(--text-xs); color: var(--text-muted); }
+
+.stepper-item[data-state="current"] > .stepper-name {
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+}

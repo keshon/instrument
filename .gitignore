@@ -1,0 +1,7 @@
+# ОС и редакторы
+Thumbs.db
+.DS_Store
+*.swp
+
+# Локальные настройки инструментов (launch.json остаётся в репозитории)
+.claude/settings.local.json

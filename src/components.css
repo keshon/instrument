@@ -1,0 +1,1044 @@
+/* ==========================================================================
+   agentic-ui — components
+
+   Правила, которым подчиняется каждый компонент в этом файле:
+   · только семантические токены и роли, никогда — сырой шаг рампы
+   · ни одного числа: высота из --control-h-*, размер из --size-*,
+     отступ из --pad-*/--gap-*. Число в компоненте ломает плотность
+   · состояние выражается поверхностью и рамкой, никогда — сдвигом layout
+   · цвет — это смысл; если он украшает, он удаляется
+   · форма рисуется маской, цвет берётся токеном. Цвет никогда не живёт
+     внутри data-URI: там он был бы захардкоженной темой
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Тональность
+
+   Общий словарь на пять значений для бейджа, точки, сноски, меры и шага.
+   Один атрибут вместо четырёх наборов модификаторов — и, что важнее, один
+   перечислимый список значений: добавить шестой статус нельзя случайно.
+
+   Правило кита: ВАРИАНТ (что выбрал автор разметки) — модификатор `--`,
+   СОСТОЯНИЕ и ТОН (что меняется в течение жизни) — атрибут. Раньше в одном
+   файле уживались .badge--ok, .is-done, [aria-selected] и [data-density] —
+   четыре языка для одной вещи.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* У тона два передних плана, а не один:
+     --tone-ink   для ТЕКСТА  — порог 4.5:1
+     --tone-mark  для МЕТКИ   — порог 3:1, но ещё и против дорожки
+
+   У статусов они совпадают: шаг 5 берёт оба порога сразу. У акцента
+   расходятся, и обязаны: текст на белом требует шага 5, а метка рядом с
+   заливкой кнопки требует шага 4, иначе на экране два разных синих. */
+
+[data-tone="neutral"] { --tone-ink: var(--text-secondary); --tone-mark: var(--text-secondary); --tone-bg: var(--surface-sunken); }
+[data-tone="running"] { --tone-ink: var(--accent-text);    --tone-mark: var(--accent-mark);    --tone-bg: var(--accent-bg); }
+[data-tone="ok"]      { --tone-ink: var(--ok-text);        --tone-mark: var(--ok-text);        --tone-bg: var(--ok-bg); }
+[data-tone="warn"]    { --tone-ink: var(--warn-text);      --tone-mark: var(--warn-text);      --tone-bg: var(--warn-bg); }
+[data-tone="error"]   { --tone-ink: var(--err-text);       --tone-mark: var(--err-text);       --tone-bg: var(--err-bg); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Иконка
+
+   Контракт: inline SVG (или <use> из спрайта), обводка currentColor,
+   толщина 1.5, сетка 16. Текстовые глифы вроде ⟳ и ▶ запрещены: у них
+   разные метрики в разных шрифтах и риск подстановки эмодзи.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.icon {
+  flex: none;
+  inline-size: var(--size-icon);
+  block-size: var(--size-icon);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon--sm { inline-size: var(--size-chevron); block-size: var(--size-chevron); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Кнопка
+
+   По умолчанию кнопка тихая. Экран, где всё primary, не имеет primary вовсе.
+
+   Ховер меняет ТОЛЬКО --btn-bg. Раньше базовое правило писало background
+   напрямую, из-за чего --btn-bg на ховере не читался вообще, и каждому
+   варианту приходилось переопределять ховер целиком — три несовместимых
+   механизма в одном компоненте вместо обещанных «двух строк на вариант».
+   ────────────────────────────────────────────────────────────────────────── */
+
+.btn {
+  --btn-fg: var(--text-primary);
+  --btn-bg: transparent;
+  --btn-bg-hover: var(--surface-hover);
+  --btn-bg-active: var(--surface-active);
+  --btn-border: var(--border-control);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-block-size: var(--control-h-md);
+  padding-inline: var(--control-pad-md);
+  border: var(--hairline) solid var(--btn-border);
+  border-radius: var(--radius-md);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--dur-1) var(--ease-out),
+              border-color var(--dur-1) var(--ease-out),
+              transform var(--dur-1) var(--ease-out);
+
+  &:hover:not(:disabled)  { --btn-bg: var(--btn-bg-hover); }
+  /* 0.985, а не 0.95. Нажатие надо почувствовать, а не разглядывать. */
+  &:active:not(:disabled) { --btn-bg: var(--btn-bg-active); transform: scale(0.985); }
+
+  /* Прозрачность, а не серая заливка: кнопка сохраняет идентичность, и
+     видно, какое именно действие недоступно.                              */
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &[aria-busy="true"] { pointer-events: none; }
+}
+
+.btn--primary {
+  --btn-fg: var(--accent-on);
+  --btn-bg: var(--accent-solid);
+  /* Вниз, а не вверх: заливка обязана уходить ОТ цвета подписи. */
+  --btn-bg-hover: var(--accent-hover);
+  --btn-bg-active: var(--accent-hover);
+  --btn-border: transparent;
+}
+
+.btn--ghost { --btn-border: transparent; }
+
+.btn--danger {
+  --btn-fg: var(--err-text);
+  --btn-border: color-mix(in oklab, var(--err-text) 40%, transparent);
+  --btn-bg-hover: var(--err-bg);
+  --btn-bg-active: var(--err-bg);
+}
+
+.btn--sm { min-block-size: var(--control-h-sm); padding-inline: var(--control-pad-sm); font-size: var(--text-xs); }
+.btn--lg { min-block-size: var(--control-h-lg); padding-inline: var(--control-pad-lg); font-size: var(--text-md); }
+
+/* Иконочная кнопка квадратная, а не «узкая»: прямоугольник 32×28 — самый
+   частый признак самодельного кита.                                       */
+.btn--icon { inline-size: var(--control-h-md); padding-inline: 0; }
+.btn--sm.btn--icon { inline-size: var(--control-h-sm); }
+.btn--lg.btn--icon { inline-size: var(--control-h-lg); }
+
+/* Шов группы — снятая рамка у соседа, а не отрицательное поле. Сдвиг в
+   -0.5px при нарисованной рамке в 1px оставлял полпикселя двойной линии:
+   браузер никогда не рисует рамку тоньше физического пикселя.             */
+.btn-group {
+  display: inline-flex;
+
+  & > .btn { border-radius: 0; }
+  & > .btn + .btn { border-inline-start: none; }
+  & > .btn:first-child {
+    border-start-start-radius: var(--radius-md);
+    border-end-start-radius: var(--radius-md);
+  }
+  & > .btn:last-child {
+    border-start-end-radius: var(--radius-md);
+    border-end-end-radius: var(--radius-md);
+  }
+  /* Элементы флекса подчиняются z-index без position — кольцо фокуса
+     ложится поверх соседей.                                              */
+  & > .btn:hover, & > .btn:focus-visible { z-index: 1; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Сегментированный контрол — выбор среди равных, в отличие от группы кнопок
+
+   Разметка: role="radiogroup" + role="radio" + aria-checked. Раньше в демо
+   стоял role="tablist" без единой панели — невалидная роль, на которую при
+   этом были завязаны стили.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.segmented {
+  display: inline-flex;
+  padding: var(--space-1);
+  gap: var(--space-1);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+
+  & > button {
+    min-block-size: calc(var(--control-h-md) - var(--space-2));
+    padding-inline: var(--control-pad-md);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+
+    &:hover { color: var(--text-primary); }
+
+    &[aria-checked="true"] {
+      background: var(--surface-raised);
+      color: var(--text-primary);
+      font-weight: var(--weight-medium);
+      /* Кольцо рамки, а не тень: box-shadow здесь очерчивает границу, а не
+         поднимает элемент над плоскостью.                                 */
+      box-shadow: 0 0 0 var(--hairline) var(--border);
+    }
+  }
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Поверхности: панель и карточка
+
+   Панель — область приложения (есть шапка, занимает своё место).
+   Карточка — ограниченный объект (то, что можно было бы перетащить).
+   Ни та, ни другая не получает тени. Тень означает «временное и сверху».
+   ────────────────────────────────────────────────────────────────────────── */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  background: var(--surface-raised);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-lg);
+  /* Панель — единица, которая перестраивается: компоненты внутри отвечают
+     на ЕЁ ширину, а не на ширину окна. Ширина к панели всегда приходит
+     снаружи, поэтому inline-size-контейнер здесь безопасен.              */
+  container: panel / inline-size;
+  /* ВНИМАНИЕ: обрезка по радиусу срежет поповер, открытый внутри панели.
+     Контракт кита: всплывающее рисуется в top layer (popover / портал), а
+     не внутри потока панели.                                             */
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-inline);
+  flex: none;
+  padding: var(--space-4) var(--pad-panel);
+  border-block-end: var(--hairline) solid var(--border-subtle);
+
+  /* Тулбар сразу под шапкой сам приносит нижнюю линию — вторая была бы
+     двойным правилом на 30 пикселей.                                     */
+  &:has(+ .toolbar) { border-block-end: none; }
+}
+
+.panel-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-normal);
+  /* Обычное предложение, никогда не капс. Заголовок панели — подпись, а
+     капс делает подпись громче данных, которые она подписывает.          */
+}
+
+.panel-actions { margin-inline-start: auto; display: flex; align-items: center; gap: var(--space-2); }
+
+.panel-body {
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+  padding: var(--panel-body-pad, var(--pad-panel));
+}
+
+.panel-body--flush { --panel-body-pad: 0; }
+.panel-body--list  { --panel-body-pad: var(--gap-row); }
+
+.card {
+  background: var(--surface-raised);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--pad-card);
+}
+
+.card--interactive {
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
+  &:hover { border-color: var(--border-strong); background: var(--surface-hover); }
+}
+
+.card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
+.card-sub   { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: none;
+  padding: var(--space-3) var(--pad-cell-x);
+  border-block-end: var(--hairline) solid var(--border-subtle);
+}
+
+.toolbar-sep {
+  inline-size: var(--hairline);
+  align-self: stretch;
+  margin-inline: var(--space-2);
+  background: var(--border);
+}
+
+.toolbar-spacer { margin-inline-start: auto; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Метрика
+
+   Нарочно без рамок, на приглушённой поверхности. Ряд метрик читается как
+   одна группа; рамка вокруг каждой превращает четыре числа в четыре объекта.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.metric {
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+  padding: var(--pad-panel);
+}
+
+.metric-label { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-ui); }
+
+.metric-value {
+  margin-block-start: var(--space-3);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.1;
+}
+
+/* Единица — часть числа, поэтому она не имеет права с ним соревноваться. */
+.metric-unit {
+  font-size: var(--text-md);
+  color: var(--text-secondary);
+  margin-inline-start: 2px;
+  letter-spacing: var(--tracking-normal);
+}
+
+/* НАПРАВЛЕНИЕ и ПОЛЯРНОСТЬ — два разных факта, поэтому два атрибута.
+   Раньше классы назывались .is-up / .is-down, а красили оценку: «↓ 18%»
+   времени это хорошо, «↑ 5 новых» предупреждений это плохо. Класс,
+   названный стрелкой и означающий оценку, — гарантированная ошибка
+   применения.                                                            */
+.metric-delta {
+  margin-block-start: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  &[data-polarity="good"] { color: var(--ok-text); }
+  &[data-polarity="bad"]  { color: var(--err-text); }
+  &[data-polarity="warn"] { color: var(--warn-text); }
+
+  &[data-dir]::before {
+    content: "";
+    flex: none;
+    inline-size: var(--size-chevron);
+    block-size: var(--size-chevron);
+    background: currentColor;
+  }
+  &[data-dir="up"]::before {
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 9.5V2.5M3 5.5 6 2.5l3 3' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  &[data-dir="down"]::before {
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v7M3 6.5l3 3 3-3' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+}
+
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--pad-panel);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Состояние: бейдж, точка, спиннер, каретка
+
+   Каждое состояние ходит с точкой И со словом: цвет в одиночку не работает
+   примерно для 8% мужчин и вообще ни для одного распечатанного скриншота.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--control-h-xs);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-xs);
+  background: var(--tone-bg, var(--surface-sunken));
+  color: var(--tone-ink, var(--text-secondary));
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Точка внутри бейджа наследует тон от бейджа — атрибут проставляется один
+   раз на группу, а не дублируется в разметке.                            */
+.dot {
+  flex: none;
+  inline-size: var(--size-dot);
+  block-size: var(--size-dot);
+  border-radius: var(--radius-full);
+  background: var(--tone-mark, var(--text-faint));
+}
+
+[data-tone="running"] .dot, .dot[data-tone="running"] {
+  animation: au-pulse 1.6s var(--ease-in-out) infinite;
+}
+
+@keyframes au-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* Спиннер — SVG, а не рамка на div.
+
+   Круг из border-radius на боксе в 13px при дробном DPR растрируется с
+   центром на полупикселе, и на вращении это видно как биение. У SVG центр
+   задан в системе координат viewBox, поворот применяется к боксу целиком,
+   растеризация происходит после — биения нет ни при каком DPR.
+
+   Разметка: <svg class="spinner"><circle class="spinner-track"/><circle
+   class="spinner-arc"/></svg> с viewBox="0 0 16 16".                      */
+.spinner {
+  flex: none;
+  inline-size: var(--size-spinner);
+  block-size: var(--size-spinner);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  animation: au-spin 0.7s linear infinite;
+
+  & > .spinner-track { stroke: var(--border-control); }
+  & > .spinner-arc {
+    stroke: var(--accent-mark);
+    /* Длина окружности при r=6.5 — примерно 40.8. Четверть на дугу. */
+    stroke-dasharray: 11 30;
+  }
+}
+
+@keyframes au-spin { to { rotate: 360deg; } }
+
+/* Каретка, отмечающая ещё поступающий текст. Это курсор терминала: он и
+   должен стоять вплотную к последнему знаку, потому что показывает точку,
+   куда придёт следующий символ. Отбивка — ровно на просвет, чтобы он не
+   слипался с буквой.
+
+   Ступенями, а не плавно: затухающая каретка читается как артефакт
+   отрисовки, а не как активность.                                        */
+.caret {
+  display: inline-block;
+  inline-size: 0.45em;
+  block-size: 1.05em;
+  margin-inline-start: 0.1em;
+  vertical-align: text-bottom;
+  background: var(--accent-mark);
+  animation: au-blink 1s steps(2, start) infinite;
+}
+
+@keyframes au-blink { 50% { opacity: 0; } }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Мера
+
+   Один тон, потому что сравнивается одна величина. Определённая заполняется,
+   неопределённая метётся. Никогда не изображать прогресс определённой
+   полосой, застрявшей на 90%.
+
+   Разметка обязана нести role="progressbar" и aria-valuenow/min/max —
+   иначе значение существует только в пикселях ширины и недоступно ни
+   скринридеру, ни тесту.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.meter {
+  block-size: var(--size-meter);
+  border-radius: var(--radius-xs);
+  background: var(--track);
+  /* Протяжённость дорожки показывает хайрлайн, а не её собственный цвет:
+     так дорожка может остаться достаточно светлой, чтобы заливка на ней
+     держала 3:1.                                                          */
+  box-shadow: inset 0 0 0 var(--hairline) var(--border);
+  overflow: hidden;
+}
+
+.meter-fill {
+  block-size: 100%;
+  border-radius: var(--radius-xs);
+  background: var(--tone-mark, var(--accent-mark));
+  transition: inline-size var(--dur-3) var(--ease-out);
+}
+
+.meter[data-state="indeterminate"] > .meter-fill {
+  inline-size: 35%;
+  animation: au-sweep 1.3s var(--ease-in-out) infinite;
+}
+
+@keyframes au-sweep {
+  0%   { translate: -100% 0; }
+  100% { translate: 340% 0; }
+}
+
+.meter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--gap-inline);
+  font-size: var(--text-sm);
+  margin-block-end: var(--space-3);
+}
+
+.meter-value { color: var(--text-secondary); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Таблица
+   ────────────────────────────────────────────────────────────────────────── */
+
+.table {
+  --table-head-bg: var(--surface-raised);
+
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+
+  & th {
+    text-align: start;
+    font-weight: var(--weight-normal);
+    color: var(--text-muted);
+    padding: var(--space-3) var(--pad-cell-x);
+    border-block-end: var(--hairline) solid var(--border);
+    white-space: nowrap;
+  }
+
+  & td {
+    padding: var(--row-pad-y) var(--pad-cell-x);
+    border-block-end: var(--hairline) solid var(--border-subtle);
+    line-height: var(--leading-ui);
+  }
+
+  & tbody tr:last-child td { border-block-end: none; }
+  & tbody tr:hover td { background: var(--surface-hover); }
+
+  /* Выделение строки — тот же язык, что у строки задачи и узла дерева. */
+  & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
+
+  /* Числа выравниваются вправо и остаются табличными — величина читается
+     как форма колонки, без чтения цифр.                                  */
+  & .num { text-align: end; }
+}
+
+/* Липкая шапка — опция, а не умолчание: в нескроллящемся контексте sticky
+   прилипал бы к вьюпорту, что на длинной странице неожиданно.            */
+.table--sticky thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-sticky);
+  background: var(--table-head-bg);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Список пар ключ–значение — для инспекторов и панелей подробностей
+
+   Колонка подписей — тот же токен, что у инспектора: два почти одинаковых
+   примитива не имеют права разъезжаться по метрике. Раньше было 80px
+   против 92px и разная типографика.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.kv {
+  display: grid;
+  grid-template-columns: minmax(0, var(--label-col)) 1fr;
+  gap: var(--space-3) var(--pad-panel);
+  font-size: var(--text-sm);
+  align-items: baseline;
+
+  & > dt { color: var(--text-muted); }
+  & > dd { margin: 0; min-inline-size: 0; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Строка свойства — примитив инспектора
+
+   Подпись слева, контрол справа, одна строка, плотно. Колонка подписей —
+   общий токен, поэтому строки выравниваются независимо от глубины
+   вложенности.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.props { display: flex; flex-direction: column; }
+
+.prop {
+  display: grid;
+  grid-template-columns: var(--label-col) 1fr;
+  align-items: center;
+  gap: var(--gap-inline);
+  padding: var(--space-2) var(--pad-cell-x);
+  min-block-size: calc(var(--control-h-sm) + var(--space-3));
+
+  &:hover { background: var(--surface-hover); }
+}
+
+/* Обрезанная подпись обязана иметь title: иначе полное имя свойства
+   прочитать нечем.                                                        */
+.prop-label {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: var(--leading-ui);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prop-control { min-inline-size: 0; display: flex; gap: var(--space-2); align-items: center; }
+
+/* Числовое поле: подпись оси служит ручкой перетаскивания, поэтому курсор
+   меняется на ней, а не на отдельном степпере — тянуть будут за букву.
+   Контракт: у input обязан быть aria-label с осью, иначе скринридер
+   прочитает «поле, 128» без указания, чего именно.                       */
+.num-field {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--control-h-sm);
+  min-inline-size: 0;
+  border: var(--hairline) solid var(--border-control);
+  border-radius: var(--radius-sm);
+  background: var(--surface-field);
+  overflow: hidden;
+
+  &:hover { border-color: var(--text-muted); }
+  &:focus-within { border-color: var(--accent-border); }
+
+  & > .num-axis {
+    flex: none;
+    padding-inline: var(--space-3);
+    font-size: var(--text-2xs);
+    color: var(--text-muted);
+    cursor: ew-resize;
+    user-select: none;
+  }
+
+  & > input {
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: 100%;
+    padding-inline: var(--space-2) var(--space-3);
+    border: none;
+    background: transparent;
+    font-size: var(--text-xs);
+    appearance: textfield;
+    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button { appearance: none; margin: 0; }
+  }
+}
+
+/* Первый настоящий контейнерный запрос: в узкой панели строка свойства
+   перестаёт быть двухколоночной — подпись встаёт над контролом. Раньше
+   инспектор в боковой колонке просто расплющивался.                      */
+@container panel (inline-size < 22rem) {
+  .prop {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+    align-items: start;
+  }
+}
+
+.vec { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--space-2); min-inline-size: 0; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Строка задачи — примитив очереди
+
+   Фиксированный левый жёлоб, поэтому точки состояний выстраиваются в
+   вертикальную линию, которую можно просканировать, не читая ни слова.
+   Разметка: role="option" внутри role="listbox", иначе aria-selected на
+   голом div невалиден.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.task {
+  display: grid;
+  grid-template-columns: var(--size-gutter) 1fr auto;
+  align-items: center;
+  gap: var(--gap-inline);
+  padding: var(--row-pad-y) var(--pad-cell-x);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  cursor: default;
+
+  &:hover { background: var(--surface-hover); }
+  /* Выделение объявлено ПОСЛЕ ховера и полупрозрачно, поэтому состояния
+     складываются: ховер по выделенной строке остаётся виден.             */
+  &[aria-selected="true"] { background: var(--surface-selected); }
+  &[aria-selected="true"]:hover { background: color-mix(in oklab, var(--surface-selected), var(--surface-hover)); }
+
+  &[data-state="running"] { --tone-ink: var(--accent-text); }
+  &[data-state="done"]    { --tone-ink: var(--ok-text); }
+  &[data-state="failed"]  { --tone-ink: var(--err-text); }
+  &[data-state="warn"]    { --tone-ink: var(--warn-text); }
+  &[data-state="running"] .dot { animation: au-pulse 1.6s var(--ease-in-out) infinite; }
+
+  /* Завершённые отступают, а не гаснут: история остаётся читаемой, но
+     перестаёт спорить с тем, что идёт сейчас.                            */
+  &[data-state="done"] .task-title { color: var(--text-secondary); }
+  /* Пропущенное — единственный случай прозрачности, и она мягкая: 0.55
+     роняло подпись под порог читаемости.                                 */
+  &[data-state="skipped"] { opacity: 0.7; }
+}
+
+/* Зазор между строками. Он не косметический: без него подсветка выделенной
+   строки смыкается с подсветкой соседней под курсором, и две строки
+   читаются как один блок.                                               */
+.task + .task { margin-block-start: var(--space-1); }
+
+.task-gutter { display: flex; justify-content: center; }
+.task-main { min-inline-size: 0; }
+.task-meta { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
+.task-title { line-height: var(--leading-ui); }
+.task-sub { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: 1px; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Лог и код
+   ────────────────────────────────────────────────────────────────────────── */
+
+.log {
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--pad-panel);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  overflow: auto;
+  /* Место под скроллбар резервируется ТОЛЬКО здесь и в двух других
+     растущих областях (.code, .diff-body). На обычной панели это
+     оборачивалось мёртвой полосой в 10px у правого края, которой нет у
+     шапки и тулбара выше, — содержимое переставало с ними совпадать.
+     Резервировать имеет смысл там, где содержимое реально прибывает.   */
+  scrollbar-gutter: stable;
+}
+
+.log-line {
+  display: grid;
+  grid-template-columns: max-content max-content 1fr;
+  gap: var(--gap-inline);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+
+  &[data-tone="warn"]  { --level-ink: var(--warn-text); }
+  &[data-tone="error"] { --level-ink: var(--err-text); color: var(--err-text); }
+}
+
+/* Ширина в ch, а не по контенту. Сетка объявлена на СТРОКЕ, то есть у
+   каждой строки она своя, и колонка уровня раньше меняла ширину от слова
+   к слову: сообщение уезжало на 7px, как только в логе появлялся error. */
+.log-time  { inline-size: 8ch; color: var(--text-muted); }
+.log-level { inline-size: 5ch; color: var(--level-ink, var(--text-muted)); }
+
+.code {
+  background: var(--surface-sunken);
+  border: var(--hairline) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--pad-panel);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+code:not(.code) {
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-sunken);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Дерево
+
+   Разметка: role="tree" на контейнере, role="treeitem" + aria-level на
+   узлах, roving tabindex — на слое, где есть JS. Без ролей aria-expanded
+   и aria-selected на голых div невалидны.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.tree { font-size: var(--text-sm); }
+
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: var(--control-h-sm);
+  padding-inline: var(--space-3);
+  padding-inline-start: calc(var(--space-3) + (var(--depth, 0) * var(--size-indent)));
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+
+  &:hover { background: var(--surface-hover); }
+  &[aria-selected="true"] { background: var(--surface-selected); color: var(--accent-text); }
+  &[aria-selected="true"]:hover { background: color-mix(in oklab, var(--surface-selected), var(--surface-hover)); }
+}
+
+.tree-item + .tree-item { margin-block-start: var(--space-1); }
+
+.tree-twist {
+  flex: none;
+  inline-size: var(--size-chevron);
+  block-size: var(--size-chevron);
+  background: var(--text-muted);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: rotate var(--dur-1) var(--ease-out);
+}
+
+/* Лист: место под завиток сохраняется, чтобы подписи держали колонку. */
+.tree-item:not([aria-expanded]) > .tree-twist { background: none; }
+.tree-item[aria-expanded="true"] > .tree-twist { rotate: 90deg; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Сноска — врезка в поток. Только левая граница, поэтому углы прямые.
+
+   Тон несёт ИКОНКУ, а не только цвет полоски. Раньше warn и error
+   отличались друг от друга исключительно цветом — прямое нарушение
+   собственного закона «цвет не может быть единственным носителем».
+   ────────────────────────────────────────────────────────────────────────── */
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-inline);
+  border-inline-start: var(--size-marker) solid var(--tone-ink, var(--border-strong));
+  border-radius: 0;
+  padding: var(--space-3) var(--pad-panel);
+  font-size: var(--text-sm);
+  line-height: var(--leading-ui);
+  color: var(--text-secondary);
+
+  &::before {
+    content: "";
+    flex: none;
+    inline-size: var(--size-icon);
+    block-size: var(--size-icon);
+    /* Центрируется по ПЕРВОЙ СТРОКЕ текста, а не по верху блока: 1lh — это
+       реальная высота строки, поэтому формула сама подстраивается под кегль
+       и плотность. Ручной сдвиг на -1px задирал значок на 2.1px вверх. */
+    margin-block-start: calc((1lh - var(--size-icon)) / 2);
+    background: var(--tone-ink);
+  }
+  &:not([data-tone])::before { content: none; }
+
+}
+
+/* Иконки тона — общие для сноски и баннера. Один набор масок на два
+   компонента: дублировать data-URI значило бы завести второй источник
+   истины для формы значка.                                              */
+:is(.note, .banner)[data-tone="running"]::before, :is(.note, .banner)[data-tone="neutral"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M8 7.4v3.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='5.2' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+:is(.note, .banner)[data-tone="ok"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.4 8.2 7.2 10 10.6 6.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+:is(.note, .banner)[data-tone="warn"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 2.2 14.6 13.4H1.4z' fill='none' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M8 6.6v3' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='11.6' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+:is(.note, .banner)[data-tone="error"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Пустое состояние
+   ────────────────────────────────────────────────────────────────────────── */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-inline);
+  padding: var(--space-9) var(--space-6);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.empty-title { color: var(--text-secondary); }
+.empty-desc  { font-size: var(--text-xs); max-inline-size: 44ch; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Баннер — сообщение уровня страницы
+
+   Это НЕ сноска. Сноска (.note) — врезка в поток, она поясняет то, рядом с
+   чем стоит, и несёт только полосу у края. Баннер относится ко всему
+   экрану, поэтому у него заливка, рамка и место под действие: «доступ
+   истекает через три дня», «идёт обслуживание», «изменения не сохранены».
+
+   Тон несёт иконку — тот же общий набор масок, что у сноски.
+   Закрытие баннера — это JS: без него он остаётся на месте и не мешает.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-inline);
+  padding: var(--space-4) var(--pad-panel);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--tone-bg, var(--surface-sunken));
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-ui);
+
+  &::before {
+    content: "";
+    flex: none;
+    inline-size: var(--size-icon);
+    block-size: var(--size-icon);
+    /* Центрируется по ПЕРВОЙ СТРОКЕ текста, а не по верху блока: 1lh — это
+       реальная высота строки, поэтому формула сама подстраивается под кегль
+       и плотность. Ручной сдвиг на -1px задирал значок на 2.1px вверх. */
+    margin-block-start: calc((1lh - var(--size-icon)) / 2);
+    background: var(--tone-ink, var(--text-secondary));
+  }
+  &:not([data-tone])::before { content: none; }
+}
+
+.banner-body { min-inline-size: 0; }
+.banner-title { font-weight: var(--weight-medium); }
+.banner-text { color: var(--text-secondary); }
+.banner-actions { flex: none; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Аккордеон
+
+   На <details>, поэтому раскрытие, клавиатура и роль достаются от
+   платформы. Атрибут name на элементах делает группу взаимоисключающей —
+   открытой остаётся ровно одна секция, и тоже без единой строки JS.
+
+   Это не .step: шаг — строка вызова инструмента с телом, аккордеон —
+   раздел содержимого. Разные работы.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.accordion { display: flex; flex-direction: column; gap: var(--space-1); }
+
+.accordion-item {
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.accordion-head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-inline);
+  min-block-size: var(--control-h-lg);
+  padding: var(--space-3) var(--pad-cell-x);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker { display: none; }
+  &:hover { background: var(--surface-hover); }
+
+  &::after {
+    content: "";
+    flex: none;
+    margin-inline-start: auto;
+    inline-size: var(--size-chevron);
+    block-size: var(--size-chevron);
+    background: var(--text-muted);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.75 6 7.75 9 4.75' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: rotate var(--dur-1) var(--ease-out);
+  }
+}
+
+.accordion-item[open] > .accordion-head {
+  border-block-end: var(--hairline) solid var(--border-subtle);
+}
+.accordion-item[open] > .accordion-head::after { rotate: 180deg; }
+
+.accordion-body { padding: var(--pad-panel) var(--pad-cell-x); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Таблица: сортировка, выбор, действия, итоги
+
+   Всё, без чего таблица админки не таблица. Поведение (сама сортировка,
+   отметка «выбрать всё») — слой приложения; кит отвечает за то, чтобы
+   состояние было видно и озвучено.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Заголовок-сортировка — настоящая кнопка внутри th: её надо нажимать с
+   клавиатуры. Направление несёт ЗНАЧОК, а не только позиция: aria-sort
+   озвучивает то же самое.                                                */
+.table th > .sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  inline-size: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+
+  &:hover { color: var(--text-primary); }
+
+  &::after {
+    content: "";
+    flex: none;
+    inline-size: var(--size-chevron);
+    block-size: var(--size-chevron);
+    background: var(--text-faint);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.6 5 6 2.6 8.4 5M3.6 7 6 9.4 8.4 7' fill='none' stroke='%23000' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+}
+
+/* Числовые колонки сортируются от правого края — значок идёт перед
+   подписью, иначе он отрывается от неё на всю ширину ячейки.             */
+.table th.num > .sort { justify-content: flex-end; flex-direction: row-reverse; }
+
+.table th[aria-sort] {
+  color: var(--text-primary);
+}
+.table th[aria-sort="ascending"] > .sort::after {
+  background: var(--accent-text);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 9.5V2.8M3.4 5.4 6 2.8l2.6 2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.table th[aria-sort="descending"] > .sort::after {
+  background: var(--accent-text);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v6.7M3.4 6.6 6 9.2l2.6-2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* Колонка выбора и колонка действий прижаты к краям и не растягиваются. */
+.table .col-select { inline-size: var(--control-h-md); }
+.table .col-actions { inline-size: 1%; white-space: nowrap; text-align: end; }
+
+/* Действия строки появляются на наведении, но с клавиатуры доступны
+   ВСЕГДА: спрятать их от Tab значило бы сделать таблицу неуправляемой без
+   мыши. Поэтому opacity, а не display, и возврат при :focus-within.      */
+.table .row-actions {
+  display: inline-flex;
+  gap: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease-out);
+}
+.table tbody tr:hover .row-actions,
+.table tbody tr:focus-within .row-actions,
+.table tbody tr[aria-selected="true"] .row-actions { opacity: 1; }
+
+/* Итоги. Верхняя граница плотнее строчной: это черта под данными, а не
+   ещё одна строка.                                                       */
+.table tfoot td {
+  border-block-start: var(--hairline) solid var(--border);
+  border-block-end: none;
+  font-weight: var(--weight-medium);
+}
+
+/* Липкая первая колонка — для широких таблиц, которые скроллятся вбок.
+   Фон обязателен, иначе под ней просвечивает уезжающее содержимое.       */
+.table--sticky-col :is(th, td):first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  background: var(--table-head-bg);
+}
+.table--sticky-col.table--sticky thead th:first-child { z-index: 2; }
+
+/* Строка выбранной подсветкой не должна терять ховер. */
+.table tbody tr[aria-selected="true"]:hover td {
+  background: color-mix(in oklab, var(--surface-selected), var(--surface-hover));
+}

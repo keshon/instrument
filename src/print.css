@@ -1,0 +1,88 @@
+/* ==========================================================================
+   agentic-ui — печать
+
+   Отдельный файл, потому что отдельный СЛОЙ, и он объявлен последним:
+   печатным правилам надо перебивать компоненты, и порядок слоёв делает это
+   без единого !important — ровно так же, как с prefers-reduced-motion.
+
+   Админки печатают и выгружают в PDF отчёты, таблицы и списки задач. Без
+   этих правил на бумагу уходили бы тёмные поверхности, обрезанные области
+   прокрутки и колонка навигации на треть листа.
+   ========================================================================== */
+
+@media print {
+
+  /* Главное правило: печатается СВЕТЛАЯ тема, какая бы ни стояла на экране.
+     Достаточно сменить color-scheme — light-dark() в семантике сама начнёт
+     отдавать светлую ветку, и переопределять токены поштучно не нужно.   */
+  :root, [data-theme="dark"] { color-scheme: light; }
+
+  body { background: none; }
+
+  /* Хром приложения на бумаге не нужен: он не данные. */
+  .shell-aside,
+  .page-actions,
+  .form-actions,
+  .toolbar,
+  .skip-link,
+  .pager,
+  .copy,
+  .segmented { display: none; }
+
+  /* Оболочка разворачивается в обычный поток: три независимо
+     прокручиваемые области на листе не имеют смысла.                     */
+  .shell {
+    display: block;
+    block-size: auto;
+  }
+
+  /* Всё, что на экране прокручивалось, на бумаге печатается целиком.
+     Иначе лог обрывается на первом экране и молча теряет остальное.      */
+  .shell-main,
+  .panel-body,
+  .log,
+  .code,
+  .diff-body,
+  .output-body {
+    overflow: visible;
+    block-size: auto;
+    max-block-size: none;
+  }
+
+  /* Свёрнутый вывод на печати разворачивается: обрезка была экранной
+     экономией места, а на листе она превращается в потерю данных.        */
+  .output[data-truncated="true"] > .output-body { mask-image: none; }
+  .output-more { display: none; }
+
+  /* Раскрыть все свёрнутые шаги: закрытый <details> на бумаге —
+     невосстановимо потерянное содержимое.                                */
+  details { display: block; }
+  details > summary { list-style: none; }
+  details:not([open]) > :not(summary) { display: revert; }
+
+  /* Блоки не рвутся между листами. */
+  .panel, .card, .metric, .approval, .failure, .diff, .banner { break-inside: avoid; }
+  tr, .task, .step, .log-line, .prop { break-inside: avoid; }
+  h1, h2, h3, .page-title, .section-title, .panel-title { break-after: avoid; }
+
+  /* Шапка таблицы повторяется на каждом листе. */
+  .table thead { display: table-header-group; }
+  .table tfoot { display: table-footer-group; }
+
+  /* Тени на бумаге не воспроизводятся, но съедают тонер по краям. */
+  .panel, .card, .dialog, .popover { box-shadow: none; }
+
+  /* Оверлеи печатать нечего: они по определению временные. */
+  .popover, .tooltip-text, dialog { display: none; }
+
+  /* Адрес ссылки виден только на экране — на бумаге его надо написать. */
+  .prose a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: var(--text-muted);
+  }
+
+  /* Индикаторы активности на листе бессмысленны: печать статична. */
+  .spinner, .caret, .skeleton { display: none; }
+  .meter[data-state="indeterminate"] > .meter-fill { display: none; }
+}

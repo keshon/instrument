@@ -1,0 +1,25 @@
+/* agentic-ui — единая точка входа. Без сборки.
+
+   Порядок слоёв объявлен первым, поэтому он фиксирован независимо от
+   порядка импортов, а стили приложения — они лежат ВНЕ слоёв — всегда
+   выигрывают без !important.
+
+   kit.motion идёт последним намеренно. Правило prefers-reduced-motion
+   обязано перебивать компоненты (у .btn специфичность выше, чем у *) и при
+   этом не перебивать приложение. Порядок слоёв даёт ровно это: позднейший
+   слой выигрывает у более раннего независимо от специфичности, а любое
+   неслойное объявление выигрывает у всех слоёв. Раньше та же задача
+   решалась через !important — и ломала обещание про приложение. */
+
+@layer kit.tokens, kit.base, kit.layout, kit.components, kit.overlay, kit.agent, kit.motion, kit.print;
+
+@import url("./tokens.css")     layer(kit.tokens);
+@import url("./base.css")       layer(kit.base);
+@import url("./layout.css")     layer(kit.layout);
+@import url("./components.css") layer(kit.components);
+@import url("./forms.css")      layer(kit.components);
+@import url("./data.css")       layer(kit.components);
+@import url("./overlay.css")    layer(kit.overlay);
+@import url("./agent.css")      layer(kit.agent);
+@import url("./motion.css")     layer(kit.motion);
+@import url("./print.css")      layer(kit.print);
