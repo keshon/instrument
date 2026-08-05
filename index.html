@@ -14,18 +14,20 @@
      инлайном — значит, в ките дыра, и чинить надо кит.                   */
 
   /* Знак — подпись самого кита: вертикальный ряд точек состояния и строки
-     работы рядом с ними. Ровно то, из чего состоит инструментальный экран. */
+     работы рядом с ними. Ровно то, из чего состоит инструментальный экран.
+     Синий отыгран дважды: верхняя точка «идёт» и разделитель в слове. */
   .logo { display: flex; align-items: center; gap: var(--space-4);
-          padding: var(--space-3); margin-block-end: var(--space-2);
+          padding: var(--space-3); margin-block-end: var(--space-3);
           border-radius: var(--radius-md); color: var(--text-primary); text-decoration: none; }
   .logo:hover { background: var(--surface-hover); }
-  .logo > svg { flex: none; inline-size: 20px; block-size: 20px; }
+  .logo > svg { flex: none; inline-size: 22px; block-size: 22px; }
   .logo circle { fill: var(--text-faint); }
   .logo .logo-dot { fill: var(--accent-solid); }
   .logo path { fill: none; stroke: var(--text-muted); stroke-width: 1.6; stroke-linecap: round; }
-  .logo-text { display: flex; flex-direction: column; min-inline-size: 0; }
-  .logo-name { font-size: var(--text-sm); font-weight: var(--weight-medium); letter-spacing: var(--tracking-tight); }
-  .logo-sub { font-size: var(--text-2xs); color: var(--text-muted); }
+  .logo-name { font-size: var(--text-lg); font-weight: var(--weight-medium);
+               letter-spacing: var(--tracking-tight); line-height: 1; }
+  .logo-sep { color: var(--accent-solid); }
+  .logo-ui { color: var(--text-muted); }
   .theme-picker { inline-size: 11rem; flex: 0 1 11rem; min-inline-size: 0; }
 
   /* Пометки о JS. Кит должен честно говорить, что работает без скрипта, а
@@ -139,17 +141,14 @@
 <div class="shell">
 
   <aside class="shell-aside">
-      <a class="logo" href="#main">
+      <a class="logo" href="#main" aria-label="instrument">
         <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
           <circle class="logo-dot" cx="4" cy="4.5" r="1.7"/>
           <circle cx="4" cy="10" r="1.7"/>
           <circle cx="4" cy="15.5" r="1.7"/>
           <path d="M8.6 4.5h8M8.6 10h5.4M8.6 15.5h6.6"/>
         </svg>
-        <span class="logo-text">
-          <span class="logo-name">instrument</span>
-          <span class="logo-sub">живая спецификация</span>
-        </span>
+        <span class="logo-name">instrument<span class="logo-sep">·</span><span class="logo-ui">ui</span></span>
       </a>
 
       <nav class="nav" aria-label="Разделы спецификации" id="toc">
@@ -1050,13 +1049,14 @@
     </p>
   </section>
   <section id="tools">
-    <h2>Инструментальные примитивы<span class="needs-js" title="Дерево и строки инспектора: бегущий tabindex, раскрытие, перетаскивание числа за подпись оси">нужен JS</span></h2>
+    <h2>Инструментальные примитивы</h2>
     <p class="why">
       Колонка подписей в инспекторе — <b>общий токен</b>, тот же самый, что у списка пар
       ключ-значение: два почти одинаковых примитива не имеют права разъезжаться по
       метрике. У числового поля подпись оси служит ручкой перетаскивания, поэтому курсор
       меняется на ней, а не на отдельном степпере, — тянуть будут именно за букву.
     </p>
+    <div class="sub">Инспектор и иерархия<span class="needs-js" title="Инспектор: перетаскивание числа за подпись оси. Дерево: раскрытие узлов, стрелки, бегущий tabindex">нужен JS</span></div>
     <div class="grid">
       <div class="panel">
         <div class="panel-header"><span class="panel-title">Инспектор</span></div>
@@ -1625,27 +1625,16 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
         </div>
       </div>
 
-      <div class="sub">Авторство</div>
+      <div class="sub">Авторство и условия</div>
       <p class="why">
-        Собран в паре: <b>Сеньор Мега</b> — постановка, вкус и разбор результата;
-        <b>Claude (Opus 5)</b> — токены, компоненты, проверки и тексты. Роли по ходу
-        работы менялись местами чаще, чем предполагалось: половина правил в конституции
-        появилась не из замысла, а из найденных багов — жёлтая точка на контрасте 1.92,
+        Собран в паре человеком и Claude (Opus&nbsp;5). Половина правил в конституции
+        появилась не из замысла, а из найденных багов: жёлтая точка на контрасте 1.92,
         колесо мыши, съеденное <code>overscroll-behavior</code>, разъезжающиеся колонки
-        лога. Каждая такая находка дописывала правило, и правило переживало баг.
+        лога. Каждая находка дописывала правило — правила здесь пережили свои баги.
       </p>
       <p class="why">
-        Отсюда и главный принцип этой спецификации: она не список компонентов, а список
-        правил с показанными рядом нарушениями. Компоненты выводятся из правил; если
-        правило и компонент разошлись — прав всегда правило.
-      </p>
-
-      <div class="sub">Условия</div>
-      <p class="why">
-        Внутренний проект, лицензия не выбрана. Имена классов без префикса
-        (<code>.card</code>, <code>.table</code>, <code>.input</code>) — перед
-        использованием за пределами своих продуктов префикс нужно добавить, иначе
-        коллизия с чужим CSS вопрос времени.
+        Внутренний проект, лицензия не выбрана. Имена классов без префикса, поэтому за
+        пределами своих продуктов префикс придётся добавить.
       </p>
     </section>
 
