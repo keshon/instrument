@@ -14,25 +14,24 @@
      канал оформления. Если для демонстрации понадобилось оформление
      инлайном — значит, в ките дыра, и чинить надо кит.                   */
 
-  /* Замок целиком в SVG. Отличительная часть — «i» — нарисована стойкой и
-     точкой, поэтому её акцент не зависит от метрик системного шрифта;
+  /* Замок целиком в SVG и только из букв. Отличительная часть — точка над
+     «i» — нарисована, поэтому её акцент не зависит от метрик шрифта;
      остаток слова остаётся текстом и берёт шрифт кита.
 
-     Синяя точка над «i» — та же точка состояния, что и верхняя в знаке.
-     Это и есть смысл замка: интерфейс, который показывает работу машины. */
+     Знака рядом больше нет: его вертикальный ряд точек спорил с точкой над
+     «i». Одна точка на замок — она же точка состояния, которой размечен
+     весь кит, и она же фавикон. */
   .logo { display: flex; align-items: center; padding: var(--space-3);
           margin-block-end: var(--space-3); border-radius: var(--radius-md);
           color: var(--text-primary); text-decoration: none; }
   .logo:hover { background: var(--surface-hover); }
-  /* Ширина бокса подогнана под слово: пустота справа тянула бы за собой
-     подсветку при наведении. Рост стойки равен x-высоте шрифта, верх точки —
-     высоте точки над «i» в нём же; обе величины измерены, а не подобраны. */
-  .logo-svg { inline-size: 113px; block-size: 22px; overflow: visible; }
+  .logo-svg { inline-size: 103px; block-size: 22px; overflow: visible; }
   .logo-dot { fill: var(--accent-solid); }
-  .logo-mute { fill: var(--text-faint); }
-  .logo-rule { fill: none; stroke: var(--text-muted); stroke-width: 1.6; stroke-linecap: round; }
   .logo-stem { fill: currentColor; }
   .logo-word { fill: currentColor; font-family: var(--font-sans); font-size: 17px;
+               font-weight: var(--weight-medium); letter-spacing: -0.01em; }
+  .logo-ui { fill: var(--text-muted); font-family: var(--font-sans); font-size: 13px;
+             font-weight: var(--weight-medium); }
                font-weight: var(--weight-medium); letter-spacing: -0.01em; }
   .theme-picker { inline-size: 11rem; flex: 0 1 11rem; min-inline-size: 0; }
 
@@ -148,26 +147,28 @@
 
   <aside class="shell-aside">
       <a class="logo" href="#main">
-        <svg class="logo-svg" viewBox="0 0 113 22" role="img" aria-label="instrument">
-          <title>instrument</title>
+        <svg class="logo-svg" viewBox="0 0 103 22" role="img" aria-label="instrument UI">
+          <title>instrument UI</title>
 
-          <!-- Знак: вертикальный ряд точек состояния и строки работы рядом. -->
-          <circle class="logo-dot" cx="4" cy="4.5" r="1.7"/>
-          <circle class="logo-mute" cx="4" cy="11" r="1.7"/>
-          <circle class="logo-mute" cx="4" cy="17.5" r="1.7"/>
-          <path class="logo-rule" d="M8.6 4.5h8M8.6 11h5.4M8.6 17.5h6.6"/>
+          <!-- «i» нарисована стойкой и точкой, а не набрана: только так её
+               точку можно покрасить акцентом. Это та же точка состояния, что
+               размечает весь кит, и здесь она единственная — знак со своим
+               рядом точек с ней конфликтовал.
 
-          <!-- «i» нарисована, а не набрана: только так её точку можно
-               покрасить акцентом, не завися от метрик системного шрифта.
-               И это та же точка состояния, что в знаке. -->
-          <rect class="logo-stem" x="27.6" y="9" width="1.9" height="9" rx="0.95"/>
-          <circle class="logo-dot" cx="28.55" cy="6.7" r="1.7"/>
-
-          <text class="logo-word" x="32.05" y="18">nstrument</text>
+               Посадка отмерена по шрифту: ширина «i» 4.44, стойка 1.9,
+               поэтому боковые просветы по 1.27 и текст начинается ровно на
+               4.44 — как если бы «i» была набрана. -->
+          <rect class="logo-stem" x="1.27" y="9" width="1.9" height="9" rx="0.95"/>
+          <circle class="logo-dot" cx="2.22" cy="6.7" r="1.7"/>
+          <text class="logo-word" x="4.44" y="18">nstrument</text>
+          <text class="logo-ui" x="89.2" y="18">UI</text>
         </svg>
       </a>
 
       <nav class="nav" aria-label="Разделы спецификации" id="toc">
+        <div class="nav-group">
+          <a class="nav-item" href="#start">С чего начать</a>
+        </div>
         <div class="nav-group">
           <span class="nav-label">Основания</span>
           <a class="nav-item" href="#color">Цвет</a>
@@ -238,6 +239,87 @@
       без него компонент неполон, и говорит, что именно требует JS:</span>
       <span class="needs-js">нужен JS</span>
     </div>
+
+    <!-- ══ Начало ══════════════════════════════════════════════════════ -->
+
+    <section id="start">
+      <h2>С чего начать</h2>
+      <p class="why">
+        Сборки нет. Кит подключается одной строкой, дальше можно писать разметку —
+        всё остальное на этой странице объясняет, <b>какую</b> разметку.
+      </p>
+
+      <div class="code">&lt;link rel="stylesheet" href="src/kit.css"&gt;</div>
+
+      <div class="sub">Что в файлах</div>
+      <table class="table">
+        <thead><tr><th>Файл</th><th>Что внутри</th></tr></thead>
+        <tbody>
+          <tr><td><code>tokens.css</code></td><td>рампы, семантика, роли, темы, плотность</td></tr>
+          <tr><td><code>base.css</code></td><td>сброс, умолчания элементов, фокус, скроллбары, проза</td></tr>
+          <tr><td><code>layout.css</code></td><td>оболочка, контейнер, поток, шапка экрана, навигация</td></tr>
+          <tr><td><code>components.css</code></td><td>кнопки, поверхности, данные, состояния, таблица</td></tr>
+          <tr><td><code>forms.css</code></td><td>поля, валидация, раскладка формы</td></tr>
+          <tr><td><code>data.css</code></td><td>аватар, тег, лента, легенда, спарклайн, кольцо, календарь</td></tr>
+          <tr><td><code>overlay.css</code></td><td>поповер, меню, тултип, модалка, шторка</td></tr>
+          <tr><td><code>agent.css</code></td><td>агентный слой и режим принудительных цветов</td></tr>
+          <tr><td><code>motion.css</code></td><td><code>prefers-reduced-motion</code></td></tr>
+          <tr><td><code>print.css</code></td><td><code>@media print</code></td></tr>
+        </tbody>
+      </table>
+      <p class="why">
+        Подключать по одному не нужно и не стоит: <code>kit.css</code> объявляет порядок
+        слоёв, а он и есть гарантия того, что ничего не переопределит друг друга не в том
+        порядке.
+      </p>
+
+      <div class="sub">Слои и почему ваши стили всегда выигрывают</div>
+      <div class="code">@layer kit.tokens, kit.base, kit.layout, kit.components,
+       kit.overlay, kit.agent, kit.motion, kit.print;</div>
+      <p class="why">
+        Стили приложения лежат <b>вне</b> слоёв, а неслойное объявление выигрывает у
+        любого слойного независимо от специфичности. Значит, переопределять кит можно
+        обычным правилом — <code>!important</code> не нужен нигде. Обратная сторона:
+        случайное совпадение имени класса тоже выиграет молча, поэтому за пределами
+        своих продуктов классам нужен префикс.
+      </p>
+
+      <div class="sub">Тема и плотность</div>
+      <div class="code">&lt;html data-theme="dark"&gt;              &lt;!-- light | light-cool | dark | dark-soft --&gt;
+&lt;html&gt;                                &lt;!-- атрибута нет — тема по настройке ОС --&gt;
+
+&lt;section data-density="compact"&gt;      &lt;!-- compact | comfortable --&gt;</div>
+      <p class="why">
+        Плотность — атрибут <b>контейнера</b>, а не вариант компонента: один атрибут на
+        панели перенастраивает всё внутри неё. Тема живёт на <code>html</code> и меняет
+        ровно две вещи — тон нейтрали и глубину поверхностей.
+      </p>
+
+      <div class="sub">Что обязательно в разметке</div>
+      <p class="why">
+        Кит рисует состояние, но не выдумывает его. Списочные компоненты требуют ролей,
+        иначе <code>aria-selected</code> невалиден, а с клавиатуры до них не добраться:
+        очередь — <code>role="listbox"</code> и <code>role="option"</code>, дерево —
+        <code>role="tree"</code> и <code>role="treeitem"</code>, мера —
+        <code>role="progressbar"</code> с <code>aria-valuenow</code>, сегментированный —
+        <code>role="radiogroup"</code>. Полный список — в <code>DESIGN.md</code>.
+      </p>
+
+      <div class="sub">Проверка</div>
+      <div class="code">node tools/contrast.mjs</div>
+      <p class="why">
+        328 пар цветов против порогов WCAG в четырёх темах. Инструмент читает настоящий
+        <code>tokens.css</code> и резолвит <code>var()</code>, <code>light-dark()</code> и
+        <code>color-mix()</code> так же, как браузер, поэтому разойтись с китом не может.
+        Заводите новый семантический токен — добавьте туда его пары.
+      </p>
+
+      <div class="note" data-tone="warn">
+        Минимум браузера: Chrome 123+, Safari 17.5+, Firefox 120+ — по
+        <code>light-dark()</code>, <code>oklch()</code>, каскадным слоям, вложенности,
+        <code>:has()</code> и единице <code>lh</code>.
+      </div>
+    </section>
 
     <!-- ══ Основания ═══════════════════════════════════════════════ -->
   <section id="color">
