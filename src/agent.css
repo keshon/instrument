@@ -1,5 +1,5 @@
 /* ==========================================================================
-   agentic-ui — агентный слой
+   instrument — агентный слой
 
    То, из чего на самом деле состоит интерфейс агента. Очередь задач, лог и
    инспектор в components.css закрывают инструментальную половину; здесь —
@@ -168,7 +168,7 @@
 .step[data-state="running"] { --tone-ink: var(--accent-text); }
 .step[data-state="ok"]      { --tone-ink: var(--ok-text); }
 .step[data-state="failed"]  { --tone-ink: var(--err-text); }
-.step[data-state="running"] .dot { animation: au-pulse 1.6s var(--ease-in-out) infinite; }
+.step[data-state="running"] .dot { animation: inst-pulse 1.6s var(--ease-in-out) infinite; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Диф
@@ -340,14 +340,14 @@
   background: var(--surface-sunken);
   border-radius: var(--radius-xs);
   block-size: 1lh;
-  animation: au-fade 1.6s var(--ease-in-out) infinite;
+  animation: inst-fade 1.6s var(--ease-in-out) infinite;
 }
 
 .skeleton--title { block-size: 1lh; inline-size: 40%; }
 .skeleton--line  { inline-size: 100%; }
 .skeleton--short { inline-size: 62%; }
 
-@keyframes au-fade {
+@keyframes inst-fade {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
 }

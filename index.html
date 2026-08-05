@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>agentic-ui — живая спецификация</title>
+<title>instrument — живая спецификация</title>
 <link rel="stylesheet" href="./src/kit.css">
 <style>
   /* Строительные леса самой страницы. В кит не входят.
@@ -13,21 +13,31 @@
      канал оформления. Если для демонстрации понадобилось оформление
      инлайном — значит, в ките дыра, и чинить надо кит.                   */
 
-  .brand { font-size: var(--text-sm); font-weight: var(--weight-medium); }
-  .brand-sub { font-size: var(--text-xs); }
-  .theme-picker { inline-size: 11rem; flex: none; }
+  /* Знак — подпись самого кита: вертикальный ряд точек состояния и строки
+     работы рядом с ними. Ровно то, из чего состоит инструментальный экран. */
+  .logo { display: flex; align-items: center; gap: var(--space-4);
+          padding: var(--space-3); margin-block-end: var(--space-2);
+          border-radius: var(--radius-md); color: var(--text-primary); text-decoration: none; }
+  .logo:hover { background: var(--surface-hover); }
+  .logo > svg { flex: none; inline-size: 20px; block-size: 20px; }
+  .logo circle { fill: var(--text-faint); }
+  .logo .logo-dot { fill: var(--accent-solid); }
+  .logo path { fill: none; stroke: var(--text-muted); stroke-width: 1.6; stroke-linecap: round; }
+  .logo-text { display: flex; flex-direction: column; min-inline-size: 0; }
+  .logo-name { font-size: var(--text-sm); font-weight: var(--weight-medium); letter-spacing: var(--tracking-tight); }
+  .logo-sub { font-size: var(--text-2xs); color: var(--text-muted); }
+  .theme-picker { inline-size: 11rem; flex: 0 1 11rem; min-inline-size: 0; }
 
   /* Пометки о JS. Кит должен честно говорить, что работает без скрипта, а
      что — только с ним: это первое, что спрашивают, выбирая кит. */
-  .needs-js, .no-js {
+  .needs-js {
     display: inline-flex; align-items: center; gap: var(--space-2);
     min-block-size: var(--control-h-xs); padding-inline: var(--space-3);
     border-radius: var(--radius-xs); font-size: var(--text-2xs);
     white-space: nowrap; vertical-align: middle;
   }
   .needs-js { background: var(--warn-bg); color: var(--warn-text); }
-  .no-js { background: var(--ok-bg); color: var(--ok-text); }
-  .sub > .needs-js, .sub > .no-js, h2 > .needs-js, h2 > .no-js { margin-inline-start: var(--space-4); }
+  .sub > .needs-js, h2 > .needs-js { margin-inline-start: var(--space-4); }
 
   .legend-js { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center;
                padding: var(--space-4) var(--pad-panel); margin-block-end: var(--space-8);
@@ -129,6 +139,19 @@
 <div class="shell">
 
   <aside class="shell-aside">
+      <a class="logo" href="#main">
+        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <circle class="logo-dot" cx="4" cy="4.5" r="1.7"/>
+          <circle cx="4" cy="10" r="1.7"/>
+          <circle cx="4" cy="15.5" r="1.7"/>
+          <path d="M8.6 4.5h8M8.6 10h5.4M8.6 15.5h6.6"/>
+        </svg>
+        <span class="logo-text">
+          <span class="logo-name">instrument</span>
+          <span class="logo-sub">живая спецификация</span>
+        </span>
+      </a>
+
       <nav class="nav" aria-label="Разделы спецификации" id="toc">
         <div class="nav-group">
           <span class="nav-label">Основания</span>
@@ -167,13 +190,12 @@
         </div>
         <div class="nav-group">
           <a class="nav-item" href="#anti">Так не надо</a>
+          <a class="nav-item" href="#about">О проекте</a>
         </div>
       </nav>
   </aside>
 
   <header class="shell-header">
-    <span class="brand">agentic-ui</span>
-    <span class="u-dim brand-sub">живая спецификация</span>
     <span class="cluster-spacer"></span>
 
     <div class="segmented" role="radiogroup" aria-label="Плотность" id="density">
@@ -197,11 +219,9 @@
     <div class="container">
 
     <div class="legend-js">
-      <span><b>Что работает без скрипта.</b></span>
-      <span class="no-js">без JS</span>
-      <span>поповер, меню, аккордеон, валидация форм, блокировка прокрутки, печать</span>
+      <span><b>Компоненты работают без скрипта.</b> Метка стоит только там, где
+      без него компонент неполон, и говорит, что именно требует JS:</span>
       <span class="needs-js">нужен JS</span>
-      <span>клавиатура в списках, открытие модалки, сортировка, копирование</span>
     </div>
 
     <!-- ══ Основания ═══════════════════════════════════════════════ -->
@@ -239,11 +259,13 @@
 
     <div class="sub">Два токена на тон, а не три</div>
     <p class="why">
-      У каждого смыслового тона ровно <code>--*-text</code> и <code>--*-bg</code>. Третий,
-      «заливка», раньше жил между ними и не проходил нигде, где под ним оказывалась
-      дорожка: жёлтая заливка меры давала <b>2.49</b> при норме 3.0, а жёлтая точка
-      состояния — <b>1.92</b>. Проверка контраста лежит в <code>tools/contrast.mjs</code>
-      и читает настоящий <code>tokens.css</code>, поэтому разойтись с китом не может.
+      У каждого смыслового тона ровно два токена: <code>--*-text</code> для метки —
+      текста, точки состояния, заливки меры — и <code>--*-bg</code> для тонированного
+      фона под ней. Третьего, «заливки» между ними, нет намеренно: метка обязана
+      держать порог и на поверхности, и на приглушённой дорожке, а это одно и то же
+      требование, самое жёсткое. Проверка лежит в <code>tools/contrast.mjs</code>: она
+      читает настоящий <code>tokens.css</code> и резолвит его как браузер, поэтому
+      разойтись с китом не может.
     </p>
   </section>
   <section id="type">
@@ -480,15 +502,29 @@
       браузер никогда не рисует рамку тоньше физического пикселя, поэтому сдвиг на
       полпикселя оставлял видимое утолщение на каждом стыке.
     </p>
+    <div class="sub">Сегментированный контрол<span class="needs-js" title="Выбор, стрелки и бегущий tabindex">нужен JS</span></div>
+    <p class="why">
+      Пара к группе кнопок, и путать их нельзя. <b>Группа кнопок</b> — это несколько
+      разных действий, поставленных вплотную. <b>Сегментированный</b> — один выбор среди
+      равных вариантов, у него всегда ровно одно выбранное значение. Отсюда и разметка:
+      у группы обычные кнопки, у сегментированного — <code>role="radiogroup"</code>.
+    </p>
+    <div class="segmented" role="radiogroup" aria-label="Режим отображения">
+      <button type="button" role="radio" aria-checked="true">Список</button>
+      <button type="button" role="radio" aria-checked="false">Сетка</button>
+      <button type="button" role="radio" aria-checked="false">Таблица</button>
+    </div>
+
     <div class="spec"><span>block-size: --control-h-md</span><span>border: --hairline</span><span>radius: --radius-md</span><span>weight: 500</span></div>
   </section>
   <section id="inputs">
     <h2>Поля ввода</h2>
     <p class="why">
-      Поле стоит во <b>врезе</b> (<code>--surface-field</code>), а не на цвете панели.
-      Пока фон поля совпадал с фоном панели, его единственной границей была рамка на
-      1.31:1 — поля на панели просто не было видно. Подсказка и ошибка занимают
-      <b>один слот</b>: ошибка заменяет подсказку, а не сдвигает форму вниз.
+      Поле стоит во <b>врезе</b> (<code>--surface-field</code>), а не на цвете панели:
+      иначе на панели его единственной границей остаётся рамка, и поле приходится
+      искать. Врез — отдельная роль поверхности, поэтому рамка может оставаться тихой.
+      Подсказка и ошибка занимают <b>один слот</b>: ошибка заменяет подсказку, а не
+      сдвигает форму вниз, — форма не перекладывается в момент заполнения.
     </p>
     <div class="grid">
       <div class="field">
@@ -514,10 +550,10 @@
       </div>
     </div>
     <p class="why">
-      Шеврон селекта рисуется <b>маской</b> на псевдоэлементе обёртки. Только так его
-      цвет остаётся токеном, а положение — логическим: два <code>linear-gradient</code>
-      давали сплошной треугольник, прибитый к физическому правому краю, и в RTL он
-      оставался справа.
+      Селект требует обёртки <code>.select-wrap</code>, и это осознанная плата. Шеврон
+      рисуется <b>маской</b> на её псевдоэлементе — только так его цвет берётся токеном,
+      а положение остаётся логическим и в RTL уезжает вместе с текстом. Общее правило
+      кита: форму задаёт маска, цвет приходит токеном, внутри data-URI цвета не бывает.
     </p>
 
     <div class="sub">Переключатели</div>
@@ -530,11 +566,11 @@
       <label class="switch"><input type="checkbox">Выключено</label>
     </div>
     <p class="why">
-      Галочка рисуется маской, а цвет берётся из <code>--accent-on</code>. Раньше внутри
-      data-URI стоял <code>stroke='white'</code> — цвет был захардкожен ровно так, как
-      запрещает второй закон кита. Выключенный свитч несёт кольцо
-      <code>--border-control</code>: без него он жил на контрасте 1.25, и «выключено»
-      было не отличить от «элемента нет».
+      Все три построены на нативном <code>input</code>: клавиатура, отправка формы и
+      скринридеры достаются бесплатно. Галочка — маска, её цвет берётся из
+      <code>--accent-on</code>, а не зашит в data-URI. Выключенный свитч несёт кольцо
+      <code>--border-control</code>, потому что у него граница <b>и есть</b> контрол:
+      без кольца «выключено» неотличимо от «элемента нет».
     </p>
 
     <div class="sub">Слайдер<span class="needs-js" title="Вывод текущего значения рядом с бегунком">нужен JS</span></div>
@@ -630,7 +666,7 @@
       </div>
     </div>
 
-    <div class="sub">Живая валидация<span class="no-js" title=":user-invalid — состояние появляется после ухода фокуса, средствами платформы">без JS</span></div>
+    <div class="sub">Живая валидация</div>
     <p class="why">
       Используется <code>:user-invalid</code>, а не <code>:invalid</code>. Разница
       принципиальная: <code>:invalid</code> горит красным с первой секунды, ещё до того,
@@ -763,9 +799,10 @@
       </div>
     </div>
     <p class="why">
-      У сноски тон несёт <b>иконку</b>, а не только цвет полоски. Раньше «внимание» и
-      «ошибка» отличались друг от друга исключительно цветом — прямое нарушение
-      собственного закона «цвет не может быть единственным носителем состояния».
+      Сноска — врезка <b>в поток</b>: она поясняет то, рядом с чем стоит, и несёт только
+      полосу у края. Для сообщения обо всём экране есть баннер — у него заливка и место
+      под действие. Тон сноски несёт <b>иконку</b>, а не только цвет полоски: иначе
+      «внимание» и «ошибка» отличались бы одним цветом, что закон кита запрещает.
     </p>
   </section>
   <section id="overlay">
@@ -778,7 +815,7 @@
       <code>--scrim</code> и все четыре z-индекса.
     </p>
 
-    <div class="sub">Поповер и меню<span class="no-js" title="Popover API: верхний слой, Escape, клик мимо, возврат фокуса">без JS</span><span class="needs-js" title="Стрелки внутри меню и открытие модалки">частично JS</span></div>
+    <div class="sub">Поповер, меню и тултип</div>
     <div class="cluster cluster--loose">
       <button class="btn" type="button" popovertarget="pop-actions">Действия</button>
       <div class="popover popover--anchored" id="pop-actions" popover>
@@ -802,6 +839,10 @@
         <span class="tooltip-text" role="tooltip" id="tt-1">Один полный обход карты агентом</span>
       </span>
 
+    </div>
+
+    <div class="sub">Модалка и шторка<span class="needs-js" title="Открытие: dlg.showModal(). Закрытие, блокировка прокрутки и подложка — без скрипта">нужен JS</span></div>
+    <div class="cluster">
       <button class="btn" type="button" data-dialog="#dlg-confirm">Модалка</button>
       <button class="btn" type="button" data-dialog="#dlg-sheet">Шторка</button>
     </div>
@@ -879,7 +920,7 @@
       </div>
     </div>
 
-    <div class="sub">Аккордеон<span class="no-js" title="details + общий name делает группу взаимоисключающей">без JS</span></div>
+    <div class="sub">Аккордеон</div>
     <p class="why">
       На <code>&lt;details&gt;</code> с атрибутом <code>name</code>: группа становится
       <b>взаимоисключающей</b> — открытой остаётся ровно одна секция, и тоже без единой
@@ -903,7 +944,7 @@
       </details>
     </div>
 
-    <div class="sub">Печать<span class="no-js" title="@media print и смена color-scheme">без JS</span></div>
+    <div class="sub">Печать</div>
     <p class="why">
       Админки печатают отчёты и выгружают в PDF. Нажмите <kbd>Ctrl</kbd> <kbd>P</kbd>:
       печатается <b>светлая тема при любой экранной</b> (достаточно сменить
@@ -961,11 +1002,12 @@
       </div>
     </div>
     <p class="why">
-      Неопределённый прогресс — <b>отдельный вид полосы</b>, а не определённая полоса,
-      застрявшая на 90%. У определённой обязаны быть <code>role="progressbar"</code> и
-      <code>aria-valuenow</code>: раньше значение существовало только как ширина в
-      пикселях и было недоступно ни скринридеру, ни тесту. У неопределённой
-      <code>aria-valuenow</code> нет — и это само по себе сообщение.
+      Неопределённый прогресс — <b>отдельный вид полосы</b>, а не определённая, застрявшая
+      на 90%: полоса, которая врёт про остаток, хуже честного «длительность неизвестна».
+      У определённой обязательны <code>role="progressbar"</code> и
+      <code>aria-valuenow</code>, иначе значение существует только как ширина в пикселях
+      и недоступно ни скринридеру, ни тесту. У неопределённой <code>aria-valuenow</code>
+      нет — и его отсутствие само по себе сообщение.
     </p>
   </section>
 
@@ -973,8 +1015,9 @@
   <section id="metrics">
     <h2>Метрики</h2>
     <p class="why">
-      Нарочно без рамок, на приглушённой поверхности. Ряд метрик читается как <b>одна
-      группа</b>; рамка вокруг каждой превращает четыре числа в четыре объекта. Единица
+      Метрика — одно число, за которым следят. Если чисел много и их сравнивают между
+      собой — это таблица, а не ряд метрик. Нарочно без рамок, на приглушённой
+      поверхности: ряд метрик читается как <b>одна группа</b>; рамка вокруг каждой превращает четыре числа в четыре объекта. Единица
       измерения мельче и тише самого числа, потому что она часть числа, а не сосед.
     </p>
     <div class="metric-row">
@@ -1338,14 +1381,16 @@
       </div>
     </div>
     <p class="why">
-      Фиксированный левый жёлоб выстраивает точки в вертикальную линию, которую можно
-      просканировать, не читая ни слова. Список — <code>role="listbox"</code>, строки —
-      <code>role="option"</code> с бегущим <code>tabindex</code>: стрелки и Home/End
-      работают. Раньше <code>aria-selected</code> стоял на голом <code>div</code>, то есть
-      был невалиден, а до строк нельзя было добраться с клавиатуры вообще.
+      Строка очереди — <b>плоская</b>: состояние, название, метаданные, время. Если нужно
+      тело — аргументы, вывод, ошибка — это уже шаг (<code>.step</code>) ниже, другой
+      компонент. Фиксированный левый жёлоб выстраивает точки в вертикальную линию,
+      которую можно просканировать, не читая ни слова. Разметка обязательна: список —
+      <code>role="listbox"</code>, строки — <code>role="option"</code> с бегущим
+      <code>tabindex</code>, иначе <code>aria-selected</code> невалиден, а до строк не
+      добраться с клавиатуры.
     </p>
 
-    <div class="sub">Вызовы инструментов<span class="no-js" title="Построено на details — раскрытие и клавиатура от платформы">без JS</span></div>
+    <div class="sub">Вызовы инструментов<span class="needs-js" title="Разворот свёрнутого вывода. Сам шаг раскрывается без скрипта — это details">нужен JS</span></div>
     <div class="panel">
       <div class="panel-body panel-body--list">
         <details class="step" data-state="ok">
@@ -1478,7 +1523,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
       </div>
     </div>
 
-    <div class="sub">Лог</div>
+    <div class="sub">Лог<span class="needs-js" title="Копирование в буфер">нужен JS</span></div>
     <div class="copyable">
       <div class="log" id="log" role="log" aria-label="Лог прогона">
         <div class="log-line"><span class="log-time">19:38:04</span><span class="log-level">info</span><span>worldgen: seed 8841203, 512×512</span></div>
@@ -1492,9 +1537,10 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
       </button>
     </div>
     <p class="why">
-      Колонки времени и уровня заданы в <code>ch</code>. Сетка объявлена на строке, то есть
-      у каждой строки она своя, и колонка уровня раньше меняла ширину от слова к слову:
-      сообщение уезжало на 7 пикселей, как только в логе появлялся <code>error</code>.
+      Колонки времени и уровня заданы в <code>ch</code>, а не по содержимому. Сетка
+      объявлена на строке — значит, у каждой строки она своя, и ширина по содержимому
+      меняла бы её от слова к слову: <code>info</code> и <code>error</code> разной длины,
+      и сообщение прыгало бы по горизонтали при каждой новой записи.
     </p>
   </section>
 
@@ -1543,6 +1589,66 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
     </div>
   </section>
 
+    <section id="about">
+      <h2>О проекте</h2>
+      <p class="why">
+        <b>instrument</b> — кит для интерфейсов, которые показывают человеку работу
+        машины: очереди задач и прогоны, логи и инспекторы, дашборды и админки.
+        Дисциплина одна на всё — тихий утилитарный минимализм, отрендеренный плоско.
+      </p>
+
+      <div class="grid">
+        <div class="card stack stack--tight">
+          <div class="card-title">Как устроен</div>
+          <div class="card-sub">
+            Четыре яруса токенов: рампы, семантика, роли, переменные компонента.
+            Тема — две ручки, а не четыре набора значений. Плотность перенастраивает
+            только ярус ролей, поэтому в компонентах нет ни одного зашитого размера.
+          </div>
+        </div>
+        <div class="card stack stack--tight">
+          <div class="card-title">Чем проверен</div>
+          <div class="card-sub">
+            <code>tools/contrast.mjs</code> читает настоящий <code>tokens.css</code> и
+            резолвит его так же, как браузер. 328 пар цветов против порогов WCAG в
+            четырёх темах. Тест не дублирует значения — он их вычисляет, поэтому
+            разойтись с китом не может.
+          </div>
+        </div>
+        <div class="card stack stack--tight">
+          <div class="card-title">Что нужно браузеру</div>
+          <div class="card-sub">
+            Chrome 123+, Safari 17.5+, Firefox 120+ — по <code>light-dark()</code>,
+            <code>oklch()</code>, каскадным слоям, вложенности, <code>:has()</code> и
+            единице <code>lh</code>. Подключение — одна строка, сборки нет.
+          </div>
+        </div>
+      </div>
+
+      <div class="sub">Авторство</div>
+      <p class="why">
+        Собран в паре: <b>Сеньор Мега</b> — постановка, вкус и разбор результата;
+        <b>Claude (Opus 5)</b> — токены, компоненты, проверки и тексты. Роли по ходу
+        работы менялись местами чаще, чем предполагалось: половина правил в конституции
+        появилась не из замысла, а из найденных багов — жёлтая точка на контрасте 1.92,
+        колесо мыши, съеденное <code>overscroll-behavior</code>, разъезжающиеся колонки
+        лога. Каждая такая находка дописывала правило, и правило переживало баг.
+      </p>
+      <p class="why">
+        Отсюда и главный принцип этой спецификации: она не список компонентов, а список
+        правил с показанными рядом нарушениями. Компоненты выводятся из правил; если
+        правило и компонент разошлись — прав всегда правило.
+      </p>
+
+      <div class="sub">Условия</div>
+      <p class="why">
+        Внутренний проект, лицензия не выбрана. Имена классов без префикса
+        (<code>.card</code>, <code>.table</code>, <code>.input</code>) — перед
+        использованием за пределами своих продуктов префикс нужно добавить, иначе
+        коллизия с чужим CSS вопрос времени.
+      </p>
+    </section>
+
     </div>
   </main>
 
@@ -1571,17 +1677,17 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
      атрибута. «По системе» — пустое значение: атрибут снимается, и
      light-dark() снова слушает настройку ОС.                            */
   const themeSel = document.getElementById('theme');
-  const savedTheme = localStorage.getItem('au-theme') || '';
+  const savedTheme = localStorage.getItem('instrument-theme') || '';
   if (savedTheme) root.dataset.theme = savedTheme;
   themeSel.value = savedTheme;
 
   themeSel.addEventListener('change', () => {
     if (themeSel.value) {
       root.dataset.theme = themeSel.value;
-      localStorage.setItem('au-theme', themeSel.value);
+      localStorage.setItem('instrument-theme', themeSel.value);
     } else {
       delete root.dataset.theme;
-      localStorage.removeItem('au-theme');
+      localStorage.removeItem('instrument-theme');
     }
   });
 

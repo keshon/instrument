@@ -1,5 +1,5 @@
 /* ==========================================================================
-   agentic-ui — движение при prefers-reduced-motion
+   instrument — движение при prefers-reduced-motion
 
    Отдельный файл, потому что отдельный СЛОЙ, и слой здесь — вся суть.
 
@@ -40,7 +40,7 @@
 
   /* Все точки, которые пульсируют: собственный тон, тон родителя-бейджа,
      состояние строки очереди и состояние шага. Список обязан совпадать с
-     тем, что заводит au-pulse в components.css и agent.css.              */
+     тем, что заводит inst-pulse в components.css и agent.css.              */
   [data-tone="running"] .dot,
   .dot[data-tone="running"],
   .task[data-state="running"] .dot,

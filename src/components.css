@@ -1,5 +1,5 @@
 /* ==========================================================================
-   agentic-ui — components
+   instrument — components
 
    Правила, которым подчиняется каждый компонент в этом файле:
    · только семантические токены и роли, никогда — сырой шаг рампы
@@ -388,10 +388,10 @@
 }
 
 [data-tone="running"] .dot, .dot[data-tone="running"] {
-  animation: au-pulse 1.6s var(--ease-in-out) infinite;
+  animation: inst-pulse 1.6s var(--ease-in-out) infinite;
 }
 
-@keyframes au-pulse {
+@keyframes inst-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
 }
@@ -412,7 +412,7 @@
   fill: none;
   stroke-width: 2;
   stroke-linecap: round;
-  animation: au-spin 0.7s linear infinite;
+  animation: inst-spin 0.7s linear infinite;
 
   & > .spinner-track { stroke: var(--border-control); }
   & > .spinner-arc {
@@ -422,7 +422,7 @@
   }
 }
 
-@keyframes au-spin { to { rotate: 360deg; } }
+@keyframes inst-spin { to { rotate: 360deg; } }
 
 /* Каретка, отмечающая ещё поступающий текст. Это курсор терминала: он и
    должен стоять вплотную к последнему знаку, потому что показывает точку,
@@ -438,10 +438,10 @@
   margin-inline-start: 0.1em;
   vertical-align: text-bottom;
   background: var(--accent-mark);
-  animation: au-blink 1s steps(2, start) infinite;
+  animation: inst-blink 1s steps(2, start) infinite;
 }
 
-@keyframes au-blink { 50% { opacity: 0; } }
+@keyframes inst-blink { 50% { opacity: 0; } }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Мера
@@ -475,10 +475,10 @@
 
 .meter[data-state="indeterminate"] > .meter-fill {
   inline-size: 35%;
-  animation: au-sweep 1.3s var(--ease-in-out) infinite;
+  animation: inst-sweep 1.3s var(--ease-in-out) infinite;
 }
 
-@keyframes au-sweep {
+@keyframes inst-sweep {
   0%   { translate: -100% 0; }
   100% { translate: 340% 0; }
 }
@@ -674,7 +674,7 @@
   &[data-state="done"]    { --tone-ink: var(--ok-text); }
   &[data-state="failed"]  { --tone-ink: var(--err-text); }
   &[data-state="warn"]    { --tone-ink: var(--warn-text); }
-  &[data-state="running"] .dot { animation: au-pulse 1.6s var(--ease-in-out) infinite; }
+  &[data-state="running"] .dot { animation: inst-pulse 1.6s var(--ease-in-out) infinite; }
 
   /* Завершённые отступают, а не гаснут: история остаётся читаемой, но
      перестаёт спорить с тем, что идёт сейчас.                            */
