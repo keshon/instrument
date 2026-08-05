@@ -13,22 +13,29 @@
      канал оформления. Если для демонстрации понадобилось оформление
      инлайном — значит, в ките дыра, и чинить надо кит.                   */
 
-  .page-head {
-    position: sticky; inset-block-start: 0; z-index: var(--z-sticky);
-    display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap;
-    padding: var(--space-5) var(--space-6);
-    margin-inline: calc(var(--pad-panel) * -1);
-    margin-block-end: var(--space-8);
-    /* Непрозрачная поверхность, а не размытие: размытия кит запрещает,
-       и живая спецификация не имеет права быть исключением.             */
-    background: var(--surface-page);
-    border-block-end: var(--hairline) solid var(--border);
-  }
-  .page-head h1 { font-size: var(--text-md); font-weight: var(--weight-medium); letter-spacing: var(--tracking-normal); }
-  .page-head .u-dim { font-size: var(--text-xs); }
-  .page-head .spacer { margin-inline-start: auto; }
+  .brand { font-size: var(--text-sm); font-weight: var(--weight-medium); }
+  .brand-sub { font-size: var(--text-xs); }
+  .theme-picker { inline-size: 11rem; flex: none; }
 
-  section { margin-block: var(--space-9); scroll-margin-block-start: 76px; }
+  /* Пометки о JS. Кит должен честно говорить, что работает без скрипта, а
+     что — только с ним: это первое, что спрашивают, выбирая кит. */
+  .needs-js, .no-js {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    min-block-size: var(--control-h-xs); padding-inline: var(--space-3);
+    border-radius: var(--radius-xs); font-size: var(--text-2xs);
+    white-space: nowrap; vertical-align: middle;
+  }
+  .needs-js { background: var(--warn-bg); color: var(--warn-text); }
+  .no-js { background: var(--ok-bg); color: var(--ok-text); }
+  .sub > .needs-js, .sub > .no-js, h2 > .needs-js, h2 > .no-js { margin-inline-start: var(--space-4); }
+
+  .legend-js { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center;
+               padding: var(--space-4) var(--pad-panel); margin-block-end: var(--space-8);
+               border: var(--hairline) solid var(--border); border-radius: var(--radius-md);
+               font-size: var(--text-xs); color: var(--text-secondary); }
+
+  section { margin-block: var(--space-9); scroll-margin-block-start: var(--space-5); }
+  section:first-of-type { margin-block-start: 0; }
   section > h2 { margin-block-end: var(--space-3); }
 
   /* Пояснение стоит и перед демонстрацией, и после неё, поэтому отступ
@@ -119,24 +126,85 @@
 
 <a class="skip-link" href="#main">К содержанию</a>
 
-<div class="container">
+<div class="shell">
 
-  <header class="page-head">
-    <h1>agentic-ui</h1>
-    <span class="u-dim">живая спецификация</span>
-    <div class="spacer"></div>
+  <aside class="shell-aside">
+      <nav class="nav" aria-label="Разделы спецификации" id="toc">
+        <div class="nav-group">
+          <span class="nav-label">Основания</span>
+          <a class="nav-item" href="#color">Цвет</a>
+          <a class="nav-item" href="#type">Типографика</a>
+          <a class="nav-item" href="#space">Ритм и форма</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-label">Раскладка</span>
+          <a class="nav-item" href="#layout">Раскладка и навигация</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-label">Ввод</span>
+          <a class="nav-item" href="#buttons">Кнопки</a>
+          <a class="nav-item" href="#inputs">Поля ввода</a>
+          <a class="nav-item" href="#forms">Формы</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-label">Поверхности</span>
+          <a class="nav-item" href="#surfaces">Поверхности</a>
+          <a class="nav-item" href="#overlay">Оверлеи и сообщения</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-label">Состояния</span>
+          <a class="nav-item" href="#status">Состояния и прогресс</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-label">Данные</span>
+          <a class="nav-item" href="#metrics">Метрики</a>
+          <a class="nav-item" href="#tools">Инструментальные примитивы</a>
+          <a class="nav-item" href="#data">Данные и графики</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-label">Агент</span>
+          <a class="nav-item" href="#agent">Агентные примитивы</a>
+        </div>
+        <div class="nav-group">
+          <a class="nav-item" href="#anti">Так не надо</a>
+        </div>
+      </nav>
+  </aside>
+
+  <header class="shell-header">
+    <span class="brand">agentic-ui</span>
+    <span class="u-dim brand-sub">живая спецификация</span>
+    <span class="cluster-spacer"></span>
+
     <div class="segmented" role="radiogroup" aria-label="Плотность" id="density">
       <button type="button" role="radio" data-v="compact" aria-checked="false">Плотно</button>
       <button type="button" role="radio" data-v="default" aria-checked="true">Обычно</button>
       <button type="button" role="radio" data-v="comfortable" aria-checked="false">Свободно</button>
     </div>
-    <button class="btn btn--sm" type="button" id="theme" aria-pressed="false">Тёмная тема</button>
+
+    <span class="select-wrap theme-picker">
+      <select class="select select--sm" id="theme" aria-label="Тема оформления">
+        <option value="">По системе</option>
+        <option value="light">Светлая тёплая</option>
+        <option value="light-cool">Светлая холодная</option>
+        <option value="dark">Тёмная глубокая</option>
+        <option value="dark-soft">Тёмная мягкая</option>
+      </select>
+    </span>
   </header>
 
-  <main id="main">
+  <main class="shell-main" id="main">
+    <div class="container">
 
-  <!-- ══ Основания ══════════════════════════════════════════════════════ -->
+    <div class="legend-js">
+      <span><b>Что работает без скрипта.</b></span>
+      <span class="no-js">без JS</span>
+      <span>поповер, меню, аккордеон, валидация форм, блокировка прокрутки, печать</span>
+      <span class="needs-js">нужен JS</span>
+      <span>клавиатура в списках, открытие модалки, сортировка, копирование</span>
+    </div>
 
+    <!-- ══ Основания ═══════════════════════════════════════════════ -->
   <section id="color">
     <h2>Цвет</h2>
     <p class="why">
@@ -178,7 +246,6 @@
       и читает настоящий <code>tokens.css</code>, поэтому разойтись с китом не может.
     </p>
   </section>
-
   <section id="type">
     <h2>Типографика</h2>
     <p class="why">
@@ -216,7 +283,6 @@
       <span class="t-sm"><kbd>Esc</kbd> — остановить прогон</span>
     </div>
   </section>
-
   <section id="space">
     <h2>Ритм и форма</h2>
     <p class="why">
@@ -232,8 +298,7 @@
     </div>
   </section>
 
-  <!-- ══ Раскладка ═════════════════════════════════════════════════════ -->
-
+    <!-- ══ Раскладка ═══════════════════════════════════════════════ -->
   <section id="layout">
     <h2>Раскладка</h2>
     <p class="why">
@@ -380,8 +445,7 @@
     </p>
   </section>
 
-  <!-- ══ Контролы ══════════════════════════════════════════════════════ -->
-
+    <!-- ══ Ввод ════════════════════════════════════════════════════ -->
   <section id="buttons">
     <h2>Кнопки</h2>
     <p class="why">
@@ -418,7 +482,6 @@
     </p>
     <div class="spec"><span>block-size: --control-h-md</span><span>border: --hairline</span><span>radius: --radius-md</span><span>weight: 500</span></div>
   </section>
-
   <section id="inputs">
     <h2>Поля ввода</h2>
     <p class="why">
@@ -474,15 +537,12 @@
       было не отличить от «элемента нет».
     </p>
 
-    <div class="sub">Слайдер</div>
+    <div class="sub">Слайдер<span class="needs-js" title="Вывод текущего значения рядом с бегунком">нужен JS</span></div>
     <div class="cluster row--slider narrow">
       <input class="slider" type="range" min="0" max="16" value="6" step="1" id="sl" aria-label="Параллельных агентов">
       <output class="t-sm" id="sl-out" for="sl">6</output>
     </div>
   </section>
-
-  <!-- ══ Формы ═════════════════════════════════════════════════════════ -->
-
   <section id="forms">
     <h2>Формы</h2>
     <p class="why">
@@ -570,7 +630,7 @@
       </div>
     </div>
 
-    <div class="sub">Живая валидация без единой строки JS</div>
+    <div class="sub">Живая валидация<span class="no-js" title=":user-invalid — состояние появляется после ухода фокуса, средствами платформы">без JS</span></div>
     <p class="why">
       Используется <code>:user-invalid</code>, а не <code>:invalid</code>. Разница
       принципиальная: <code>:invalid</code> горит красным с первой секунды, ещё до того,
@@ -668,8 +728,7 @@
     </p>
   </section>
 
-  <!-- ══ Поверхности ═══════════════════════════════════════════════════ -->
-
+    <!-- ══ Поверхности ═════════════════════════════════════════════ -->
   <section id="surfaces">
     <h2>Поверхности</h2>
     <p class="why">
@@ -709,44 +768,153 @@
       собственного закона «цвет не может быть единственным носителем состояния».
     </p>
   </section>
-
-  <section id="metrics">
-    <h2>Метрики</h2>
+  <section id="overlay">
+    <h2>Оверлеи и сообщения</h2>
     <p class="why">
-      Нарочно без рамок, на приглушённой поверхности. Ряд метрик читается как <b>одна
-      группа</b>; рамка вокруг каждой превращает четыре числа в четыре объекта. Единица
-      измерения мельче и тише самого числа, потому что она часть числа, а не сосед.
+      Строка конституции «поповер, тултип и модалка — им нужен JS» <b>устарела</b>.
+      Popover API даёт верхний слой, закрытие по Escape и по клику мимо, и возврат
+      фокуса на кнопку — полностью декларативно. Этот раздел наконец применяет то, что
+      было объявлено и не использовалось ни разу: обе тени, <code>--surface-overlay</code>,
+      <code>--scrim</code> и все четыре z-индекса.
     </p>
-    <div class="metric-row">
-      <div class="metric">
-        <div class="metric-label">Время прогона</div>
-        <div class="metric-value">42<span class="metric-unit">&nbsp;с</span></div>
-        <div class="metric-delta" data-dir="down" data-polarity="good">18% к прошлому</div>
+
+    <div class="sub">Поповер и меню<span class="no-js" title="Popover API: верхний слой, Escape, клик мимо, возврат фокуса">без JS</span><span class="needs-js" title="Стрелки внутри меню и открытие модалки">частично JS</span></div>
+    <div class="cluster cluster--loose">
+      <button class="btn" type="button" popovertarget="pop-actions">Действия</button>
+      <div class="popover popover--anchored" id="pop-actions" popover>
+        <div class="menu" role="menu">
+          <span class="menu-label">Прогон #4127</span>
+          <button class="menu-item" type="button" role="menuitem">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>Перезапустить
+            <span class="menu-shortcut"><kbd>R</kbd></span></button>
+          <button class="menu-item" type="button" role="menuitem">
+            <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>Скопировать id</button>
+          <button class="menu-item" type="button" role="menuitem" aria-checked="true">
+            <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Показывать лог</button>
+          <span class="menu-sep"></span>
+          <button class="menu-item" type="button" role="menuitem" data-tone="error">Удалить прогон</button>
+          <button class="menu-item" type="button" role="menuitem" aria-disabled="true">Архивировать</button>
+        </div>
       </div>
-      <div class="metric">
-        <div class="metric-label">Тесты пройдены</div>
-        <div class="metric-value">248<span class="metric-unit">/251</span></div>
-        <div class="metric-delta" data-polarity="warn">3 падают</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Размер бандла</div>
-        <div class="metric-value">7,4<span class="metric-unit">&nbsp;МБ</span></div>
-        <div class="metric-delta">без изменений</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Предупреждений</div>
-        <div class="metric-value">12</div>
-        <div class="metric-delta" data-dir="up" data-polarity="bad">5 новых</div>
-      </div>
+
+      <span class="tooltip">
+        <button class="btn btn--ghost" type="button" aria-describedby="tt-1">Что такое проход?</button>
+        <span class="tooltip-text" role="tooltip" id="tt-1">Один полный обход карты агентом</span>
+      </span>
+
+      <button class="btn" type="button" data-dialog="#dlg-confirm">Модалка</button>
+      <button class="btn" type="button" data-dialog="#dlg-sheet">Шторка</button>
     </div>
     <p class="why">
-      <b>Направление и полярность — два разных факта, поэтому два атрибута.</b>
-      Стрелка вниз у времени прогона это хорошо, стрелка вверх у предупреждений это
-      плохо. Пока классы назывались <code>.is-up</code> и <code>.is-down</code>, они
-      назывались стрелкой, а означали оценку — гарантированная ошибка применения.
+      Привязка поповера к кнопке идёт через <b>неявный якорь</b>: вызвавшая кнопка уже
+      является якорем, поэтому имена заводить не нужно. Правило спрятано под
+      <code>@supports</code> — где <code>position-area</code> не поддержан, поповер
+      встанет по центру экрана. Деградирует, а не ломается.
+    </p>
+    <p class="why">
+      Тултип намеренно сделан <b>без</b> Popover API и без якорей — обычным
+      позиционированием, чтобы работать везде одинаково. Плата известна: внутри панели
+      с <code>overflow: hidden</code> он обрежется, и там нужен поповер.
+    </p>
+
+    <dialog class="dialog" id="dlg-confirm">
+      <form method="dialog">
+        <div class="dialog-head">
+          <span class="dialog-title">Удалить прогон #4127?</span>
+          <button class="btn btn--sm btn--ghost dialog-close" type="submit" aria-label="Закрыть">✕</button>
+        </div>
+        <div class="dialog-body stack">
+          <p>Будут удалены лог, артефакты и диф. Ссылки на прогон в отчётах перестанут открываться.</p>
+          <div class="note" data-tone="warn">Необратимо: восстановление из резервной копии занимает до суток.</div>
+        </div>
+        <div class="dialog-foot">
+          <span class="dialog-foot-note">Escape тоже закрывает</span>
+          <button class="btn" type="submit">Отмена</button>
+          <button class="btn btn--danger" type="submit">Удалить</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="dialog sheet" id="dlg-sheet">
+      <form method="dialog">
+        <div class="dialog-head">
+          <span class="dialog-title">Параметры прогона</span>
+          <button class="btn btn--sm btn--ghost dialog-close" type="submit" aria-label="Закрыть">✕</button>
+        </div>
+        <div class="dialog-body">
+          <dl class="kv">
+            <dt>Модель</dt><dd>opus</dd>
+            <dt>Агентов</dt><dd>7 из 12</dd>
+            <dt>Токенов</dt><dd>184 320</dd>
+            <dt>Начат</dt><dd>19:38:04</dd>
+          </dl>
+        </div>
+        <div class="dialog-foot dialog-foot--end">
+          <button class="btn" type="submit">Закрыть</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="sub">Баннер — сообщение уровня страницы</div>
+    <p class="why">
+      Это <b>не сноска</b>. Сноска поясняет то, рядом с чем стоит, и несёт только полосу
+      у края. Баннер относится ко всему экрану, поэтому у него заливка и место под
+      действие. Иконки тона — общий набор масок со сноской, один источник формы на два
+      компонента.
+    </p>
+    <div class="stack stack--tight">
+      <div class="banner" data-tone="warn">
+        <div class="banner-body">
+          <div class="banner-title">Доступ истекает через 3 дня</div>
+          <div class="banner-text">После 8 августа запуск прогонов остановится.</div>
+        </div>
+        <div class="banner-actions"><button class="btn btn--sm" type="button">Продлить</button></div>
+      </div>
+      <div class="banner" data-tone="error">
+        <div class="banner-body"><div class="banner-title">Обслуживание хранилища</div>
+          <div class="banner-text">Артефакты недоступны до 21:00.</div></div>
+      </div>
+      <div class="banner" data-tone="ok">
+        <div class="banner-body"><div class="banner-title">Изменения сохранены</div></div>
+      </div>
+    </div>
+
+    <div class="sub">Аккордеон<span class="no-js" title="details + общий name делает группу взаимоисключающей">без JS</span></div>
+    <p class="why">
+      На <code>&lt;details&gt;</code> с атрибутом <code>name</code>: группа становится
+      <b>взаимоисключающей</b> — открытой остаётся ровно одна секция, и тоже без единой
+      строки JS. Попробуйте открыть вторую.
+    </p>
+    <div class="accordion">
+      <details class="accordion-item" name="faq" open>
+        <summary class="accordion-head">Почему прогон занял 42 секунды?</summary>
+        <div class="accordion-body">Три прохода расстановки ресурсов плюс запекание навмеша.
+          Основное время ушло на валидацию путей, которая перезапускалась дважды.</div>
+      </details>
+      <details class="accordion-item" name="faq">
+        <summary class="accordion-head">Можно ли ограничить расход токенов?</summary>
+        <div class="accordion-body">Да, в параметрах проекта. Лимит проверяется перед стартом
+          каждого агента, а не по факту — прогон не уйдёт в минус.</div>
+      </details>
+      <details class="accordion-item" name="faq">
+        <summary class="accordion-head">Что происходит с артефактами после удаления?</summary>
+        <div class="accordion-body">Удаляются вместе с прогоном. Резервная копия хранится семь
+          суток, восстановление — через поддержку.</div>
+      </details>
+    </div>
+
+    <div class="sub">Печать<span class="no-js" title="@media print и смена color-scheme">без JS</span></div>
+    <p class="why">
+      Админки печатают отчёты и выгружают в PDF. Нажмите <kbd>Ctrl</kbd> <kbd>P</kbd>:
+      печатается <b>светлая тема при любой экранной</b> (достаточно сменить
+      <code>color-scheme</code> — <code>light-dark()</code> сама отдаст светлую ветку),
+      боковая навигация и полосы действий исчезают, области прокрутки разворачиваются
+      целиком, свёрнутый вывод и закрытые секции раскрываются. Обрезка на экране — это
+      экономия места, на листе она превращается в потерю данных.
     </p>
   </section>
 
+    <!-- ══ Состояния ═══════════════════════════════════════════════ -->
   <section id="status">
     <h2>Состояния и прогресс</h2>
     <p class="why">
@@ -801,8 +969,288 @@
     </p>
   </section>
 
-  <!-- ══ Агентные примитивы ════════════════════════════════════════════ -->
+    <!-- ══ Данные ══════════════════════════════════════════════════ -->
+  <section id="metrics">
+    <h2>Метрики</h2>
+    <p class="why">
+      Нарочно без рамок, на приглушённой поверхности. Ряд метрик читается как <b>одна
+      группа</b>; рамка вокруг каждой превращает четыре числа в четыре объекта. Единица
+      измерения мельче и тише самого числа, потому что она часть числа, а не сосед.
+    </p>
+    <div class="metric-row">
+      <div class="metric">
+        <div class="metric-label">Время прогона</div>
+        <div class="metric-value">42<span class="metric-unit">&nbsp;с</span></div>
+        <div class="metric-delta" data-dir="down" data-polarity="good">18% к прошлому</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Тесты пройдены</div>
+        <div class="metric-value">248<span class="metric-unit">/251</span></div>
+        <div class="metric-delta" data-polarity="warn">3 падают</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Размер бандла</div>
+        <div class="metric-value">7,4<span class="metric-unit">&nbsp;МБ</span></div>
+        <div class="metric-delta">без изменений</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Предупреждений</div>
+        <div class="metric-value">12</div>
+        <div class="metric-delta" data-dir="up" data-polarity="bad">5 новых</div>
+      </div>
+    </div>
+    <p class="why">
+      <b>Направление и полярность — два разных факта, поэтому два атрибута.</b>
+      Стрелка вниз у времени прогона это хорошо, стрелка вверх у предупреждений это
+      плохо. Пока классы назывались <code>.is-up</code> и <code>.is-down</code>, они
+      назывались стрелкой, а означали оценку — гарантированная ошибка применения.
+    </p>
+  </section>
+  <section id="tools">
+    <h2>Инструментальные примитивы<span class="needs-js" title="Дерево и строки инспектора: бегущий tabindex, раскрытие, перетаскивание числа за подпись оси">нужен JS</span></h2>
+    <p class="why">
+      Колонка подписей в инспекторе — <b>общий токен</b>, тот же самый, что у списка пар
+      ключ-значение: два почти одинаковых примитива не имеют права разъезжаться по
+      метрике. У числового поля подпись оси служит ручкой перетаскивания, поэтому курсор
+      меняется на ней, а не на отдельном степпере, — тянуть будут именно за букву.
+    </p>
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Инспектор</span></div>
+        <div class="toolbar">
+          <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Переместить">
+            <svg class="icon" aria-hidden="true"><use href="#i-move"/></svg></button>
+          <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Повернуть">
+            <svg class="icon" aria-hidden="true"><use href="#i-rotate"/></svg></button>
+          <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Масштаб">
+            <svg class="icon" aria-hidden="true"><use href="#i-scale"/></svg></button>
+          <span class="toolbar-sep"></span>
+          <span class="toolbar-spacer"></span>
+          <span class="badge">terrain_chunk_04</span>
+        </div>
+        <div class="panel-body panel-body--flush">
+          <div class="props">
+            <div class="prop"><span class="prop-label" title="Позиция">Позиция</span>
+              <span class="prop-control vec">
+                <span class="num-field"><span class="num-axis">X</span><input type="number" value="128" aria-label="Позиция X"></span>
+                <span class="num-field"><span class="num-axis">Y</span><input type="number" value="0" aria-label="Позиция Y"></span>
+                <span class="num-field"><span class="num-axis">Z</span><input type="number" value="-64" aria-label="Позиция Z"></span>
+              </span></div>
+            <div class="prop"><span class="prop-label" title="Поворот">Поворот</span>
+              <span class="prop-control vec">
+                <span class="num-field"><span class="num-axis">X</span><input type="number" value="0" aria-label="Поворот X"></span>
+                <span class="num-field"><span class="num-axis">Y</span><input type="number" value="45" aria-label="Поворот Y"></span>
+                <span class="num-field"><span class="num-axis">Z</span><input type="number" value="0" aria-label="Поворот Z"></span>
+              </span></div>
+            <div class="prop"><span class="prop-label" title="Материал">Материал</span>
+              <span class="prop-control">
+                <span class="select-wrap"><select class="select select--sm" aria-label="Материал"><option>rock_granite</option><option>rock_basalt</option></select></span>
+              </span></div>
+            <div class="prop"><span class="prop-label" title="Отбрасывать тень">Тень</span>
+              <span class="prop-control"><label class="switch"><input type="checkbox" checked aria-label="Отбрасывать тень"></label></span></div>
+            <div class="prop"><span class="prop-label" title="Плотность растительности">Плотность</span>
+              <span class="prop-control"><input class="slider" type="range" min="0" max="100" value="72" aria-label="Плотность растительности"></span></div>
+          </div>
+        </div>
+      </div>
 
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Иерархия</span></div>
+        <div class="panel-body panel-body--list">
+          <div class="tree" role="tree" aria-label="Иерархия сцены" id="tree">
+            <div class="tree-item" role="treeitem" aria-level="1" aria-expanded="true" aria-selected="false" tabindex="0" style="--depth:0"><span class="tree-twist"></span>world</div>
+            <div class="tree-item" role="treeitem" aria-level="2" aria-expanded="true" aria-selected="false" tabindex="-1" style="--depth:1"><span class="tree-twist"></span>terrain</div>
+            <div class="tree-item" role="treeitem" aria-level="3" aria-selected="true" tabindex="-1" style="--depth:2"><span class="tree-twist"></span>terrain_chunk_04</div>
+            <div class="tree-item" role="treeitem" aria-level="3" aria-selected="false" tabindex="-1" style="--depth:2"><span class="tree-twist"></span>terrain_chunk_05</div>
+            <div class="tree-item" role="treeitem" aria-level="2" aria-expanded="false" aria-selected="false" tabindex="-1" style="--depth:1"><span class="tree-twist"></span>props</div>
+            <div class="tree-item" role="treeitem" aria-level="2" aria-selected="false" tabindex="-1" style="--depth:1"><span class="tree-twist"></span>lighting</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub">Таблица</div>
+    <p class="why">Числа выровнены вправо и табличные — величина читается как форма колонки, без чтения цифр.</p>
+    <table class="table">
+      <thead><tr><th>Модуль</th><th>Состояние</th><th class="num">Время, с</th><th class="num">Файлов</th><th class="num">Токенов</th></tr></thead>
+      <tbody>
+        <tr><td>Рендер</td><td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td><td class="num">18,2</td><td class="num">42</td><td class="num">61 204</td></tr>
+        <tr aria-selected="true"><td>Физика</td><td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td><td class="num">11,5</td><td class="num">17</td><td class="num">38 910</td></tr>
+        <tr><td>Ассеты</td><td><span class="badge" data-tone="running"><span class="dot"></span>идёт</span></td><td class="num">8,1</td><td class="num">203</td><td class="num">9 442</td></tr>
+        <tr><td>Аудио</td><td><span class="badge" data-tone="error"><span class="dot"></span>упало</span></td><td class="num">4,2</td><td class="num">8</td><td class="num">1 180</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sub">Пустое состояние</div>
+    <div class="panel"><div class="empty">
+      <div class="empty-title">Прогонов пока нет</div>
+      <div class="empty-desc">Запуск создаст очередь агентов и лог, которые появятся здесь.</div>
+      <button class="btn btn--sm" type="button">Запустить первый</button>
+    </div></div>
+  </section>
+  <section id="data">
+    <h2>Данные</h2>
+    <p class="why">
+      Категориальная палитра — <b>единственное место в ките, где цвет не кодирует
+      состояние</b>, а кодирует ряд. Поэтому у неё отдельные правила: порядок — часть
+      контракта (ряд №1 всегда <code>--chart-1</code>, иначе показатель меняет цвет от
+      экрана к экрану), тона отстоят минимум на 25° от каждого статусного и от акцента,
+      а светлота внутри палитры намеренно разная — ряды остаются различимыми и при
+      дальтонизме, и на чёрно-белой печати.
+    </p>
+    <p class="why">
+      Шесть рядов, и это потолок. Седьмой — признак, что это не график, а таблица.
+    </p>
+    <div class="ramp ramp--chart" id="ramp-chart"></div>
+
+    <div class="sub">Спарклайн, кольцо и легенда</div>
+    <div class="grid">
+      <div class="card stack stack--tight">
+        <div class="metric-label">Токенов в сутки</div>
+        <div class="metric-value">184<span class="metric-unit">&nbsp;тыс.</span></div>
+        <svg class="sparkline" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">
+          <path class="sparkline-area" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6 120,32 0,32Z"/>
+          <path class="sparkline-line" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6"/>
+        </svg>
+        <div class="t-2xs">За 11 суток, без осей — это форма изменения рядом с числом, а не график</div>
+      </div>
+
+      <div class="card cluster cluster--loose">
+        <span class="ring-wrap">
+          <svg class="ring" viewBox="0 0 20 20" role="img" aria-label="Израсходовано 74% бюджета">
+            <circle class="ring-track" cx="10" cy="10" r="8"/>
+            <circle class="ring-fill" cx="10" cy="10" r="8" style="--value:0.74"/>
+          </svg>
+          <span class="ring-label">74</span>
+        </span>
+        <div>
+          <div class="card-title">Бюджет израсходован</div>
+          <div class="card-sub">184 320 из 250 000 токенов</div>
+        </div>
+      </div>
+
+      <div class="card stack stack--tight">
+        <div class="card-title">Время по модулям</div>
+        <ul class="legend">
+          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-1)"></span>Рендер <span class="legend-value">18,2 с</span></li>
+          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-2)"></span>Физика <span class="legend-value">11,5 с</span></li>
+          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-3)"></span>Ассеты <span class="legend-value">8,1 с</span></li>
+          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-4)"></span>Аудио <span class="legend-value">4,2 с</span></li>
+        </ul>
+        <div class="t-2xs">Метка ряда — квадрат: круг занят точкой состояния</div>
+      </div>
+    </div>
+
+    <div class="sub">Таблица: сортировка, выбор, действия, итоги<span class="needs-js" title="Сама сортировка, «выбрать всё» и действия строки">нужен JS</span></div>
+    <table class="table table--sticky">
+      <thead>
+        <tr>
+          <th class="col-select"><label class="checkbox"><input type="checkbox" aria-label="Выбрать все строки"></label></th>
+          <th aria-sort="descending"><button class="sort" type="button">Модуль</button></th>
+          <th>Состояние</th>
+          <th class="num"><button class="sort" type="button">Время, с</button></th>
+          <th class="num"><button class="sort" type="button">Токенов</button></th>
+          <th class="col-actions"><span class="u-visually-hidden">Действия</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr aria-selected="true">
+          <td><label class="checkbox"><input type="checkbox" checked aria-label="Выбрать «Рендер»"></label></td>
+          <td>Рендер</td>
+          <td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td>
+          <td class="num">18,2</td><td class="num">61 204</td>
+          <td class="col-actions"><span class="row-actions">
+            <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Перезапустить Рендер">
+              <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+          </span></td>
+        </tr>
+        <tr>
+          <td><label class="checkbox"><input type="checkbox" aria-label="Выбрать «Физика»"></label></td>
+          <td>Физика</td>
+          <td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td>
+          <td class="num">11,5</td><td class="num">38 910</td>
+          <td class="col-actions"><span class="row-actions">
+            <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Перезапустить Физика">
+              <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+          </span></td>
+        </tr>
+        <tr>
+          <td><label class="checkbox"><input type="checkbox" aria-label="Выбрать «Аудио»"></label></td>
+          <td>Аудио</td>
+          <td><span class="badge" data-tone="error"><span class="dot"></span>упало</span></td>
+          <td class="num">4,2</td><td class="num">1 180</td>
+          <td class="col-actions"><span class="row-actions">
+            <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Перезапустить Аудио">
+              <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+          </span></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr><td></td><td>Итого</td><td></td><td class="num">33,9</td><td class="num">101 294</td><td></td></tr>
+      </tfoot>
+    </table>
+    <p class="why">
+      Направление сортировки несёт <b>значок</b>, а не только положение колонки, и
+      дублируется в <code>aria-sort</code>. Действия строки появляются на наведении, но с
+      клавиатуры доступны <b>всегда</b>: спрятать их от Tab значило бы сделать таблицу
+      неуправляемой без мыши, поэтому они гаснут прозрачностью, а не исчезают.
+    </p>
+
+    <div class="sub">Аватары, теги, лента<span class="needs-js" title="Снятие тега и выбор даты в календаре">нужен JS</span></div>
+    <div class="grid">
+      <div class="card stack stack--tight">
+        <div class="card-title">Участники</div>
+        <div class="cluster">
+          <span class="avatars">
+            <span class="avatar" style="background:var(--chart-1);color:var(--accent-on)">ИС</span>
+            <span class="avatar" style="background:var(--chart-3);color:var(--accent-on)">МК</span>
+            <span class="avatar" style="background:var(--chart-5);color:var(--accent-on)">ДП</span>
+            <span class="avatars-more">и ещё 4</span>
+          </span>
+        </div>
+        <div class="cluster cluster--tight">
+          <span class="tag">worldgen<button class="tag-remove" type="button" aria-label="Убрать метку worldgen"></button></span>
+          <span class="tag">ночной<button class="tag-remove" type="button" aria-label="Убрать метку ночной"></button></span>
+          <span class="tag">приоритет:высокий</span>
+        </div>
+        <div class="t-2xs">Тег — не бейдж: бейдж это состояние из словаря кита, тег завёл пользователь</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">История прогона</div>
+        <div class="timeline">
+          <div class="timeline-item" data-tone="ok">
+            <span class="timeline-dot"></span>
+            <span class="timeline-body">Прогон запущен<span class="timeline-sub">seed 8841203, 512×512</span></span>
+            <span class="timeline-time">19:38:04</span>
+          </div>
+          <div class="timeline-item" data-tone="warn">
+            <span class="timeline-dot"></span>
+            <span class="timeline-body">Перекрытие биомов<span class="timeline-sub">тундра и степь в 12 клетках</span></span>
+            <span class="timeline-time">19:38:14</span>
+          </div>
+          <div class="timeline-item" data-tone="error">
+            <span class="timeline-dot"></span>
+            <span class="timeline-body">Валидация путей упала<span class="timeline-sub">3 узла недостижимы</span></span>
+            <span class="timeline-time">19:38:16</span>
+          </div>
+          <div class="timeline-item" data-tone="running">
+            <span class="timeline-dot"></span>
+            <span class="timeline-body">Повтор расстановки<span class="timeline-sub">идёт третий проход</span></span>
+            <span class="timeline-time">19:38:18</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card stack stack--tight">
+        <div class="card-title">Август 2026</div>
+        <div class="calendar" id="calendar" role="grid" aria-label="Август 2026"></div>
+        <div class="t-2xs">Сегодня помечено подчёркиванием, а не только цветом</div>
+      </div>
+    </div>
+  </section>
+
+    <!-- ══ Агент ═══════════════════════════════════════════════════ -->
   <section id="agent">
     <h2>Агентные примитивы</h2>
     <p class="why">
@@ -812,7 +1260,7 @@
       из которого есть выход.
     </p>
 
-    <div class="sub">Запрос подтверждения</div>
+    <div class="sub">Запрос подтверждения<span class="needs-js" title="Обработка решения и перевод блока в состояние «решено»">нужен JS</span></div>
     <p class="why">
       Определяющее взаимодействие агентных систем и <b>единственный блок в ките, которому
       разрешено останавливать глаз</b>. Обязательны три вещи: что именно будет сделано,
@@ -842,7 +1290,7 @@
       </div>
     </div>
 
-    <div class="sub">Очередь агентов</div>
+    <div class="sub">Очередь агентов<span class="needs-js" title="Бегущий tabindex, стрелки, выбор строки">нужен JS</span></div>
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Очередь агентов</span>
@@ -897,7 +1345,7 @@
       был невалиден, а до строк нельзя было добраться с клавиатуры вообще.
     </p>
 
-    <div class="sub">Вызовы инструментов</div>
+    <div class="sub">Вызовы инструментов<span class="no-js" title="Построено на details — раскрытие и клавиатура от платформы">без JS</span></div>
     <div class="panel">
       <div class="panel-body panel-body--list">
         <details class="step" data-state="ok">
@@ -1050,405 +1498,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
     </p>
   </section>
 
-  <!-- ══ Инструментальные примитивы ════════════════════════════════════ -->
-
-  <section id="tools">
-    <h2>Инструментальные примитивы</h2>
-    <p class="why">
-      Колонка подписей в инспекторе — <b>общий токен</b>, тот же самый, что у списка пар
-      ключ-значение: два почти одинаковых примитива не имеют права разъезжаться по
-      метрике. У числового поля подпись оси служит ручкой перетаскивания, поэтому курсор
-      меняется на ней, а не на отдельном степпере, — тянуть будут именно за букву.
-    </p>
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-header"><span class="panel-title">Инспектор</span></div>
-        <div class="toolbar">
-          <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Переместить">
-            <svg class="icon" aria-hidden="true"><use href="#i-move"/></svg></button>
-          <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Повернуть">
-            <svg class="icon" aria-hidden="true"><use href="#i-rotate"/></svg></button>
-          <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Масштаб">
-            <svg class="icon" aria-hidden="true"><use href="#i-scale"/></svg></button>
-          <span class="toolbar-sep"></span>
-          <span class="toolbar-spacer"></span>
-          <span class="badge">terrain_chunk_04</span>
-        </div>
-        <div class="panel-body panel-body--flush">
-          <div class="props">
-            <div class="prop"><span class="prop-label" title="Позиция">Позиция</span>
-              <span class="prop-control vec">
-                <span class="num-field"><span class="num-axis">X</span><input type="number" value="128" aria-label="Позиция X"></span>
-                <span class="num-field"><span class="num-axis">Y</span><input type="number" value="0" aria-label="Позиция Y"></span>
-                <span class="num-field"><span class="num-axis">Z</span><input type="number" value="-64" aria-label="Позиция Z"></span>
-              </span></div>
-            <div class="prop"><span class="prop-label" title="Поворот">Поворот</span>
-              <span class="prop-control vec">
-                <span class="num-field"><span class="num-axis">X</span><input type="number" value="0" aria-label="Поворот X"></span>
-                <span class="num-field"><span class="num-axis">Y</span><input type="number" value="45" aria-label="Поворот Y"></span>
-                <span class="num-field"><span class="num-axis">Z</span><input type="number" value="0" aria-label="Поворот Z"></span>
-              </span></div>
-            <div class="prop"><span class="prop-label" title="Материал">Материал</span>
-              <span class="prop-control">
-                <span class="select-wrap"><select class="select select--sm" aria-label="Материал"><option>rock_granite</option><option>rock_basalt</option></select></span>
-              </span></div>
-            <div class="prop"><span class="prop-label" title="Отбрасывать тень">Тень</span>
-              <span class="prop-control"><label class="switch"><input type="checkbox" checked aria-label="Отбрасывать тень"></label></span></div>
-            <div class="prop"><span class="prop-label" title="Плотность растительности">Плотность</span>
-              <span class="prop-control"><input class="slider" type="range" min="0" max="100" value="72" aria-label="Плотность растительности"></span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header"><span class="panel-title">Иерархия</span></div>
-        <div class="panel-body panel-body--list">
-          <div class="tree" role="tree" aria-label="Иерархия сцены" id="tree">
-            <div class="tree-item" role="treeitem" aria-level="1" aria-expanded="true" aria-selected="false" tabindex="0" style="--depth:0"><span class="tree-twist"></span>world</div>
-            <div class="tree-item" role="treeitem" aria-level="2" aria-expanded="true" aria-selected="false" tabindex="-1" style="--depth:1"><span class="tree-twist"></span>terrain</div>
-            <div class="tree-item" role="treeitem" aria-level="3" aria-selected="true" tabindex="-1" style="--depth:2"><span class="tree-twist"></span>terrain_chunk_04</div>
-            <div class="tree-item" role="treeitem" aria-level="3" aria-selected="false" tabindex="-1" style="--depth:2"><span class="tree-twist"></span>terrain_chunk_05</div>
-            <div class="tree-item" role="treeitem" aria-level="2" aria-expanded="false" aria-selected="false" tabindex="-1" style="--depth:1"><span class="tree-twist"></span>props</div>
-            <div class="tree-item" role="treeitem" aria-level="2" aria-selected="false" tabindex="-1" style="--depth:1"><span class="tree-twist"></span>lighting</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sub">Таблица</div>
-    <p class="why">Числа выровнены вправо и табличные — величина читается как форма колонки, без чтения цифр.</p>
-    <table class="table">
-      <thead><tr><th>Модуль</th><th>Состояние</th><th class="num">Время, с</th><th class="num">Файлов</th><th class="num">Токенов</th></tr></thead>
-      <tbody>
-        <tr><td>Рендер</td><td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td><td class="num">18,2</td><td class="num">42</td><td class="num">61 204</td></tr>
-        <tr aria-selected="true"><td>Физика</td><td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td><td class="num">11,5</td><td class="num">17</td><td class="num">38 910</td></tr>
-        <tr><td>Ассеты</td><td><span class="badge" data-tone="running"><span class="dot"></span>идёт</span></td><td class="num">8,1</td><td class="num">203</td><td class="num">9 442</td></tr>
-        <tr><td>Аудио</td><td><span class="badge" data-tone="error"><span class="dot"></span>упало</span></td><td class="num">4,2</td><td class="num">8</td><td class="num">1 180</td></tr>
-      </tbody>
-    </table>
-
-    <div class="sub">Пустое состояние</div>
-    <div class="panel"><div class="empty">
-      <div class="empty-title">Прогонов пока нет</div>
-      <div class="empty-desc">Запуск создаст очередь агентов и лог, которые появятся здесь.</div>
-      <button class="btn btn--sm" type="button">Запустить первый</button>
-    </div></div>
-  </section>
-
-  <!-- ══ Данные ════════════════════════════════════════════════════════ -->
-
-  <section id="data">
-    <h2>Данные</h2>
-    <p class="why">
-      Категориальная палитра — <b>единственное место в ките, где цвет не кодирует
-      состояние</b>, а кодирует ряд. Поэтому у неё отдельные правила: порядок — часть
-      контракта (ряд №1 всегда <code>--chart-1</code>, иначе показатель меняет цвет от
-      экрана к экрану), тона отстоят минимум на 25° от каждого статусного и от акцента,
-      а светлота внутри палитры намеренно разная — ряды остаются различимыми и при
-      дальтонизме, и на чёрно-белой печати.
-    </p>
-    <p class="why">
-      Шесть рядов, и это потолок. Седьмой — признак, что это не график, а таблица.
-    </p>
-    <div class="ramp ramp--chart" id="ramp-chart"></div>
-
-    <div class="sub">Спарклайн, кольцо и легенда</div>
-    <div class="grid">
-      <div class="card stack stack--tight">
-        <div class="metric-label">Токенов в сутки</div>
-        <div class="metric-value">184<span class="metric-unit">&nbsp;тыс.</span></div>
-        <svg class="sparkline" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">
-          <path class="sparkline-area" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6 120,32 0,32Z"/>
-          <path class="sparkline-line" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6"/>
-        </svg>
-        <div class="t-2xs">За 11 суток, без осей — это форма изменения рядом с числом, а не график</div>
-      </div>
-
-      <div class="card cluster cluster--loose">
-        <span class="ring-wrap">
-          <svg class="ring" viewBox="0 0 20 20" role="img" aria-label="Израсходовано 74% бюджета">
-            <circle class="ring-track" cx="10" cy="10" r="8"/>
-            <circle class="ring-fill" cx="10" cy="10" r="8" style="--value:0.74"/>
-          </svg>
-          <span class="ring-label">74</span>
-        </span>
-        <div>
-          <div class="card-title">Бюджет израсходован</div>
-          <div class="card-sub">184 320 из 250 000 токенов</div>
-        </div>
-      </div>
-
-      <div class="card stack stack--tight">
-        <div class="card-title">Время по модулям</div>
-        <ul class="legend">
-          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-1)"></span>Рендер <span class="legend-value">18,2 с</span></li>
-          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-2)"></span>Физика <span class="legend-value">11,5 с</span></li>
-          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-3)"></span>Ассеты <span class="legend-value">8,1 с</span></li>
-          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-4)"></span>Аудио <span class="legend-value">4,2 с</span></li>
-        </ul>
-        <div class="t-2xs">Метка ряда — квадрат: круг занят точкой состояния</div>
-      </div>
-    </div>
-
-    <div class="sub">Таблица: сортировка, выбор, действия, итоги</div>
-    <table class="table table--sticky">
-      <thead>
-        <tr>
-          <th class="col-select"><label class="checkbox"><input type="checkbox" aria-label="Выбрать все строки"></label></th>
-          <th aria-sort="descending"><button class="sort" type="button">Модуль</button></th>
-          <th>Состояние</th>
-          <th class="num"><button class="sort" type="button">Время, с</button></th>
-          <th class="num"><button class="sort" type="button">Токенов</button></th>
-          <th class="col-actions"><span class="u-visually-hidden">Действия</span></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr aria-selected="true">
-          <td><label class="checkbox"><input type="checkbox" checked aria-label="Выбрать «Рендер»"></label></td>
-          <td>Рендер</td>
-          <td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td>
-          <td class="num">18,2</td><td class="num">61 204</td>
-          <td class="col-actions"><span class="row-actions">
-            <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Перезапустить Рендер">
-              <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
-          </span></td>
-        </tr>
-        <tr>
-          <td><label class="checkbox"><input type="checkbox" aria-label="Выбрать «Физика»"></label></td>
-          <td>Физика</td>
-          <td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td>
-          <td class="num">11,5</td><td class="num">38 910</td>
-          <td class="col-actions"><span class="row-actions">
-            <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Перезапустить Физика">
-              <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
-          </span></td>
-        </tr>
-        <tr>
-          <td><label class="checkbox"><input type="checkbox" aria-label="Выбрать «Аудио»"></label></td>
-          <td>Аудио</td>
-          <td><span class="badge" data-tone="error"><span class="dot"></span>упало</span></td>
-          <td class="num">4,2</td><td class="num">1 180</td>
-          <td class="col-actions"><span class="row-actions">
-            <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Перезапустить Аудио">
-              <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
-          </span></td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr><td></td><td>Итого</td><td></td><td class="num">33,9</td><td class="num">101 294</td><td></td></tr>
-      </tfoot>
-    </table>
-    <p class="why">
-      Направление сортировки несёт <b>значок</b>, а не только положение колонки, и
-      дублируется в <code>aria-sort</code>. Действия строки появляются на наведении, но с
-      клавиатуры доступны <b>всегда</b>: спрятать их от Tab значило бы сделать таблицу
-      неуправляемой без мыши, поэтому они гаснут прозрачностью, а не исчезают.
-    </p>
-
-    <div class="sub">Аватары, теги, лента</div>
-    <div class="grid">
-      <div class="card stack stack--tight">
-        <div class="card-title">Участники</div>
-        <div class="cluster">
-          <span class="avatars">
-            <span class="avatar" style="background:var(--chart-1);color:var(--accent-on)">ИС</span>
-            <span class="avatar" style="background:var(--chart-3);color:var(--accent-on)">МК</span>
-            <span class="avatar" style="background:var(--chart-5);color:var(--accent-on)">ДП</span>
-            <span class="avatars-more">и ещё 4</span>
-          </span>
-        </div>
-        <div class="cluster cluster--tight">
-          <span class="tag">worldgen<button class="tag-remove" type="button" aria-label="Убрать метку worldgen"></button></span>
-          <span class="tag">ночной<button class="tag-remove" type="button" aria-label="Убрать метку ночной"></button></span>
-          <span class="tag">приоритет:высокий</span>
-        </div>
-        <div class="t-2xs">Тег — не бейдж: бейдж это состояние из словаря кита, тег завёл пользователь</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">История прогона</div>
-        <div class="timeline">
-          <div class="timeline-item" data-tone="ok">
-            <span class="timeline-dot"></span>
-            <span class="timeline-body">Прогон запущен<span class="timeline-sub">seed 8841203, 512×512</span></span>
-            <span class="timeline-time">19:38:04</span>
-          </div>
-          <div class="timeline-item" data-tone="warn">
-            <span class="timeline-dot"></span>
-            <span class="timeline-body">Перекрытие биомов<span class="timeline-sub">тундра и степь в 12 клетках</span></span>
-            <span class="timeline-time">19:38:14</span>
-          </div>
-          <div class="timeline-item" data-tone="error">
-            <span class="timeline-dot"></span>
-            <span class="timeline-body">Валидация путей упала<span class="timeline-sub">3 узла недостижимы</span></span>
-            <span class="timeline-time">19:38:16</span>
-          </div>
-          <div class="timeline-item" data-tone="running">
-            <span class="timeline-dot"></span>
-            <span class="timeline-body">Повтор расстановки<span class="timeline-sub">идёт третий проход</span></span>
-            <span class="timeline-time">19:38:18</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="card stack stack--tight">
-        <div class="card-title">Август 2026</div>
-        <div class="calendar" id="calendar" role="grid" aria-label="Август 2026"></div>
-        <div class="t-2xs">Сегодня помечено подчёркиванием, а не только цветом</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══ Оверлеи и сообщения ═══════════════════════════════════════════ -->
-
-  <section id="overlay">
-    <h2>Оверлеи и сообщения</h2>
-    <p class="why">
-      Строка конституции «поповер, тултип и модалка — им нужен JS» <b>устарела</b>.
-      Popover API даёт верхний слой, закрытие по Escape и по клику мимо, и возврат
-      фокуса на кнопку — полностью декларативно. Этот раздел наконец применяет то, что
-      было объявлено и не использовалось ни разу: обе тени, <code>--surface-overlay</code>,
-      <code>--scrim</code> и все четыре z-индекса.
-    </p>
-
-    <div class="sub">Поповер и меню — без единой строки JS</div>
-    <div class="cluster cluster--loose">
-      <button class="btn" type="button" popovertarget="pop-actions">Действия</button>
-      <div class="popover popover--anchored" id="pop-actions" popover>
-        <div class="menu" role="menu">
-          <span class="menu-label">Прогон #4127</span>
-          <button class="menu-item" type="button" role="menuitem">
-            <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>Перезапустить
-            <span class="menu-shortcut"><kbd>R</kbd></span></button>
-          <button class="menu-item" type="button" role="menuitem">
-            <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>Скопировать id</button>
-          <button class="menu-item" type="button" role="menuitem" aria-checked="true">
-            <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Показывать лог</button>
-          <span class="menu-sep"></span>
-          <button class="menu-item" type="button" role="menuitem" data-tone="error">Удалить прогон</button>
-          <button class="menu-item" type="button" role="menuitem" aria-disabled="true">Архивировать</button>
-        </div>
-      </div>
-
-      <span class="tooltip">
-        <button class="btn btn--ghost" type="button" aria-describedby="tt-1">Что такое проход?</button>
-        <span class="tooltip-text" role="tooltip" id="tt-1">Один полный обход карты агентом</span>
-      </span>
-
-      <button class="btn" type="button" data-dialog="#dlg-confirm">Модалка</button>
-      <button class="btn" type="button" data-dialog="#dlg-sheet">Шторка</button>
-    </div>
-    <p class="why">
-      Привязка поповера к кнопке идёт через <b>неявный якорь</b>: вызвавшая кнопка уже
-      является якорем, поэтому имена заводить не нужно. Правило спрятано под
-      <code>@supports</code> — где <code>position-area</code> не поддержан, поповер
-      встанет по центру экрана. Деградирует, а не ломается.
-    </p>
-    <p class="why">
-      Тултип намеренно сделан <b>без</b> Popover API и без якорей — обычным
-      позиционированием, чтобы работать везде одинаково. Плата известна: внутри панели
-      с <code>overflow: hidden</code> он обрежется, и там нужен поповер.
-    </p>
-
-    <dialog class="dialog" id="dlg-confirm">
-      <form method="dialog">
-        <div class="dialog-head">
-          <span class="dialog-title">Удалить прогон #4127?</span>
-          <button class="btn btn--sm btn--ghost dialog-close" type="submit" aria-label="Закрыть">✕</button>
-        </div>
-        <div class="dialog-body stack">
-          <p>Будут удалены лог, артефакты и диф. Ссылки на прогон в отчётах перестанут открываться.</p>
-          <div class="note" data-tone="warn">Необратимо: восстановление из резервной копии занимает до суток.</div>
-        </div>
-        <div class="dialog-foot">
-          <span class="dialog-foot-note">Escape тоже закрывает</span>
-          <button class="btn" type="submit">Отмена</button>
-          <button class="btn btn--danger" type="submit">Удалить</button>
-        </div>
-      </form>
-    </dialog>
-
-    <dialog class="dialog sheet" id="dlg-sheet">
-      <form method="dialog">
-        <div class="dialog-head">
-          <span class="dialog-title">Параметры прогона</span>
-          <button class="btn btn--sm btn--ghost dialog-close" type="submit" aria-label="Закрыть">✕</button>
-        </div>
-        <div class="dialog-body">
-          <dl class="kv">
-            <dt>Модель</dt><dd>opus</dd>
-            <dt>Агентов</dt><dd>7 из 12</dd>
-            <dt>Токенов</dt><dd>184 320</dd>
-            <dt>Начат</dt><dd>19:38:04</dd>
-          </dl>
-        </div>
-        <div class="dialog-foot dialog-foot--end">
-          <button class="btn" type="submit">Закрыть</button>
-        </div>
-      </form>
-    </dialog>
-
-    <div class="sub">Баннер — сообщение уровня страницы</div>
-    <p class="why">
-      Это <b>не сноска</b>. Сноска поясняет то, рядом с чем стоит, и несёт только полосу
-      у края. Баннер относится ко всему экрану, поэтому у него заливка и место под
-      действие. Иконки тона — общий набор масок со сноской, один источник формы на два
-      компонента.
-    </p>
-    <div class="stack stack--tight">
-      <div class="banner" data-tone="warn">
-        <div class="banner-body">
-          <div class="banner-title">Доступ истекает через 3 дня</div>
-          <div class="banner-text">После 8 августа запуск прогонов остановится.</div>
-        </div>
-        <div class="banner-actions"><button class="btn btn--sm" type="button">Продлить</button></div>
-      </div>
-      <div class="banner" data-tone="error">
-        <div class="banner-body"><div class="banner-title">Обслуживание хранилища</div>
-          <div class="banner-text">Артефакты недоступны до 21:00.</div></div>
-      </div>
-      <div class="banner" data-tone="ok">
-        <div class="banner-body"><div class="banner-title">Изменения сохранены</div></div>
-      </div>
-    </div>
-
-    <div class="sub">Аккордеон</div>
-    <p class="why">
-      На <code>&lt;details&gt;</code> с атрибутом <code>name</code>: группа становится
-      <b>взаимоисключающей</b> — открытой остаётся ровно одна секция, и тоже без единой
-      строки JS. Попробуйте открыть вторую.
-    </p>
-    <div class="accordion">
-      <details class="accordion-item" name="faq" open>
-        <summary class="accordion-head">Почему прогон занял 42 секунды?</summary>
-        <div class="accordion-body">Три прохода расстановки ресурсов плюс запекание навмеша.
-          Основное время ушло на валидацию путей, которая перезапускалась дважды.</div>
-      </details>
-      <details class="accordion-item" name="faq">
-        <summary class="accordion-head">Можно ли ограничить расход токенов?</summary>
-        <div class="accordion-body">Да, в параметрах проекта. Лимит проверяется перед стартом
-          каждого агента, а не по факту — прогон не уйдёт в минус.</div>
-      </details>
-      <details class="accordion-item" name="faq">
-        <summary class="accordion-head">Что происходит с артефактами после удаления?</summary>
-        <div class="accordion-body">Удаляются вместе с прогоном. Резервная копия хранится семь
-          суток, восстановление — через поддержку.</div>
-      </details>
-    </div>
-
-    <div class="sub">Печать</div>
-    <p class="why">
-      Админки печатают отчёты и выгружают в PDF. Нажмите <kbd>Ctrl</kbd> <kbd>P</kbd>:
-      печатается <b>светлая тема при любой экранной</b> (достаточно сменить
-      <code>color-scheme</code> — <code>light-dark()</code> сама отдаст светлую ветку),
-      боковая навигация и полосы действий исчезают, области прокрутки разворачиваются
-      целиком, свёрнутый вывод и закрытые секции раскрываются. Обрезка на экране — это
-      экономия места, на листе она превращается в потерю данных.
-    </p>
-  </section>
-
-  <!-- ══ Антипримеры ═══════════════════════════════════════════════════ -->
-
+    <!-- ══ Разное ══════════════════════════════════════════════════ -->
   <section id="anti">
     <h2>Так не надо</h2>
     <p class="why">
@@ -1493,9 +1543,10 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
     </div>
   </section>
 
+    </div>
   </main>
-</div>
 
+</div>
 <!-- Спрайт иконок. Контракт: сетка 16, обводка currentColor, толщина 1.5.
      Текстовые глифы вроде ⟳ и ▶ запрещены: разные метрики в разных шрифтах
      и риск подстановки эмодзи. -->
@@ -1516,26 +1567,49 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
   const root = document.documentElement;
 
   /* ── Тема ───────────────────────────────────────────────────────────────
-     Сохраняется, подписывается тем, что ПРОИЗОЙДЁТ, и несёт aria-pressed.
-     Раньше кнопка называлась «Тема» и не сообщала ни текущего состояния,
-     ни результата нажатия.                                              */
-  const themeBtn = document.getElementById('theme');
-  const systemDark = () => matchMedia('(prefers-color-scheme: dark)').matches;
+     Четыре темы — это две ручки в токенах, а здесь просто значение
+     атрибута. «По системе» — пустое значение: атрибут снимается, и
+     light-dark() снова слушает настройку ОС.                            */
+  const themeSel = document.getElementById('theme');
+  const savedTheme = localStorage.getItem('au-theme') || '';
+  if (savedTheme) root.dataset.theme = savedTheme;
+  themeSel.value = savedTheme;
 
-  function applyTheme(t) {
-    if (t) root.dataset.theme = t; else delete root.dataset.theme;
-    const dark = t ? t === 'dark' : systemDark();
-    themeBtn.textContent = dark ? 'Светлая тема' : 'Тёмная тема';
-    themeBtn.setAttribute('aria-pressed', String(dark));
-  }
-
-  applyTheme(localStorage.getItem('au-theme'));
-  themeBtn.addEventListener('click', () => {
-    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : systemDark();
-    const next = dark ? 'light' : 'dark';
-    localStorage.setItem('au-theme', next);
-    applyTheme(next);
+  themeSel.addEventListener('change', () => {
+    if (themeSel.value) {
+      root.dataset.theme = themeSel.value;
+      localStorage.setItem('au-theme', themeSel.value);
+    } else {
+      delete root.dataset.theme;
+      localStorage.removeItem('au-theme');
+    }
   });
+
+  /* ── Подсветка текущего раздела в навигаторе ─────────────────────────── */
+  const toc = document.getElementById('toc');
+  const tocLinks = new Map([...toc.querySelectorAll('.nav-item')]
+    .map(a => [a.getAttribute('href').slice(1), a]));
+
+  const spy = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      tocLinks.forEach(a => a.removeAttribute('aria-current'));
+      const link = tocLinks.get(e.target.id);
+      if (link) link.setAttribute('aria-current', 'page');
+    }
+  }, { root: document.querySelector('.shell-main'), rootMargin: '0px 0px -75% 0px' });
+
+  document.querySelectorAll('#main section[id]').forEach(s => spy.observe(s));
+
+  /* Клик подсвечивает сразу, не дожидаясь, пока прокрутка доедет и
+     наблюдатель отработает. Он же страхует случай, когда наблюдатель
+     недоступен. */
+  const markActive = link => {
+    tocLinks.forEach(a => a.removeAttribute('aria-current'));
+    if (link) link.setAttribute('aria-current', 'page');
+  };
+  toc.addEventListener('click', e => markActive(e.target.closest('.nav-item')));
+  markActive(tocLinks.values().next().value);
 
   /* ── Сегментированный контрол ───────────────────────────────────────────
      role="radiogroup" + aria-checked + стрелки. Раньше стоял role="tablist"

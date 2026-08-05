@@ -79,7 +79,12 @@
   grid-area: header;
   display: flex;
   align-items: center;
-  gap: var(--gap-inline);
+  /* Переносится обязательно: в шапке живут крошки и несколько контролов, и
+     без переноса они на узком экране выталкивают документ за вьюпорт —
+     появляется горизонтальная прокрутка, из-за которой 100dvh оболочки
+     перестаёт помещаться по высоте.                                       */
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--gap-inline);
   padding: var(--space-4) var(--pad-panel);
   border-block-end: var(--hairline) solid var(--border);
   background: var(--surface-page);
