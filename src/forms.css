@@ -320,25 +320,44 @@
   margin-inline-start: var(--space-2);
 }
 
-/* Группа полей. min-inline-size обязателен: у fieldset собственная
-   минимальная ширина по содержимому, и без сброса он не даёт колонкам
-   сжиматься — это его давняя особенность, а не наша ошибка.               */
+/* Группа полей — БЕЗ рамки по умолчанию, и это осознанно.
+
+   Работа fieldset — сгруппировать поля и дать группе имя; рамка вокруг неё
+   приходит из браузера, а не из смысла. Форма почти всегда живёт внутри
+   панели или карточки, и рамка группы даёт рамку внутри рамки — ровно то,
+   против чего написано правило про ряд метрик. Границу задаёт заголовок и
+   воздух, а не линия.
+
+   Если группу всё же надо обвести — .fieldset--framed. Это должно быть
+   решением, а не умолчанием.
+
+   min-inline-size обязателен: у fieldset собственная минимальная ширина по
+   содержимому, и без сброса он не даёт колонкам сжиматься.                */
 .fieldset {
   display: flex;
   flex-direction: column;
-  gap: var(--pad-panel);
+  gap: var(--gap-inline);
   min-inline-size: 0;
   margin: 0;
+  padding: 0;
+  border: none;
+
+  & > legend {
+    padding: 0;
+    margin-block-end: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--text-primary);
+  }
+}
+
+.fieldset--framed {
+  gap: var(--pad-panel);
   padding: var(--pad-card);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-md);
 
-  & > legend {
-    padding-inline: var(--space-3);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-medium);
-    color: var(--text-secondary);
-  }
+  & > legend { padding-inline: var(--space-3); margin-block-end: 0; color: var(--text-secondary); }
 }
 
 /* Полоса действий длинной формы. Липнет к низу области прокрутки, поэтому
@@ -361,6 +380,24 @@
   padding-block: var(--pad-panel);
   border-block-start: var(--hairline) solid var(--border);
   background: var(--form-actions-bg, var(--surface-page));
+}
+
+/* Внутри панели полоса обязана ГАСИТЬ её внутренний отступ, а не жить в нём.
+   Иначе под полосой остаётся зазор в высоту отступа, и в него видно, как
+   проезжает содержимое, — полоса перестаёт быть дном области.
+
+   Заодно здесь же правильный фон: внутри панели это её поверхность, а не
+   поверхность страницы.                                                   */
+.panel-body > .form-actions {
+  --form-actions-bg: var(--surface-raised);
+  /* Липкая позиция отсчитывается от ВНУТРЕННЕГО края отступа области, а не
+     от её видимого низа, поэтому отрицательного поля мало — нужен
+     отрицательный inset. Без него под полосой остаётся зазор в высоту
+     отступа, и в нём видно проезжающее содержимое.                        */
+  inset-block-end: calc(var(--panel-body-pad, var(--pad-panel)) * -1);
+  margin-inline: calc(var(--panel-body-pad, var(--pad-panel)) * -1);
+  margin-block-end: calc(var(--panel-body-pad, var(--pad-panel)) * -1);
+  padding-inline: var(--panel-body-pad, var(--pad-panel));
 }
 
 .form-actions--end { justify-content: flex-end; }

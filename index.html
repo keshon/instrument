@@ -75,10 +75,10 @@
 
   .narrow { max-inline-size: 520px; }
 
-  /* Область с высотой под демонстрацию липкой полосы действий: без границ
-     прокрутки её липкость показать нечем. */
-  .form-demo { max-block-size: 16rem; overflow: auto; padding-inline: var(--space-2);
-               border: var(--hairline) solid var(--border); border-radius: var(--radius-md); }
+  /* Панель с ограниченной высотой: без границ прокрутки липкость полосы
+     действий показать нечем. Рамку даёт сама панель — своей у демо нет,
+     иначе получаются рамки внутри рамок. */
+  .form-demo-body { max-block-size: 19rem; }
 
   /* Оболочка в демо показывается в коробке, а не на весь экран. */
   .shell-demo { block-size: 380px; border: var(--hairline) solid var(--border);
@@ -825,26 +825,27 @@
       </label>
     </div>
 
-    <div class="sub">Файл, множественный выбор и полоса действий</div>
+    <div class="sub">Полоса действий, файл и множественный выбор</div>
     <p class="why">
-      Липкость полосы действий ограничена ближайшим блочным предком, а не экраном:
-      её место — <b>последним элементом прокручиваемой области формы</b>. Ниже она
-      лежит в области с заданной высотой — прокрутите её, и «Сохранить» останется на
-      месте. Положить такую полосу просто в длинную страницу нельзя: она поедет
+      Липкость полосы действий ограничена <b>ближайшим блочным предком</b>, а не экраном.
+      Значит, её место — последним элементом прокручиваемой области формы, то есть
+      обычно в <code>.panel-body</code>. Прокрутите панель ниже: «Сохранить» останется
+      на месте. Положить такую полосу просто в длинную страницу нельзя — она поедет
       поверх всего, что ниже, до самого конца родителя.
     </p>
-    <div class="form-demo">
-    <div class="split">
-      <div class="split-side stack">
-        <label class="file">
-          <input type="file" multiple>
-          Перетащите файлы или выберите
-          <span class="file-hint">До 20 МБ, форматы .json и .csv</span>
-        </label>
-      </div>
-      <div class="split-main">
-        <fieldset class="fieldset">
-          <legend>Уведомления</legend>
+    <div class="panel form-demo">
+      <div class="panel-header"><span class="panel-title">Уведомления</span></div>
+      <div class="panel-body form-demo-body">
+        <div class="form">
+          <div class="field">
+            <span class="label">Импорт списка получателей</span>
+            <label class="file">
+              <input type="file" multiple>
+              Перетащите файлы или выберите
+              <span class="file-hint">До 20 МБ, форматы .json и .csv</span>
+            </label>
+          </div>
+
           <div class="field">
             <label class="label" for="f13">Кого оповещать</label>
             <span class="select-wrap">
@@ -855,21 +856,25 @@
                 <option>Внешний вебхук</option>
               </select>
             </span>
-            <span class="field-hint">Шеврон не рисуется — список ничего не раскрывает. Высота задаётся токеном, а не атрибутом size</span>
+            <span class="field-hint">Шеврон не рисуется — список ничего не раскрывает</span>
           </div>
-          <div class="cluster cluster--loose">
-            <label class="checkbox"><input type="checkbox" checked>При падении</label>
-            <label class="checkbox"><input type="checkbox">При каждом прогоне</label>
-            <label class="switch"><input type="checkbox" checked>Дублировать в почту</label>
-          </div>
-        </fieldset>
-      </div>
-    </div>
 
-      <div class="form-actions">
-        <span class="form-actions-note">Изменения не сохранены</span>
-        <button class="btn" type="button">Отмена</button>
-        <button class="btn btn--primary" type="button">Сохранить</button>
+          <fieldset class="fieldset">
+            <legend>Когда оповещать</legend>
+            <div class="cluster cluster--loose">
+              <label class="checkbox"><input type="checkbox" checked>При падении</label>
+              <label class="checkbox"><input type="checkbox">При каждом прогоне</label>
+              <label class="switch"><input type="checkbox" checked>Дублировать в почту</label>
+            </div>
+          </fieldset>
+
+        </div>
+
+        <div class="form-actions">
+          <span class="form-actions-note">Изменения не сохранены</span>
+          <button class="btn" type="button">Отмена</button>
+          <button class="btn btn--primary" type="button">Сохранить</button>
+        </div>
       </div>
     </div>
   </section>
