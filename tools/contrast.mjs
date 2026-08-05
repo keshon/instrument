@@ -29,9 +29,54 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const css = readFileSync(join(ROOT, 'src/tokens.css'), 'utf8')
   .replace(/\/\*[\s\S]*?\*\//g, '');
 
-const DECLS = new Map();
-for (const m of css.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) {
-  DECLS.set(m[1], m[2].trim().replace(/\s+/g, ' '));
+/** Тело блока, начинающегося на позиции idx, со сбалансированными скобками. */
+function bodyAt(idx) {
+  let depth = 0, start = -1;
+  for (let i = idx; i < css.length; i++) {
+    if (css[i] === '{') { if (depth === 0) start = i + 1; depth++; }
+    else if (css[i] === '}') { if (--depth === 0) return css.slice(start, i); }
+  }
+  return '';
+}
+
+/** Объявления кастомных свойств из первого блока, совпавшего с re. */
+function declsOf(re) {
+  const m = re.exec(css);
+  const map = new Map();
+  if (!m) return map;
+  for (const d of bodyAt(m.index).matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) {
+    map.set(d[1], d[2].trim().replace(/\s+/g, ' '));
+  }
+  return map;
+}
+
+// База — первый блок :root. Блоки [data-density] и медиазапросы сюда НЕ
+// попадают: иначе высоты контролов затёрли бы базовые объявления.
+const BASE = declsOf(/^:root \{/m);
+
+/** Четыре темы — две независимые ручки, а не четыре набора токенов. */
+const THEMES = [
+  { id: 'light',      label: 'светлая тёплая',   scheme: 'light' },
+  { id: 'light-cool', label: 'светлая холодная', scheme: 'light' },
+  { id: 'dark',       label: 'тёмная глубокая',  scheme: 'dark'  },
+  { id: 'dark-soft',  label: 'тёмная мягкая',    scheme: 'dark'  },
+];
+for (const t of THEMES) {
+  t.vars = declsOf(new RegExp('\\[data-theme="' + t.id + '"\\]\\s*\\{'));
+}
+
+function lookup(name, theme) {
+  if (theme.vars.has(name)) return theme.vars.get(name);
+  if (BASE.has(name)) return BASE.get(name);
+  throw new Error(`токен ${name} не объявлен`);
+}
+
+/** Текстовая подстановка var() — так же, как это делает браузер ДО разбора
+    функции. Без неё oklch(0.994 0.002 var(--hue-neutral)) не разобрать. */
+function expand(value, theme, depth = 0) {
+  if (depth > 30) throw new Error('слишком глубокая подстановка var()');
+  if (!value.includes('var(')) return value;
+  return expand(value.replace(/var\((--[\w-]+)\)/g, (_, n) => lookup(n, theme)), theme, depth + 1);
 }
 
 /** Разбить список аргументов по запятым верхнего уровня. */
@@ -74,38 +119,24 @@ function oklchToSrgb(L, C, H, alpha = 1) {
   };
 }
 
-/**
- * Разрешить значение токена в цвет sRGB для заданного режима.
- * mode — 'light' | 'dark', им управляется light-dark().
- */
-function resolve(value, mode, seen = new Set()) {
-  const v = value.trim();
+/** Разрешить значение в цвет sRGB для темы. Значение уже без var(). */
+function resolve(value, theme) {
+  const v = expand(value, theme).trim();
 
   if (v === 'transparent') return { r: 0, g: 0, b: 0, a: 0 };
 
-  if (v.startsWith('var(')) {
-    const name = splitArgs(inner(v))[0];
-    if (seen.has(name)) throw new Error(`цикл в ${name}`);
-    if (!DECLS.has(name)) throw new Error(`токен ${name} не объявлен`);
-    return resolve(DECLS.get(name), mode, new Set([...seen, name]));
-  }
-
   if (v.startsWith('light-dark(')) {
     const [l, d] = splitArgs(inner(v));
-    return resolve(mode === 'dark' ? d : l, mode, seen);
+    return resolve(theme.scheme === 'dark' ? d : l, theme);
   }
 
   if (v.startsWith('color-mix(')) {
     const args = splitArgs(inner(v));
-    if (!/^in oklab$/i.test(args[0])) {
-      throw new Error(`поддержан только "in oklab": ${v}`);
-    }
+    if (!/^in oklab$/i.test(args[0])) throw new Error(`поддержан только "in oklab": ${v}`);
     const [c1, p1] = args[1].match(/^(.*?)\s+([\d.]+)%$/).slice(1);
     const pct = parseFloat(p1) / 100;
-    const base = resolve(c1, mode, seen);
-    const other = resolve(args[2], mode, seen);
-    // Смешивание премультиплицированное: с transparent это ровно
-    // «тот же цвет с альфой pct».
+    const base = resolve(c1, theme);
+    const other = resolve(args[2], theme);
     const a = base.a * pct + other.a * (1 - pct);
     if (a === 0) return { r: 0, g: 0, b: 0, a: 0 };
     return {
@@ -117,17 +148,12 @@ function resolve(value, mode, seen = new Set()) {
   }
 
   const ok = v.match(/^oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*(?:\/\s*([\d.]+)\s*)?\)$/);
-  if (ok) {
-    return oklchToSrgb(+ok[1], +ok[2], +ok[3], ok[4] === undefined ? 1 : +ok[4]);
-  }
+  if (ok) return oklchToSrgb(+ok[1], +ok[2], +ok[3], ok[4] === undefined ? 1 : +ok[4]);
 
   throw new Error(`не разобрать цвет: ${v}`);
 }
 
-const token = (name, mode) => {
-  if (!DECLS.has(name)) throw new Error(`токен ${name} не объявлен`);
-  return resolve(DECLS.get(name), mode);
-};
+const token = (name, theme) => resolve(lookup(name, theme), theme);
 
 /** Наложить fg на bg (оба sRGB, простое смешивание по альфе). */
 function composite(fg, bg) {
@@ -141,8 +167,8 @@ function composite(fg, bg) {
 }
 
 /** Схлопнуть стопку токенов в непрозрачный цвет. Первый — непрозрачная база. */
-function flatten(stack, mode) {
-  return stack.map((n) => token(n, mode)).reduce((bg, fg) => composite(fg, bg));
+function flatten(stack, theme) {
+  return stack.map((n) => token(n, theme)).reduce((bg, fg) => composite(fg, bg));
 }
 
 function luminance({ r, g, b }) {
@@ -281,27 +307,28 @@ const CASES = [
 let failed = 0;
 const rows = [];
 
-for (const mode of ['light', 'dark']) {
+for (const theme of THEMES) {
   for (const [label, fg, bgStack, min] of CASES) {
     let r, err = null;
     try {
-      r = ratio(token(fg, mode), flatten(bgStack, mode));
+      r = ratio(token(fg, theme), flatten(bgStack, theme));
     } catch (e) {
       err = e.message;
     }
     const ok = err === null && r >= min;
     if (!ok) failed++;
-    rows.push({ mode, label, r, min, ok, err });
+    rows.push({ theme, label, r, min, ok, err });
   }
 }
 
 const W = Math.max(...rows.map((x) => x.label.length));
-let lastMode = null;
+let last = null;
 for (const x of rows) {
-  if (x.mode !== lastMode) {
-    console.log(`\n${x.mode === 'light' ? 'СВЕТЛАЯ' : 'ТЁМНАЯ'} тема`);
-    console.log('─'.repeat(W + 24));
-    lastMode = x.mode;
+  if (x.theme.id !== last) {
+    console.log(`
+ТЕМА ${x.theme.id} — ${x.theme.label}`);
+    console.log('─'.repeat(W + 26));
+    last = x.theme.id;
   }
   if (x.err) {
     console.log(`  ✗ ${x.label.padEnd(W)}  ОШИБКА: ${x.err}`);
@@ -317,4 +344,4 @@ if (failed) {
   console.log(`✗ провалов: ${failed} из ${rows.length}`);
   process.exit(1);
 }
-console.log(`· все ${rows.length} проверок пройдены`);
+console.log(`· все ${rows.length} проверок пройдены в ${THEMES.length} темах`);
