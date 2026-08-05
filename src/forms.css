@@ -343,6 +343,12 @@
 
 /* Полоса действий длинной формы. Липнет к низу области прокрутки, поэтому
    «Сохранить» не приходится искать в конце трёх экранов.                   */
+/* ВАЖНО про область действия. Липкость ограничена ближайшим блочным
+   предком, а не экраном: полоса «отлипнет» ровно там, где кончится этот
+   предок. Поэтому её место — последним элементом ПРОКРУЧИВАЕМОЙ области
+   формы (.panel-body или собственный контейнер с высотой). Если положить
+   её просто в длинную страницу, она поедет поверх всего, что ниже, до
+   самого конца родителя.                                                  */
 .form-actions {
   position: sticky;
   inset-block-end: 0;
@@ -350,9 +356,11 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3);
+  /* Воздух над чертой: без него полоса прилипает к последнему полю. */
+  margin-block-start: var(--pad-panel);
   padding-block: var(--pad-panel);
   border-block-start: var(--hairline) solid var(--border);
-  background: var(--surface-page);
+  background: var(--form-actions-bg, var(--surface-page));
 }
 
 .form-actions--end { justify-content: flex-end; }

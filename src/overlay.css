@@ -180,6 +180,16 @@
 .tooltip:hover > .tooltip-text,
 .tooltip:focus-within > .tooltip-text { opacity: 1; }
 
+/* Тултип в одну строку годится для короткой подписи. Как только внутри
+   предложение, nowrap растягивает его за край экрана — поэтому длинному
+   тексту нужен явный вариант с переносом и потолком ширины.             */
+.tooltip-text--wide {
+  inline-size: max-content;
+  max-inline-size: 22rem;
+  white-space: normal;
+  text-align: start;
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    Модалка
 

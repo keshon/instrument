@@ -14,24 +14,22 @@
      канал оформления. Если для демонстрации понадобилось оформление
      инлайном — значит, в ките дыра, и чинить надо кит.                   */
 
-  /* Замок целиком в SVG и только из букв. Отличительная часть — точка над
-     «i» — нарисована, поэтому её акцент не зависит от метрик шрифта;
-     остаток слова остаётся текстом и берёт шрифт кита.
+  /* Знак картинкой, имя текстом. Набирать слово внутри SVG оказалось плохой
+     идеей: текст переставал выделяться и искаться, а посадка нарисованной
+     буквы зависела от метрик системного шрифта.
 
-     Знака рядом нет: его вертикальный ряд точек спорил с точкой над «i».
-     Одна точка на замок — она же точка состояния, которой размечен весь
-     кит, и она же фавикон. */
-  .logo { display: flex; align-items: center; padding: var(--space-3);
-          margin-block-end: var(--space-3); border-radius: var(--radius-md);
-          color: var(--text-primary); text-decoration: none; }
+     Верхняя точка знака — акцентная: это та же точка состояния, которой
+     размечен весь кит. */
+  .logo { display: flex; align-items: center; gap: var(--space-4);
+          padding: var(--space-3); margin-block-end: var(--space-3);
+          border-radius: var(--radius-md); color: var(--text-primary); text-decoration: none; }
   .logo:hover { background: var(--surface-hover); }
-  .logo-svg { inline-size: 112px; block-size: 20px; overflow: visible; }
+  .logo-mark { flex: none; inline-size: 20px; block-size: 20px; }
   .logo-dot { fill: var(--accent-solid); }
-  .logo-stem { fill: currentColor; }
-  .logo-word { fill: currentColor; font-family: var(--font-mono); font-size: 15px;
-               font-weight: var(--weight-medium); }
-  .logo-ui { fill: var(--text-muted); font-family: var(--font-mono); font-size: 15px;
-             font-weight: var(--weight-medium); }
+  .logo-mute { fill: var(--text-faint); }
+  .logo-rule { fill: none; stroke: var(--text-muted); stroke-width: 1.6; stroke-linecap: round; }
+  .logo-name { font-size: var(--text-lg); font-weight: var(--weight-medium);
+               letter-spacing: var(--tracking-tight); line-height: 1; }
   .theme-picker { inline-size: 11rem; flex: 0 1 11rem; min-inline-size: 0; }
 
   /* Пометки о JS. Кит должен честно говорить, что работает без скрипта, а
@@ -43,7 +41,17 @@
     white-space: nowrap; vertical-align: middle;
   }
   .needs-js { background: var(--warn-bg); color: var(--warn-text); }
-  .sub > .needs-js, h2 > .needs-js { margin-inline-start: var(--space-4); }
+  .needs-js { cursor: help; }
+  .sub > .tooltip, h2 > .tooltip { margin-inline-start: var(--space-4); vertical-align: middle; }
+  /* Чип в шапке раздела: тултип раскрывается вниз, потому что сверху его
+     срежет край области прокрутки. */
+  .sub > .tooltip > .tooltip-text, h2 > .tooltip > .tooltip-text {
+    inset-block-end: auto; inset-block-start: calc(100% + var(--space-3));
+  }
+
+  /* Вводный баннер отбивается от первого раздела сам: у section:first-of-type
+     верхнее поле снято, иначе страница начиналась бы с провала. */
+  .page-intro { margin-block-end: var(--space-8); }
 
   section { margin-block: var(--space-9); scroll-margin-block-start: var(--space-5); }
   section:first-of-type { margin-block-start: 0; }
@@ -67,6 +75,11 @@
 
   .narrow { max-inline-size: 520px; }
 
+  /* Область с высотой под демонстрацию липкой полосы действий: без границ
+     прокрутки её липкость показать нечем. */
+  .form-demo { max-block-size: 16rem; overflow: auto; padding-inline: var(--space-2);
+               border: var(--hairline) solid var(--border); border-radius: var(--radius-md); }
+
   /* Оболочка в демо показывается в коробке, а не на весь экран. */
   .shell-demo { block-size: 380px; border: var(--hairline) solid var(--border);
                 border-radius: var(--radius-lg); overflow: hidden; }
@@ -81,6 +94,11 @@
   .ramp { display: grid; grid-template-columns: repeat(15, 1fr); gap: 2px; }
   .ramp > div { block-size: 34px; border-radius: var(--radius-xs); box-shadow: inset 0 0 0 var(--hairline) var(--border-subtle); }
   .ramp--6 { grid-template-columns: repeat(6, 1fr); }
+  /* Номера шагов подписаны под шкалой, а не спрятаны в системную подсказку:
+     так весь ряд читается разом, и подсказка не спорит с тултипом кита. */
+  .ramp-scale { margin-block-start: var(--space-2); }
+  .ramp-scale > span { font-family: var(--font-mono); font-size: var(--text-2xs);
+                       color: var(--text-muted); text-align: center; }
   .ramp--chart { grid-template-columns: repeat(6, 1fr); }
 
   .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4); }
@@ -141,22 +159,13 @@
 
   <aside class="shell-aside">
       <a class="logo" href="#main">
-        <svg class="logo-svg" viewBox="0 0 112 20" role="img" aria-label="instrument UI">
-          <title>instrument UI</title>
-
-          <!-- Моноширинное начертание — вторая гарнитура кита, и здесь оно
-               работает как подпись: инструмент, а не приложение. Побочная
-               выгода: у всех глифов одна ширина (8.79 при 15px), поэтому
-               «i» сидит в своей ячейке по центру и посадка не зависит от
-               того, какой моношрифт нашёлся в системе.
-
-               Точка над «i» нарисована — только так её красит акцент. Это
-               та же точка состояния, которой размечен весь кит. -->
-          <rect class="logo-stem" x="3.5" y="8" width="1.8" height="8" rx="0.9"/>
-          <circle class="logo-dot" cx="4.4" cy="4.9" r="1.7"/>
-          <text class="logo-word" x="8.79" y="16">nstrument</text>
-          <text class="logo-ui" x="93.9" y="16">ui</text>
+        <svg class="logo-mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <circle class="logo-dot" cx="4" cy="4.5" r="1.7"/>
+          <circle class="logo-mute" cx="4" cy="10" r="1.7"/>
+          <circle class="logo-mute" cx="4" cy="15.5" r="1.7"/>
+          <path class="logo-rule" d="M8.6 4.5h8M8.6 10h5.4M8.6 15.5h6.6"/>
         </svg>
+        <span class="logo-name">instrument</span>
       </a>
 
       <nav class="nav" aria-label="Разделы спецификации" id="toc">
@@ -228,7 +237,7 @@
   <main class="shell-main" id="main">
     <div class="container">
 
-    <div class="banner" data-tone="neutral">
+    <div class="banner page-intro" data-tone="neutral">
       <div class="banner-body">
         <div class="banner-title">Компоненты работают без скрипта</div>
         <div class="banner-text">Метка стоит только там, где без JS компонент неполон,
@@ -331,6 +340,7 @@
 
     <div class="sub">Нейтральная рампа — 15 шагов, лёгкий тёплый уклон</div>
     <div class="ramp" id="ramp-n"></div>
+    <div class="ramp ramp-scale" id="ramp-n-scale"></div>
     <p class="why">
       Пятнадцатый шаг существует не для красоты: тёмной теме нужно четыре различимые
       поверхности подряд, а на четырнадцати их помещалось три.
@@ -338,6 +348,7 @@
 
     <div class="sub">Акцент — один тон. Второй акцентный тон это не фича, а симптом</div>
     <div class="ramp ramp--6" id="ramp-a"></div>
+    <div class="ramp ramp--6 ramp-scale" id="ramp-a-scale"></div>
 
     <div class="sub">Семантические поверхности</div>
     <div class="swatches">
@@ -596,7 +607,7 @@
       браузер никогда не рисует рамку тоньше физического пикселя, поэтому сдвиг на
       полпикселя оставлял видимое утолщение на каждом стыке.
     </p>
-    <div class="sub">Сегментированный контрол<span class="needs-js" title="Выбор, стрелки и бегущий tabindex">нужен JS</span></div>
+    <div class="sub">Сегментированный контрол<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-1">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-1">Выбор, стрелки и бегущий tabindex</span></span></div>
     <p class="why">
       Пара к группе кнопок, и путать их нельзя. <b>Группа кнопок</b> — это несколько
       разных действий, поставленных вплотную. <b>Сегментированный</b> — один выбор среди
@@ -667,7 +678,7 @@
       без кольца «выключено» неотличимо от «элемента нет».
     </p>
 
-    <div class="sub">Слайдер<span class="needs-js" title="Вывод текущего значения рядом с бегунком">нужен JS</span></div>
+    <div class="sub">Слайдер<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-2">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-2">Вывод текущего значения рядом с бегунком</span></span></div>
     <div class="cluster row--slider narrow">
       <input class="slider" type="range" min="0" max="16" value="6" step="1" id="sl" aria-label="Параллельных агентов">
       <output class="t-sm" id="sl-out" for="sl">6</output>
@@ -815,6 +826,14 @@
     </div>
 
     <div class="sub">Файл, множественный выбор и полоса действий</div>
+    <p class="why">
+      Липкость полосы действий ограничена ближайшим блочным предком, а не экраном:
+      её место — <b>последним элементом прокручиваемой области формы</b>. Ниже она
+      лежит в области с заданной высотой — прокрутите её, и «Сохранить» останется на
+      месте. Положить такую полосу просто в длинную страницу нельзя: она поедет
+      поверх всего, что ниже, до самого конца родителя.
+    </p>
+    <div class="form-demo">
     <div class="split">
       <div class="split-side stack">
         <label class="file">
@@ -847,15 +866,12 @@
       </div>
     </div>
 
-    <div class="form-actions">
-      <span class="form-actions-note">Изменения не сохранены</span>
-      <button class="btn" type="button">Отмена</button>
-      <button class="btn btn--primary" type="button">Сохранить</button>
+      <div class="form-actions">
+        <span class="form-actions-note">Изменения не сохранены</span>
+        <button class="btn" type="button">Отмена</button>
+        <button class="btn btn--primary" type="button">Сохранить</button>
+      </div>
     </div>
-    <p class="why">
-      Полоса действий липнет к низу области прокрутки, поэтому «Сохранить» не приходится
-      искать в конце трёх экранов.
-    </p>
   </section>
 
     <!-- ══ Поверхности ═════════════════════════════════════════════ -->
@@ -935,7 +951,7 @@
 
     </div>
 
-    <div class="sub">Модалка и шторка<span class="needs-js" title="Открытие: dlg.showModal(). Закрытие, блокировка прокрутки и подложка — без скрипта">нужен JS</span></div>
+    <div class="sub">Модалка и шторка<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-3">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-3">Открытие: dlg.showModal(). Закрытие, блокировка прокрутки и подложка — без скрипта</span></span></div>
     <div class="cluster">
       <button class="btn" type="button" data-dialog="#dlg-confirm">Модалка</button>
       <button class="btn" type="button" data-dialog="#dlg-sheet">Шторка</button>
@@ -1151,7 +1167,7 @@
       метрике. У числового поля подпись оси служит ручкой перетаскивания, поэтому курсор
       меняется на ней, а не на отдельном степпере, — тянуть будут именно за букву.
     </p>
-    <div class="sub">Инспектор и иерархия<span class="needs-js" title="Инспектор: перетаскивание числа за подпись оси. Дерево: раскрытие узлов, стрелки, бегущий tabindex">нужен JS</span></div>
+    <div class="sub">Инспектор и иерархия<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-4">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-4">Инспектор: перетаскивание числа за подпись оси. Дерево: раскрытие узлов, стрелки, бегущий tabindex</span></span></div>
     <div class="grid">
       <div class="panel">
         <div class="panel-header"><span class="panel-title">Инспектор</span></div>
@@ -1240,6 +1256,7 @@
       Шесть рядов, и это потолок. Седьмой — признак, что это не график, а таблица.
     </p>
     <div class="ramp ramp--chart" id="ramp-chart"></div>
+    <div class="ramp ramp--chart ramp-scale" id="ramp-chart-scale"></div>
 
     <div class="sub">Спарклайн, кольцо и легенда</div>
     <div class="grid">
@@ -1279,7 +1296,7 @@
       </div>
     </div>
 
-    <div class="sub">Таблица: сортировка, выбор, действия, итоги<span class="needs-js" title="Сама сортировка, «выбрать всё» и действия строки">нужен JS</span></div>
+    <div class="sub">Таблица: сортировка, выбор, действия, итоги<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-5">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-5">Сама сортировка, «выбрать всё» и действия строки</span></span></div>
     <table class="table table--sticky">
       <thead>
         <tr>
@@ -1334,7 +1351,7 @@
       неуправляемой без мыши, поэтому они гаснут прозрачностью, а не исчезают.
     </p>
 
-    <div class="sub">Аватары, теги, лента<span class="needs-js" title="Снятие тега и выбор даты в календаре">нужен JS</span></div>
+    <div class="sub">Аватары, теги, лента<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-6">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-6">Снятие тега и выбор даты в календаре</span></span></div>
     <div class="grid">
       <div class="card stack stack--tight">
         <div class="card-title">Участники</div>
@@ -1398,7 +1415,7 @@
       из которого есть выход.
     </p>
 
-    <div class="sub">Запрос подтверждения<span class="needs-js" title="Обработка решения и перевод блока в состояние «решено»">нужен JS</span></div>
+    <div class="sub">Запрос подтверждения<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-7">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-7">Обработка решения и перевод блока в состояние «решено»</span></span></div>
     <p class="why">
       Определяющее взаимодействие агентных систем и <b>единственный блок в ките, которому
       разрешено останавливать глаз</b>. Обязательны три вещи: что именно будет сделано,
@@ -1428,7 +1445,7 @@
       </div>
     </div>
 
-    <div class="sub">Очередь агентов<span class="needs-js" title="Бегущий tabindex, стрелки, выбор строки">нужен JS</span></div>
+    <div class="sub">Очередь агентов<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-8">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-8">Бегущий tabindex, стрелки, выбор строки</span></span></div>
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Очередь агентов</span>
@@ -1485,7 +1502,7 @@
       добраться с клавиатуры.
     </p>
 
-    <div class="sub">Вызовы инструментов<span class="needs-js" title="Разворот свёрнутого вывода. Сам шаг раскрывается без скрипта — это details">нужен JS</span></div>
+    <div class="sub">Вызовы инструментов<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-9">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-9">Разворот свёрнутого вывода. Сам шаг раскрывается без скрипта — это details</span></span></div>
     <div class="panel">
       <div class="panel-body panel-body--list">
         <details class="step" data-state="ok">
@@ -1618,7 +1635,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
       </div>
     </div>
 
-    <div class="sub">Лог<span class="needs-js" title="Копирование в буфер">нужен JS</span></div>
+    <div class="sub">Лог<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-10">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-10">Копирование в буфер</span></span></div>
     <div class="copyable">
       <div class="log" id="log" role="log" aria-label="Лог прогона">
         <div class="log-line"><span class="log-time">19:38:04</span><span class="log-level">info</span><span>worldgen: seed 8841203, 512×512</span></div>
@@ -1891,16 +1908,20 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
   for (let i = 0; i <= 14; i++) {
     const d = document.createElement('div');
     d.style.background = `var(--n-${i})`;
-    d.title = `--n-${i}`;
     rampN.append(d);
+    const cap = document.createElement('span');
+    cap.textContent = i;
+    document.getElementById('ramp-n-scale').append(cap);
   }
 
   const rampA = document.getElementById('ramp-a');
   for (let i = 1; i <= 6; i++) {
     const d = document.createElement('div');
     d.style.background = `var(--a-${i})`;
-    d.title = `--a-${i}`;
     rampA.append(d);
+    const cap = document.createElement('span');
+    cap.textContent = i;
+    document.getElementById('ramp-a-scale').append(cap);
   }
 
   const spaceDemo = document.getElementById('space-demo');
@@ -1951,8 +1972,10 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
   for (let i = 1; i <= 6; i++) {
     const d = document.createElement('div');
     d.style.background = `var(--chart-${i})`;
-    d.title = `--chart-${i}`;
     rampChart.append(d);
+    const cap = document.createElement('span');
+    cap.textContent = i;
+    document.getElementById('ramp-chart-scale').append(cap);
   }
 
   /* Календарь: август 2026 начинается с субботы, «сегодня» — 5-е. */
