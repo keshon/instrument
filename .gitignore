@@ -6,7 +6,9 @@ Thumbs.db
 # Локальные настройки инструментов (launch.json остаётся в репозитории)
 .claude/settings.local.json
 
-# Сгенерированный сайт. Источник — docs/ и docsgen/, здесь только вывод.
-site/
-docsgen/docsgen
-docsgen/docsgen.exe
+# Собранный сайт. Источник — docs/ и site/, здесь только вывод.
+dist/
+
+# Скомпилированный генератор
+site/site
+site/site.exe

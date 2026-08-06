@@ -1,4 +1,4 @@
-module instrument/docsgen
+module instrument/site
 
 go 1.26
 

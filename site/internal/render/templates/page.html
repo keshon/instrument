@@ -36,7 +36,7 @@
       <div class="inst-nav-group">
         <span class="inst-nav-label">{{ .Label }}</span>
         {{ range .Items }}
-        <a class="inst-nav-item" href="{{ .Route }}"{{ if eq3 .Route $.Page.Route }} aria-current="page"{{ end }}>{{ .Title }}</a>
+        <a class="inst-nav-item" href="{{ .Route }}"{{ if same .Route $.Page.Route }} aria-current="page"{{ end }}>{{ .Title }}</a>
         {{ end }}
       </div>
       {{ end }}

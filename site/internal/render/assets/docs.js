@@ -20,6 +20,7 @@
         delete root.dataset.theme;
         localStorage.removeItem('instrument-theme');
       }
+      syncDemos();
     });
   }
 
@@ -36,6 +37,7 @@
       const v = btn.dataset.v;
       if (v === 'default') { delete root.dataset.density; localStorage.removeItem('instrument-density'); }
       else { root.dataset.density = v; localStorage.setItem('instrument-density', v); }
+      syncDemos();
     };
     select(items.find((x) => x.dataset.v === saved) || items[1]);
     density.addEventListener('click', (e) => {
@@ -52,6 +54,55 @@
       e.preventDefault();
       const next = items[(i + d + items.length) % items.length];
       next.focus(); select(next);
+    });
+  }
+
+
+  /* ── Столы примеров ────────────────────────────────────────────────────
+     Каждый пример — отдельный документ в iframe. Родитель делает две вещи:
+     подгоняет высоту под содержимое (иначе кадр либо пустует, либо
+     заводит собственную полосу прокрутки — и то и другое читается как
+     поломка) и передаёт выбранную тему стола. */
+
+  const frames = new Map();
+  document.querySelectorAll('[data-demo]').forEach((fig) => {
+    const frame = fig.querySelector('.demo-frame');
+    if (frame) frames.set(new URL(frame.src, location).pathname, frame);
+  });
+
+  addEventListener('message', (e) => {
+    if (e.origin !== location.origin || !e.data || !e.data.demoHeight) return;
+    const f = frames.get(e.data.id);
+    if (f) f.style.blockSize = e.data.demoHeight + 'px';
+  });
+
+  document.querySelectorAll('[data-demo-theme]').forEach((sel) => {
+    sel.addEventListener('change', () => {
+      const frame = sel.closest('[data-demo]').querySelector('.demo-frame');
+      /* Пустое значение — «как у сайта»: стол берёт тему справочника, но
+         остаётся в своём документе. */
+      const t = sel.value || root.dataset.theme || '';
+      frame.contentWindow.postMessage(
+        { demoTheme: t, demoDensity: root.dataset.density || '' }, location.origin);
+    });
+  });
+
+  /* Смена темы или плотности справочника догоняет те столы, которые сами
+     ничего не выбрали.
+
+     Объявление функцией, а не const-стрелкой, намеренно: syncDemos
+     вызывается из обработчика плотности, который отрабатывает при
+     инициализации — то есть ВЫШЕ по файлу. Стрелка в const попадала бы во
+     временную мёртвую зону и роняла весь скрипт целиком, вместе с темой,
+     поиском и копированием. */
+  function syncDemos() {
+    document.querySelectorAll('[data-demo]').forEach((fig) => {
+      const sel = fig.querySelector('[data-demo-theme]');
+      if (sel && sel.value) return;
+      const w = fig.querySelector('.demo-frame').contentWindow;
+      if (w) w.postMessage(
+        { demoTheme: root.dataset.theme || '', demoDensity: root.dataset.density || '' },
+        location.origin);
     });
   }
 

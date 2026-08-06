@@ -1,9 +1,8 @@
-package main
+package content
 
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"path"
 	"regexp"
 	"strings"
@@ -16,82 +15,31 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
-	"gopkg.in/yaml.v3"
 )
 
-type frontmatter struct {
-	Title    string `yaml:"title"`
-	Group    string `yaml:"group"`
-	Source   string `yaml:"source"`
-	Status   string `yaml:"status"`
-	NeedsJS  string `yaml:"needs-js"`
-	Template string `yaml:"template"`
-}
+func renderMarkdown(p *Page, body []byte) error {
+	cr := &codeRenderer{page: p}
+	md := goldmark.New(
+		goldmark.WithExtensions(extension.GFM),
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+			parser.WithASTTransformers(util.Prioritized(&linkRewriter{dir: p.Dir}, 100)),
+		),
+		goldmark.WithRendererOptions(
+			html.WithUnsafe(), // примеры — это HTML, в том и смысл
+			renderer.WithNodeRenderers(util.Prioritized(cr, 1)),
+		),
+	)
 
-var fmRe = regexp.MustCompile(`(?s)\A---\r?\n(.*?)\r?\n---\r?\n`)
-
-func parsePage(fsPath, rel string) (*Page, error) {
-	raw, err := os.ReadFile(fsPath)
-	if err != nil {
-		return nil, err
-	}
-
-	var meta frontmatter
-	body := raw
-	if m := fmRe.FindSubmatch(raw); m != nil {
-		if err := yaml.Unmarshal(m[1], &meta); err != nil {
-			return nil, fmt.Errorf("frontmatter: %w", err)
-		}
-		body = raw[len(m[0]):]
-	}
-
-	slug := strings.TrimSuffix(path.Base(rel), ".md")
-	dir := path.Dir(rel)
-	if dir == "." {
-		dir = ""
-	}
-	route := "/"
-	if slug != "index" {
-		route = "/" + path.Join(dir, slug) + "/"
-	} else if dir != "" {
-		route = "/" + dir + "/"
-	}
-
-	p := &Page{
-		Route: route, Rel: rel, Dir: dir, Slug: slug,
-		Title: meta.Title, Group: meta.Group, Source: meta.Source,
-		NeedsJS: meta.NeedsJS, Status: meta.Status,
-		Splash: meta.Template == "splash",
-	}
-	if p.Title == "" {
-		p.Title = slug
-	}
-
-	md := newMarkdown(dir)
 	doc := md.Parser().Parse(text.NewReader(body))
 	p.TOC = collectTOC(doc, body)
 
 	var buf bytes.Buffer
 	if err := md.Renderer().Render(&buf, body, doc); err != nil {
-		return nil, err
+		return err
 	}
 	p.HTML = buf.String()
-	p.Text = plainText(body)
-	return p, nil
-}
-
-func newMarkdown(dir string) goldmark.Markdown {
-	return goldmark.New(
-		goldmark.WithExtensions(extension.GFM),
-		goldmark.WithParserOptions(
-			parser.WithAutoHeadingID(),
-			parser.WithASTTransformers(util.Prioritized(&linkRewriter{dir: dir}, 100)),
-		),
-		goldmark.WithRendererOptions(
-			html.WithUnsafe(), // примеры — это HTML, в том и смысл
-			renderer.WithNodeRenderers(util.Prioritized(&codeRenderer{}, 1)),
-		),
-	)
+	return nil
 }
 
 // ── Ссылки ────────────────────────────────────────────────────────────────
@@ -103,7 +51,7 @@ func newMarkdown(dir string) goldmark.Markdown {
 
 type linkRewriter struct{ dir string }
 
-func (l *linkRewriter) Transform(doc *ast.Document, reader text.Reader, pc parser.Context) {
+func (l *linkRewriter) Transform(doc *ast.Document, r text.Reader, pc parser.Context) {
 	ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
 			return ast.WalkContinue, nil
@@ -132,21 +80,19 @@ func (l *linkRewriter) Transform(doc *ast.Document, reader text.Reader, pc parse
 }
 
 // ── Блоки кода ────────────────────────────────────────────────────────────
-//
-// Ограда ```html preview разворачивается в живой пример: та же разметка
-// сначала рисуется настоящим китом, потом показывается кодом. Разойтись
-// они не могут — это одна и та же строка.
-//
-// Сцена намеренно БЕЗ рамки. Панель и карточка приносят свою, и рамка
-// вокруг рамки — ровно то, что кит запрещает у ряда метрик.
 
-type codeRenderer struct{}
-
-func (r *codeRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
-	reg.Register(ast.KindFencedCodeBlock, r.renderFenced)
+type codeRenderer struct {
+	page *Page
+	n    int
 }
 
-func (r *codeRenderer) renderFenced(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+func (r *codeRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
+	reg.Register(ast.KindFencedCodeBlock, r.render)
+}
+
+var previewRe = regexp.MustCompile(`(^|\s)preview(\s|$)`)
+
+func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
 	if !entering {
 		return ast.WalkContinue, nil
 	}
@@ -165,14 +111,36 @@ func (r *codeRenderer) renderFenced(w util.BufWriter, source []byte, n ast.Node,
 	if node.Info != nil {
 		info = string(node.Info.Segment.Value(source))
 	}
-	preview := lang == "html" && regexp.MustCompile(`(^|\s)preview(\s|$)`).MatchString(info)
 
-	if preview {
-		fmt.Fprintf(w, `<div class="demo"><div class="demo-stage">%s</div>`, raw)
+	if lang == "html" && previewRe.MatchString(info) {
+		r.n++
+		id := strings.Trim(strings.ReplaceAll(r.page.Route, "/", "-"), "-")
+		if id == "" {
+			id = "index"
+		}
+		id = fmt.Sprintf("%s-%d", id, r.n)
+		r.page.Demos = append(r.page.Demos, Demo{ID: id, Markup: raw})
+
+		// Заголовок сцены — это её адрес, а не украшение: пример живёт
+		// отдельным документом, и его можно открыть в новой вкладке.
+		fmt.Fprintf(w, `<figure class="demo" data-demo>`+
+			`<figcaption class="demo-bar">`+
+			`<span class="demo-chrome" aria-hidden="true"></span>`+
+			`<span class="demo-label">Пример</span>`+
+			`<span class="demo-tools">`+
+			`<span class="inst-select-wrap demo-theme"><select class="inst-select inst-select--sm" aria-label="Тема примера" data-demo-theme>`+
+			`<option value="">как у сайта</option><option value="light">светлая тёплая</option>`+
+			`<option value="light-cool">светлая холодная</option><option value="dark">тёмная глубокая</option>`+
+			`<option value="dark-soft">тёмная мягкая</option></select></span>`+
+			`<a class="demo-open" href="/demo/%s.html" target="_blank" rel="noopener" title="Открыть пример отдельно">↗</a>`+
+			`</span></figcaption>`+
+			`<iframe class="demo-frame" src="/demo/%s.html" title="Живой пример" loading="lazy"></iframe>`,
+			id, id)
 		writeCode(w, raw, lang, true)
-		w.WriteString(`</div>`)
+		w.WriteString(`</figure>`)
 		return ast.WalkSkipChildren, nil
 	}
+
 	writeCode(w, raw, lang, false)
 	return ast.WalkSkipChildren, nil
 }
@@ -183,20 +151,20 @@ func writeCode(w util.BufWriter, raw, lang string, inDemo bool) {
 		cls += " code-block--demo"
 	}
 	fmt.Fprintf(w, `<div class="%s"><button class="code-copy inst-btn inst-btn--sm" type="button" data-copy>копировать</button><pre><code class="lang-%s">%s</code></pre></div>`,
-		cls, htmlEscape(lang), highlight(raw, lang))
+		cls, escape(lang), highlight(raw, lang))
 }
 
 // ── Подсветка ─────────────────────────────────────────────────────────────
 //
-// Своя, на три цвета из палитры кита, а не библиотека: подсветка в 60 цветов
-// на макете из хайрлайнов и воздуха кричит громче кода, который подсвечивает.
-// Различать надо ровно три вещи: имя тега, имя атрибута и значение.
+// Своя, на три цвета из палитры кита, а не библиотека: подсветка в шестьдесят
+// цветов на макете из хайрлайнов и воздуха кричит громче кода, который
+// подсвечивает. Различать надо ровно три вещи: имя тега, имя атрибута и
+// значение.
 
 var (
-	// Захватываются ОТДЕЛЬНО открывающая часть и имя тега. Иначе поиск
-	// первой буквы попадает внутрь мнемоники: в «&lt;button» первая буква —
-	// это «l» из «lt», и подсветка разрывала саму мнемонику на «&» и
-	// «lt;button», после чего в коде проступали сущности.
+	// Открывающая часть и имя тега захватываются ОТДЕЛЬНО. Иначе поиск имени
+	// «по первой букве» попадает внутрь мнемоники: в «&lt;button» первая
+	// буква — это «l» из «lt», и подсветка разрывала саму мнемонику.
 	tagRe     = regexp.MustCompile(`(&lt;/?)([a-zA-Z][\w-]*)`)
 	attrRe    = regexp.MustCompile(`([a-zA-Z-]+)=(&#34;[^&]*&#34;)`)
 	commentRe = regexp.MustCompile(`(?s)&lt;!--.*?--&gt;|/\*.*?\*/`)
@@ -205,7 +173,7 @@ var (
 )
 
 func highlight(raw, lang string) string {
-	s := htmlEscape(raw)
+	s := escape(raw)
 	switch lang {
 	case "html":
 		s = tagRe.ReplaceAllString(s, `$1<b class="t-tag">$2</b>`)
@@ -214,11 +182,10 @@ func highlight(raw, lang string) string {
 		s = cssPropRe.ReplaceAllString(s, `$1<b class="t-attr">$2</b>:`)
 		s = cssVarRe.ReplaceAllString(s, `<b class="t-val">$1</b>`)
 	}
-	s = commentRe.ReplaceAllString(s, `<i class="t-com">$0</i>`)
-	return s
+	return commentRe.ReplaceAllString(s, `<i class="t-com">$0</i>`)
 }
 
-func htmlEscape(s string) string {
+func escape(s string) string {
 	var b strings.Builder
 	for _, r := range s {
 		switch r {
@@ -237,7 +204,7 @@ func htmlEscape(s string) string {
 	return b.String()
 }
 
-// ── Оглавление и текст для поиска ─────────────────────────────────────────
+// ── Оглавление ────────────────────────────────────────────────────────────
 
 func collectTOC(doc ast.Node, src []byte) []Heading {
 	var out []Heading
@@ -250,8 +217,8 @@ func collectTOC(doc ast.Node, src []byte) []Heading {
 			return ast.WalkContinue, nil
 		}
 		id, _ := h.AttributeString("id")
-		idStr, _ := id.([]byte)
-		out = append(out, Heading{Level: h.Level, ID: string(idStr), Text: nodeText(h, src)})
+		b, _ := id.([]byte)
+		out = append(out, Heading{Level: h.Level, ID: string(b), Text: nodeText(h, src)})
 		return ast.WalkContinue, nil
 	})
 	return out
@@ -268,11 +235,4 @@ func nodeText(n ast.Node, src []byte) string {
 		return ast.WalkContinue, nil
 	})
 	return strings.TrimSpace(b.String())
-}
-
-var stripRe = regexp.MustCompile("(?s)```.*?```|`[^`]*`|[|*_#>\\[\\]()]")
-
-func plainText(body []byte) string {
-	s := stripRe.ReplaceAllString(string(body), " ")
-	return strings.Join(strings.Fields(s), " ")
 }

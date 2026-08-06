@@ -113,37 +113,55 @@
 /* Сцена БЕЗ рамки, и это не экономия. Панель и карточка приносят свою, и
    рамка вокруг рамки — ровно то, что кит запрещает у ряда метрик: она
    превращает одну группу в два объекта. Сцену обозначает поверхность. */
-/* Сцена и код стоят на РАЗНЫХ поверхностях, и это не косметика: пока обе
-   были на --surface-sunken, они сливались в одно серое пятно, и читатель не
-   видел границы между «вот как выглядит» и «вот как написано».
+/* Пример живёт в ОТДЕЛЬНОМ документе внутри iframe, и стол вокруг него —
+   не украшение, а сообщение: «дальше чужой экран».
 
-   Порядок поверхностей кита читается как стопка: sunken < page < raised.
-   Сцена берёт raised — она показывает работающее, то есть «сверху»; код
-   берёт sunken — он вреза́н в страницу. */
+   Пока пример был бесшовен со страницей, происходили две неприятности.
+   Компонент читался сиротой — непонятно, где кончается справочник и
+   начинается демонстрация. И смена темы вики перекрашивала примеры, то
+   есть показывала не кит, а страницу про кит.
+
+   Отсюда полоса сверху со своим переключателем темы: у стола тема своя. */
+
 .demo {
-  margin-block: var(--space-6);
+  margin: var(--space-6) 0;
+  border: var(--hairline) solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  border: var(--hairline) solid var(--border-subtle);
-}
-
-.demo-stage {
   background: var(--surface-raised);
-  display: flex; flex-wrap: wrap; align-items: flex-start;
-  gap: var(--space-5);
-  padding: var(--space-7);
-  font-size: var(--text-sm); line-height: var(--leading-ui);
-  font-variant-numeric: tabular-nums;
 }
 
-/* Блочное занимает всю сцену, а не жмётся в ряд. */
-.demo-stage > :is(.inst-panel, .inst-card, .inst-table, .inst-form, .inst-log,
-                  .inst-diff, .inst-approval, .inst-failure, .inst-calendar,
-                  .inst-timeline, .inst-lanes, .inst-budget, .inst-tree,
-                  .inst-empty, .inst-banner, .inst-note, .inst-metric-row,
-                  .inst-stack, .inst-field, .inst-props, .inst-kv, .inst-shell,
-                  .inst-steps, .inst-stepper, [role="listbox"], [role="grid"],
-                  [role="tree"], [role="log"]) { flex: 1 1 100%; }
+.demo-bar {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding-inline: var(--space-5);
+  min-block-size: var(--control-h-lg);
+  border-block-end: var(--hairline) solid var(--border-subtle);
+  background: var(--surface-sunken);
+  font-size: var(--text-xs); color: var(--text-muted);
+}
+
+/* Три точки — единственная вольность на весь сайт. Они не имитируют
+   систему, а сообщают «это окно, а не абзац», и делают это быстрее любой
+   подписи. */
+.demo-chrome {
+  flex: none; inline-size: 34px; block-size: var(--size-dot);
+  background:
+    radial-gradient(circle 3px at 3px 50%, var(--border-strong) 99%, transparent) 0 0/14px 100% no-repeat,
+    radial-gradient(circle 3px at 3px 50%, var(--border-strong) 99%, transparent) 11px 0/14px 100% no-repeat,
+    radial-gradient(circle 3px at 3px 50%, var(--border-strong) 99%, transparent) 22px 0/14px 100% no-repeat;
+}
+
+.demo-label { flex: 1 1 auto; }
+.demo-tools { display: flex; align-items: center; gap: var(--space-4); }
+.demo-theme { inline-size: 10rem; }
+.demo-open { color: var(--text-muted); text-decoration: none; font-size: var(--text-sm); }
+.demo-open:hover { color: var(--accent-text); }
+
+.demo-frame {
+  display: block; inline-size: 100%; border: 0;
+  block-size: 8rem;   /* до первого сообщения о высоте */
+  background: var(--surface-page);
+}
 
 /* ── Код ────────────────────────────────────────────────────────────────── */
 

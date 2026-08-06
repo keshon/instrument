@@ -1,10 +1,16 @@
-package main
+package nav
 
-import "sort"
+import (
+	"sort"
 
-type NavSection struct {
+	"instrument/site/internal/content"
+)
+
+
+
+type Section struct {
 	Label string
-	Items []*Page
+	Items []*content.Page
 }
 
 // Порядок разделов — по пути читателя, а не по алфавиту: сначала из чего
@@ -50,8 +56,8 @@ var sections = []struct {
 	{"about", "О проекте", nil},
 }
 
-func buildNav(pages []*Page) []NavSection {
-	byDir := map[string][]*Page{}
+func Build(pages []*content.Page) []Section {
+	byDir := map[string][]*content.Page{}
 	for _, p := range pages {
 		if p.Slug == "index" && p.Dir == "" {
 			continue // главная живёт в шапке, а не в списке
@@ -59,7 +65,7 @@ func buildNav(pages []*Page) []NavSection {
 		byDir[p.Dir] = append(byDir[p.Dir], p)
 	}
 
-	var out []NavSection
+	var out []Section
 	for _, s := range sections {
 		items := byDir[s.dir]
 		if len(items) == 0 {
@@ -83,7 +89,7 @@ func buildNav(pages []*Page) []NavSection {
 				return items[i].Title < items[j].Title
 			}
 		})
-		out = append(out, NavSection{Label: s.label, Items: items})
+		out = append(out, Section{Label: s.label, Items: items})
 		delete(byDir, s.dir)
 	}
 
@@ -99,7 +105,7 @@ func buildNav(pages []*Page) []NavSection {
 	for _, dir := range rest {
 		items := byDir[dir]
 		sort.Slice(items, func(i, j int) bool { return items[i].Title < items[j].Title })
-		out = append(out, NavSection{Label: dir, Items: items})
+		out = append(out, Section{Label: dir, Items: items})
 	}
 	return out
 }

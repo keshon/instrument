@@ -1,10 +1,12 @@
-package main
+package check
 
 import (
 	"fmt"
 	"regexp"
 	"sort"
 	"strings"
+
+	"instrument/site/internal/content"
 )
 
 // verify проверяет собранный сайт до того, как его увидит человек.
@@ -25,10 +27,17 @@ var (
 	leftMdRe = regexp.MustCompile(`href="([^"]*\.md(?:#[^"]*)?)"`)
 )
 
-func verify(pages []*Page) []string {
+func Verify(pages []*content.Page) []string {
 	routes := map[string]bool{}
+	demos := map[string]bool{}
 	for _, p := range pages {
 		routes[p.Route] = true
+		// Столы примеров — отдельные документы, а не маршруты страниц.
+		// Проверяются они так же строго: ссылка на несуществующий стол —
+		// это пустой кадр, и увидеть его можно только открыв страницу.
+		for _, d := range p.Demos {
+			demos["/demo/"+d.ID+".html"] = true
+		}
 	}
 
 	var problems []string
@@ -40,6 +49,13 @@ func verify(pages []*Page) []string {
 		for _, m := range hrefRe.FindAllStringSubmatch(p.HTML, -1) {
 			t := m[1]
 			if strings.HasPrefix(t, "/kit/") || strings.HasPrefix(t, "/assets/") {
+				continue
+			}
+			if strings.HasPrefix(m[1], "/demo/") {
+				if !demos[m[1]] {
+					problems = append(problems,
+						fmt.Sprintf("%s  стола примера нет: %s", p.Route, m[1]))
+				}
 				continue
 			}
 			if !strings.HasSuffix(t, "/") {
