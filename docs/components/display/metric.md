@@ -70,6 +70,46 @@ source: src/components.css
 четыре объекта, между которыми читатель начинает искать различия, которых нет.
 Поэтому метрика стоит на приглушённой поверхности, а не в карточке.
 
+## Собранный экран
+
+Ряд метрик из сводки прогона. Порознь метрика — просто крупное число;
+смысл появляется в ряду.
+
+Что видно только здесь:
+
+- **рамок нет ни у одной.** Четыре числа — одна группа; рамка вокруг каждого
+  превратила бы их в четыре объекта, между которыми читатель начнёт искать
+  различия;
+- **единица мельче и тише числа.** «42 с» одним кеглем читается как одно
+  слово; разделив размер и цвет, глаз хватает число, а «с» уходит в фон;
+- **направление и оценка независимы.** Стрелка вниз у времени — хорошо,
+  стрелка вверх у предупреждений — плохо.
+
+```html preview context
+<div class="inst-metric-row">
+  <div class="inst-metric">
+    <div class="inst-metric-label">Время прогона</div>
+    <div class="inst-metric-value">42<span class="inst-metric-unit">&nbsp;с</span></div>
+    <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% к прошлому</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Тесты пройдены</div>
+    <div class="inst-metric-value">248<span class="inst-metric-unit">/251</span></div>
+    <div class="inst-metric-delta" data-tone="warn">3 падают</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Размер бандла</div>
+    <div class="inst-metric-value">7,4<span class="inst-metric-unit">&nbsp;МБ</span></div>
+    <div class="inst-metric-delta">без изменений</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Предупреждений</div>
+    <div class="inst-metric-value">12</div>
+    <div class="inst-metric-delta" data-dir="up" data-tone="error">5 новых</div>
+  </div>
+</div>
+```
+
 ## Справочник
 
 ### Классы

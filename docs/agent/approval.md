@@ -87,6 +87,32 @@ needs-js: Обработка решения и перевод блока в со
 Тон здесь означает **необратимость**, а не тяжесть: удаление красное потому,
 что его нельзя отменить, а не потому, что оно «плохое».
 
+## Собранный экран
+
+Запрос из настоящего прогона — с командой, списком последствий и пометкой
+необратимого.
+
+Обратите внимание на **порядок**: что будет сделано, что это затронет, и
+только потом решение. Запрос, начинающийся с кнопок, требует ответа раньше,
+чем сообщает вопрос.
+
+```html preview context
+<div class="inst-approval" data-state="pending" role="group" aria-labelledby="ap1">
+  <div class="inst-approval-head" id="ap1">Агент просит разрешение</div>
+  <div class="inst-approval-what">rm -rf build/ &amp;&amp; npm run build</div>
+  <ul class="inst-approval-effects">
+    <li>Удалит каталог <code>build/</code> целиком — 1 284 файла</li>
+    <li data-tone="warn">Необратимо: содержимое не попадает в корзину</li>
+    <li>Пересборка займёт около 40 с</li>
+  </ul>
+  <div class="inst-approval-actions">
+    <button class="inst-btn inst-btn--primary inst-btn--sm" type="button">Разрешить</button>
+    <button class="inst-btn inst-btn--sm" type="button">Отклонить</button>
+    <button class="inst-btn inst-btn--ghost inst-btn--sm" type="button">Разрешать всегда</button>
+  </div>
+</div>
+```
+
 ## Справочник
 
 ### Классы

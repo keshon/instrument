@@ -75,6 +75,98 @@ source: src/agent.css
 не «…» и не «Показать ещё»: пользователь должен знать, сколько он не видит,
 чтобы решить, стоит ли разворачивать.
 
+## Собранный экран
+
+Транскрипт прогона — то, ради чего шаг существует. Порознь шаги выглядят
+списком, вместе — рассказом о том, что делала машина.
+
+Что проверить руками:
+
+- **раскройте шаг** — это `<details>`, и раскрытие ничего не стоило: ни
+  строки скрипта, ни `aria-expanded` руками;
+- **найдите текст поиском по странице** (`Ctrl+F`) — браузер раскроет
+  свёрнутый шаг сам. Своя реализация это теряет;
+- **свёрнутый вывод называет своё число словами.** «Показать все 240 строк»,
+  а не «…»: пользователь должен знать, сколько он не видит, чтобы решить,
+  разворачивать ли.
+
+```html preview context
+<div class="inst-panel">
+      <div class="inst-panel-body inst-panel-body--list">
+        <details class="inst-step" data-state="ok">
+          <summary class="inst-step-head">
+            <span class="inst-step-twist"></span><span class="inst-dot"></span>
+            <span class="inst-step-name">read_file</span>
+            <span class="inst-step-sub inst-u-truncate">terrain/heightmap.ts</span>
+            <span class="inst-step-meta">0,3 с</span>
+          </summary>
+          <div class="inst-step-body">
+            <div class="inst-code">{ "path": "terrain/heightmap.ts", "range": [1, 240] }</div>
+            <div class="inst-output" data-truncated="true">
+              <pre class="inst-code inst-output-body">export function decodeHeightmap(buf: ArrayBuffer): Float32Array {
+  const view = new DataView(buf);
+  const size = view.getUint32(0, true);
+  const out = new Float32Array(size * size);
+  for (let i = 0; i &lt; out.length; i++) {
+    out[i] = view.getUint16(4 + i * 2, true) / 65535;
+  }
+  return out;
+}
+
+export function sampleBilinear(map: Float32Array, size: number, x: number, y: number) {
+  const x0 = Math.floor(x), y0 = Math.floor(y);
+  const x1 = Math.min(x0 + 1, size - 1), y1 = Math.min(y0 + 1, size - 1);
+  const fx = x - x0, fy = y - y0;
+  return  map[y0 * size + x0] * (1 - fx) * (1 - fy)
+        + map[y0 * size + x1] * fx * (1 - fy)
+        + map[y1 * size + x0] * (1 - fx) * fy
+        + map[y1 * size + x1] * fx * fy;
+}</pre>
+              <button class="inst-output-more" type="button">Показать все 240 строк</button>
+            </div>
+          </div>
+        </details>
+
+        <details class="inst-step" data-state="running" open>
+          <summary class="inst-step-head">
+            <span class="inst-step-twist"></span><span class="inst-dot"></span>
+            <span class="inst-step-name">place_resources</span>
+            <span class="inst-step-sub inst-u-truncate">проход 3 из 3</span>
+            <span class="inst-step-meta">14,0 с</span>
+          </summary>
+          <div class="inst-step-body">
+            <div class="inst-stack inst-stack--tight">
+              <div class="inst-skeleton inst-skeleton--title"></div>
+              <div class="inst-skeleton inst-skeleton--line"></div>
+              <div class="inst-skeleton inst-skeleton--short"></div>
+            </div>
+          </div>
+        </details>
+
+        <details class="inst-step" data-state="failed">
+          <summary class="inst-step-head">
+            <span class="inst-step-twist"></span><span class="inst-dot"></span>
+            <span class="inst-step-name">validate_paths</span>
+            <span class="inst-step-sub inst-u-truncate">3 узла недостижимы</span>
+            <span class="inst-step-meta">1,2 с</span>
+          </summary>
+          <div class="inst-step-body">
+            <div class="inst-failure" role="alert">
+              <div class="inst-failure-head">Валидация путей не прошла</div>
+              <div class="inst-failure-reason">PathError: unreachable nodes (18,204) (19,204) (20,205) — no navmesh link from region 7</div>
+              <div class="inst-failure-tried">Попыток: 3, последняя в 19:38:16</div>
+              <div class="inst-failure-actions">
+                <button class="inst-btn inst-btn--sm" type="button">Повторить</button>
+                <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Пропустить шаг</button>
+                <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Открыть регион 7</button>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+```
+
 ## Справочник
 
 ### Классы

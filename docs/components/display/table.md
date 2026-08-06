@@ -118,6 +118,71 @@ needs-js: Сама сортировка, «выбрать всё» и дейст
 `<tfoot>` идёт в разметке **после** `<tbody>` и отбивается сверху. Строка
 итогов — не последняя строка данных, и путать их нельзя.
 
+## Собранный экран
+
+Таблица показывает себя только целиком: сортировка, выбор строк, действия и
+итоги по отдельности выглядят как четыре независимых класса, а вместе — как
+один инструмент.
+
+Что проверить руками:
+
+- **наведите на строку** — появятся действия. Теперь пройдите по строкам
+  `Tab`: действия появятся снова. Это разные события (`:hover` и
+  `:focus-within`), и второе существует ровно затем, чтобы действие,
+  видимое только под курсором, не пропадало для клавиатуры;
+- **выделите строку** и наведите на неё — подсветки складываются, потому
+  что выделение полупрозрачно;
+- **прокрутите тело панели** — шапка останется на месте.
+
+```html preview context
+<div class="inst-panel">
+  <div class="inst-panel-header">
+    <span class="inst-panel-title">Очередь агентов</span>
+    <span class="inst-panel-actions"><span class="inst-badge">7 из 12</span></span>
+  </div>
+  <div class="inst-panel-body inst-panel-body--list">
+    <div class="tree-none" role="listbox" aria-label="Очередь агентов" id="queue">
+      <div class="inst-task" role="option" data-state="done" aria-selected="false" tabindex="-1">
+        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Разбор карты высот</span>
+          <span class="inst-task-sub">terrain/heightmap.ts · 4 файла</span></span>
+        <span class="inst-task-meta">2,1 с</span>
+      </div>
+      <div class="inst-task" role="option" data-state="done" aria-selected="false" tabindex="-1">
+        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Генерация биомов</span>
+          <span class="inst-task-sub">world/biomes.ts · 11 файлов</span></span>
+        <span class="inst-task-meta">8,4 с</span>
+      </div>
+      <div class="inst-task" role="option" data-state="running" aria-selected="true" tabindex="0">
+        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Расстановка ресурсов</span>
+          <span class="inst-task-sub">идёт третий проход<span class="inst-caret"></span></span></span>
+        <span class="inst-task-meta">14,0 с</span>
+      </div>
+      <div class="inst-task" role="option" data-state="failed" aria-selected="false" tabindex="-1">
+        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Валидация путей</span>
+          <span class="inst-task-sub">3 узла недостижимы</span></span>
+        <span class="inst-task-meta">1,2 с</span>
+      </div>
+      <div class="inst-task" role="option" data-state="queued" aria-selected="false" tabindex="-1">
+        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Запекание навмеша</span>
+          <span class="inst-task-sub">ждёт валидацию</span></span>
+        <span class="inst-task-meta">—</span>
+      </div>
+      <div class="inst-task" role="option" data-state="skipped" aria-selected="false" tabindex="-1">
+        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Экспорт превью</span>
+          <span class="inst-task-sub">пропущено флагом</span></span>
+        <span class="inst-task-meta">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
 ## Справочник
 
 ### Классы

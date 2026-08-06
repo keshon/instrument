@@ -66,6 +66,34 @@ source: src/agent.css
 Как и свёрнутый вывод шага, участок **называет своё число словами**. Молча
 пропустить строки — то же враньё про объём.
 
+## Собранный экран
+
+Диф с шапкой, статистикой и свёрнутым участком.
+
+Что проверить руками: **выделите несколько строк и скопируйте**. В буфер
+уйдёт чистый код — без номеров строк и без знаков `+` и `−`. Номера несут
+`user-select: none`, знак рисуется псевдоэлементом. Диф, из которого нельзя
+скопировать код, бесполезен ровно в тот момент, когда он нужен.
+
+```html preview context
+<div class="inst-diff">
+  <div class="inst-diff-head">
+    <span class="inst-diff-path">src/world/biomes.ts</span>
+    <span class="inst-diff-stat"><span data-kind="add">+3</span> <span data-kind="del">−2</span></span>
+  </div>
+  <div class="inst-diff-body">
+    <div class="inst-diff-fold">свёрнуто 118 строк</div>
+    <div class="inst-diff-line"><span class="inst-diff-num">119</span><span class="inst-diff-num">119</span><span class="inst-diff-code">  const seed = opts.seed ?? 0;</span></div>
+    <div class="inst-diff-line" data-kind="del"><span class="inst-diff-num">120</span><span class="inst-diff-num"></span><span class="inst-diff-code">  const noise = simplex2(seed);</span></div>
+    <div class="inst-diff-line" data-kind="del"><span class="inst-diff-num">121</span><span class="inst-diff-num"></span><span class="inst-diff-code">  if (noise &gt; 0.5) return TUNDRA;</span></div>
+    <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">120</span><span class="inst-diff-code">  const noise = simplex2(seed, { octaves: 3 });</span></div>
+    <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">121</span><span class="inst-diff-code">  // тундра и степь перекрывались в 12 клетках — разводим по высоте</span></div>
+    <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">122</span><span class="inst-diff-code">  if (noise &gt; 0.5 &amp;&amp; height &gt; 0.72) return TUNDRA;</span></div>
+    <div class="inst-diff-line"><span class="inst-diff-num">122</span><span class="inst-diff-num">123</span><span class="inst-diff-code">  return STEPPE;</span></div>
+  </div>
+</div>
+```
+
 ## Справочник
 
 ### Классы
