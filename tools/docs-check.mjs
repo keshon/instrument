@@ -67,8 +67,10 @@ function walk(dir) {
 }
 
 const pages = walk(DOCS).filter(p => !p.includes('internal'));
+const pageSet = new Set(pages.map(p => p.replace(/\\/g, '/')));
 const documented = new Set();
 const problems = [];
+const pending = new Map();   /* ссылка → откуда. Ещё не написанные страницы */
 
 for (const p of pages) {
   const md = readFileSync(p, 'utf8');
@@ -80,6 +82,19 @@ for (const p of pages) {
     for (const m of line.matchAll(/\binst-[a-z0-9-]+/g)) {
       documented.add(m[0]);
       if (!kit.has(m[0])) problems.push(`${at}  класса нет в ките: .${m[0]}`);
+    }
+
+    /* Ссылки между страницами. Не «ошибка» и не «метрика», а третий вид:
+       ссылка на ещё не написанную страницу — нормальный след недоделанной
+       работы, но забытая — дыра, которую никто не заметит, пока читатель в
+       неё не провалится. Поэтому они собираются отдельным списком. */
+    for (const m of line.matchAll(/\]\((\.[^)#]+\.md)(#[^)]*)?\)/g)) {
+      const target = new URL(m[1], 'file:///' + p.replace(/\\/g, '/')).pathname.replace(/^\/([A-Z]:)/, '$1');
+      if (!pageSet.has(target.replace(/\\/g, '/'))) {
+        const rt = relative(ROOT, target).replace(/\\/g, '/');
+        if (!pending.has(rt)) pending.set(rt, []);
+        pending.get(rt).push(at);
+      }
     }
 
     for (const m of line.matchAll(/data-([a-z-]+)="([^"]*)"/g)) {
@@ -106,11 +121,21 @@ if (problems.length) {
   console.log();
 }
 
-if (undocumented.length) {
-  console.log(`── без страницы (${undocumented.length}) ──`);
-  console.log('  ' + undocumented.map(c => '.' + c).join(' ') + '\n');
+if (pending.size) {
+  console.log(`── ссылки на ещё не написанные страницы (${pending.size}) ──`);
+  [...pending].sort().forEach(([t, from]) => console.log(`  ${t}  ← ${from.length}`));
+  console.log();
 }
 
-if (!problems.length && !undocumented.length) console.log('· документация и кит сходятся полностью');
+if (undocumented.length && process.argv.includes('-v')) {
+  console.log(`── без страницы (${undocumented.length}) ──`);
+  console.log('  ' + undocumented.map(c => '.' + c).join(' ') + '\n');
+} else if (undocumented.length) {
+  console.log(`── без страницы: ${undocumented.length} классов (список — с ключом -v) ──\n`);
+}
+
+if (!problems.length && !undocumented.length && !pending.size) {
+  console.log('· документация и кит сходятся полностью');
+}
 
 process.exit(problems.length ? 1 : 0);
