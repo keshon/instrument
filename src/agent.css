@@ -195,8 +195,12 @@
 
 .inst-diff-path { font-family: var(--font-mono); min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .inst-diff-stat { margin-inline-start: auto; color: var(--text-muted); white-space: nowrap; }
-.inst-diff-stat > .inst-is-add { color: var(--ok-text); }
-.inst-diff-stat > .inst-is-del { color: var(--err-text); }
+/* Тот же data-kind, что и у строк дифа ниже, а не собственные классы.
+   Раньше здесь стояли .is-add / .is-del — одна смысловая ось, записанная
+   двумя способами в сорока строках друг от друга. Расхождение таких пар
+   наступает не «если», а «когда».                                         */
+.inst-diff-stat > [data-kind="add"] { color: var(--ok-text); }
+.inst-diff-stat > [data-kind="del"] { color: var(--err-text); }
 
 .inst-diff-body {
   font-family: var(--font-mono);
@@ -484,6 +488,16 @@
   .inst-table tbody tr[aria-selected="true"] td {
     background: Highlight;
     color: HighlightText;
+  }
+
+  /* Кольцо занятой кнопки. Без этого правила forced-colors красит ВСЕ
+     четыре рамки в CanvasText, кольцо становится равномерным — и вращение
+     перестаёт быть видно вовсе. Дуга обязана отличаться от дорожки, иначе
+     индикатор не индицирует.                                             */
+  .inst-btn[aria-busy="true"]::after {
+    forced-color-adjust: none;
+    border-color: ButtonFace;
+    border-block-start-color: ButtonText;
   }
 
   /* Маскированные глифы в forced-colors теряют цвет фона — переводим их

@@ -35,6 +35,11 @@
      это амплитуда и частота, а не сам факт движения.                      */
 
   .inst-spinner { animation-duration: 2.4s; }
+  /* Кольцо занятой кнопки крутится теми же кадрами, значит и замедляется
+     вместе со спиннером. Оно тут не для красоты: пока оно вращается,
+     подпись кнопки погашена, и остановленное кольцо превращает кнопку в
+     пустой прямоугольник без единого признака, что что-то происходит. */
+  .inst-btn[aria-busy="true"]::after { animation-duration: 2.4s; }
   .inst-skeleton { animation-duration: 3s; }
   .inst-meter[data-state="indeterminate"] > .inst-meter-fill { animation-duration: 3s; }
 

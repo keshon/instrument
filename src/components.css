@@ -110,7 +110,50 @@
      видно, какое именно действие недоступно.                              */
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  &[aria-busy="true"] { pointer-events: none; }
+  /* Занятость — на aria-busy, а не на своём data-state. У кнопки нет
+     жизненного цикла, как у строки очереди или шага: есть переходный флаг
+     «действие пошло». Платформа для него слово уже придумала, и стили кита
+     завязаны на ARIA именно затем, чтобы состояние жило в одном месте.
+
+     Подпись НЕ убирается из потока, а гасится цветом: ширина кнопки должна
+     остаться прежней, иначе полоса действий дёргается в момент нажатия —
+     ровно тогда, когда пользователь смотрит на курсор. Заодно подпись
+     остаётся скринридеру и не требует запасного aria-label.
+
+     Кольцо собрано из рамки, а не из .inst-spinner: тот — настоящий SVG из
+     двух окружностей, псевдоэлементом его не вставить. Токен размера,
+     толщина и кадры анимации у них общие, поэтому разойтись не могут.
+
+     Кнопка остаётся фокусируемой намеренно. disabled выбрасывает её из
+     порядка обхода прямо под пальцами у того, кто пришёл с клавиатуры;
+     pointer-events снимает только мышь, а защита от повторного нажатия —
+     на обработчике: это поведение, а не оформление.                       */
+  &[aria-busy="true"] {
+    position: relative;
+    pointer-events: none;
+    color: transparent;
+
+    &::after {
+      content: "";
+      position: absolute;
+      /* Центр задан явно. Абсолютный потомок флекс-контейнера встаёт по его
+         align/justify «сам», но это тихо ломается от первого же варианта с
+         другой раскладкой — например, у иконочной кнопки.
+
+         translate отдельным свойством, а не в transform: анимация крутит
+         rotate, и в одном transform они бы затирали друг друга.           */
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      translate: -50% -50%;
+      inline-size: var(--size-spinner);
+      block-size: var(--size-spinner);
+      border: calc(var(--stroke) * 2) solid
+              color-mix(in oklab, var(--btn-fg) 25%, transparent);
+      border-block-start-color: var(--btn-fg);
+      border-radius: var(--radius-full);
+      animation: inst-spin 0.7s linear infinite;
+    }
+  }
 }
 
 .inst-btn--primary {
@@ -322,22 +365,27 @@
   letter-spacing: var(--tracking-normal);
 }
 
-/* НАПРАВЛЕНИЕ и ПОЛЯРНОСТЬ — два разных факта, поэтому два атрибута.
+/* НАПРАВЛЕНИЕ и ОЦЕНКА — два разных факта, поэтому два атрибута.
    Раньше классы назывались .is-up / .is-down, а красили оценку: «↓ 18%»
    времени это хорошо, «↑ 5 новых» предупреждений это плохо. Класс,
    названный стрелкой и означающий оценку, — гарантированная ошибка
-   применения.                                                            */
+   применения.
+
+   Оценку несёт data-tone, а не собственный data-polarity. Полярность была
+   третьим именем для тех же трёх цветов: good/bad/warn против ok/error/warn,
+   причём warn совпадал буквально. Два способа получить один и тот же
+   --warn-text — это два места, где он однажды разойдётся.
+
+   Отсюда и одна строка вместо трёх правил: дельта просто читает --tone-ink,
+   который тон уже проставил. Побочно она получила neutral и running, до
+   которых у полярности слов не было.                                      */
 .inst-metric-delta {
   margin-block-start: var(--space-2);
   font-size: var(--text-xs);
-  color: var(--text-muted);
+  color: var(--tone-ink, var(--text-muted));
   display: flex;
   align-items: center;
   gap: var(--space-2);
-
-  &[data-polarity="good"] { color: var(--ok-text); }
-  &[data-polarity="bad"]  { color: var(--err-text); }
-  &[data-polarity="warn"] { color: var(--warn-text); }
 
   &[data-dir]::before {
     content: "";

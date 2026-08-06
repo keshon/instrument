@@ -92,6 +92,14 @@
   .row--slider > .inst-slider { flex: 1 1 auto; inline-size: auto; min-inline-size: 0; }
   .row--slider > output { min-inline-size: 3ch; text-align: end; }
 
+  /* Та же причина, что и у слайдера: поле и селект тянутся на 100%, и в ряду
+     каждый выталкивает соседа на новую строку. Здесь ряд и есть содержание
+     демонстрации — он показывает, что поле, селект и кнопка одного размера
+     встают на одну высоту. */
+  .size-row { flex-wrap: nowrap; align-items: center; }
+  .size-row > .inst-input { flex: 0 1 7rem; inline-size: auto; min-inline-size: 0; }
+  .size-row > .inst-select-wrap { flex: 0 1 9rem; inline-size: auto; min-inline-size: 0; }
+
   .ramp { display: grid; grid-template-columns: repeat(15, 1fr); gap: 2px; }
   .ramp > div { block-size: 34px; border-radius: var(--radius-xs); box-shadow: inset 0 0 0 var(--hairline) var(--border-subtle); }
   .ramp--6 { grid-template-columns: repeat(6, 1fr); }
@@ -608,6 +616,28 @@
       браузер никогда не рисует рамку тоньше физического пикселя, поэтому сдвиг на
       полпикселя оставлял видимое утолщение на каждом стыке.
     </p>
+
+    <h3 class="sub" id="button-busy">Занятая кнопка</h3>
+    <div class="inst-cluster">
+      <button class="inst-btn inst-btn--primary" type="button" aria-busy="true">Запустить</button>
+      <button class="inst-btn" type="button" aria-busy="true">Отмена</button>
+      <button class="inst-btn inst-btn--danger" type="button" aria-busy="true">Удалить</button>
+      <button class="inst-btn inst-btn--icon" type="button" aria-busy="true" aria-label="Обновить">
+        <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+      </button>
+    </div>
+    <p class="why">
+      Занятость живёт на <code>aria-busy</code>, а не на своём атрибуте: у кнопки нет
+      жизненного цикла, как у строки очереди, — есть переходный флаг «действие пошло»,
+      и слово для него платформа уже придумала. Подпись <b>не убирается из потока</b>,
+      а гасится цветом: ширина остаётся прежней, иначе полоса действий дёргается ровно
+      в тот момент, когда пользователь смотрит на курсор. Скринридеру подпись при этом
+      остаётся. Кнопка намеренно <b>сохраняет фокус</b>: <code>disabled</code> выбросил бы
+      её из порядка обхода прямо под пальцами у того, кто пришёл с клавиатуры.
+      <code>pointer-events</code> снимает только мышь — защита от повторного нажатия
+      живёт в обработчике, потому что это поведение, а не оформление.
+    </p>
+
     <h3 class="sub" id="segmented">Сегментированный контрол<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-1">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-1">Выбор, стрелки и бегущий tabindex</span></span></h3>
     <p class="why">
       Пара к группе кнопок, и путать их нельзя. <b>Группа кнопок</b> — это несколько
@@ -660,6 +690,36 @@
       рисуется <b>маской</b> на её псевдоэлементе — только так его цвет берётся токеном,
       а положение остаётся логическим и в RTL уезжает вместе с текстом. Общее правило
       кита: форму задаёт маска, цвет приходит токеном, внутри data-URI цвета не бывает.
+    </p>
+
+    <h3 class="sub" id="field-sizes">Размеры полей симметричны кнопочным</h3>
+    <div class="inst-stack inst-stack--tight narrow">
+      <div class="inst-cluster size-row">
+        <input class="inst-input inst-input--sm" value="sm" size="6" aria-label="Поле sm">
+        <span class="inst-select-wrap"><select class="inst-select inst-select--sm" aria-label="Селект sm"><option>sm</option></select></span>
+        <button class="inst-btn inst-btn--sm" type="button">sm</button>
+      </div>
+      <div class="inst-cluster size-row">
+        <input class="inst-input" value="md" size="6" aria-label="Поле md">
+        <span class="inst-select-wrap"><select class="inst-select" aria-label="Селект md"><option>md</option></select></span>
+        <button class="inst-btn" type="button">md</button>
+      </div>
+      <div class="inst-cluster size-row">
+        <input class="inst-input inst-input--lg" value="lg" size="6" aria-label="Поле lg">
+        <span class="inst-select-wrap"><select class="inst-select inst-select--lg" aria-label="Селект lg"><option>lg</option></select></span>
+        <button class="inst-btn inst-btn--lg" type="button">lg</button>
+      </div>
+      <textarea class="inst-textarea inst-textarea--sm" aria-label="Текстовое поле sm">textarea --sm</textarea>
+      <textarea class="inst-textarea inst-textarea--lg" aria-label="Текстовое поле lg">textarea --lg</textarea>
+    </div>
+    <p class="why">
+      Шкала симметрична не ради порядка в таблице: поле и кнопка стоят <b>в одной
+      строке формы</b>, и пока у поля был только <code>--sm</code>, размер <code>lg</code>
+      существовал у кнопки и не существовал у соседа — форма с крупными контролами не
+      собиралась вовсе. Меняются высота и кегль, но не горизонтальный отступ: у поля
+      текст прижат к краю, а не отцентрован, поэтому отступу незачем расти вместе с
+      высотой. У <code>textarea</code> множитель 2,5 считается от своей высоты контрола —
+      «два с половиной контрола высотой» и есть определение текстового поля.
     </p>
 
     <h3 class="sub" id="toggles">Переключатели</h3>
@@ -1139,12 +1199,12 @@
       <div class="inst-metric">
         <div class="inst-metric-label">Время прогона</div>
         <div class="inst-metric-value">42<span class="inst-metric-unit">&nbsp;с</span></div>
-        <div class="inst-metric-delta" data-dir="down" data-polarity="good">18% к прошлому</div>
+        <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% к прошлому</div>
       </div>
       <div class="inst-metric">
         <div class="inst-metric-label">Тесты пройдены</div>
         <div class="inst-metric-value">248<span class="inst-metric-unit">/251</span></div>
-        <div class="inst-metric-delta" data-polarity="warn">3 падают</div>
+        <div class="inst-metric-delta" data-tone="warn">3 падают</div>
       </div>
       <div class="inst-metric">
         <div class="inst-metric-label">Размер бандла</div>
@@ -1154,7 +1214,7 @@
       <div class="inst-metric">
         <div class="inst-metric-label">Предупреждений</div>
         <div class="inst-metric-value">12</div>
-        <div class="inst-metric-delta" data-dir="up" data-polarity="bad">5 новых</div>
+        <div class="inst-metric-delta" data-dir="up" data-tone="error">5 новых</div>
       </div>
     </div>
     <p class="why">
@@ -1593,7 +1653,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
     <div class="inst-diff">
       <div class="inst-diff-head">
         <span class="inst-diff-path">src/world/biomes.ts</span>
-        <span class="inst-diff-stat"><span class="inst-is-add">+3</span> <span class="inst-is-del">−2</span></span>
+        <span class="inst-diff-stat"><span data-kind="add">+3</span> <span data-kind="del">−2</span></span>
       </div>
       <div class="inst-diff-body">
         <div class="inst-diff-fold">свёрнуто 118 строк</div>
