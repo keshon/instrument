@@ -24,8 +24,9 @@
     "./src/*": "./src/*"
   },
   "scripts": {
-    "check": "node tools/contrast.mjs",
+    "check": "node tools/contrast.mjs && node tools/docs-check.mjs",
     "check:contrast": "node tools/contrast.mjs",
+    "check:docs": "node tools/docs-check.mjs",
     "classes": "node tools/classes.mjs",
     "start": "python -m http.server 8321"
   },
