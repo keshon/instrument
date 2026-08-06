@@ -58,6 +58,6 @@ needs-js: Копирование в буфер
 ## Связанное
 
 [Лог](../../agent/log.md) · [Диф](../../agent/diff.md) ·
-[Вывод инструмента](../../agent/output.md) · [Типографика](../../foundations/typography.md)
+[Шаг и свёрнутый вывод](../../agent/step.md) · [Типографика](../../foundations/typography.md)
 
 Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
