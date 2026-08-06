@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ .Page.Title }} — instrument</title>
+<link rel="icon" type="image/svg+xml" href="/assets/mark.svg">
+<!-- Кит подключается ровно так же, как у потребителя: одной строкой. -->
+<link rel="stylesheet" href="/kit/kit.css">
+<link rel="stylesheet" href="/docs.css">
+<script>
+  /* Тема ставится до первой отрисовки, иначе страница успевает мигнуть
+     светлым. Три строки в head дешевле любого решения после загрузки. */
+  try {
+    var t = localStorage.getItem('instrument-theme');
+    if (t) document.documentElement.dataset.theme = t;
+    var d = localStorage.getItem('instrument-density');
+    if (d) document.documentElement.dataset.density = d;
+  } catch (e) {}
+</script>
+</head>
+<body>
+{{ .Sprite }}
+
+<a class="inst-skip-link" href="#main">Перейти к содержимому</a>
+
+<div class="inst-shell">
+  <aside class="inst-shell-aside" id="sidebar">
+    <a class="site-logo" href="/">
+      <svg class="site-logo-mark" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-grid"/></svg>
+      <span class="site-logo-name">instrument</span>
+    </a>
+
+    <nav class="inst-nav" aria-label="Разделы документации">
+      {{ range .Nav }}
+      <div class="inst-nav-group">
+        <span class="inst-nav-label">{{ .Label }}</span>
+        {{ range .Items }}
+        <a class="inst-nav-item" href="{{ .Route }}"{{ if eq3 .Route $.Page.Route }} aria-current="page"{{ end }}>{{ .Title }}</a>
+        {{ end }}
+      </div>
+      {{ end }}
+    </nav>
+  </aside>
+
+  <header class="inst-shell-header">
+    <button class="inst-btn inst-btn--sm inst-btn--icon site-burger" type="button"
+            aria-label="Разделы" aria-expanded="false" aria-controls="sidebar" data-burger>
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>
+    </button>
+
+    <div class="site-search">
+      <input class="inst-input inst-input--sm" type="search" placeholder="Поиск  /"
+             aria-label="Поиск по документации" autocomplete="off" data-search>
+      <div class="site-results inst-panel" role="listbox" aria-label="Результаты" hidden data-results></div>
+    </div>
+
+    <span class="inst-cluster-spacer"></span>
+
+    <div class="inst-segmented" role="radiogroup" aria-label="Плотность" data-density-picker>
+      <button type="button" role="radio" data-v="compact" aria-checked="false">Плотно</button>
+      <button type="button" role="radio" data-v="default" aria-checked="true">Обычно</button>
+      <button type="button" role="radio" data-v="comfortable" aria-checked="false">Свободно</button>
+    </div>
+
+    <span class="inst-select-wrap site-theme">
+      <select class="inst-select inst-select--sm" aria-label="Тема оформления" data-theme-picker>
+        <option value="">По системе</option>
+        <option value="light">Светлая тёплая</option>
+        <option value="light-cool">Светлая холодная</option>
+        <option value="dark">Тёмная глубокая</option>
+        <option value="dark-soft">Тёмная мягкая</option>
+      </select>
+    </span>
+  </header>
+
+  <main class="inst-shell-main" id="main">
+    <div class="site-layout{{ if .Page.Splash }} site-layout--splash{{ end }}">
+      <article class="inst-prose site-body">
+        <div class="inst-page-header">
+          <div class="inst-page-header-main">
+            <h1 class="inst-page-title">{{ .Page.Title }}</h1>
+            {{ if .Page.Group }}<p class="inst-page-desc">{{ .Page.Group }}</p>{{ end }}
+          </div>
+          {{ if .Page.NeedsJS }}
+          <div class="inst-page-actions">
+            <span class="inst-badge" data-tone="warn" title="{{ .Page.NeedsJS }}">нужен JS</span>
+          </div>
+          {{ end }}
+        </div>
+
+        {{ .Body }}
+
+        {{ if .Page.Source }}
+        <p class="site-source">Исходник: <code>{{ .Page.Source }}</code></p>
+        {{ end }}
+      </article>
+
+      {{ if .Page.TOC }}
+      <nav class="site-toc" aria-label="На этой странице">
+        <span class="inst-nav-label">На этой странице</span>
+        {{ range .Page.TOC }}
+        <a class="site-toc-item" data-level="{{ .Level }}" href="#{{ .ID }}">{{ .Text }}</a>
+        {{ end }}
+      </nav>
+      {{ end }}
+    </div>
+  </main>
+</div>
+
+<script src="/docs.js" defer></script>
+</body>
+</html>

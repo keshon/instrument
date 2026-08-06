@@ -6,12 +6,5 @@ Thumbs.db
 # Локальные настройки инструментов (launch.json остаётся в репозитории)
 .claude/settings.local.json
 
-# Сайт документации. Сборка есть только у него — кит остаётся без сборки.
-node_modules/
-site/dist/
-site/.astro/
-# Генерируется из ../src и ../assets скриптом sync-kit: единственный источник
-# там, здесь только копия.
-site/public/kit/
-site/public/assets/
-site/src/generated/
+# Сгенерированный сайт. Источник — docs/ и docsgen/, здесь только вывод.
+site/

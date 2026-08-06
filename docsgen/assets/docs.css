@@ -1,0 +1,199 @@
+/* Леса сайта документации. В кит не входят.
+
+   Правило то же, что у живой спецификации: здесь допустимо только то, что
+   принадлежит САЙТУ. Если для показа компонента понадобилось его
+   дооформить — значит, в ките дыра, и чинить надо кит.
+
+   Раскладку, навигацию, прозу, поля, кнопки и панель даёт кит. Здесь —
+   логотип, поиск, оглавление, сцена примера и подсветка кода. */
+
+/* Спрайт иконок стоит в теле страницы, потому что <use href="#i-..."> ищет
+   символ в том же документе. Без этого правила он остаётся видимым блоком
+   в 150px — дефолтной высоте SVG без атрибутов — и толкает вниз всю
+   оболочку. */
+.sprite { position: absolute; inline-size: 0; block-size: 0; overflow: hidden; }
+
+/* ── Шапка и логотип ────────────────────────────────────────────────────── */
+
+.site-logo {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  color: var(--text-primary); text-decoration: none;
+}
+.site-logo:hover { background: var(--surface-hover); }
+.site-logo-mark { flex: none; inline-size: 18px; block-size: 18px; color: var(--accent-mark); }
+.site-logo-name {
+  font-size: var(--text-lg); font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight); line-height: 1;
+}
+
+.site-burger { display: none; }
+
+/* ── Поиск ──────────────────────────────────────────────────────────────── */
+
+.site-search { position: relative; inline-size: min(28rem, 42vw); }
+
+.site-results {
+  position: absolute; inset-inline: 0; inset-block-start: calc(100% + var(--space-3));
+  z-index: var(--z-popover);
+  max-block-size: 60vh; overflow: auto;
+  box-shadow: var(--shadow-popover);
+}
+.site-results[hidden] { display: none; }
+
+.site-result {
+  display: block; padding: var(--space-4) var(--space-5);
+  color: inherit; text-decoration: none;
+}
+.site-result + .site-result { border-block-start: var(--hairline) solid var(--border-subtle); }
+.site-result:hover, .site-result[aria-selected="true"] { background: var(--surface-hover); }
+.site-result-title { font-weight: var(--weight-medium); }
+.site-result-group { font-size: var(--text-xs); color: var(--text-muted); }
+.site-result-empty { padding: var(--space-5); color: var(--text-muted); font-size: var(--text-sm); }
+
+.site-theme { inline-size: 11rem; flex: none; }
+
+/* ── Раскладка страницы ─────────────────────────────────────────────────── */
+
+.site-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 14rem;
+  gap: var(--space-9);
+  max-inline-size: var(--container-max);
+  margin-inline: auto;
+  padding: var(--space-7) var(--space-8) var(--space-10);
+}
+.site-layout--splash { grid-template-columns: minmax(0, 1fr); }
+
+/* Проза ограничена 68ch — это мера читаемости. Но живой пример и таблица
+   справочника меряются не строкой, а содержимым, поэтому им разрешено
+   выходить на всю колонку. */
+.site-body { max-inline-size: none; }
+.site-body > :is(p, ul, ol, blockquote, h2, h3, h4) { max-inline-size: 68ch; }
+
+.site-source {
+  margin-block-start: var(--space-9);
+  padding-block-start: var(--space-5);
+  border-block-start: var(--hairline) solid var(--border-subtle);
+  font-size: var(--text-sm); color: var(--text-muted);
+}
+
+/* ── Оглавление ─────────────────────────────────────────────────────────── */
+
+.site-toc {
+  position: sticky; inset-block-start: var(--space-7);
+  align-self: start; display: flex; flex-direction: column; gap: var(--space-1);
+  max-block-size: calc(100dvh - var(--space-10)); overflow: auto;
+  font-size: var(--text-sm);
+}
+.site-toc-item {
+  padding: var(--space-2) var(--space-4);
+  border-inline-start: var(--size-marker) solid transparent;
+  color: var(--text-secondary); text-decoration: none;
+}
+.site-toc-item[data-level="3"] { padding-inline-start: var(--space-7); font-size: var(--text-xs); }
+.site-toc-item:hover { color: var(--text-primary); }
+.site-toc-item[aria-current="true"] {
+  border-inline-start-color: var(--accent-mark); color: var(--text-primary);
+}
+
+/* ── Живой пример ───────────────────────────────────────────────────────── */
+
+/* Сцена БЕЗ рамки, и это не экономия. Панель и карточка приносят свою, и
+   рамка вокруг рамки — ровно то, что кит запрещает у ряда метрик: она
+   превращает одну группу в два объекта. Сцену обозначает поверхность. */
+.demo {
+  margin-block: var(--space-6);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+
+.demo-stage {
+  display: flex; flex-wrap: wrap; align-items: flex-start;
+  gap: var(--space-5);
+  padding: var(--space-7);
+  font-size: var(--text-sm); line-height: var(--leading-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Блочное занимает всю сцену, а не жмётся в ряд. */
+.demo-stage > :is(.inst-panel, .inst-card, .inst-table, .inst-form, .inst-log,
+                  .inst-diff, .inst-approval, .inst-failure, .inst-calendar,
+                  .inst-timeline, .inst-lanes, .inst-budget, .inst-tree,
+                  .inst-empty, .inst-banner, .inst-note, .inst-metric-row,
+                  .inst-stack, .inst-field, .inst-props, .inst-kv, .inst-shell,
+                  .inst-steps, .inst-stepper, [role="listbox"], [role="grid"],
+                  [role="tree"], [role="log"]) { flex: 1 1 100%; }
+
+/* ── Код ────────────────────────────────────────────────────────────────── */
+
+.code-block { position: relative; }
+.code-block pre {
+  margin: 0; overflow: auto; scrollbar-gutter: stable;
+  padding: var(--space-5) var(--pad-panel);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs); line-height: 1.6;
+}
+.code-block--demo pre { border-radius: 0; border-block-start: var(--hairline) solid var(--border); }
+.code-block code { font-size: inherit; }
+
+.code-copy {
+  position: absolute; inset-block-start: var(--space-4); inset-inline-end: var(--space-4);
+  opacity: 0; transition: opacity var(--dur-1) var(--ease-out);
+}
+.code-block:hover .code-copy, .code-copy:focus-visible { opacity: 1; }
+
+/* Подсветка на три цвета из палитры кита. Шестьдесят цветов на макете из
+   хайрлайнов кричали бы громче кода, который подсвечивают. */
+.t-tag  { color: var(--accent-text); font-weight: var(--weight-normal); }
+.t-attr { color: var(--ok-text);     font-weight: var(--weight-normal); }
+.t-val  { color: var(--text-primary); font-weight: var(--weight-normal); }
+.t-com  { color: var(--text-faint);  font-style: normal; }
+
+/* ── Таблицы справочника ────────────────────────────────────────────────── */
+
+.site-body table {
+  inline-size: 100%; border-collapse: collapse;
+  font-size: var(--text-sm); line-height: var(--leading-ui);
+  margin-block: var(--space-6);
+}
+.site-body th {
+  text-align: start; font-weight: var(--weight-normal); color: var(--text-muted);
+  padding: var(--space-3) var(--pad-cell-x);
+  border-block-end: var(--hairline) solid var(--border);
+  white-space: nowrap;
+}
+.site-body td {
+  padding: var(--row-pad-y) var(--pad-cell-x);
+  border-block-end: var(--hairline) solid var(--border-subtle);
+  vertical-align: baseline;
+}
+
+.site-body blockquote {
+  margin-block: var(--space-6);
+  padding: var(--space-5) var(--pad-panel);
+  border-inline-start: var(--size-marker) solid var(--warn-text);
+  background: var(--warn-bg);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm); line-height: var(--leading-ui);
+}
+.site-body blockquote > * + * { margin-block-start: var(--space-4); }
+
+.site-body :is(h2, h3, h4) { scroll-margin-block-start: var(--space-6); }
+.site-body h2 { margin-block-start: var(--space-9); }
+
+/* ── Узкий экран ────────────────────────────────────────────────────────── */
+
+@media (width < 60rem) {
+  .site-layout { grid-template-columns: minmax(0, 1fr); padding-inline: var(--space-6); }
+  .site-toc { display: none; }
+  .site-burger { display: inline-flex; }
+  .site-search { inline-size: auto; flex: 1 1 auto; }
+  .inst-shell-aside { display: none; }
+  .inst-shell:has(.site-burger[aria-expanded="true"]) .inst-shell-aside {
+    display: block; grid-area: main; z-index: var(--z-sticky);
+    background: var(--surface-raised);
+  }
+}

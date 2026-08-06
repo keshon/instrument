@@ -9,8 +9,9 @@
     },
     {
       "name": "docs",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "site", "run", "dev", "--", "--port", "4321"],
+      "runtimeExecutable": "go",
+      "runtimeArgs": ["run", ".", "-serve", ":4321"],
+      "cwd": "docsgen",
       "port": 4321
     }
   ]
