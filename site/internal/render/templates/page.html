@@ -34,7 +34,9 @@
     <nav class="inst-nav" aria-label="Разделы документации">
       {{ range .Nav }}
       <div class="inst-nav-group">
-        <span class="inst-nav-label">{{ .Label }}</span>
+        <span class="inst-nav-label">
+          {{ if .Icon }}<svg class="inst-icon" aria-hidden="true"><use href="#{{ .Icon }}"/></svg>{{ end }}
+          {{ .Label }}</span>
         {{ range .Items }}
         <a class="inst-nav-item" href="{{ .Route }}"{{ if same .Route $.Page.Route }} aria-current="page"{{ end }}>{{ .Title }}</a>
         {{ end }}
@@ -42,6 +44,29 @@
       {{ end }}
     </nav>
   </aside>
+  <script>
+    /* Прокрутка боковой колонки восстанавливается ЗДЕСЬ, а не в docs.js.
+
+       Каждый переход — полная загрузка документа, и колонка отматывается
+       в начало: на семидесяти пунктах это значит скроллить заново после
+       каждого клика. Восстановление отложенным скриптом дало бы прыжок —
+       колонка успела бы отрисоваться сверху. Здесь она уже в DOM, но ещё
+       не показана, поэтому переход незаметен. */
+    (() => {
+      const el = document.getElementById('sidebar');
+      try {
+        const y = sessionStorage.getItem('instrument-aside');
+        if (y) el.scrollTop = +y;
+      } catch (e) {}
+      let t;
+      el.addEventListener('scroll', () => {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          try { sessionStorage.setItem('instrument-aside', el.scrollTop); } catch (e) {}
+        }, 120);
+      }, { passive: true });
+    })();
+  </script>
 
   <header class="inst-shell-header">
     <button class="inst-btn inst-btn--sm inst-btn--icon site-burger" type="button"
