@@ -101,4 +101,4 @@ el.indeterminate = true;   // «часть вложенных выбрана»
 [Выбираемая карточка](./choice-card.md) ·
 [Сегментированный контрол](../actions/segmented.md) · [Форма](./form.md)
 
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

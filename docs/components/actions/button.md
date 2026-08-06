@@ -231,4 +231,4 @@ source: src/components.css
 [Иконка](../../foundations/icons.md) · [Меню](../overlays/menu.md) ·
 [Полоса действий формы](../inputs/form.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

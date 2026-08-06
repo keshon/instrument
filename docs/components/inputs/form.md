@@ -147,4 +147,4 @@ source: src/forms.css
 [Переключатели](./toggles.md) · [Кнопка](../actions/button.md) ·
 [Панель](../display/panel.md)
 
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

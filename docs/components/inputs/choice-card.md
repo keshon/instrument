@@ -195,4 +195,4 @@ source: src/forms.css
 [Сегментированный контрол](../actions/segmented.md) ·
 [Карточка](../display/card.md) · [Бейдж](../display/badge.md)
 
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

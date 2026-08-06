@@ -106,4 +106,4 @@ source: src/overlay.css
 [Поповер](./popover.md) · [Меню](./menu.md) · [Сноска](../feedback/note.md) ·
 [Кнопка](../actions/button.md) · [Панель](../display/panel.md)
 
-Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

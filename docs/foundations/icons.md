@@ -181,4 +181,4 @@ Inline SVG на сетке 16, обводка `currentColor` толщиной 1.
 [Поповер и меню](../components/overlays/popover.md) ·
 [Пустое состояние](../components/feedback/empty.md)
 
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

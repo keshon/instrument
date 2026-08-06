@@ -140,4 +140,4 @@ source: src/components.css
 [Скелетон](./skeleton.md) · [Строка очереди](../../agent/task.md) ·
 [Шаг агента](../../agent/step.md) · [Движение](../../foundations/motion.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

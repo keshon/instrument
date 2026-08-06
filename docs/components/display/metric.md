@@ -111,4 +111,4 @@ source: src/components.css
 [Мера](../charts/meter.md) · [Спарклайн](../charts/sparkline.md) ·
 [Кольцо](../charts/ring.md) · [Таблица](./table.md) · [Карточка](./card.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

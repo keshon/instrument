@@ -203,4 +203,4 @@ source: src/tokens.css
 [Метрика](../components/display/metric.md) ·
 [Строка лога](../agent/log.md)
 
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

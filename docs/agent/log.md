@@ -94,4 +94,4 @@ needs-js: Копирование в буфер, виртуализация
 [Шаг](./step.md) · [Лента событий](../components/display/timeline.md) ·
 [Код](../components/display/code.md) · [Блок отказа](./failure.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

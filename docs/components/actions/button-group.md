@@ -65,4 +65,4 @@ source: src/components.css
 [Кнопка](./button.md) · [Сегментированный контрол](./segmented.md) ·
 [Меню](../overlays/menu.md) · [Тулбар](../navigation/toolbar.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

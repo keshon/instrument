@@ -1,0 +1,92 @@
+/* Стили самого сайта документации. В кит не входят.
+
+   То же правило, что у живой спецификации: здесь допустимы только леса
+   страницы. Если для показа компонента понадобилось его дооформить —
+   значит, в ките дыра, и чинить надо кит. */
+
+/* ── Сцена живого примера ──────────────────────────────────────────────────
+
+   Пример стоит НА поверхности страницы кита, а не на фоне Starlight: иначе
+   демонстрируется компонент в среде, которой у потребителя не будет.
+   Отсюда собственный фон и рамка — они принадлежат сцене, а не компоненту. */
+
+.preview {
+  margin-block: 1rem 0;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem 0.5rem 0 0;
+  border-block-end: none;
+  overflow: hidden;
+}
+
+.preview-stage {
+  padding: 1.25rem;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-ui);
+
+  /* Примеры почти всегда — ряд из нескольких элементов. Кластер здесь
+     принадлежит сцене, а не компоненту: в разметке примера его нет, и
+     появиться он там не должен. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+/* Блочные компоненты занимают всю ширину сцены, а не жмутся в ряд. */
+.preview-stage > :is(.inst-panel, .inst-card, .inst-table, .inst-form,
+                     .inst-log, .inst-diff, .inst-approval, .inst-failure,
+                     .inst-calendar, .inst-timeline, .inst-lanes, .inst-budget,
+                     .inst-tree, .inst-empty, .inst-banner, .inst-note,
+                     .inst-metric-row, .inst-stack, .inst-field, [role="listbox"],
+                     [role="grid"], [role="tree"]) {
+  flex: 1 1 100%;
+}
+
+/* Код под сценой смыкается с ней в один блок. */
+.preview + .expressive-code,
+.preview + pre {
+  margin-block-start: 0;
+}
+.preview + .expressive-code .frame,
+.preview + .expressive-code pre {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+/* ── Возврат размеров SVG киту ─────────────────────────────────────────────
+
+   Starlight в слое starlight.content объявляет
+
+     .sl-markdown-content :is(img, picture, video, canvas, svg, iframe)
+     { display: block; max-width: 100%; height: auto }
+
+   и внутри сцены это ломает всё, у чего высота задана токеном: иконка
+   вырастала до 150px — дефолтной высоты SVG без атрибутов.
+
+   Побеждает Starlight не специфичностью, а порядком слоёв, и это прямое
+   следствие главного обещания кита: «стили приложения всегда выигрывают».
+   Здесь приложением оказался сам движок документации.
+
+   `revert-layer` не помогает — он откатывает к слою Starlight, а не кита.
+   Поэтому размеры возвращаются поимённо. Список короткий и закрытый: в ките
+   ровно четыре компонента на SVG, и появление пятого — повод дописать сюда
+   строку, а не молча получить 150px. */
+
+.sl-markdown-content .preview-stage :is(svg, img, picture, video, canvas) {
+  display: revert;
+  max-inline-size: revert;
+}
+.sl-markdown-content .preview-stage .inst-icon      { block-size: var(--size-icon); }
+.sl-markdown-content .preview-stage .inst-icon--sm  { block-size: var(--size-chevron); }
+.sl-markdown-content .preview-stage .inst-spinner   { block-size: var(--size-spinner); }
+.sl-markdown-content .preview-stage .inst-ring      { block-size: var(--control-h-lg); }
+.sl-markdown-content .preview-stage .inst-sparkline { block-size: calc(var(--control-h-md) * 1.25); }
+
+/* ── Спрайт иконок ─────────────────────────────────────────────────────────
+   <use href="#i-refresh"> работает только от символов в ТОМ ЖЕ документе,
+   поэтому спрайт вклеивается в каждую страницу. Разметка примеров при этом
+   остаётся ровно такой, какую скопирует потребитель. */
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }

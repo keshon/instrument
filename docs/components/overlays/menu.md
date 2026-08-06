@@ -148,4 +148,4 @@ needs-js: Перемещение стрелками между пунктами 
 [Селект](../inputs/select.md) · [Панель инструментов](../navigation/toolbar.md) ·
 [Иконка](../../foundations/icons.md)
 
-Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

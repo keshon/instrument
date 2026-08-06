@@ -170,4 +170,4 @@ needs-js: Сама сортировка, «выбрать всё» и дейст
 [Очередь](../../agent/task.md) · [Пагинация](../navigation/pagination.md) ·
 [Пустое состояние](../feedback/empty.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

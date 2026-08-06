@@ -67,4 +67,4 @@ source: src/components.css
 [Панель](./panel.md) · [Метрика](./metric.md) ·
 [Выбираемая карточка](../inputs/choice-card.md) · [Сетка](../../layout/flow.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

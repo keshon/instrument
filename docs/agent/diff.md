@@ -110,4 +110,4 @@ source: src/agent.css
 [Шаг](./step.md) · [Запрос подтверждения](./approval.md) ·
 [Код](../components/display/code.md) · [Лог](./log.md)
 
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

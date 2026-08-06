@@ -138,4 +138,4 @@ source: src/layout.css
 [Оболочка](./shell.md) · [Примитивы потока](./flow.md) · [Сплит](./split.md) ·
 [Шапка экрана](./page-header.md) · [Панель](../components/display/panel.md)
 
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

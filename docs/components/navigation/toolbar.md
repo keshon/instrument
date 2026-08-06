@@ -116,4 +116,4 @@ source: src/components.css
 [Сегментированный контрол](../actions/segmented.md) · [Меню](../overlays/menu.md) ·
 [Секция](../../layout/section.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -107,4 +107,4 @@ source: src/layout.css
 [Вкладки](./tabs.md) · [Шапка экрана](../../layout/page-header.md) ·
 [Дерево](../../agent/tree.md)
 
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

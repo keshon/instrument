@@ -188,4 +188,4 @@ source: src/tokens.css
 [Поток](../layout/flow.md) · [Оболочка](../layout/shell.md) ·
 [Панель](../components/display/panel.md) · [Карточка](../components/display/card.md)
 
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

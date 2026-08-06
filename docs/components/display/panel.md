@@ -114,4 +114,4 @@ source: src/components.css
 [Оболочка](../../layout/shell.md) · [Поповер](../overlays/popover.md) ·
 [Таблица](./table.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

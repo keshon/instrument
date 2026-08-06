@@ -88,4 +88,4 @@ source: src/agent.css
 [Мера](../components/charts/meter.md) ·
 [Лента событий](../components/display/timeline.md)
 
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

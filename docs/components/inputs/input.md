@@ -177,4 +177,4 @@ source: src/forms.css
 [Поиск](./search.md) · [Числовое поле](./num-field.md) ·
 [Кнопка](../actions/button.md)
 
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

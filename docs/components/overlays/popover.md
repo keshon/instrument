@@ -133,4 +133,4 @@ source: src/overlay.css
 [Шторка](./sheet.md) · [Кнопка](../actions/button.md) ·
 [Слои и тени](../../foundations/elevation.md)
 
-Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

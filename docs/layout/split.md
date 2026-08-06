@@ -145,4 +145,4 @@ source: src/layout.css
 [Контейнер](./container.md) · [Панель](../components/display/panel.md) ·
 [Секция](./section.md)
 
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

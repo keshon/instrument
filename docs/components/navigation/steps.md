@@ -123,4 +123,4 @@ source: src/layout.css
 [Вкладки](./tabs.md) · [Лента](../display/timeline.md) ·
 [Форма](../inputs/form.md)
 
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

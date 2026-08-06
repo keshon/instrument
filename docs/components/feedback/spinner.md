@@ -106,4 +106,4 @@ source: src/components.css
 [Мера](../charts/meter.md) · [Кнопка](../actions/button.md) ·
 [Движение](../../foundations/motion.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

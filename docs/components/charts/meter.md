@@ -193,4 +193,4 @@ source: src/components.css
 [Метрика](../display/metric.md) · [Бюджет прогона](../../agent/budget.md) ·
 [Дорожка агента](../../agent/lane.md) · [Заглушка](../feedback/skeleton.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

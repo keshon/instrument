@@ -84,4 +84,4 @@ source: src/agent.css
 [Метрика](../components/display/metric.md) · [Дорожки прогонов](./lane.md) ·
 [Строка очереди](./task.md)
 
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

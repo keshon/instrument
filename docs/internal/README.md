@@ -16,4 +16,4 @@
 держится именно на этом.
 
 Актуальные документы — в корне: [README](../../README.md),
-[DESIGN](../../DESIGN.md), [ROADMAP](../../ROADMAP.md).
+[DESIGN](../about/design-principles.md), [ROADMAP](../../ROADMAP.md).

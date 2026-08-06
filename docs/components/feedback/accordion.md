@@ -123,4 +123,4 @@ source: src/components.css
 [Шаг агента](../../agent/step.md) · [Таймлайн](../display/timeline.md) ·
 [Форма](../inputs/form.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

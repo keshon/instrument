@@ -89,4 +89,4 @@ needs-js: Выбор, стрелки и бегущий tabindex
 [Вкладки](../navigation/tabs.md) · [Селект](../inputs/select.md) ·
 [Плотность](../../foundations/density.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

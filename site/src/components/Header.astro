@@ -1,0 +1,20 @@
+---
+/* Переопределение Header у Starlight: рядом со штатной шапкой в ТЕЛО
+   документа попадает спрайт иконок.
+
+   Именно в тело, а не в head: <use href="#i-refresh"> ищет символ в том же
+   документе, и символы внутри <head> браузер не отдаёт. Внешняя ссылка вида
+   sprite.svg#i-refresh работала бы, но тогда разметка примера перестала бы
+   совпадать с той, которую копирует потребитель, — а это ровно то, чего
+   страницы избегают.
+
+   Спрайт приходит через ?raw, то есть вшивается на этапе сборки. Читать его
+   в рантайме через readFileSync нельзя: после бандлинга import.meta.url
+   указывает на чанк, а не на исходник. Файл в src/generated/ создаёт
+   sync-kit из того же assets/sprite.svg, что и у живой спецификации. */
+import Default from '@astrojs/starlight/components/Header.astro';
+import sprite from '../generated/sprite.svg?raw';
+---
+
+<Default><slot /></Default>
+<Fragment set:html={sprite} />

@@ -166,4 +166,4 @@ source: src/data.css
 [Мера](./meter.md) · [Метрика](../display/metric.md) ·
 [Таблица](../display/table.md) · [Карточка](../display/card.md)
 
-Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

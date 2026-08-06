@@ -129,4 +129,4 @@ needs-js: Обработка решения и перевод блока в со
 [Модалка](../components/overlays/dialog.md) ·
 [Баннер](../components/feedback/banner.md)
 
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

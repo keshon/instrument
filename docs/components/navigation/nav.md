@@ -142,4 +142,4 @@ source: src/layout.css
 [Вкладки](./tabs.md) · [Бейдж](../display/badge.md) ·
 [Дерево](../../agent/tree.md) · [Иконка](../../foundations/icons.md)
 
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

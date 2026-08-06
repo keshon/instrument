@@ -124,4 +124,4 @@ primary, не имеет primary вовсе — см. [кнопку](../componen
 [Крошки](../components/navigation/breadcrumbs.md) ·
 [Вкладки](../components/navigation/tabs.md)
 
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

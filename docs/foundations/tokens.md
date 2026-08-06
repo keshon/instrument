@@ -309,4 +309,4 @@ source: src/tokens.css
 [Ритм и форма](./spacing.md) · [Высота и поверхности](./elevation.md) ·
 [Движение](./motion.md) · [Плотность](./density.md) · [Иконки](./icons.md)
 
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

@@ -155,4 +155,4 @@ source: src/layout.css
 [Метрика](../components/display/metric.md) ·
 [Тулбар](../components/navigation/toolbar.md)
 
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

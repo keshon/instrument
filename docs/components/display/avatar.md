@@ -69,4 +69,4 @@ source: src/data.css
 [Тег](./tag.md) · [Бейдж](./badge.md) · [Таблица](./table.md) ·
 [Лента событий](./timeline.md)
 
-Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -191,4 +191,4 @@ SVG. `aria-label` остаётся тем более — без подписи �
 [Палитра](./palette.md) · [Метрика](../display/metric.md) ·
 [Карточка](../display/card.md) · [Бюджет прогона](../../agent/budget.md)
 
-Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

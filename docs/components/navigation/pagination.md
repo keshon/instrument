@@ -111,4 +111,4 @@ source: src/layout.css
 [Панель](../display/panel.md) · [Тулбар](./toolbar.md) ·
 [Секция](../../layout/section.md)
 
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -1,0 +1,17 @@
+{
+  "name": "instrument-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "node scripts/sync-kit.mjs",
+    "predev": "node scripts/sync-kit.mjs",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.41.7",
+    "astro": "^7.2.0",
+    "unist-util-visit": "^5.1.0"
+  }
+}

@@ -114,4 +114,4 @@ source: src/components.css
 [Тег](./tag.md) · [Точка и состояния](../feedback/states.md) ·
 [Сноска и баннер](../feedback/banner.md) · [Строка очереди](../../agent/task.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

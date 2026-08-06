@@ -108,4 +108,4 @@ source: src/components.css
 [Блок отказа](../../agent/failure.md) · [Бейдж](../display/badge.md) ·
 [Форма](../inputs/form.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

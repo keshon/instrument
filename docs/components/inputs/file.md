@@ -180,4 +180,4 @@ needs-js: перетаскивание файлов в зону и список 
 [Выбираемая карточка](./choice-card.md) · [Мера](../charts/meter.md) ·
 [Кнопка](../actions/button.md) · [Сноска и баннер](../feedback/banner.md)
 
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -160,4 +160,4 @@ source: src/tokens.css
 [Панель](../components/display/panel.md) · [Карточка](../components/display/card.md) ·
 [Поповер](../components/overlays/popover.md) · [Модалка](../components/overlays/dialog.md)
 
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

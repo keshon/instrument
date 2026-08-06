@@ -87,4 +87,4 @@ code, kbd, samp, pre, .inst-u-mono {
 [Отступы и форма](./spacing.md) · [Код](../components/display/code.md) ·
 [Оболочка](../layout/shell.md)
 
-Исходник: `src/base.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/base.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

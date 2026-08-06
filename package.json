@@ -11,7 +11,7 @@
   "files": [
     "src",
     "README.md",
-    "DESIGN.md",
+    "docs/about/design-principles.md",
     "LICENSE"
   ],
   "main": "./src/kit.css",
@@ -27,7 +27,11 @@
     "check": "node tools/contrast.mjs && node tools/docs-check.mjs",
     "check:contrast": "node tools/contrast.mjs",
     "check:docs": "node tools/docs-check.mjs",
+    "check:site": "node tools/site-check.mjs",
+    "check:all": "npm run check && npm run docs:build && npm run check:site",
     "classes": "node tools/classes.mjs",
+    "docs:dev": "npm --prefix site run dev",
+    "docs:build": "npm --prefix site run build",
     "start": "python -m http.server 8321"
   },
   "keywords": [

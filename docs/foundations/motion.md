@@ -154,4 +154,4 @@ source: src/tokens.css
 [Кнопка](../components/actions/button.md) · [Мера](../components/charts/meter.md) ·
 [Шаг](../agent/step.md) · [Строка очереди](../agent/task.md)
 
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

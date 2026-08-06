@@ -148,4 +148,4 @@ source: src/forms.css
 [Тег](../display/tag.md) · [Таблица](../display/table.md) ·
 [Пустое состояние](../feedback/empty.md)
 
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

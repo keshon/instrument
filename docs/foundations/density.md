@@ -166,4 +166,4 @@ source: src/tokens.css
 [Таблица](../components/display/table.md) · [Строка очереди](../agent/task.md) ·
 [Форма](../components/inputs/form.md) · [Оболочка](../layout/shell.md)
 
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

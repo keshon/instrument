@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
+  <symbol id="i-refresh" viewBox="0 0 16 16"><path d="M13.5 8a5.5 5.5 0 1 1-1.7-3.97"/><path d="M13.6 2.6v3.2h-3.2"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 16 16"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5v-1a1.5 1.5 0 0 0-1.5-1.5H4a1.5 1.5 0 0 0-1.5 1.5V9A1.5 1.5 0 0 0 4 10.5h1"/></symbol>
+  <symbol id="i-move" viewBox="0 0 16 16"><path d="M8 2.5v11M2.5 8h11"/><path d="M6.2 4.3 8 2.5l1.8 1.8M6.2 11.7 8 13.5l1.8-1.8M4.3 6.2 2.5 8l1.8 1.8M11.7 6.2 13.5 8l-1.8 1.8"/></symbol>
+  <symbol id="i-rotate" viewBox="0 0 16 16"><path d="M2.9 8a5.1 5.1 0 1 0 1.6-3.7"/><path d="M2.4 3.2v3.1h3.1"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 16 16"><path d="M3 9.5v3.5h3.5M13 6.5V3H9.5"/><path d="M3 13 7 9M13 3l-4 4"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></symbol>
+  <symbol id="i-list" viewBox="0 0 16 16"><path d="M6 4h7.5M6 8h7.5M6 12h7.5M2.8 4h.01M2.8 8h.01M2.8 12h.01"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 16 16"><path d="M2.5 13.5h11"/><path d="M4.5 11V7M8 11V3.5M11.5 11V8.5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 16 16"><circle cx="6" cy="5.5" r="2.5"/><path d="M1.8 13.2a4.4 4.4 0 0 1 8.4 0"/><path d="M10.6 3.3a2.5 2.5 0 0 1 0 4.4M11.6 9.4a4.4 4.4 0 0 1 2.6 3.8"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.6M8 12.6v1.6M14.2 8h-1.6M3.4 8H1.8M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1M12.4 12.4l-1.1-1.1M4.7 4.7 3.6 3.6"/></symbol>
+</svg>

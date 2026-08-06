@@ -116,4 +116,4 @@ source: src/agent.css
 [Точка и каретка](./states.md) · [Мера](../charts/meter.md) ·
 [Шаг агента](../../agent/step.md)
 
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

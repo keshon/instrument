@@ -131,4 +131,4 @@ needs-js: Закрытие баннера. Кит не даёт крестика
 [Блок отказа](../../agent/failure.md) · [Бейдж](../display/badge.md) ·
 [Модалка](../overlays/dialog.md)
 
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

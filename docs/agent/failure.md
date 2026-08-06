@@ -85,4 +85,4 @@ source: src/agent.css
 [Баннер](../components/feedback/banner.md) ·
 [Пустое состояние](../components/feedback/empty.md) · [Лог](./log.md)
 
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../../DESIGN.md)
+Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

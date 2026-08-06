@@ -90,4 +90,4 @@ source: src/data.css
 [Лог](../../agent/log.md) · [Шаги мастера](../navigation/steps.md) ·
 [Таблица](./table.md) · [Бейдж](./badge.md)
 
-Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../../DESIGN.md)
+Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)
