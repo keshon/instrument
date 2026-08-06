@@ -71,6 +71,17 @@
 .site-body { max-inline-size: none; }
 .site-body > :is(p, ul, ol, blockquote, h2, h3, h4) { max-inline-size: 68ch; }
 
+/* Группа страницы уже стоит в боковой колонке и в заголовке была бы
+   повтором. Здесь она тише подзаголовка: подпись, а не описание. */
+.site-body .inst-page-desc {
+  font-size: var(--text-xs); color: var(--text-muted);
+  text-transform: none; letter-spacing: var(--tracking-normal);
+}
+
+/* Разделы боковой колонки разделены воздухом, а не линиями: одиннадцать
+   линеек в одной колонке читаются как решётка и спорят с содержимым. */
+.inst-shell-aside .inst-nav-group + .inst-nav-group { margin-block-start: var(--space-6); }
+
 .site-source {
   margin-block-start: var(--space-9);
   padding-block-start: var(--space-5);
@@ -102,14 +113,22 @@
 /* Сцена БЕЗ рамки, и это не экономия. Панель и карточка приносят свою, и
    рамка вокруг рамки — ровно то, что кит запрещает у ряда метрик: она
    превращает одну группу в два объекта. Сцену обозначает поверхность. */
+/* Сцена и код стоят на РАЗНЫХ поверхностях, и это не косметика: пока обе
+   были на --surface-sunken, они сливались в одно серое пятно, и читатель не
+   видел границы между «вот как выглядит» и «вот как написано».
+
+   Порядок поверхностей кита читается как стопка: sunken < page < raised.
+   Сцена берёт raised — она показывает работающее, то есть «сверху»; код
+   берёт sunken — он вреза́н в страницу. */
 .demo {
   margin-block: var(--space-6);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: var(--surface-sunken);
+  border: var(--hairline) solid var(--border-subtle);
 }
 
 .demo-stage {
+  background: var(--surface-raised);
   display: flex; flex-wrap: wrap; align-items: flex-start;
   gap: var(--space-5);
   padding: var(--space-7);
@@ -136,7 +155,7 @@
   border-radius: var(--radius-md);
   font-size: var(--text-xs); line-height: 1.6;
 }
-.code-block--demo pre { border-radius: 0; border-block-start: var(--hairline) solid var(--border); }
+.code-block--demo pre { border-radius: 0; border-block-start: var(--hairline) solid var(--border-subtle); }
 .code-block code { font-size: inherit; }
 
 .code-copy {
@@ -186,9 +205,16 @@
 
 /* ── Узкий экран ────────────────────────────────────────────────────────── */
 
-@media (width < 60rem) {
-  .site-layout { grid-template-columns: minmax(0, 1fr); padding-inline: var(--space-6); }
+/* Оглавление уходит первым и рано: до 78rem оно съедает 272px из рабочей
+   области, и колонка прозы становится у́же собственной меры читаемости.
+   Навигация по странице ценна, но не ценой самой страницы. */
+@media (width < 78rem) {
+  .site-layout { grid-template-columns: minmax(0, 1fr); }
   .site-toc { display: none; }
+}
+
+@media (width < 60rem) {
+  .site-layout { padding-inline: var(--space-6); }
   .site-burger { display: inline-flex; }
   .site-search { inline-size: auto; flex: 1 1 auto; }
   .inst-shell-aside { display: none; }

@@ -193,7 +193,11 @@ func writeCode(w util.BufWriter, raw, lang string, inDemo bool) {
 // Различать надо ровно три вещи: имя тега, имя атрибута и значение.
 
 var (
-	tagRe     = regexp.MustCompile(`&lt;/?([a-zA-Z][\w-]*)`)
+	// Захватываются ОТДЕЛЬНО открывающая часть и имя тега. Иначе поиск
+	// первой буквы попадает внутрь мнемоники: в «&lt;button» первая буква —
+	// это «l» из «lt», и подсветка разрывала саму мнемонику на «&» и
+	// «lt;button», после чего в коде проступали сущности.
+	tagRe     = regexp.MustCompile(`(&lt;/?)([a-zA-Z][\w-]*)`)
 	attrRe    = regexp.MustCompile(`([a-zA-Z-]+)=(&#34;[^&]*&#34;)`)
 	commentRe = regexp.MustCompile(`(?s)&lt;!--.*?--&gt;|/\*.*?\*/`)
 	cssPropRe = regexp.MustCompile(`(?m)^(\s*)([a-z-]+):`)
@@ -204,11 +208,7 @@ func highlight(raw, lang string) string {
 	s := htmlEscape(raw)
 	switch lang {
 	case "html":
-		s = tagRe.ReplaceAllString(s, `$0`)
-		s = tagRe.ReplaceAllStringFunc(s, func(m string) string {
-			i := strings.IndexAny(m, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-			return m[:i] + `<b class="t-tag">` + m[i:] + `</b>`
-		})
+		s = tagRe.ReplaceAllString(s, `$1<b class="t-tag">$2</b>`)
 		s = attrRe.ReplaceAllString(s, `<b class="t-attr">$1</b>=<b class="t-val">$2</b>`)
 	case "css":
 		s = cssPropRe.ReplaceAllString(s, `$1<b class="t-attr">$2</b>:`)
