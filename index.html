@@ -42,10 +42,10 @@
   }
   .needs-js { background: var(--warn-bg); color: var(--warn-text); }
   .needs-js { cursor: help; }
-  .sub > .tooltip, h2 > .tooltip { margin-inline-start: var(--space-4); vertical-align: middle; }
+  .sub > .inst-tooltip, h2 > .inst-tooltip { margin-inline-start: var(--space-4); vertical-align: middle; }
   /* Чип в шапке раздела: тултип раскрывается вниз, потому что сверху его
      срежет край области прокрутки. */
-  .sub > .tooltip > .tooltip-text, h2 > .tooltip > .tooltip-text {
+  .sub > .inst-tooltip > .inst-tooltip-text, h2 > .inst-tooltip > .inst-tooltip-text {
     inset-block-end: auto; inset-block-start: calc(100% + var(--space-3));
   }
 
@@ -70,7 +70,8 @@
   .why b { font-weight: var(--weight-medium); color: var(--text-primary); }
   .why code { font-size: var(--text-xs); }
 
-  .sub { margin-block: var(--space-7) var(--space-4); font-size: var(--text-sm);
+  .sub { margin-block: var(--space-7) var(--space-4); scroll-margin-block-start: var(--space-5);
+         font-size: var(--text-sm);
          font-weight: var(--weight-medium); color: var(--text-secondary); }
 
   .narrow { max-inline-size: 520px; }
@@ -83,12 +84,12 @@
   /* Оболочка в демо показывается в коробке, а не на весь экран. */
   .shell-demo { block-size: 380px; border: var(--hairline) solid var(--border);
                 border-radius: var(--radius-lg); overflow: hidden; }
-  .shell-demo .shell { block-size: 100%; }
+  .shell-demo .inst-shell { block-size: 100%; }
 
   /* Слайдер тянется на 100% контейнера, поэтому в флекс-ряду ему нужен
      явный flex-basis, иначе он выталкивает соседа на следующую строку. */
   .row--slider { flex-wrap: nowrap; gap: var(--space-5); }
-  .row--slider > .slider { flex: 1 1 auto; inline-size: auto; min-inline-size: 0; }
+  .row--slider > .inst-slider { flex: 1 1 auto; inline-size: auto; min-inline-size: 0; }
   .row--slider > output { min-inline-size: 3ch; text-align: end; }
 
   .ramp { display: grid; grid-template-columns: repeat(15, 1fr); gap: 2px; }
@@ -116,7 +117,7 @@
 
   .scale-row { display: flex; align-items: baseline; gap: var(--space-6); padding-block: var(--space-3);
                border-block-end: var(--hairline) solid var(--border-subtle); }
-  .scale-row > .tag { flex: none; inline-size: 78px; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-muted); }
+  .scale-row > .scale-cap { flex: none; inline-size: 78px; font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-muted); }
   .t-2xl { font-size: var(--text-2xl); font-weight: var(--weight-medium); letter-spacing: var(--tracking-tight); }
   .t-xl { font-size: var(--text-xl); font-weight: var(--weight-medium); }
   .t-lg { font-size: var(--text-lg); font-weight: var(--weight-medium); }
@@ -143,21 +144,21 @@
   .bad-cap { font-size: var(--text-2xs); color: var(--err-text); margin-block-end: var(--space-3); }
   .bad-shout { font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; }
   .bad-bars { display: flex; flex-direction: column; gap: var(--space-3); }
-  .bad-bars .meter-fill { background: var(--ok-text); }
-  .bad-bars > :nth-child(2) .meter-fill { background: var(--warn-text); }
-  .bad-bars > :nth-child(3) .meter-fill { background: var(--err-text); }
-  .bad-bars > :nth-child(4) .meter-fill { background: var(--accent-text); }
+  .bad-bars .inst-meter-fill { background: var(--ok-text); }
+  .bad-bars > :nth-child(2) .inst-meter-fill { background: var(--warn-text); }
+  .bad-bars > :nth-child(3) .inst-meter-fill { background: var(--err-text); }
+  .bad-bars > :nth-child(4) .inst-meter-fill { background: var(--accent-text); }
   .bad-card { background: var(--surface-raised); border-radius: var(--radius-lg); padding: var(--pad-card);
               box-shadow: 0 6px 18px -4px oklch(0 0 0 / 0.25); }
 </style>
 </head>
 <body>
 
-<a class="skip-link" href="#main">К содержанию</a>
+<a class="inst-skip-link" href="#main">К содержанию</a>
 
-<div class="shell">
+<div class="inst-shell">
 
-  <aside class="shell-aside">
+  <aside class="inst-shell-aside">
       <a class="logo" href="#main">
         <svg class="logo-mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
           <circle class="logo-dot" cx="4" cy="4.5" r="1.7"/>
@@ -168,63 +169,63 @@
         <span class="logo-name">instrument</span>
       </a>
 
-      <nav class="nav" aria-label="Разделы спецификации" id="toc">
-        <div class="nav-group">
-          <a class="nav-item" href="#start">С чего начать</a>
+      <nav class="inst-nav" aria-label="Разделы спецификации" id="toc">
+        <div class="inst-nav-group">
+          <a class="inst-nav-item" href="#start">С чего начать</a>
         </div>
-        <div class="nav-group">
-          <span class="nav-label">Основания</span>
-          <a class="nav-item" href="#color">Цвет</a>
-          <a class="nav-item" href="#type">Типографика</a>
-          <a class="nav-item" href="#space">Ритм и форма</a>
+        <div class="inst-nav-group">
+          <span class="inst-nav-label">Основания</span>
+          <a class="inst-nav-item" href="#color">Цвет</a>
+          <a class="inst-nav-item" href="#type">Типографика</a>
+          <a class="inst-nav-item" href="#space">Ритм и форма</a>
         </div>
-        <div class="nav-group">
-          <span class="nav-label">Раскладка</span>
-          <a class="nav-item" href="#layout">Раскладка и навигация</a>
+        <div class="inst-nav-group">
+          <span class="inst-nav-label">Раскладка</span>
+          <a class="inst-nav-item" href="#layout">Раскладка и навигация</a>
         </div>
-        <div class="nav-group">
-          <span class="nav-label">Ввод</span>
-          <a class="nav-item" href="#buttons">Кнопки</a>
-          <a class="nav-item" href="#inputs">Поля ввода</a>
-          <a class="nav-item" href="#forms">Формы</a>
+        <div class="inst-nav-group">
+          <span class="inst-nav-label">Ввод</span>
+          <a class="inst-nav-item" href="#buttons">Кнопки</a>
+          <a class="inst-nav-item" href="#inputs">Поля ввода</a>
+          <a class="inst-nav-item" href="#forms">Формы</a>
         </div>
-        <div class="nav-group">
-          <span class="nav-label">Поверхности</span>
-          <a class="nav-item" href="#surfaces">Поверхности</a>
-          <a class="nav-item" href="#overlay">Оверлеи и сообщения</a>
+        <div class="inst-nav-group">
+          <span class="inst-nav-label">Поверхности</span>
+          <a class="inst-nav-item" href="#surfaces">Поверхности</a>
+          <a class="inst-nav-item" href="#overlay">Оверлеи и сообщения</a>
         </div>
-        <div class="nav-group">
-          <span class="nav-label">Состояния</span>
-          <a class="nav-item" href="#status">Состояния и прогресс</a>
+        <div class="inst-nav-group">
+          <span class="inst-nav-label">Состояния</span>
+          <a class="inst-nav-item" href="#status">Состояния и прогресс</a>
         </div>
-        <div class="nav-group">
-          <span class="nav-label">Данные</span>
-          <a class="nav-item" href="#metrics">Метрики</a>
-          <a class="nav-item" href="#tools">Инструментальные примитивы</a>
-          <a class="nav-item" href="#data">Данные и графики</a>
+        <div class="inst-nav-group">
+          <span class="inst-nav-label">Данные</span>
+          <a class="inst-nav-item" href="#metrics">Метрики</a>
+          <a class="inst-nav-item" href="#tools">Инструментальные примитивы</a>
+          <a class="inst-nav-item" href="#data">Данные и графики</a>
         </div>
-        <div class="nav-group">
-          <span class="nav-label">Агент</span>
-          <a class="nav-item" href="#agent">Агентные примитивы</a>
+        <div class="inst-nav-group">
+          <span class="inst-nav-label">Агент</span>
+          <a class="inst-nav-item" href="#agent">Агентные примитивы</a>
         </div>
-        <div class="nav-group">
-          <a class="nav-item" href="#anti">Так не надо</a>
-          <a class="nav-item" href="#about">О проекте</a>
+        <div class="inst-nav-group">
+          <a class="inst-nav-item" href="#anti">Так не надо</a>
+          <a class="inst-nav-item" href="#about">О проекте</a>
         </div>
       </nav>
   </aside>
 
-  <header class="shell-header">
-    <span class="cluster-spacer"></span>
+  <header class="inst-shell-header">
+    <span class="inst-cluster-spacer"></span>
 
-    <div class="segmented" role="radiogroup" aria-label="Плотность" id="density">
+    <div class="inst-segmented" role="radiogroup" aria-label="Плотность" id="density">
       <button type="button" role="radio" data-v="compact" aria-checked="false">Плотно</button>
       <button type="button" role="radio" data-v="default" aria-checked="true">Обычно</button>
       <button type="button" role="radio" data-v="comfortable" aria-checked="false">Свободно</button>
     </div>
 
-    <span class="select-wrap theme-picker">
-      <select class="select select--sm" id="theme" aria-label="Тема оформления">
+    <span class="inst-select-wrap theme-picker">
+      <select class="inst-select inst-select--sm" id="theme" aria-label="Тема оформления">
         <option value="">По системе</option>
         <option value="light">Светлая тёплая</option>
         <option value="light-cool">Светлая холодная</option>
@@ -234,16 +235,16 @@
     </span>
   </header>
 
-  <main class="shell-main" id="main">
-    <div class="container">
+  <main class="inst-shell-main" id="main">
+    <div class="inst-container">
 
-    <div class="banner page-intro" data-tone="neutral">
-      <div class="banner-body">
-        <div class="banner-title">Компоненты работают без скрипта</div>
-        <div class="banner-text">Метка стоит только там, где без JS компонент неполон,
+    <div class="inst-banner page-intro" data-tone="neutral">
+      <div class="inst-banner-body">
+        <div class="inst-banner-title">Компоненты работают без скрипта</div>
+        <div class="inst-banner-text">Метка стоит только там, где без JS компонент неполон,
           и в подсказке говорит, что именно требует скрипта.</div>
       </div>
-      <div class="banner-actions"><span class="needs-js">нужен JS</span></div>
+      <div class="inst-banner-actions"><span class="needs-js">нужен JS</span></div>
     </div>
 
     <!-- ══ Начало ══════════════════════════════════════════════════════ -->
@@ -255,10 +256,10 @@
         всё остальное на этой странице объясняет, <b>какую</b> разметку.
       </p>
 
-      <div class="code">&lt;link rel="stylesheet" href="src/kit.css"&gt;</div>
+      <div class="inst-code">&lt;link rel="stylesheet" href="src/kit.css"&gt;</div>
 
-      <div class="sub">Что в файлах</div>
-      <table class="table">
+      <h3 class="sub" id="files">Что в файлах</h3>
+      <table class="inst-table">
         <thead><tr><th>Файл</th><th>Что внутри</th></tr></thead>
         <tbody>
           <tr><td><code>tokens.css</code></td><td>рампы, семантика, роли, темы, плотность</td></tr>
@@ -279,8 +280,8 @@
         порядке.
       </p>
 
-      <div class="sub">Слои и почему ваши стили всегда выигрывают</div>
-      <div class="code">@layer kit.tokens, kit.base, kit.layout, kit.components,
+      <h3 class="sub" id="layers">Слои и почему ваши стили всегда выигрывают</h3>
+      <div class="inst-code">@layer kit.tokens, kit.base, kit.layout, kit.components,
        kit.overlay, kit.agent, kit.motion, kit.print;</div>
       <p class="why">
         Стили приложения лежат <b>вне</b> слоёв, а неслойное объявление выигрывает у
@@ -290,8 +291,8 @@
         своих продуктов классам нужен префикс.
       </p>
 
-      <div class="sub">Тема и плотность</div>
-      <div class="code">&lt;html data-theme="dark"&gt;              &lt;!-- light | light-cool | dark | dark-soft --&gt;
+      <h3 class="sub" id="theming">Тема и плотность</h3>
+      <div class="inst-code">&lt;html data-theme="dark"&gt;              &lt;!-- light | light-cool | dark | dark-soft --&gt;
 &lt;html&gt;                                &lt;!-- атрибута нет — тема по настройке ОС --&gt;
 
 &lt;section data-density="compact"&gt;      &lt;!-- compact | comfortable --&gt;</div>
@@ -301,7 +302,7 @@
         ровно две вещи — тон нейтрали и глубину поверхностей.
       </p>
 
-      <div class="sub">Что обязательно в разметке</div>
+      <h3 class="sub" id="markup-contract">Что обязательно в разметке</h3>
       <p class="why">
         Кит рисует состояние, но не выдумывает его. Списочные компоненты требуют ролей,
         иначе <code>aria-selected</code> невалиден, а с клавиатуры до них не добраться:
@@ -311,8 +312,8 @@
         <code>role="radiogroup"</code>. Полный список — в <code>DESIGN.md</code>.
       </p>
 
-      <div class="sub">Проверка</div>
-      <div class="code">node tools/contrast.mjs</div>
+      <h3 class="sub" id="checks">Проверка</h3>
+      <div class="inst-code">node tools/contrast.mjs</div>
       <p class="why">
         328 пар цветов против порогов WCAG в четырёх темах. Инструмент читает настоящий
         <code>tokens.css</code> и резолвит <code>var()</code>, <code>light-dark()</code> и
@@ -320,7 +321,7 @@
         Заводите новый семантический токен — добавьте туда его пары.
       </p>
 
-      <div class="note" data-tone="warn">
+      <div class="inst-note" data-tone="warn">
         Минимум браузера: Chrome 123+, Safari 17.5+, Firefox 120+ — по
         <code>light-dark()</code>, <code>oklch()</code>, каскадным слоям, вложенности,
         <code>:has()</code> и единице <code>lh</code>.
@@ -338,7 +339,7 @@
       <code>--n-3</code>, только что захардкодил светлую тему.
     </p>
 
-    <div class="sub">Нейтральная рампа — 15 шагов, лёгкий тёплый уклон</div>
+    <h3 class="sub" id="ramp-neutral">Нейтральная рампа — 15 шагов, лёгкий тёплый уклон</h3>
     <div class="ramp" id="ramp-n"></div>
     <div class="ramp ramp-scale" id="ramp-n-scale"></div>
     <p class="why">
@@ -346,11 +347,11 @@
       поверхности подряд, а на четырнадцати их помещалось три.
     </p>
 
-    <div class="sub">Акцент — один тон. Второй акцентный тон это не фича, а симптом</div>
+    <h3 class="sub" id="ramp-accent">Акцент — один тон. Второй акцентный тон это не фича, а симптом</h3>
     <div class="ramp ramp--6" id="ramp-a"></div>
     <div class="ramp ramp--6 ramp-scale" id="ramp-a-scale"></div>
 
-    <div class="sub">Семантические поверхности</div>
+    <h3 class="sub" id="semantic-surfaces">Семантические поверхности</h3>
     <div class="swatches">
       <div class="sw"><div class="chip chip--sunken"></div><div class="cap">--surface-sunken</div></div>
       <div class="sw"><div class="chip chip--page"></div><div class="cap">--surface-page</div></div>
@@ -362,7 +363,7 @@
       <div class="sw"><div class="chip chip--err"></div><div class="cap">--err-text</div></div>
     </div>
 
-    <div class="sub">Два токена на тон, а не три</div>
+    <h3 class="sub" id="tone-tokens">Два токена на тон, а не три</h3>
     <p class="why">
       У каждого смыслового тона ровно два токена: <code>--*-text</code> для метки —
       текста, точки состояния, заливки меры — и <code>--*-bg</code> для тонированного
@@ -379,32 +380,32 @@
       Семь ступеней и <b>два начертания</b>. 600 и 700 в шрифте есть и всё равно запрещены:
       на макете из хайрлайнов и воздуха они читаются как крик. База документа — <b>13px</b>,
       потому что плотные инструменты живут там; проза 15px включается классом
-      <code>.prose</code>. Когда базой была проза, каждый компонент был обязан
+      <code>.inst-prose</code>. Когда базой была проза, каждый компонент был обязан
       переобъявить размер, а любой <code>div</code> без класса наследовал не тот кегль.
     </p>
-    <div class="scale-row"><span class="tag">2xl / 27</span><span class="t-2xl">Только для героя-числа</span></div>
-    <div class="scale-row"><span class="tag">xl / 21</span><span class="t-xl">Заголовок раздела</span></div>
-    <div class="scale-row"><span class="tag">lg / 17</span><span class="t-lg">Заголовок блока</span></div>
-    <div class="scale-row"><span class="tag">md / 15</span><span class="t-md">Основной текст и сообщения</span></div>
-    <div class="scale-row"><span class="tag">sm / 13</span><span class="t-sm">Интерфейс по умолчанию: подписи, кнопки, ячейки</span></div>
-    <div class="scale-row"><span class="tag">xs / 12</span><span class="t-xs">Метаданные, время, подсказки</span></div>
-    <div class="scale-row"><span class="tag">2xs / 11</span><span class="t-2xs">Бейджи и подписи осей — пол, ниже не опускаемся</span></div>
+    <div class="scale-row"><span class="scale-cap">2xl / 27</span><span class="t-2xl">Только для героя-числа</span></div>
+    <div class="scale-row"><span class="scale-cap">xl / 21</span><span class="t-xl">Заголовок раздела</span></div>
+    <div class="scale-row"><span class="scale-cap">lg / 17</span><span class="t-lg">Заголовок блока</span></div>
+    <div class="scale-row"><span class="scale-cap">md / 15</span><span class="t-md">Основной текст и сообщения</span></div>
+    <div class="scale-row"><span class="scale-cap">sm / 13</span><span class="t-sm">Интерфейс по умолчанию: подписи, кнопки, ячейки</span></div>
+    <div class="scale-row"><span class="scale-cap">xs / 12</span><span class="t-xs">Метаданные, время, подсказки</span></div>
+    <div class="scale-row"><span class="scale-cap">2xs / 11</span><span class="t-2xs">Бейджи и подписи осей — пол, ниже не опускаемся</span></div>
 
-    <div class="sub">Проза — опт-ин</div>
-    <div class="prose">
-      <p>Тело ответа агента набирается <code>.prose</code>: 15/1.65, пропорциональные
+    <h3 class="sub" id="prose">Проза — опт-ин</h3>
+    <div class="inst-prose">
+      <p>Тело ответа агента набирается <code>.inst-prose</code>: 15/1.65, пропорциональные
       цифры и ширина строки, ограниченная 68 знаками. Всё остальное в ките остаётся
       интерфейсом и остаётся табличным.</p>
       <p>Отдельного компонента для стриминга нет и не нужно: тело — это
-      <code>.prose</code>, а признак того, что текст ещё поступает, — каретка<span class="caret"></span></p>
+      <code>.inst-prose</code>, а признак того, что текст ещё поступает, — каретка<span class="inst-caret"></span></p>
     </div>
 
-    <div class="sub">Клавиши</div>
+    <h3 class="sub" id="keys">Клавиши</h3>
     <p class="why">
       Инструмент живёт на клавиатуре, поэтому клавиша — элемент интерфейса, а не
       безымянный моноширинный кусок.
     </p>
-    <div class="cluster">
+    <div class="inst-cluster">
       <span class="t-sm"><kbd>Ctrl</kbd> <kbd>K</kbd> — поиск по прогонам</span>
       <span class="t-sm"><kbd>↑</kbd> <kbd>↓</kbd> — по очереди агентов</span>
       <span class="t-sm"><kbd>Esc</kbd> — остановить прогон</span>
@@ -419,8 +420,8 @@
       он даёт плотности одну точку, через которую она перенастраивает всё сразу.
     </p>
     <div class="space-demo" id="space-demo"></div>
-    <div class="sub">Радиусы вложены: у внутреннего меньше, иначе он выпирает</div>
-    <div class="cluster radius-demo">
+    <h3 class="sub" id="radius">Радиусы вложены: у внутреннего меньше, иначе он выпирает</h3>
+    <div class="inst-cluster radius-demo">
       <div class="r-xs"></div><div class="r-sm"></div><div class="r-md"></div><div class="r-lg"></div>
     </div>
   </section>
@@ -442,72 +443,72 @@
       она единственная действительно зависит от размера окна.
     </p>
 
-    <div class="sub">Оболочка приложения</div>
+    <h3 class="sub" id="shell">Оболочка приложения</h3>
     <div class="shell-demo">
-      <div class="shell">
-        <aside class="shell-aside">
-          <nav class="nav" aria-label="Разделы">
-            <div class="nav-group">
-              <span class="nav-label">Работа</span>
-              <a class="nav-item" href="#layout" aria-current="page">
-                <svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Прогоны
-                <span class="badge nav-count">7</span></a>
-              <a class="nav-item" href="#layout">
-                <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Очередь</a>
-              <a class="nav-item" href="#layout">
-                <svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Отчёты</a>
+      <div class="inst-shell">
+        <aside class="inst-shell-aside">
+          <nav class="inst-nav" aria-label="Разделы">
+            <div class="inst-nav-group">
+              <span class="inst-nav-label">Работа</span>
+              <a class="inst-nav-item" href="#layout" aria-current="page">
+                <svg class="inst-icon" aria-hidden="true"><use href="#i-grid"/></svg>Прогоны
+                <span class="inst-badge inst-nav-count">7</span></a>
+              <a class="inst-nav-item" href="#layout">
+                <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>Очередь</a>
+              <a class="inst-nav-item" href="#layout">
+                <svg class="inst-icon" aria-hidden="true"><use href="#i-chart"/></svg>Отчёты</a>
             </div>
-            <div class="nav-group">
-              <span class="nav-label">Настройка</span>
-              <a class="nav-item" href="#layout">
-                <svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Доступы</a>
-              <a class="nav-item" href="#layout">
-                <svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg>Параметры</a>
+            <div class="inst-nav-group">
+              <span class="inst-nav-label">Настройка</span>
+              <a class="inst-nav-item" href="#layout">
+                <svg class="inst-icon" aria-hidden="true"><use href="#i-users"/></svg>Доступы</a>
+              <a class="inst-nav-item" href="#layout">
+                <svg class="inst-icon" aria-hidden="true"><use href="#i-settings"/></svg>Параметры</a>
             </div>
           </nav>
         </aside>
 
-        <header class="shell-header">
+        <header class="inst-shell-header">
           <nav aria-label="Хлебные крошки">
-            <ol class="crumbs">
+            <ol class="inst-crumbs">
               <li><a href="#layout">Проекты</a></li>
               <li><a href="#layout">worldgen</a></li>
               <li><span aria-current="page">Прогон #4127</span></li>
             </ol>
           </nav>
-          <span class="cluster-spacer"></span>
-          <button class="btn btn--sm" type="button">Экспорт</button>
-          <button class="btn btn--sm btn--primary" type="button">Запустить</button>
+          <span class="inst-cluster-spacer"></span>
+          <button class="inst-btn inst-btn--sm" type="button">Экспорт</button>
+          <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Запустить</button>
         </header>
 
-        <main class="shell-main">
-          <div class="container container--full stack">
-            <div class="page-header">
-              <div class="page-header-main">
-                <h3 class="page-title">Прогоны</h3>
-                <p class="page-desc">Каждая область прокручивается сама: боковая навигация
+        <main class="inst-shell-main">
+          <div class="inst-container inst-container--full inst-stack">
+            <div class="inst-page-header">
+              <div class="inst-page-header-main">
+                <h3 class="inst-page-title">Прогоны</h3>
+                <p class="inst-page-desc">Каждая область прокручивается сама: боковая навигация
                   не уезжает, пока читают таблицу.</p>
               </div>
-              <div class="page-actions">
-                <button class="btn btn--sm" type="button">Фильтры</button>
+              <div class="inst-page-actions">
+                <button class="inst-btn inst-btn--sm" type="button">Фильтры</button>
               </div>
             </div>
 
-            <nav class="tabs" aria-label="Разделы прогонов">
-              <a class="tab" href="#layout" aria-current="page">Активные</a>
-              <a class="tab" href="#layout">История</a>
-              <a class="tab" href="#layout">Расписание</a>
+            <nav class="inst-tabs" aria-label="Разделы прогонов">
+              <a class="inst-tab" href="#layout" aria-current="page">Активные</a>
+              <a class="inst-tab" href="#layout">История</a>
+              <a class="inst-tab" href="#layout">Расписание</a>
             </nav>
 
-            <div class="section">
-              <div class="section-head">
-                <h4 class="section-title">Сводка за сутки</h4>
-                <span class="section-actions"><button class="btn btn--sm btn--ghost" type="button">Период</button></span>
+            <div class="inst-section">
+              <div class="inst-section-head">
+                <h4 class="inst-section-title">Сводка за сутки</h4>
+                <span class="inst-section-actions"><button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Период</button></span>
               </div>
-              <div class="grid grid--tight">
-                <div class="metric"><div class="metric-label">В работе</div><div class="metric-value">7</div></div>
-                <div class="metric"><div class="metric-label">В очереди</div><div class="metric-value">5</div></div>
-                <div class="metric"><div class="metric-label">Упало</div><div class="metric-value">1</div></div>
+              <div class="inst-grid inst-grid--tight">
+                <div class="inst-metric"><div class="inst-metric-label">В работе</div><div class="inst-metric-value">7</div></div>
+                <div class="inst-metric"><div class="inst-metric-label">В очереди</div><div class="inst-metric-value">5</div></div>
+                <div class="inst-metric"><div class="inst-metric-label">Упало</div><div class="inst-metric-value">1</div></div>
               </div>
             </div>
           </div>
@@ -520,49 +521,49 @@
       приедет вместе с поповером, там он получается декларативно.
     </p>
 
-    <div class="sub">Примитивы потока</div>
+    <h3 class="sub" id="flow">Примитивы потока</h3>
     <p class="why">
       Три штуки, и у каждой три шага зазора, названные <b>намерением, а не числом</b>.
       Это осознанный отказ от утилит вида <code>mt-3</code>: шкала кита нарочно разрежена
       сверху, чтобы «чуть побольше» не было доступным решением, а двести утилит отступов
       возвращают его первым классом.
     </p>
-    <div class="split">
-      <div class="split-side card">
-        <div class="card-title">split-side</div>
-        <div class="card-sub">Желаемая ширина 18rem. Переносится сам, когда основной
+    <div class="inst-split">
+      <div class="inst-split-side inst-card">
+        <div class="inst-card-title">split-side</div>
+        <div class="inst-card-sub">Желаемая ширина 18rem. Переносится сам, когда основной
           части перестаёт хватать порога, — без единого запроса.</div>
       </div>
-      <div class="split-main card">
-        <div class="card-title">split-main</div>
-        <div class="card-sub">Забирает остаток. Сузьте окно — колонки встанут друг под
+      <div class="inst-split-main inst-card">
+        <div class="inst-card-title">split-main</div>
+        <div class="inst-card-sub">Забирает остаток. Сузьте окно — колонки встанут друг под
           друга, и ни одного <code>@media</code> для этого не понадобилось.</div>
       </div>
     </div>
 
-    <div class="sub">Постраничная навигация и шаги</div>
-    <div class="stack">
+    <h3 class="sub" id="pagination">Постраничная навигация и шаги</h3>
+    <div class="inst-stack">
       <nav aria-label="Страницы">
-        <ol class="pager">
-          <li><a class="pager-item" href="#layout" aria-disabled="true">Назад</a></li>
-          <li><a class="pager-item" href="#layout" aria-current="page">1</a></li>
-          <li><a class="pager-item" href="#layout">2</a></li>
-          <li><a class="pager-item" href="#layout">3</a></li>
-          <li><span class="pager-gap">…</span></li>
-          <li><a class="pager-item" href="#layout">24</a></li>
-          <li><a class="pager-item" href="#layout">Вперёд</a></li>
+        <ol class="inst-pager">
+          <li><a class="inst-pager-item" href="#layout" aria-disabled="true">Назад</a></li>
+          <li><a class="inst-pager-item" href="#layout" aria-current="page">1</a></li>
+          <li><a class="inst-pager-item" href="#layout">2</a></li>
+          <li><a class="inst-pager-item" href="#layout">3</a></li>
+          <li><span class="inst-pager-gap">…</span></li>
+          <li><a class="inst-pager-item" href="#layout">24</a></li>
+          <li><a class="inst-pager-item" href="#layout">Вперёд</a></li>
         </ol>
       </nav>
 
-      <ol class="stepper">
-        <li class="stepper-item" data-state="done">
-          <span class="stepper-name">Источник</span><span class="stepper-note">готово</span></li>
-        <li class="stepper-item" data-state="done">
-          <span class="stepper-name">Правила</span><span class="stepper-note">готово</span></li>
-        <li class="stepper-item" data-state="current">
-          <span class="stepper-name">Проверка</span><span class="stepper-note">сейчас</span></li>
-        <li class="stepper-item" data-state="todo">
-          <span class="stepper-name">Запуск</span><span class="stepper-note">дальше</span></li>
+      <ol class="inst-stepper">
+        <li class="inst-stepper-item" data-state="done">
+          <span class="inst-stepper-name">Источник</span><span class="inst-stepper-note">готово</span></li>
+        <li class="inst-stepper-item" data-state="done">
+          <span class="inst-stepper-name">Правила</span><span class="inst-stepper-note">готово</span></li>
+        <li class="inst-stepper-item" data-state="current">
+          <span class="inst-stepper-name">Проверка</span><span class="inst-stepper-note">сейчас</span></li>
+        <li class="inst-stepper-item" data-state="todo">
+          <span class="inst-stepper-name">Запуск</span><span class="inst-stepper-note">дальше</span></li>
       </ol>
     </div>
     <p class="why">
@@ -581,25 +582,25 @@
       строки. У сплошной кнопки заливка при наведении уходит <b>от</b> цвета подписи:
       зеркальное «в тёмной светлее» роняло контраст подписи до 2.61.
     </p>
-    <div class="cluster">
-      <button class="btn btn--primary" type="button">Запустить</button>
-      <button class="btn" type="button">Отмена</button>
-      <button class="btn btn--ghost" type="button">Подробнее</button>
-      <button class="btn btn--danger" type="button">Удалить</button>
-      <button class="btn" type="button" disabled>Недоступно</button>
-      <button class="btn btn--icon" type="button" aria-label="Обновить">
-        <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+    <div class="inst-cluster">
+      <button class="inst-btn inst-btn--primary" type="button">Запустить</button>
+      <button class="inst-btn" type="button">Отмена</button>
+      <button class="inst-btn inst-btn--ghost" type="button">Подробнее</button>
+      <button class="inst-btn inst-btn--danger" type="button">Удалить</button>
+      <button class="inst-btn" type="button" disabled>Недоступно</button>
+      <button class="inst-btn inst-btn--icon" type="button" aria-label="Обновить">
+        <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg>
       </button>
     </div>
-    <div class="sub">Размеры завязаны на один токен высоты</div>
-    <div class="cluster">
-      <button class="btn btn--sm" type="button">sm</button>
-      <button class="btn" type="button">md</button>
-      <button class="btn btn--lg" type="button">lg</button>
-      <div class="btn-group">
-        <button class="btn btn--sm" type="button">Слева</button>
-        <button class="btn btn--sm" type="button">Центр</button>
-        <button class="btn btn--sm" type="button">Справа</button>
+    <h3 class="sub" id="button-sizes">Размеры завязаны на один токен высоты</h3>
+    <div class="inst-cluster">
+      <button class="inst-btn inst-btn--sm" type="button">sm</button>
+      <button class="inst-btn" type="button">md</button>
+      <button class="inst-btn inst-btn--lg" type="button">lg</button>
+      <div class="inst-btn-group">
+        <button class="inst-btn inst-btn--sm" type="button">Слева</button>
+        <button class="inst-btn inst-btn--sm" type="button">Центр</button>
+        <button class="inst-btn inst-btn--sm" type="button">Справа</button>
       </div>
     </div>
     <p class="why">
@@ -607,14 +608,14 @@
       браузер никогда не рисует рамку тоньше физического пикселя, поэтому сдвиг на
       полпикселя оставлял видимое утолщение на каждом стыке.
     </p>
-    <div class="sub">Сегментированный контрол<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-1">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-1">Выбор, стрелки и бегущий tabindex</span></span></div>
+    <h3 class="sub" id="segmented">Сегментированный контрол<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-1">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-1">Выбор, стрелки и бегущий tabindex</span></span></h3>
     <p class="why">
       Пара к группе кнопок, и путать их нельзя. <b>Группа кнопок</b> — это несколько
       разных действий, поставленных вплотную. <b>Сегментированный</b> — один выбор среди
       равных вариантов, у него всегда ровно одно выбранное значение. Отсюда и разметка:
       у группы обычные кнопки, у сегментированного — <code>role="radiogroup"</code>.
     </p>
-    <div class="segmented" role="radiogroup" aria-label="Режим отображения">
+    <div class="inst-segmented" role="radiogroup" aria-label="Режим отображения">
       <button type="button" role="radio" aria-checked="true">Список</button>
       <button type="button" role="radio" aria-checked="false">Сетка</button>
       <button type="button" role="radio" aria-checked="false">Таблица</button>
@@ -631,44 +632,44 @@
       Подсказка и ошибка занимают <b>один слот</b>: ошибка заменяет подсказку, а не
       сдвигает форму вниз, — форма не перекладывается в момент заполнения.
     </p>
-    <div class="grid">
-      <div class="field">
-        <label class="label" for="i1">Имя агента</label>
-        <input class="input" id="i1" placeholder="worldgen-01">
-        <span class="field-hint">Латиница, цифры и дефис</span>
+    <div class="inst-grid">
+      <div class="inst-field">
+        <label class="inst-label" for="i1">Имя агента</label>
+        <input class="inst-input" id="i1" placeholder="worldgen-01">
+        <span class="inst-field-hint">Латиница, цифры и дефис</span>
       </div>
-      <div class="field">
-        <label class="label" for="i2">Модель</label>
-        <span class="select-wrap">
-          <select class="select" id="i2"><option>opus</option><option>sonnet</option><option>haiku</option></select>
+      <div class="inst-field">
+        <label class="inst-label" for="i2">Модель</label>
+        <span class="inst-select-wrap">
+          <select class="inst-select" id="i2"><option>opus</option><option>sonnet</option><option>haiku</option></select>
         </span>
-        <span class="field-hint">Влияет на стоимость прогона</span>
+        <span class="inst-field-hint">Влияет на стоимость прогона</span>
       </div>
-      <div class="field">
-        <label class="label" for="i3">Бюджет токенов</label>
-        <input class="input" id="i3" value="500000" aria-invalid="true" aria-describedby="i3-err">
-        <span class="field-error" id="i3-err">Превышает лимит проекта — 250 000</span>
+      <div class="inst-field">
+        <label class="inst-label" for="i3">Бюджет токенов</label>
+        <input class="inst-input" id="i3" value="500000" aria-invalid="true" aria-describedby="i3-err">
+        <span class="inst-field-error" id="i3-err">Превышает лимит проекта — 250 000</span>
       </div>
-      <div class="field">
-        <label class="label" for="i4">Промпт</label>
-        <textarea class="textarea" id="i4" placeholder="Опишите задачу"></textarea>
+      <div class="inst-field">
+        <label class="inst-label" for="i4">Промпт</label>
+        <textarea class="inst-textarea" id="i4" placeholder="Опишите задачу"></textarea>
       </div>
     </div>
     <p class="why">
-      Селект требует обёртки <code>.select-wrap</code>, и это осознанная плата. Шеврон
+      Селект требует обёртки <code>.inst-select-wrap</code>, и это осознанная плата. Шеврон
       рисуется <b>маской</b> на её псевдоэлементе — только так его цвет берётся токеном,
       а положение остаётся логическим и в RTL уезжает вместе с текстом. Общее правило
       кита: форму задаёт маска, цвет приходит токеном, внутри data-URI цвета не бывает.
     </p>
 
-    <div class="sub">Переключатели</div>
-    <div class="cluster cluster--loose">
-      <label class="checkbox"><input type="checkbox" checked>Кешировать результат</label>
-      <label class="checkbox"><input type="checkbox" id="ind">Частично</label>
-      <label class="radio"><input type="radio" name="r" checked>Параллельно</label>
-      <label class="radio"><input type="radio" name="r">Последовательно</label>
-      <label class="switch"><input type="checkbox" checked>Автозапуск</label>
-      <label class="switch"><input type="checkbox">Выключено</label>
+    <h3 class="sub" id="toggles">Переключатели</h3>
+    <div class="inst-cluster inst-cluster--loose">
+      <label class="inst-checkbox"><input type="checkbox" checked>Кешировать результат</label>
+      <label class="inst-checkbox"><input type="checkbox" id="ind">Частично</label>
+      <label class="inst-radio"><input type="radio" name="r" checked>Параллельно</label>
+      <label class="inst-radio"><input type="radio" name="r">Последовательно</label>
+      <label class="inst-switch"><input type="checkbox" checked>Автозапуск</label>
+      <label class="inst-switch"><input type="checkbox">Выключено</label>
     </div>
     <p class="why">
       Все три построены на нативном <code>input</code>: клавиатура, отправка формы и
@@ -678,9 +679,9 @@
       без кольца «выключено» неотличимо от «элемента нет».
     </p>
 
-    <div class="sub">Слайдер<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-2">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-2">Вывод текущего значения рядом с бегунком</span></span></div>
-    <div class="cluster row--slider narrow">
-      <input class="slider" type="range" min="0" max="16" value="6" step="1" id="sl" aria-label="Параллельных агентов">
+    <h3 class="sub" id="slider">Слайдер<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-2">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-2">Вывод текущего значения рядом с бегунком</span></span></h3>
+    <div class="inst-cluster row--slider narrow">
+      <input class="inst-slider" type="range" min="0" max="16" value="6" step="1" id="sl" aria-label="Параллельных агентов">
       <output class="t-sm" id="sl-out" for="sl">6</output>
     </div>
   </section>
@@ -694,84 +695,84 @@
       ждать ему разблокировки или значение неизменяемо в принципе.
     </p>
 
-    <div class="sub">Подпись сверху и подпись сбоку</div>
+    <h3 class="sub" id="form-layout">Подпись сверху и подпись сбоку</h3>
     <p class="why">
       Выбор не вкусовой. <b>Сверху</b> — когда поля разнородны и их читают по одному.
       <b>Сбоку</b> — когда полей много и они однотипны: колонка подписей превращает форму
       в таблицу, которую можно просканировать, не читая каждую строку. Колонка — тот же
       <code>--label-col</code>, что у инспектора.
     </p>
-    <div class="grid grid--wide">
-      <div class="card">
-        <form class="form">
-          <div class="field">
-            <label class="label" for="f1">Название задания<span class="required" aria-hidden="true">*</span></label>
-            <input class="input" id="f1" required value="Ночная пересборка мира">
+    <div class="inst-grid inst-grid--wide">
+      <div class="inst-card">
+        <form class="inst-form">
+          <div class="inst-field">
+            <label class="inst-label" for="f1">Название задания<span class="inst-required" aria-hidden="true">*</span></label>
+            <input class="inst-input" id="f1" required value="Ночная пересборка мира">
           </div>
-          <div class="field">
-            <label class="label" for="f2">Описание <span class="optional">необязательно</span></label>
-            <textarea class="textarea" id="f2" placeholder="Зачем это задание существует"></textarea>
+          <div class="inst-field">
+            <label class="inst-label" for="f2">Описание <span class="inst-optional">необязательно</span></label>
+            <textarea class="inst-textarea" id="f2" placeholder="Зачем это задание существует"></textarea>
           </div>
         </form>
       </div>
 
-      <div class="card">
-        <form class="form form--side">
-          <div class="field">
-            <label class="label" for="f3">Расписание</label>
-            <input class="input" id="f3" type="time" value="03:30">
+      <div class="inst-card">
+        <form class="inst-form inst-form--side">
+          <div class="inst-field">
+            <label class="inst-label" for="f3">Расписание</label>
+            <input class="inst-input" id="f3" type="time" value="03:30">
           </div>
-          <div class="field">
-            <label class="label" for="f4">С даты</label>
-            <input class="input" id="f4" type="date" value="2026-08-10">
+          <div class="inst-field">
+            <label class="inst-label" for="f4">С даты</label>
+            <input class="inst-input" id="f4" type="date" value="2026-08-10">
           </div>
-          <div class="field">
-            <label class="label" for="f5">Приоритет</label>
-            <span class="select-wrap">
-              <select class="select" id="f5"><option>обычный</option><option>высокий</option></select>
+          <div class="inst-field">
+            <label class="inst-label" for="f5">Приоритет</label>
+            <span class="inst-select-wrap">
+              <select class="inst-select" id="f5"><option>обычный</option><option>высокий</option></select>
             </span>
           </div>
-          <div class="field">
-            <label class="label" for="f6">Идентификатор</label>
-            <input class="input" id="f6" value="job_4127_nightly" readonly>
-            <span class="field-hint">Только чтение — значение можно скопировать</span>
+          <div class="inst-field">
+            <label class="inst-label" for="f6">Идентификатор</label>
+            <input class="inst-input" id="f6" value="job_4127_nightly" readonly>
+            <span class="inst-field-hint">Только чтение — значение можно скопировать</span>
           </div>
         </form>
       </div>
     </div>
 
-    <div class="sub">Приставки и поиск</div>
+    <h3 class="sub" id="input-group">Приставки и поиск</h3>
     <p class="why">
       Рамка живёт на <b>группе</b>, а не на поле: иначе на стыке получаются две линии,
       а фокус подсвечивает только половину контрола. У поиска кнопка очистки —
       <b>нативная</b>, приведённая к тону кита: своя потребовала бы JS.
     </p>
-    <div class="grid">
-      <div class="field">
-        <label class="label" for="f7">Бюджет прогона</label>
-        <span class="input-group">
-          <span class="input-affix">₽</span>
-          <input class="input" id="f7" type="number" value="12000">
-          <span class="input-affix">в сутки</span>
+    <div class="inst-grid">
+      <div class="inst-field">
+        <label class="inst-label" for="f7">Бюджет прогона</label>
+        <span class="inst-input-group">
+          <span class="inst-input-affix">₽</span>
+          <input class="inst-input" id="f7" type="number" value="12000">
+          <span class="inst-input-affix">в сутки</span>
         </span>
       </div>
-      <div class="field">
-        <label class="label" for="f8">Таймаут агента</label>
-        <span class="input-group">
-          <input class="input" id="f8" type="number" value="90">
-          <span class="input-affix">с</span>
-          <button class="btn" type="button">Сбросить</button>
+      <div class="inst-field">
+        <label class="inst-label" for="f8">Таймаут агента</label>
+        <span class="inst-input-group">
+          <input class="inst-input" id="f8" type="number" value="90">
+          <span class="inst-input-affix">с</span>
+          <button class="inst-btn" type="button">Сбросить</button>
         </span>
       </div>
-      <div class="field">
-        <label class="label" for="f9">Поиск по прогонам</label>
-        <span class="search">
-          <input class="input" id="f9" type="search" placeholder="worldgen" value="worldgen">
+      <div class="inst-field">
+        <label class="inst-label" for="f9">Поиск по прогонам</label>
+        <span class="inst-search">
+          <input class="inst-input" id="f9" type="search" placeholder="worldgen" value="worldgen">
         </span>
       </div>
     </div>
 
-    <div class="sub">Живая валидация</div>
+    <h3 class="sub" id="validation">Живая валидация</h3>
     <p class="why">
       Используется <code>:user-invalid</code>, а не <code>:invalid</code>. Разница
       принципиальная: <code>:invalid</code> горит красным с первой секунды, ещё до того,
@@ -779,101 +780,100 @@
       не совершал. <b>Введите что-нибудь не похожее на почту и уведите фокус</b> — ошибка
       появится и заменит подсказку в том же слоте, без перекладывания формы.
     </p>
-    <div class="grid">
-      <div class="field">
-        <label class="label" for="f10">Почта для отчётов</label>
-        <input class="input" id="f10" type="email" required placeholder="ops@example.com"
+    <div class="inst-grid">
+      <div class="inst-field">
+        <label class="inst-label" for="f10">Почта для отчётов</label>
+        <input class="inst-input" id="f10" type="email" required placeholder="ops@example.com"
                aria-describedby="f10-hint f10-err">
-        <span class="field-hint" id="f10-hint">Куда слать сводку после каждого прогона</span>
-        <span class="field-error" id="f10-err" data-when="invalid">Не похоже на адрес почты</span>
+        <span class="inst-field-hint" id="f10-hint">Куда слать сводку после каждого прогона</span>
+        <span class="inst-field-error" id="f10-err" data-when="invalid">Не похоже на адрес почты</span>
       </div>
-      <div class="field">
-        <label class="label" for="f11">Токен доступа</label>
-        <input class="input" id="f11" required pattern="[a-z0-9_]{8,}" placeholder="sk_live_..."
+      <div class="inst-field">
+        <label class="inst-label" for="f11">Токен доступа</label>
+        <input class="inst-input" id="f11" required pattern="[a-z0-9_]{8,}" placeholder="sk_live_..."
                aria-describedby="f11-hint f11-err">
-        <span class="field-hint" id="f11-hint">Латиница, цифры и подчёркивание, от 8 знаков</span>
-        <span class="field-error" id="f11-err" data-when="invalid">Не меньше 8 знаков, только a–z, 0–9 и _</span>
+        <span class="inst-field-hint" id="f11-hint">Латиница, цифры и подчёркивание, от 8 знаков</span>
+        <span class="inst-field-error" id="f11-err" data-when="invalid">Не меньше 8 знаков, только a–z, 0–9 и _</span>
       </div>
-      <div class="field">
-        <label class="label" for="f12">Недоступно</label>
-        <input class="input" id="f12" value="Наследуется от проекта" disabled>
-        <span class="field-hint">disabled — не путать с readonly слева</span>
+      <div class="inst-field">
+        <label class="inst-label" for="f12">Недоступно</label>
+        <input class="inst-input" id="f12" value="Наследуется от проекта" disabled>
+        <span class="inst-field-hint">disabled — не путать с readonly слева</span>
       </div>
     </div>
 
-    <div class="sub">Выбираемые карточки</div>
+    <h3 class="sub" id="choice-card">Выбираемые карточки</h3>
     <p class="why">
       Голой радиокнопки с подписью в одну строку не хватает, когда у вариантов есть
       последствия. Выбор несёт не только цвет: у края встаёт <b>та же несущая метка</b>,
       что у текущего пункта навигации.
     </p>
-    <div class="grid">
-      <label class="choice-card">
+    <div class="inst-grid">
+      <label class="inst-choice-card">
         <input type="radio" name="mode" checked>
-        <span><span class="choice-card-title">Параллельно</span>
-          <span class="choice-card-desc">До 12 агентов сразу. Быстрее, но расход токенов выше и порядок вывода не гарантирован.</span></span>
+        <span><span class="inst-choice-card-title">Параллельно</span>
+          <span class="inst-choice-card-desc">До 12 агентов сразу. Быстрее, но расход токенов выше и порядок вывода не гарантирован.</span></span>
       </label>
-      <label class="choice-card">
+      <label class="inst-choice-card">
         <input type="radio" name="mode">
-        <span><span class="choice-card-title">Последовательно</span>
-          <span class="choice-card-desc">По одному агенту. Медленнее, зато лог читается сверху вниз без чересполосицы.</span></span>
+        <span><span class="inst-choice-card-title">Последовательно</span>
+          <span class="inst-choice-card-desc">По одному агенту. Медленнее, зато лог читается сверху вниз без чересполосицы.</span></span>
       </label>
-      <label class="choice-card">
+      <label class="inst-choice-card">
         <input type="radio" name="mode" disabled>
-        <span><span class="choice-card-title">Распределённо</span>
-          <span class="choice-card-desc">Недоступно на текущем тарифе.</span></span>
+        <span><span class="inst-choice-card-title">Распределённо</span>
+          <span class="inst-choice-card-desc">Недоступно на текущем тарифе.</span></span>
       </label>
     </div>
 
-    <div class="sub">Полоса действий, файл и множественный выбор</div>
+    <h3 class="sub" id="form-actions">Полоса действий, файл и множественный выбор</h3>
     <p class="why">
       Липкость полосы действий ограничена <b>ближайшим блочным предком</b>, а не экраном.
       Значит, её место — последним элементом прокручиваемой области формы, то есть
-      обычно в <code>.panel-body</code>. Прокрутите панель ниже: «Сохранить» останется
+      обычно в <code>.inst-panel-body</code>. Прокрутите панель ниже: «Сохранить» останется
       на месте. Положить такую полосу просто в длинную страницу нельзя — она поедет
       поверх всего, что ниже, до самого конца родителя.
     </p>
-    <div class="panel form-demo">
-      <div class="panel-header"><span class="panel-title">Уведомления</span></div>
-      <div class="panel-body form-demo-body">
-        <div class="form">
-          <div class="field">
-            <span class="label">Импорт списка получателей</span>
-            <label class="file">
+    <div class="inst-panel form-demo">
+      <div class="inst-panel-header"><span class="inst-panel-title">Уведомления</span></div>
+      <div class="inst-panel-body form-demo-body">
+        <div class="inst-form">
+          <div class="inst-field">
+            <span class="inst-label">Импорт списка получателей</span>
+            <label class="inst-file">
               <input type="file" multiple>
               Перетащите файлы или выберите
-              <span class="file-hint">До 20 МБ, форматы .json и .csv</span>
+              <span class="inst-file-hint">До 20 МБ, форматы .json и .csv</span>
             </label>
           </div>
 
-          <div class="field">
-            <label class="label" for="f13">Кого оповещать</label>
-            <span class="select-wrap">
-              <select class="select" id="f13" multiple>
+          <div class="inst-field">
+            <label class="inst-label" for="f13">Кого оповещать</label>
+            <span class="inst-select-wrap">
+              <select class="inst-select" id="f13" multiple>
                 <option selected>Дежурный инженер</option>
                 <option selected>Владелец проекта</option>
                 <option>Вся команда</option>
-                <option>Внешний вебхук</option>
               </select>
             </span>
-            <span class="field-hint">Шеврон не рисуется — список ничего не раскрывает</span>
+            <span class="inst-field-hint">Шеврон не рисуется — список ничего не раскрывает</span>
           </div>
 
-          <fieldset class="fieldset">
+          <fieldset class="inst-fieldset">
             <legend>Когда оповещать</legend>
-            <div class="cluster cluster--loose">
-              <label class="checkbox"><input type="checkbox" checked>При падении</label>
-              <label class="checkbox"><input type="checkbox">При каждом прогоне</label>
-              <label class="switch"><input type="checkbox" checked>Дублировать в почту</label>
+            <div class="inst-cluster inst-cluster--loose">
+              <label class="inst-checkbox"><input type="checkbox" checked>При падении</label>
+              <label class="inst-checkbox"><input type="checkbox">При каждом прогоне</label>
+              <label class="inst-switch"><input type="checkbox" checked>Дублировать в почту</label>
             </div>
           </fieldset>
 
         </div>
 
-        <div class="form-actions">
-          <span class="form-actions-note">Изменения не сохранены</span>
-          <button class="btn" type="button">Отмена</button>
-          <button class="btn btn--primary" type="button">Сохранить</button>
+        <div class="inst-form-actions">
+          <span class="inst-form-actions-note">Изменения не сохранены</span>
+          <button class="inst-btn" type="button">Отмена</button>
+          <button class="inst-btn inst-btn--primary" type="button">Сохранить</button>
         </div>
       </div>
     </div>
@@ -888,15 +888,15 @@
       Ни у той, ни у другой нет тени: тень означает «временное и сверху», её получают
       только поповеры и модалки.
     </p>
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Прогон #4127</span>
-          <span class="badge" data-tone="running"><span class="dot"></span>идёт</span>
-          <span class="panel-actions"><button class="btn btn--sm btn--ghost" type="button">Стоп</button></span>
+    <div class="inst-grid">
+      <div class="inst-panel">
+        <div class="inst-panel-header">
+          <span class="inst-panel-title">Прогон #4127</span>
+          <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
+          <span class="inst-panel-actions"><button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Стоп</button></span>
         </div>
-        <div class="panel-body">
-          <dl class="kv">
+        <div class="inst-panel-body">
+          <dl class="inst-kv">
             <dt>Модель</dt><dd>opus</dd>
             <dt>Начат</dt><dd>19:38:04</dd>
             <dt>Агентов</dt><dd>7 из 12</dd>
@@ -904,13 +904,13 @@
           </dl>
         </div>
       </div>
-      <div class="stack">
-        <div class="card card--interactive">
-          <div class="card-title">worldgen-01</div>
-          <div class="card-sub">Генерация биомов, 3 прохода</div>
+      <div class="inst-stack">
+        <div class="inst-card inst-card--interactive">
+          <div class="inst-card-title">worldgen-01</div>
+          <div class="inst-card-sub">Генерация биомов, 3 прохода</div>
         </div>
-        <div class="note" data-tone="warn">Три теста упали после последнего прохода. Повтор не запускался.</div>
-        <div class="note">Обычная сноска без семантики — серая полоса, квадратные углы, без иконки.</div>
+        <div class="inst-note" data-tone="warn">Три теста упали после последнего прохода. Повтор не запускался.</div>
+        <div class="inst-note">Обычная сноска без семантики — серая полоса, квадратные углы, без иконки.</div>
       </div>
     </div>
     <p class="why">
@@ -930,36 +930,36 @@
       <code>--scrim</code> и все четыре z-индекса.
     </p>
 
-    <div class="sub">Поповер, меню и тултип</div>
-    <div class="cluster cluster--loose">
-      <button class="btn" type="button" popovertarget="pop-actions">Действия</button>
-      <div class="popover popover--anchored" id="pop-actions" popover>
-        <div class="menu" role="menu">
-          <span class="menu-label">Прогон #4127</span>
-          <button class="menu-item" type="button" role="menuitem">
-            <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>Перезапустить
-            <span class="menu-shortcut"><kbd>R</kbd></span></button>
-          <button class="menu-item" type="button" role="menuitem">
-            <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>Скопировать id</button>
-          <button class="menu-item" type="button" role="menuitem" aria-checked="true">
-            <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Показывать лог</button>
-          <span class="menu-sep"></span>
-          <button class="menu-item" type="button" role="menuitem" data-tone="error">Удалить прогон</button>
-          <button class="menu-item" type="button" role="menuitem" aria-disabled="true">Архивировать</button>
+    <h3 class="sub" id="popover">Поповер, меню и тултип</h3>
+    <div class="inst-cluster inst-cluster--loose">
+      <button class="inst-btn" type="button" popovertarget="pop-actions">Действия</button>
+      <div class="inst-popover inst-popover--anchored" id="pop-actions" popover>
+        <div class="inst-menu" role="menu">
+          <span class="inst-menu-label">Прогон #4127</span>
+          <button class="inst-menu-item" type="button" role="menuitem">
+            <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Перезапустить
+            <span class="inst-menu-shortcut"><kbd>R</kbd></span></button>
+          <button class="inst-menu-item" type="button" role="menuitem">
+            <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>Скопировать id</button>
+          <button class="inst-menu-item" type="button" role="menuitem" aria-checked="true">
+            <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>Показывать лог</button>
+          <span class="inst-menu-sep"></span>
+          <button class="inst-menu-item" type="button" role="menuitem" data-tone="error">Удалить прогон</button>
+          <button class="inst-menu-item" type="button" role="menuitem" aria-disabled="true">Архивировать</button>
         </div>
       </div>
 
-      <span class="tooltip">
-        <button class="btn btn--ghost" type="button" aria-describedby="tt-1">Что такое проход?</button>
-        <span class="tooltip-text" role="tooltip" id="tt-1">Один полный обход карты агентом</span>
+      <span class="inst-tooltip">
+        <button class="inst-btn inst-btn--ghost" type="button" aria-describedby="tt-1">Что такое проход?</button>
+        <span class="inst-tooltip-text" role="tooltip" id="tt-1">Один полный обход карты агентом</span>
       </span>
 
     </div>
 
-    <div class="sub">Модалка и шторка<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-3">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-3">Открытие: dlg.showModal(). Закрытие, блокировка прокрутки и подложка — без скрипта</span></span></div>
-    <div class="cluster">
-      <button class="btn" type="button" data-dialog="#dlg-confirm">Модалка</button>
-      <button class="btn" type="button" data-dialog="#dlg-sheet">Шторка</button>
+    <h3 class="sub" id="dialog">Модалка и шторка<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-3">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-3">Открытие: dlg.showModal(). Закрытие, блокировка прокрутки и подложка — без скрипта</span></span></h3>
+    <div class="inst-cluster">
+      <button class="inst-btn" type="button" data-dialog="#dlg-confirm">Модалка</button>
+      <button class="inst-btn" type="button" data-dialog="#dlg-sheet">Шторка</button>
     </div>
     <p class="why">
       Привязка поповера к кнопке идёт через <b>неявный якорь</b>: вызвавшая кнопка уже
@@ -973,93 +973,93 @@
       с <code>overflow: hidden</code> он обрежется, и там нужен поповер.
     </p>
 
-    <dialog class="dialog" id="dlg-confirm">
+    <dialog class="inst-dialog" id="dlg-confirm">
       <form method="dialog">
-        <div class="dialog-head">
-          <span class="dialog-title">Удалить прогон #4127?</span>
-          <button class="btn btn--sm btn--ghost dialog-close" type="submit" aria-label="Закрыть">✕</button>
+        <div class="inst-dialog-head">
+          <span class="inst-dialog-title">Удалить прогон #4127?</span>
+          <button class="inst-btn inst-btn--sm inst-btn--ghost inst-dialog-close" type="submit" aria-label="Закрыть">✕</button>
         </div>
-        <div class="dialog-body stack">
+        <div class="inst-dialog-body inst-stack">
           <p>Будут удалены лог, артефакты и диф. Ссылки на прогон в отчётах перестанут открываться.</p>
-          <div class="note" data-tone="warn">Необратимо: восстановление из резервной копии занимает до суток.</div>
+          <div class="inst-note" data-tone="warn">Необратимо: восстановление из резервной копии занимает до суток.</div>
         </div>
-        <div class="dialog-foot">
-          <span class="dialog-foot-note">Escape тоже закрывает</span>
-          <button class="btn" type="submit">Отмена</button>
-          <button class="btn btn--danger" type="submit">Удалить</button>
+        <div class="inst-dialog-foot">
+          <span class="inst-dialog-foot-note">Escape тоже закрывает</span>
+          <button class="inst-btn" type="submit">Отмена</button>
+          <button class="inst-btn inst-btn--danger" type="submit">Удалить</button>
         </div>
       </form>
     </dialog>
 
-    <dialog class="dialog sheet" id="dlg-sheet">
+    <dialog class="inst-dialog inst-sheet" id="dlg-sheet">
       <form method="dialog">
-        <div class="dialog-head">
-          <span class="dialog-title">Параметры прогона</span>
-          <button class="btn btn--sm btn--ghost dialog-close" type="submit" aria-label="Закрыть">✕</button>
+        <div class="inst-dialog-head">
+          <span class="inst-dialog-title">Параметры прогона</span>
+          <button class="inst-btn inst-btn--sm inst-btn--ghost inst-dialog-close" type="submit" aria-label="Закрыть">✕</button>
         </div>
-        <div class="dialog-body">
-          <dl class="kv">
+        <div class="inst-dialog-body">
+          <dl class="inst-kv">
             <dt>Модель</dt><dd>opus</dd>
             <dt>Агентов</dt><dd>7 из 12</dd>
             <dt>Токенов</dt><dd>184 320</dd>
             <dt>Начат</dt><dd>19:38:04</dd>
           </dl>
         </div>
-        <div class="dialog-foot dialog-foot--end">
-          <button class="btn" type="submit">Закрыть</button>
+        <div class="inst-dialog-foot inst-dialog-foot--end">
+          <button class="inst-btn" type="submit">Закрыть</button>
         </div>
       </form>
     </dialog>
 
-    <div class="sub">Баннер — сообщение уровня страницы</div>
+    <h3 class="sub" id="banner">Баннер — сообщение уровня страницы</h3>
     <p class="why">
       Это <b>не сноска</b>. Сноска поясняет то, рядом с чем стоит, и несёт только полосу
       у края. Баннер относится ко всему экрану, поэтому у него заливка и место под
       действие. Иконки тона — общий набор масок со сноской, один источник формы на два
       компонента.
     </p>
-    <div class="stack stack--tight">
-      <div class="banner" data-tone="warn">
-        <div class="banner-body">
-          <div class="banner-title">Доступ истекает через 3 дня</div>
-          <div class="banner-text">После 8 августа запуск прогонов остановится.</div>
+    <div class="inst-stack inst-stack--tight">
+      <div class="inst-banner" data-tone="warn">
+        <div class="inst-banner-body">
+          <div class="inst-banner-title">Доступ истекает через 3 дня</div>
+          <div class="inst-banner-text">После 8 августа запуск прогонов остановится.</div>
         </div>
-        <div class="banner-actions"><button class="btn btn--sm" type="button">Продлить</button></div>
+        <div class="inst-banner-actions"><button class="inst-btn inst-btn--sm" type="button">Продлить</button></div>
       </div>
-      <div class="banner" data-tone="error">
-        <div class="banner-body"><div class="banner-title">Обслуживание хранилища</div>
-          <div class="banner-text">Артефакты недоступны до 21:00.</div></div>
+      <div class="inst-banner" data-tone="error">
+        <div class="inst-banner-body"><div class="inst-banner-title">Обслуживание хранилища</div>
+          <div class="inst-banner-text">Артефакты недоступны до 21:00.</div></div>
       </div>
-      <div class="banner" data-tone="ok">
-        <div class="banner-body"><div class="banner-title">Изменения сохранены</div></div>
+      <div class="inst-banner" data-tone="ok">
+        <div class="inst-banner-body"><div class="inst-banner-title">Изменения сохранены</div></div>
       </div>
     </div>
 
-    <div class="sub">Аккордеон</div>
+    <h3 class="sub" id="accordion">Аккордеон</h3>
     <p class="why">
       На <code>&lt;details&gt;</code> с атрибутом <code>name</code>: группа становится
       <b>взаимоисключающей</b> — открытой остаётся ровно одна секция, и тоже без единой
       строки JS. Попробуйте открыть вторую.
     </p>
-    <div class="accordion">
-      <details class="accordion-item" name="faq" open>
-        <summary class="accordion-head">Почему прогон занял 42 секунды?</summary>
-        <div class="accordion-body">Три прохода расстановки ресурсов плюс запекание навмеша.
+    <div class="inst-accordion">
+      <details class="inst-accordion-item" name="faq" open>
+        <summary class="inst-accordion-head">Почему прогон занял 42 секунды?</summary>
+        <div class="inst-accordion-body">Три прохода расстановки ресурсов плюс запекание навмеша.
           Основное время ушло на валидацию путей, которая перезапускалась дважды.</div>
       </details>
-      <details class="accordion-item" name="faq">
-        <summary class="accordion-head">Можно ли ограничить расход токенов?</summary>
-        <div class="accordion-body">Да, в параметрах проекта. Лимит проверяется перед стартом
+      <details class="inst-accordion-item" name="faq">
+        <summary class="inst-accordion-head">Можно ли ограничить расход токенов?</summary>
+        <div class="inst-accordion-body">Да, в параметрах проекта. Лимит проверяется перед стартом
           каждого агента, а не по факту — прогон не уйдёт в минус.</div>
       </details>
-      <details class="accordion-item" name="faq">
-        <summary class="accordion-head">Что происходит с артефактами после удаления?</summary>
-        <div class="accordion-body">Удаляются вместе с прогоном. Резервная копия хранится семь
+      <details class="inst-accordion-item" name="faq">
+        <summary class="inst-accordion-head">Что происходит с артефактами после удаления?</summary>
+        <div class="inst-accordion-body">Удаляются вместе с прогоном. Резервная копия хранится семь
           суток, восстановление — через поддержку.</div>
       </details>
     </div>
 
-    <div class="sub">Печать</div>
+    <h3 class="sub" id="print">Печать</h3>
     <p class="why">
       Админки печатают отчёты и выгружают в PDF. Нажмите <kbd>Ctrl</kbd> <kbd>P</kbd>:
       печатается <b>светлая тема при любой экранной</b> (достаточно сменить
@@ -1079,40 +1079,40 @@
       скриншота. Точка внутри бейджа наследует тон от бейджа — атрибут ставится один раз
       на группу.
     </p>
-    <div class="cluster">
-      <span class="badge"><span class="dot"></span>в очереди</span>
-      <span class="badge" data-tone="running"><span class="dot"></span>идёт</span>
-      <span class="badge" data-tone="ok"><span class="dot"></span>готово</span>
-      <span class="badge" data-tone="warn"><span class="dot"></span>с замечаниями</span>
-      <span class="badge" data-tone="error"><span class="dot"></span>упало</span>
-      <svg class="spinner" viewBox="0 0 16 16" role="status" aria-label="Загрузка"><circle class="spinner-track" cx="8" cy="8" r="6.5"/><circle class="spinner-arc" cx="8" cy="8" r="6.5"/></svg>
-      <span class="t-sm">Стриминг ответа<span class="caret"></span></span>
+    <div class="inst-cluster">
+      <span class="inst-badge"><span class="inst-dot"></span>в очереди</span>
+      <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
+      <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
+      <span class="inst-badge" data-tone="warn"><span class="inst-dot"></span>с замечаниями</span>
+      <span class="inst-badge" data-tone="error"><span class="inst-dot"></span>упало</span>
+      <svg class="inst-spinner" viewBox="0 0 16 16" role="status" aria-label="Загрузка"><circle class="inst-spinner-track" cx="8" cy="8" r="6.5"/><circle class="inst-spinner-arc" cx="8" cy="8" r="6.5"/></svg>
+      <span class="t-sm">Стриминг ответа<span class="inst-caret"></span></span>
     </div>
 
-    <div class="sub">Полосы — один тон, потому что сравнивается одна величина</div>
-    <div class="stack narrow">
+    <h3 class="sub" id="meter">Полосы — один тон, потому что сравнивается одна величина</h3>
+    <div class="inst-stack narrow">
       <div>
-        <div class="meter-row"><span>Рендер</span><span class="meter-value">18,2 с</span></div>
-        <div class="meter" role="progressbar" aria-label="Рендер" aria-valuenow="43" aria-valuemin="0" aria-valuemax="100">
-          <div class="meter-fill" style="inline-size:43%"></div>
+        <div class="inst-meter-row"><span>Рендер</span><span class="inst-meter-value">18,2 с</span></div>
+        <div class="inst-meter" role="progressbar" aria-label="Рендер" aria-valuenow="43" aria-valuemin="0" aria-valuemax="100">
+          <div class="inst-meter-fill" style="inline-size:43%"></div>
         </div>
       </div>
       <div>
-        <div class="meter-row"><span>Физика</span><span class="meter-value">11,5 с</span></div>
-        <div class="meter" role="progressbar" aria-label="Физика" aria-valuenow="27" aria-valuemin="0" aria-valuemax="100">
-          <div class="meter-fill" style="inline-size:27%"></div>
+        <div class="inst-meter-row"><span>Физика</span><span class="inst-meter-value">11,5 с</span></div>
+        <div class="inst-meter" role="progressbar" aria-label="Физика" aria-valuenow="27" aria-valuemin="0" aria-valuemax="100">
+          <div class="inst-meter-fill" style="inline-size:27%"></div>
         </div>
       </div>
       <div>
-        <div class="meter-row"><span>Ассеты</span><span class="meter-value">8,1 с</span></div>
-        <div class="meter" role="progressbar" aria-label="Ассеты" aria-valuenow="19" aria-valuemin="0" aria-valuemax="100">
-          <div class="meter-fill" style="inline-size:19%"></div>
+        <div class="inst-meter-row"><span>Ассеты</span><span class="inst-meter-value">8,1 с</span></div>
+        <div class="inst-meter" role="progressbar" aria-label="Ассеты" aria-valuenow="19" aria-valuemin="0" aria-valuemax="100">
+          <div class="inst-meter-fill" style="inline-size:19%"></div>
         </div>
       </div>
       <div>
-        <div class="meter-row"><span>Индексация</span><span class="meter-value">длительность неизвестна</span></div>
-        <div class="meter" data-state="indeterminate" role="progressbar" aria-label="Индексация">
-          <div class="meter-fill"></div>
+        <div class="inst-meter-row"><span>Индексация</span><span class="inst-meter-value">длительность неизвестна</span></div>
+        <div class="inst-meter" data-state="indeterminate" role="progressbar" aria-label="Индексация">
+          <div class="inst-meter-fill"></div>
         </div>
       </div>
     </div>
@@ -1135,26 +1135,26 @@
       поверхности: ряд метрик читается как <b>одна группа</b>; рамка вокруг каждой превращает четыре числа в четыре объекта. Единица
       измерения мельче и тише самого числа, потому что она часть числа, а не сосед.
     </p>
-    <div class="metric-row">
-      <div class="metric">
-        <div class="metric-label">Время прогона</div>
-        <div class="metric-value">42<span class="metric-unit">&nbsp;с</span></div>
-        <div class="metric-delta" data-dir="down" data-polarity="good">18% к прошлому</div>
+    <div class="inst-metric-row">
+      <div class="inst-metric">
+        <div class="inst-metric-label">Время прогона</div>
+        <div class="inst-metric-value">42<span class="inst-metric-unit">&nbsp;с</span></div>
+        <div class="inst-metric-delta" data-dir="down" data-polarity="good">18% к прошлому</div>
       </div>
-      <div class="metric">
-        <div class="metric-label">Тесты пройдены</div>
-        <div class="metric-value">248<span class="metric-unit">/251</span></div>
-        <div class="metric-delta" data-polarity="warn">3 падают</div>
+      <div class="inst-metric">
+        <div class="inst-metric-label">Тесты пройдены</div>
+        <div class="inst-metric-value">248<span class="inst-metric-unit">/251</span></div>
+        <div class="inst-metric-delta" data-polarity="warn">3 падают</div>
       </div>
-      <div class="metric">
-        <div class="metric-label">Размер бандла</div>
-        <div class="metric-value">7,4<span class="metric-unit">&nbsp;МБ</span></div>
-        <div class="metric-delta">без изменений</div>
+      <div class="inst-metric">
+        <div class="inst-metric-label">Размер бандла</div>
+        <div class="inst-metric-value">7,4<span class="inst-metric-unit">&nbsp;МБ</span></div>
+        <div class="inst-metric-delta">без изменений</div>
       </div>
-      <div class="metric">
-        <div class="metric-label">Предупреждений</div>
-        <div class="metric-value">12</div>
-        <div class="metric-delta" data-dir="up" data-polarity="bad">5 новых</div>
+      <div class="inst-metric">
+        <div class="inst-metric-label">Предупреждений</div>
+        <div class="inst-metric-value">12</div>
+        <div class="inst-metric-delta" data-dir="up" data-polarity="bad">5 новых</div>
       </div>
     </div>
     <p class="why">
@@ -1172,79 +1172,79 @@
       метрике. У числового поля подпись оси служит ручкой перетаскивания, поэтому курсор
       меняется на ней, а не на отдельном степпере, — тянуть будут именно за букву.
     </p>
-    <div class="sub">Инспектор и иерархия<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-4">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-4">Инспектор: перетаскивание числа за подпись оси. Дерево: раскрытие узлов, стрелки, бегущий tabindex</span></span></div>
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-header"><span class="panel-title">Инспектор</span></div>
-        <div class="toolbar">
-          <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Переместить">
-            <svg class="icon" aria-hidden="true"><use href="#i-move"/></svg></button>
-          <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Повернуть">
-            <svg class="icon" aria-hidden="true"><use href="#i-rotate"/></svg></button>
-          <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Масштаб">
-            <svg class="icon" aria-hidden="true"><use href="#i-scale"/></svg></button>
-          <span class="toolbar-sep"></span>
-          <span class="toolbar-spacer"></span>
-          <span class="badge">terrain_chunk_04</span>
+    <h3 class="sub" id="inspector">Инспектор и иерархия<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-4">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-4">Инспектор: перетаскивание числа за подпись оси. Дерево: раскрытие узлов, стрелки, бегущий tabindex</span></span></h3>
+    <div class="inst-grid">
+      <div class="inst-panel">
+        <div class="inst-panel-header"><span class="inst-panel-title">Инспектор</span></div>
+        <div class="inst-toolbar">
+          <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Переместить">
+            <svg class="inst-icon" aria-hidden="true"><use href="#i-move"/></svg></button>
+          <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Повернуть">
+            <svg class="inst-icon" aria-hidden="true"><use href="#i-rotate"/></svg></button>
+          <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Масштаб">
+            <svg class="inst-icon" aria-hidden="true"><use href="#i-scale"/></svg></button>
+          <span class="inst-toolbar-sep"></span>
+          <span class="inst-toolbar-spacer"></span>
+          <span class="inst-badge">terrain_chunk_04</span>
         </div>
-        <div class="panel-body panel-body--flush">
-          <div class="props">
-            <div class="prop"><span class="prop-label" title="Позиция">Позиция</span>
-              <span class="prop-control vec">
-                <span class="num-field"><span class="num-axis">X</span><input type="number" value="128" aria-label="Позиция X"></span>
-                <span class="num-field"><span class="num-axis">Y</span><input type="number" value="0" aria-label="Позиция Y"></span>
-                <span class="num-field"><span class="num-axis">Z</span><input type="number" value="-64" aria-label="Позиция Z"></span>
+        <div class="inst-panel-body inst-panel-body--flush">
+          <div class="inst-props">
+            <div class="inst-prop"><span class="inst-prop-label" title="Позиция">Позиция</span>
+              <span class="inst-prop-control inst-vec">
+                <span class="inst-num-field"><span class="inst-num-axis">X</span><input type="number" value="128" aria-label="Позиция X"></span>
+                <span class="inst-num-field"><span class="inst-num-axis">Y</span><input type="number" value="0" aria-label="Позиция Y"></span>
+                <span class="inst-num-field"><span class="inst-num-axis">Z</span><input type="number" value="-64" aria-label="Позиция Z"></span>
               </span></div>
-            <div class="prop"><span class="prop-label" title="Поворот">Поворот</span>
-              <span class="prop-control vec">
-                <span class="num-field"><span class="num-axis">X</span><input type="number" value="0" aria-label="Поворот X"></span>
-                <span class="num-field"><span class="num-axis">Y</span><input type="number" value="45" aria-label="Поворот Y"></span>
-                <span class="num-field"><span class="num-axis">Z</span><input type="number" value="0" aria-label="Поворот Z"></span>
+            <div class="inst-prop"><span class="inst-prop-label" title="Поворот">Поворот</span>
+              <span class="inst-prop-control inst-vec">
+                <span class="inst-num-field"><span class="inst-num-axis">X</span><input type="number" value="0" aria-label="Поворот X"></span>
+                <span class="inst-num-field"><span class="inst-num-axis">Y</span><input type="number" value="45" aria-label="Поворот Y"></span>
+                <span class="inst-num-field"><span class="inst-num-axis">Z</span><input type="number" value="0" aria-label="Поворот Z"></span>
               </span></div>
-            <div class="prop"><span class="prop-label" title="Материал">Материал</span>
-              <span class="prop-control">
-                <span class="select-wrap"><select class="select select--sm" aria-label="Материал"><option>rock_granite</option><option>rock_basalt</option></select></span>
+            <div class="inst-prop"><span class="inst-prop-label" title="Материал">Материал</span>
+              <span class="inst-prop-control">
+                <span class="inst-select-wrap"><select class="inst-select inst-select--sm" aria-label="Материал"><option>rock_granite</option><option>rock_basalt</option></select></span>
               </span></div>
-            <div class="prop"><span class="prop-label" title="Отбрасывать тень">Тень</span>
-              <span class="prop-control"><label class="switch"><input type="checkbox" checked aria-label="Отбрасывать тень"></label></span></div>
-            <div class="prop"><span class="prop-label" title="Плотность растительности">Плотность</span>
-              <span class="prop-control"><input class="slider" type="range" min="0" max="100" value="72" aria-label="Плотность растительности"></span></div>
+            <div class="inst-prop"><span class="inst-prop-label" title="Отбрасывать тень">Тень</span>
+              <span class="inst-prop-control"><label class="inst-switch"><input type="checkbox" checked aria-label="Отбрасывать тень"></label></span></div>
+            <div class="inst-prop"><span class="inst-prop-label" title="Плотность растительности">Плотность</span>
+              <span class="inst-prop-control"><input class="inst-slider" type="range" min="0" max="100" value="72" aria-label="Плотность растительности"></span></div>
           </div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-header"><span class="panel-title">Иерархия</span></div>
-        <div class="panel-body panel-body--list">
-          <div class="tree" role="tree" aria-label="Иерархия сцены" id="tree">
-            <div class="tree-item" role="treeitem" aria-level="1" aria-expanded="true" aria-selected="false" tabindex="0" style="--depth:0"><span class="tree-twist"></span>world</div>
-            <div class="tree-item" role="treeitem" aria-level="2" aria-expanded="true" aria-selected="false" tabindex="-1" style="--depth:1"><span class="tree-twist"></span>terrain</div>
-            <div class="tree-item" role="treeitem" aria-level="3" aria-selected="true" tabindex="-1" style="--depth:2"><span class="tree-twist"></span>terrain_chunk_04</div>
-            <div class="tree-item" role="treeitem" aria-level="3" aria-selected="false" tabindex="-1" style="--depth:2"><span class="tree-twist"></span>terrain_chunk_05</div>
-            <div class="tree-item" role="treeitem" aria-level="2" aria-expanded="false" aria-selected="false" tabindex="-1" style="--depth:1"><span class="tree-twist"></span>props</div>
-            <div class="tree-item" role="treeitem" aria-level="2" aria-selected="false" tabindex="-1" style="--depth:1"><span class="tree-twist"></span>lighting</div>
+      <div class="inst-panel">
+        <div class="inst-panel-header"><span class="inst-panel-title">Иерархия</span></div>
+        <div class="inst-panel-body inst-panel-body--list">
+          <div class="inst-tree" role="tree" aria-label="Иерархия сцены" id="tree">
+            <div class="inst-tree-item" role="treeitem" aria-level="1" aria-expanded="true" aria-selected="false" tabindex="0" style="--depth:0"><span class="inst-tree-twist"></span>world</div>
+            <div class="inst-tree-item" role="treeitem" aria-level="2" aria-expanded="true" aria-selected="false" tabindex="-1" style="--depth:1"><span class="inst-tree-twist"></span>terrain</div>
+            <div class="inst-tree-item" role="treeitem" aria-level="3" aria-selected="true" tabindex="-1" style="--depth:2"><span class="inst-tree-twist"></span>terrain_chunk_04</div>
+            <div class="inst-tree-item" role="treeitem" aria-level="3" aria-selected="false" tabindex="-1" style="--depth:2"><span class="inst-tree-twist"></span>terrain_chunk_05</div>
+            <div class="inst-tree-item" role="treeitem" aria-level="2" aria-expanded="false" aria-selected="false" tabindex="-1" style="--depth:1"><span class="inst-tree-twist"></span>props</div>
+            <div class="inst-tree-item" role="treeitem" aria-level="2" aria-selected="false" tabindex="-1" style="--depth:1"><span class="inst-tree-twist"></span>lighting</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="sub">Таблица</div>
+    <h3 class="sub" id="table">Таблица</h3>
     <p class="why">Числа выровнены вправо и табличные — величина читается как форма колонки, без чтения цифр.</p>
-    <table class="table">
-      <thead><tr><th>Модуль</th><th>Состояние</th><th class="num">Время, с</th><th class="num">Файлов</th><th class="num">Токенов</th></tr></thead>
+    <table class="inst-table">
+      <thead><tr><th>Модуль</th><th>Состояние</th><th class="inst-num">Время, с</th><th class="inst-num">Файлов</th><th class="inst-num">Токенов</th></tr></thead>
       <tbody>
-        <tr><td>Рендер</td><td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td><td class="num">18,2</td><td class="num">42</td><td class="num">61 204</td></tr>
-        <tr aria-selected="true"><td>Физика</td><td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td><td class="num">11,5</td><td class="num">17</td><td class="num">38 910</td></tr>
-        <tr><td>Ассеты</td><td><span class="badge" data-tone="running"><span class="dot"></span>идёт</span></td><td class="num">8,1</td><td class="num">203</td><td class="num">9 442</td></tr>
-        <tr><td>Аудио</td><td><span class="badge" data-tone="error"><span class="dot"></span>упало</span></td><td class="num">4,2</td><td class="num">8</td><td class="num">1 180</td></tr>
+        <tr><td>Рендер</td><td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span></td><td class="inst-num">18,2</td><td class="inst-num">42</td><td class="inst-num">61 204</td></tr>
+        <tr aria-selected="true"><td>Физика</td><td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span></td><td class="inst-num">11,5</td><td class="inst-num">17</td><td class="inst-num">38 910</td></tr>
+        <tr><td>Ассеты</td><td><span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span></td><td class="inst-num">8,1</td><td class="inst-num">203</td><td class="inst-num">9 442</td></tr>
+        <tr><td>Аудио</td><td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>упало</span></td><td class="inst-num">4,2</td><td class="inst-num">8</td><td class="inst-num">1 180</td></tr>
       </tbody>
     </table>
 
-    <div class="sub">Пустое состояние</div>
-    <div class="panel"><div class="empty">
-      <div class="empty-title">Прогонов пока нет</div>
-      <div class="empty-desc">Запуск создаст очередь агентов и лог, которые появятся здесь.</div>
-      <button class="btn btn--sm" type="button">Запустить первый</button>
+    <h3 class="sub" id="empty">Пустое состояние</h3>
+    <div class="inst-panel"><div class="inst-empty">
+      <div class="inst-empty-title">Прогонов пока нет</div>
+      <div class="inst-empty-desc">Запуск создаст очередь агентов и лог, которые появятся здесь.</div>
+      <button class="inst-btn inst-btn--sm" type="button">Запустить первый</button>
     </div></div>
   </section>
   <section id="data">
@@ -1263,90 +1263,90 @@
     <div class="ramp ramp--chart" id="ramp-chart"></div>
     <div class="ramp ramp--chart ramp-scale" id="ramp-chart-scale"></div>
 
-    <div class="sub">Спарклайн, кольцо и легенда</div>
-    <div class="grid">
-      <div class="card stack stack--tight">
-        <div class="metric-label">Токенов в сутки</div>
-        <div class="metric-value">184<span class="metric-unit">&nbsp;тыс.</span></div>
-        <svg class="sparkline" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">
-          <path class="sparkline-area" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6 120,32 0,32Z"/>
-          <path class="sparkline-line" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6"/>
+    <h3 class="sub" id="charts">Спарклайн, кольцо и легенда</h3>
+    <div class="inst-grid">
+      <div class="inst-card inst-stack inst-stack--tight">
+        <div class="inst-metric-label">Токенов в сутки</div>
+        <div class="inst-metric-value">184<span class="inst-metric-unit">&nbsp;тыс.</span></div>
+        <svg class="inst-sparkline" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">
+          <path class="inst-sparkline-area" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6 120,32 0,32Z"/>
+          <path class="inst-sparkline-line" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6"/>
         </svg>
         <div class="t-2xs">За 11 суток, без осей — это форма изменения рядом с числом, а не график</div>
       </div>
 
-      <div class="card cluster cluster--loose">
-        <span class="ring-wrap">
-          <svg class="ring" viewBox="0 0 20 20" role="img" aria-label="Израсходовано 74% бюджета">
-            <circle class="ring-track" cx="10" cy="10" r="8"/>
-            <circle class="ring-fill" cx="10" cy="10" r="8" style="--value:0.74"/>
+      <div class="inst-card inst-cluster inst-cluster--loose">
+        <span class="inst-ring-wrap">
+          <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Израсходовано 74% бюджета">
+            <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
+            <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.74"/>
           </svg>
-          <span class="ring-label">74</span>
+          <span class="inst-ring-label">74</span>
         </span>
         <div>
-          <div class="card-title">Бюджет израсходован</div>
-          <div class="card-sub">184 320 из 250 000 токенов</div>
+          <div class="inst-card-title">Бюджет израсходован</div>
+          <div class="inst-card-sub">184 320 из 250 000 токенов</div>
         </div>
       </div>
 
-      <div class="card stack stack--tight">
-        <div class="card-title">Время по модулям</div>
-        <ul class="legend">
-          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-1)"></span>Рендер <span class="legend-value">18,2 с</span></li>
-          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-2)"></span>Физика <span class="legend-value">11,5 с</span></li>
-          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-3)"></span>Ассеты <span class="legend-value">8,1 с</span></li>
-          <li class="legend-item"><span class="legend-swatch" style="--series:var(--chart-4)"></span>Аудио <span class="legend-value">4,2 с</span></li>
+      <div class="inst-card inst-stack inst-stack--tight">
+        <div class="inst-card-title">Время по модулям</div>
+        <ul class="inst-legend">
+          <li class="inst-legend-item"><span class="inst-legend-swatch" style="--series:var(--chart-1)"></span>Рендер <span class="inst-legend-value">18,2 с</span></li>
+          <li class="inst-legend-item"><span class="inst-legend-swatch" style="--series:var(--chart-2)"></span>Физика <span class="inst-legend-value">11,5 с</span></li>
+          <li class="inst-legend-item"><span class="inst-legend-swatch" style="--series:var(--chart-3)"></span>Ассеты <span class="inst-legend-value">8,1 с</span></li>
+          <li class="inst-legend-item"><span class="inst-legend-swatch" style="--series:var(--chart-4)"></span>Аудио <span class="inst-legend-value">4,2 с</span></li>
         </ul>
         <div class="t-2xs">Метка ряда — квадрат: круг занят точкой состояния</div>
       </div>
     </div>
 
-    <div class="sub">Таблица: сортировка, выбор, действия, итоги<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-5">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-5">Сама сортировка, «выбрать всё» и действия строки</span></span></div>
-    <table class="table table--sticky">
+    <h3 class="sub" id="table-advanced">Таблица: сортировка, выбор, действия, итоги<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-5">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-5">Сама сортировка, «выбрать всё» и действия строки</span></span></h3>
+    <table class="inst-table inst-table--sticky">
       <thead>
         <tr>
-          <th class="col-select"><label class="checkbox"><input type="checkbox" aria-label="Выбрать все строки"></label></th>
-          <th aria-sort="descending"><button class="sort" type="button">Модуль</button></th>
+          <th class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать все строки"></label></th>
+          <th aria-sort="descending"><button class="inst-sort" type="button">Модуль</button></th>
           <th>Состояние</th>
-          <th class="num"><button class="sort" type="button">Время, с</button></th>
-          <th class="num"><button class="sort" type="button">Токенов</button></th>
-          <th class="col-actions"><span class="u-visually-hidden">Действия</span></th>
+          <th class="inst-num"><button class="inst-sort" type="button">Время, с</button></th>
+          <th class="inst-num"><button class="inst-sort" type="button">Токенов</button></th>
+          <th class="inst-col-actions"><span class="inst-u-visually-hidden">Действия</span></th>
         </tr>
       </thead>
       <tbody>
         <tr aria-selected="true">
-          <td><label class="checkbox"><input type="checkbox" checked aria-label="Выбрать «Рендер»"></label></td>
+          <td><label class="inst-checkbox"><input type="checkbox" checked aria-label="Выбрать «Рендер»"></label></td>
           <td>Рендер</td>
-          <td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td>
-          <td class="num">18,2</td><td class="num">61 204</td>
-          <td class="col-actions"><span class="row-actions">
-            <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Перезапустить Рендер">
-              <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+          <td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span></td>
+          <td class="inst-num">18,2</td><td class="inst-num">61 204</td>
+          <td class="inst-col-actions"><span class="inst-row-actions">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Рендер">
+              <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </span></td>
         </tr>
         <tr>
-          <td><label class="checkbox"><input type="checkbox" aria-label="Выбрать «Физика»"></label></td>
+          <td><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать «Физика»"></label></td>
           <td>Физика</td>
-          <td><span class="badge" data-tone="ok"><span class="dot"></span>готово</span></td>
-          <td class="num">11,5</td><td class="num">38 910</td>
-          <td class="col-actions"><span class="row-actions">
-            <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Перезапустить Физика">
-              <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+          <td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span></td>
+          <td class="inst-num">11,5</td><td class="inst-num">38 910</td>
+          <td class="inst-col-actions"><span class="inst-row-actions">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Физика">
+              <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </span></td>
         </tr>
         <tr>
-          <td><label class="checkbox"><input type="checkbox" aria-label="Выбрать «Аудио»"></label></td>
+          <td><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать «Аудио»"></label></td>
           <td>Аудио</td>
-          <td><span class="badge" data-tone="error"><span class="dot"></span>упало</span></td>
-          <td class="num">4,2</td><td class="num">1 180</td>
-          <td class="col-actions"><span class="row-actions">
-            <button class="btn btn--sm btn--ghost btn--icon" type="button" aria-label="Перезапустить Аудио">
-              <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+          <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>упало</span></td>
+          <td class="inst-num">4,2</td><td class="inst-num">1 180</td>
+          <td class="inst-col-actions"><span class="inst-row-actions">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Аудио">
+              <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </span></td>
         </tr>
       </tbody>
       <tfoot>
-        <tr><td></td><td>Итого</td><td></td><td class="num">33,9</td><td class="num">101 294</td><td></td></tr>
+        <tr><td></td><td>Итого</td><td></td><td class="inst-num">33,9</td><td class="inst-num">101 294</td><td></td></tr>
       </tfoot>
     </table>
     <p class="why">
@@ -1356,55 +1356,55 @@
       неуправляемой без мыши, поэтому они гаснут прозрачностью, а не исчезают.
     </p>
 
-    <div class="sub">Аватары, теги, лента<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-6">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-6">Снятие тега и выбор даты в календаре</span></span></div>
-    <div class="grid">
-      <div class="card stack stack--tight">
-        <div class="card-title">Участники</div>
-        <div class="cluster">
-          <span class="avatars">
-            <span class="avatar" style="background:var(--chart-1);color:var(--accent-on)">ИС</span>
-            <span class="avatar" style="background:var(--chart-3);color:var(--accent-on)">МК</span>
-            <span class="avatar" style="background:var(--chart-5);color:var(--accent-on)">ДП</span>
-            <span class="avatars-more">и ещё 4</span>
+    <h3 class="sub" id="avatar-tag-timeline">Аватары, теги, лента<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-6">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-6">Снятие тега и выбор даты в календаре</span></span></h3>
+    <div class="inst-grid">
+      <div class="inst-card inst-stack inst-stack--tight">
+        <div class="inst-card-title">Участники</div>
+        <div class="inst-cluster">
+          <span class="inst-avatars">
+            <span class="inst-avatar" style="background:var(--chart-1);color:var(--accent-on)">ИС</span>
+            <span class="inst-avatar" style="background:var(--chart-3);color:var(--accent-on)">МК</span>
+            <span class="inst-avatar" style="background:var(--chart-5);color:var(--accent-on)">ДП</span>
+            <span class="inst-avatars-more">и ещё 4</span>
           </span>
         </div>
-        <div class="cluster cluster--tight">
-          <span class="tag">worldgen<button class="tag-remove" type="button" aria-label="Убрать метку worldgen"></button></span>
-          <span class="tag">ночной<button class="tag-remove" type="button" aria-label="Убрать метку ночной"></button></span>
-          <span class="tag">приоритет:высокий</span>
+        <div class="inst-cluster inst-cluster--tight">
+          <span class="inst-tag">worldgen<button class="inst-tag-remove" type="button" aria-label="Убрать метку worldgen"></button></span>
+          <span class="inst-tag">ночной<button class="inst-tag-remove" type="button" aria-label="Убрать метку ночной"></button></span>
+          <span class="inst-tag">приоритет:высокий</span>
         </div>
         <div class="t-2xs">Тег — не бейдж: бейдж это состояние из словаря кита, тег завёл пользователь</div>
       </div>
 
-      <div class="card">
-        <div class="card-title">История прогона</div>
-        <div class="timeline">
-          <div class="timeline-item" data-tone="ok">
-            <span class="timeline-dot"></span>
-            <span class="timeline-body">Прогон запущен<span class="timeline-sub">seed 8841203, 512×512</span></span>
-            <span class="timeline-time">19:38:04</span>
+      <div class="inst-card">
+        <div class="inst-card-title">История прогона</div>
+        <div class="inst-timeline">
+          <div class="inst-timeline-item" data-tone="ok">
+            <span class="inst-timeline-dot"></span>
+            <span class="inst-timeline-body">Прогон запущен<span class="inst-timeline-sub">seed 8841203, 512×512</span></span>
+            <span class="inst-timeline-time">19:38:04</span>
           </div>
-          <div class="timeline-item" data-tone="warn">
-            <span class="timeline-dot"></span>
-            <span class="timeline-body">Перекрытие биомов<span class="timeline-sub">тундра и степь в 12 клетках</span></span>
-            <span class="timeline-time">19:38:14</span>
+          <div class="inst-timeline-item" data-tone="warn">
+            <span class="inst-timeline-dot"></span>
+            <span class="inst-timeline-body">Перекрытие биомов<span class="inst-timeline-sub">тундра и степь в 12 клетках</span></span>
+            <span class="inst-timeline-time">19:38:14</span>
           </div>
-          <div class="timeline-item" data-tone="error">
-            <span class="timeline-dot"></span>
-            <span class="timeline-body">Валидация путей упала<span class="timeline-sub">3 узла недостижимы</span></span>
-            <span class="timeline-time">19:38:16</span>
+          <div class="inst-timeline-item" data-tone="error">
+            <span class="inst-timeline-dot"></span>
+            <span class="inst-timeline-body">Валидация путей упала<span class="inst-timeline-sub">3 узла недостижимы</span></span>
+            <span class="inst-timeline-time">19:38:16</span>
           </div>
-          <div class="timeline-item" data-tone="running">
-            <span class="timeline-dot"></span>
-            <span class="timeline-body">Повтор расстановки<span class="timeline-sub">идёт третий проход</span></span>
-            <span class="timeline-time">19:38:18</span>
+          <div class="inst-timeline-item" data-tone="running">
+            <span class="inst-timeline-dot"></span>
+            <span class="inst-timeline-body">Повтор расстановки<span class="inst-timeline-sub">идёт третий проход</span></span>
+            <span class="inst-timeline-time">19:38:18</span>
           </div>
         </div>
       </div>
 
-      <div class="card stack stack--tight">
-        <div class="card-title">Август 2026</div>
-        <div class="calendar" id="calendar" role="grid" aria-label="Август 2026"></div>
+      <div class="inst-card inst-stack inst-stack--tight">
+        <div class="inst-card-title">Август 2026</div>
+        <div class="inst-calendar" id="calendar" role="grid" aria-label="Август 2026"></div>
         <div class="t-2xs">Сегодня помечено подчёркиванием, а не только цветом</div>
       </div>
     </div>
@@ -1420,86 +1420,86 @@
       из которого есть выход.
     </p>
 
-    <div class="sub">Запрос подтверждения<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-7">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-7">Обработка решения и перевод блока в состояние «решено»</span></span></div>
+    <h3 class="sub" id="approval">Запрос подтверждения<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-7">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-7">Обработка решения и перевод блока в состояние «решено»</span></span></h3>
     <p class="why">
       Определяющее взаимодействие агентных систем и <b>единственный блок в ките, которому
       разрешено останавливать глаз</b>. Обязательны три вещи: что именно будет сделано,
       что это затронет, и решение одним нажатием. После ответа блок не исчезает и не
       гаснет — он отступает, как и завершённая задача.
     </p>
-    <div class="stack">
-      <div class="approval" data-state="pending" role="group" aria-labelledby="ap1">
-        <div class="approval-head" id="ap1">Агент просит разрешение</div>
-        <div class="approval-what">rm -rf build/ &amp;&amp; npm run build --force</div>
-        <ul class="approval-effects">
+    <div class="inst-stack">
+      <div class="inst-approval" data-state="pending" role="group" aria-labelledby="ap1">
+        <div class="inst-approval-head" id="ap1">Агент просит разрешение</div>
+        <div class="inst-approval-what">rm -rf build/ &amp;&amp; npm run build --force</div>
+        <ul class="inst-approval-effects">
           <li>Удалит каталог <code>build/</code> целиком — 1 284 файла</li>
           <li data-tone="warn">Необратимо: содержимое не попадает в корзину</li>
           <li>Пересборка займёт около 40 с</li>
         </ul>
-        <div class="approval-actions">
-          <button class="btn btn--primary btn--sm" type="button" data-approve="allow">Разрешить</button>
-          <button class="btn btn--sm" type="button" data-approve="deny">Отклонить</button>
-          <button class="btn btn--ghost btn--sm" type="button" data-approve="always">Разрешать всегда</button>
+        <div class="inst-approval-actions">
+          <button class="inst-btn inst-btn--primary inst-btn--sm" type="button" data-approve="allow">Разрешить</button>
+          <button class="inst-btn inst-btn--sm" type="button" data-approve="deny">Отклонить</button>
+          <button class="inst-btn inst-btn--ghost inst-btn--sm" type="button" data-approve="always">Разрешать всегда</button>
         </div>
       </div>
 
-      <div class="approval" data-state="approved" role="group" aria-labelledby="ap2">
-        <div class="approval-head" id="ap2">Решение принято</div>
-        <div class="approval-what">git push origin worldgen --force-with-lease</div>
-        <div class="approval-verdict">Разрешено в 19:37:52 · осталось в истории</div>
+      <div class="inst-approval" data-state="approved" role="group" aria-labelledby="ap2">
+        <div class="inst-approval-head" id="ap2">Решение принято</div>
+        <div class="inst-approval-what">git push origin worldgen --force-with-lease</div>
+        <div class="inst-approval-verdict">Разрешено в 19:37:52 · осталось в истории</div>
       </div>
     </div>
 
-    <div class="sub">Очередь агентов<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-8">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-8">Бегущий tabindex, стрелки, выбор строки</span></span></div>
-    <div class="panel">
-      <div class="panel-header">
-        <span class="panel-title">Очередь агентов</span>
-        <span class="panel-actions"><span class="badge">7 из 12</span></span>
+    <h3 class="sub" id="task-queue">Очередь агентов<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-8">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-8">Бегущий tabindex, стрелки, выбор строки</span></span></h3>
+    <div class="inst-panel">
+      <div class="inst-panel-header">
+        <span class="inst-panel-title">Очередь агентов</span>
+        <span class="inst-panel-actions"><span class="inst-badge">7 из 12</span></span>
       </div>
-      <div class="panel-body panel-body--list">
+      <div class="inst-panel-body inst-panel-body--list">
         <div class="tree-none" role="listbox" aria-label="Очередь агентов" id="queue">
-          <div class="task" role="option" data-state="done" aria-selected="false" tabindex="-1">
-            <span class="task-gutter"><span class="dot"></span></span>
-            <span class="task-main"><span class="task-title u-truncate">Разбор карты высот</span>
-              <span class="task-sub">terrain/heightmap.ts · 4 файла</span></span>
-            <span class="task-meta">2,1 с</span>
+          <div class="inst-task" role="option" data-state="done" aria-selected="false" tabindex="-1">
+            <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+            <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Разбор карты высот</span>
+              <span class="inst-task-sub">terrain/heightmap.ts · 4 файла</span></span>
+            <span class="inst-task-meta">2,1 с</span>
           </div>
-          <div class="task" role="option" data-state="done" aria-selected="false" tabindex="-1">
-            <span class="task-gutter"><span class="dot"></span></span>
-            <span class="task-main"><span class="task-title u-truncate">Генерация биомов</span>
-              <span class="task-sub">world/biomes.ts · 11 файлов</span></span>
-            <span class="task-meta">8,4 с</span>
+          <div class="inst-task" role="option" data-state="done" aria-selected="false" tabindex="-1">
+            <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+            <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Генерация биомов</span>
+              <span class="inst-task-sub">world/biomes.ts · 11 файлов</span></span>
+            <span class="inst-task-meta">8,4 с</span>
           </div>
-          <div class="task" role="option" data-state="running" aria-selected="true" tabindex="0">
-            <span class="task-gutter"><span class="dot"></span></span>
-            <span class="task-main"><span class="task-title u-truncate">Расстановка ресурсов</span>
-              <span class="task-sub">идёт третий проход<span class="caret"></span></span></span>
-            <span class="task-meta">14,0 с</span>
+          <div class="inst-task" role="option" data-state="running" aria-selected="true" tabindex="0">
+            <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+            <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Расстановка ресурсов</span>
+              <span class="inst-task-sub">идёт третий проход<span class="inst-caret"></span></span></span>
+            <span class="inst-task-meta">14,0 с</span>
           </div>
-          <div class="task" role="option" data-state="failed" aria-selected="false" tabindex="-1">
-            <span class="task-gutter"><span class="dot"></span></span>
-            <span class="task-main"><span class="task-title u-truncate">Валидация путей</span>
-              <span class="task-sub">3 узла недостижимы</span></span>
-            <span class="task-meta">1,2 с</span>
+          <div class="inst-task" role="option" data-state="failed" aria-selected="false" tabindex="-1">
+            <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+            <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Валидация путей</span>
+              <span class="inst-task-sub">3 узла недостижимы</span></span>
+            <span class="inst-task-meta">1,2 с</span>
           </div>
-          <div class="task" role="option" data-state="queued" aria-selected="false" tabindex="-1">
-            <span class="task-gutter"><span class="dot"></span></span>
-            <span class="task-main"><span class="task-title u-truncate">Запекание навмеша</span>
-              <span class="task-sub">ждёт валидацию</span></span>
-            <span class="task-meta">—</span>
+          <div class="inst-task" role="option" data-state="queued" aria-selected="false" tabindex="-1">
+            <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+            <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Запекание навмеша</span>
+              <span class="inst-task-sub">ждёт валидацию</span></span>
+            <span class="inst-task-meta">—</span>
           </div>
-          <div class="task" role="option" data-state="skipped" aria-selected="false" tabindex="-1">
-            <span class="task-gutter"><span class="dot"></span></span>
-            <span class="task-main"><span class="task-title u-truncate">Экспорт превью</span>
-              <span class="task-sub">пропущено флагом</span></span>
-            <span class="task-meta">—</span>
+          <div class="inst-task" role="option" data-state="skipped" aria-selected="false" tabindex="-1">
+            <span class="inst-task-gutter"><span class="inst-dot"></span></span>
+            <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Экспорт превью</span>
+              <span class="inst-task-sub">пропущено флагом</span></span>
+            <span class="inst-task-meta">—</span>
           </div>
         </div>
       </div>
     </div>
     <p class="why">
       Строка очереди — <b>плоская</b>: состояние, название, метаданные, время. Если нужно
-      тело — аргументы, вывод, ошибка — это уже шаг (<code>.step</code>) ниже, другой
+      тело — аргументы, вывод, ошибка — это уже шаг (<code>.inst-step</code>) ниже, другой
       компонент. Фиксированный левый жёлоб выстраивает точки в вертикальную линию,
       которую можно просканировать, не читая ни слова. Разметка обязательна: список —
       <code>role="listbox"</code>, строки — <code>role="option"</code> с бегущим
@@ -1507,20 +1507,20 @@
       добраться с клавиатуры.
     </p>
 
-    <div class="sub">Вызовы инструментов<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-9">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-9">Разворот свёрнутого вывода. Сам шаг раскрывается без скрипта — это details</span></span></div>
-    <div class="panel">
-      <div class="panel-body panel-body--list">
-        <details class="step" data-state="ok">
-          <summary class="step-head">
-            <span class="step-twist"></span><span class="dot"></span>
-            <span class="step-name">read_file</span>
-            <span class="step-sub u-truncate">terrain/heightmap.ts</span>
-            <span class="step-meta">0,3 с</span>
+    <h3 class="sub" id="tool-calls">Вызовы инструментов<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-9">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-9">Разворот свёрнутого вывода. Сам шаг раскрывается без скрипта — это details</span></span></h3>
+    <div class="inst-panel">
+      <div class="inst-panel-body inst-panel-body--list">
+        <details class="inst-step" data-state="ok">
+          <summary class="inst-step-head">
+            <span class="inst-step-twist"></span><span class="inst-dot"></span>
+            <span class="inst-step-name">read_file</span>
+            <span class="inst-step-sub inst-u-truncate">terrain/heightmap.ts</span>
+            <span class="inst-step-meta">0,3 с</span>
           </summary>
-          <div class="step-body">
-            <div class="code">{ "path": "terrain/heightmap.ts", "range": [1, 240] }</div>
-            <div class="output" data-truncated="true">
-              <pre class="code output-body">export function decodeHeightmap(buf: ArrayBuffer): Float32Array {
+          <div class="inst-step-body">
+            <div class="inst-code">{ "path": "terrain/heightmap.ts", "range": [1, 240] }</div>
+            <div class="inst-output" data-truncated="true">
+              <pre class="inst-code inst-output-body">export function decodeHeightmap(buf: ArrayBuffer): Float32Array {
   const view = new DataView(buf);
   const size = view.getUint32(0, true);
   const out = new Float32Array(size * size);
@@ -1539,43 +1539,43 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
         + map[y1 * size + x0] * (1 - fx) * fy
         + map[y1 * size + x1] * fx * fy;
 }</pre>
-              <button class="output-more" type="button">Показать все 240 строк</button>
+              <button class="inst-output-more" type="button">Показать все 240 строк</button>
             </div>
           </div>
         </details>
 
-        <details class="step" data-state="running" open>
-          <summary class="step-head">
-            <span class="step-twist"></span><span class="dot"></span>
-            <span class="step-name">place_resources</span>
-            <span class="step-sub u-truncate">проход 3 из 3</span>
-            <span class="step-meta">14,0 с</span>
+        <details class="inst-step" data-state="running" open>
+          <summary class="inst-step-head">
+            <span class="inst-step-twist"></span><span class="inst-dot"></span>
+            <span class="inst-step-name">place_resources</span>
+            <span class="inst-step-sub inst-u-truncate">проход 3 из 3</span>
+            <span class="inst-step-meta">14,0 с</span>
           </summary>
-          <div class="step-body">
-            <div class="stack stack--tight">
-              <div class="skeleton skeleton--title"></div>
-              <div class="skeleton skeleton--line"></div>
-              <div class="skeleton skeleton--short"></div>
+          <div class="inst-step-body">
+            <div class="inst-stack inst-stack--tight">
+              <div class="inst-skeleton inst-skeleton--title"></div>
+              <div class="inst-skeleton inst-skeleton--line"></div>
+              <div class="inst-skeleton inst-skeleton--short"></div>
             </div>
           </div>
         </details>
 
-        <details class="step" data-state="failed">
-          <summary class="step-head">
-            <span class="step-twist"></span><span class="dot"></span>
-            <span class="step-name">validate_paths</span>
-            <span class="step-sub u-truncate">3 узла недостижимы</span>
-            <span class="step-meta">1,2 с</span>
+        <details class="inst-step" data-state="failed">
+          <summary class="inst-step-head">
+            <span class="inst-step-twist"></span><span class="inst-dot"></span>
+            <span class="inst-step-name">validate_paths</span>
+            <span class="inst-step-sub inst-u-truncate">3 узла недостижимы</span>
+            <span class="inst-step-meta">1,2 с</span>
           </summary>
-          <div class="step-body">
-            <div class="failure" role="alert">
-              <div class="failure-head">Валидация путей не прошла</div>
-              <div class="failure-reason">PathError: unreachable nodes (18,204) (19,204) (20,205) — no navmesh link from region 7</div>
-              <div class="failure-tried">Попыток: 3, последняя в 19:38:16</div>
-              <div class="failure-actions">
-                <button class="btn btn--sm" type="button">Повторить</button>
-                <button class="btn btn--sm btn--ghost" type="button">Пропустить шаг</button>
-                <button class="btn btn--sm btn--ghost" type="button">Открыть регион 7</button>
+          <div class="inst-step-body">
+            <div class="inst-failure" role="alert">
+              <div class="inst-failure-head">Валидация путей не прошла</div>
+              <div class="inst-failure-reason">PathError: unreachable nodes (18,204) (19,204) (20,205) — no navmesh link from region 7</div>
+              <div class="inst-failure-tried">Попыток: 3, последняя в 19:38:16</div>
+              <div class="inst-failure-actions">
+                <button class="inst-btn inst-btn--sm" type="button">Повторить</button>
+                <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Пропустить шаг</button>
+                <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Открыть регион 7</button>
               </div>
             </div>
           </div>
@@ -1585,25 +1585,25 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
     <p class="why">
       Шаг построен на <code>&lt;details&gt;</code>: раскрытие, клавиатура и роль достаются
       от платформы, и компонент работает до того, как приедет JS. Это <b>не</b> строка
-      задачи — <code>.task</code> плоская строка очереди, <code>.step</code> шаг с телом.
+      задачи — <code>.inst-task</code> плоская строка очереди, <code>.inst-step</code> шаг с телом.
       Разные работы, разные компоненты.
     </p>
 
-    <div class="sub">Диф</div>
-    <div class="diff">
-      <div class="diff-head">
-        <span class="diff-path">src/world/biomes.ts</span>
-        <span class="diff-stat"><span class="is-add">+3</span> <span class="is-del">−2</span></span>
+    <h3 class="sub" id="diff">Диф</h3>
+    <div class="inst-diff">
+      <div class="inst-diff-head">
+        <span class="inst-diff-path">src/world/biomes.ts</span>
+        <span class="inst-diff-stat"><span class="inst-is-add">+3</span> <span class="inst-is-del">−2</span></span>
       </div>
-      <div class="diff-body">
-        <div class="diff-fold">свёрнуто 118 строк</div>
-        <div class="diff-line"><span class="diff-num">119</span><span class="diff-num">119</span><span class="diff-code">  const seed = opts.seed ?? 0;</span></div>
-        <div class="diff-line" data-kind="del"><span class="diff-num">120</span><span class="diff-num"></span><span class="diff-code">  const noise = simplex2(seed);</span></div>
-        <div class="diff-line" data-kind="del"><span class="diff-num">121</span><span class="diff-num"></span><span class="diff-code">  if (noise &gt; 0.5) return TUNDRA;</span></div>
-        <div class="diff-line" data-kind="add"><span class="diff-num"></span><span class="diff-num">120</span><span class="diff-code">  const noise = simplex2(seed, { octaves: 3 });</span></div>
-        <div class="diff-line" data-kind="add"><span class="diff-num"></span><span class="diff-num">121</span><span class="diff-code">  // тундра и степь перекрывались в 12 клетках — разводим по высоте</span></div>
-        <div class="diff-line" data-kind="add"><span class="diff-num"></span><span class="diff-num">122</span><span class="diff-code">  if (noise &gt; 0.5 &amp;&amp; height &gt; 0.72) return TUNDRA;</span></div>
-        <div class="diff-line"><span class="diff-num">122</span><span class="diff-num">123</span><span class="diff-code">  return STEPPE;</span></div>
+      <div class="inst-diff-body">
+        <div class="inst-diff-fold">свёрнуто 118 строк</div>
+        <div class="inst-diff-line"><span class="inst-diff-num">119</span><span class="inst-diff-num">119</span><span class="inst-diff-code">  const seed = opts.seed ?? 0;</span></div>
+        <div class="inst-diff-line" data-kind="del"><span class="inst-diff-num">120</span><span class="inst-diff-num"></span><span class="inst-diff-code">  const noise = simplex2(seed);</span></div>
+        <div class="inst-diff-line" data-kind="del"><span class="inst-diff-num">121</span><span class="inst-diff-num"></span><span class="inst-diff-code">  if (noise &gt; 0.5) return TUNDRA;</span></div>
+        <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">120</span><span class="inst-diff-code">  const noise = simplex2(seed, { octaves: 3 });</span></div>
+        <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">121</span><span class="inst-diff-code">  // тундра и степь перекрывались в 12 клетках — разводим по высоте</span></div>
+        <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">122</span><span class="inst-diff-code">  if (noise &gt; 0.5 &amp;&amp; height &gt; 0.72) return TUNDRA;</span></div>
+        <div class="inst-diff-line"><span class="inst-diff-num">122</span><span class="inst-diff-num">123</span><span class="inst-diff-code">  return STEPPE;</span></div>
       </div>
     </div>
     <p class="why">
@@ -1612,45 +1612,45 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
       распечатки. Свёрнутые участки называют своё число словами, а не исчезают молча.
     </p>
 
-    <div class="sub">Бюджет и параллельные прогоны</div>
-    <div class="grid">
-      <div class="card">
-        <div class="budget">
-          <div class="budget-row">
+    <h3 class="sub" id="budget">Бюджет и параллельные прогоны</h3>
+    <div class="inst-grid">
+      <div class="inst-card">
+        <div class="inst-budget">
+          <div class="inst-budget-row">
             <span>Токены</span>
-            <span class="budget-value">184 320 <span class="budget-of">из 250 000</span></span>
+            <span class="inst-budget-value">184 320 <span class="inst-budget-of">из 250 000</span></span>
           </div>
-          <div class="meter" role="progressbar" aria-label="Расход токенов" aria-valuenow="74" aria-valuemin="0" aria-valuemax="100">
-            <div class="meter-fill" style="inline-size:74%"></div>
+          <div class="inst-meter" role="progressbar" aria-label="Расход токенов" aria-valuenow="74" aria-valuemin="0" aria-valuemax="100">
+            <div class="inst-meter-fill" style="inline-size:74%"></div>
           </div>
-          <div class="budget-note">При текущем темпе хватит ещё примерно на 3 прогона.</div>
+          <div class="inst-budget-note">При текущем темпе хватит ещё примерно на 3 прогона.</div>
         </div>
       </div>
-      <div class="card">
-        <div class="lanes">
-          <div class="lane"><span class="lane-label">worldgen-01</span>
-            <span class="lane-track"><span class="lane-span" data-tone="ok" style="--from:0;--to:.42"></span></span></div>
-          <div class="lane"><span class="lane-label">biomes-02</span>
-            <span class="lane-track"><span class="lane-span" data-tone="ok" style="--from:.12;--to:.68"></span></span></div>
-          <div class="lane"><span class="lane-label">resources-03</span>
-            <span class="lane-track"><span class="lane-span" data-tone="running" style="--from:.55;--to:.94"></span></span></div>
-          <div class="lane"><span class="lane-label">paths-04</span>
-            <span class="lane-track"><span class="lane-span" data-tone="error" style="--from:.7;--to:.76"></span></span></div>
+      <div class="inst-card">
+        <div class="inst-lanes">
+          <div class="inst-lane"><span class="inst-lane-label">worldgen-01</span>
+            <span class="inst-lane-track"><span class="inst-lane-span" data-tone="ok" style="--from:0;--to:.42"></span></span></div>
+          <div class="inst-lane"><span class="inst-lane-label">biomes-02</span>
+            <span class="inst-lane-track"><span class="inst-lane-span" data-tone="ok" style="--from:.12;--to:.68"></span></span></div>
+          <div class="inst-lane"><span class="inst-lane-label">resources-03</span>
+            <span class="inst-lane-track"><span class="inst-lane-span" data-tone="running" style="--from:.55;--to:.94"></span></span></div>
+          <div class="inst-lane"><span class="inst-lane-label">paths-04</span>
+            <span class="inst-lane-track"><span class="inst-lane-span" data-tone="error" style="--from:.7;--to:.76"></span></span></div>
         </div>
       </div>
     </div>
 
-    <div class="sub">Лог<span class="tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-10">нужен JS</span><span class="tooltip-text tooltip-text--wide" role="tooltip" id="js-10">Копирование в буфер</span></span></div>
-    <div class="copyable">
-      <div class="log" id="log" role="log" aria-label="Лог прогона">
-        <div class="log-line"><span class="log-time">19:38:04</span><span class="log-level">info</span><span>worldgen: seed 8841203, 512×512</span></div>
-        <div class="log-line"><span class="log-time">19:38:06</span><span class="log-level">info</span><span>heightmap: 4 файла прочитано за 2.1s</span></div>
-        <div class="log-line" data-tone="warn"><span class="log-time">19:38:14</span><span class="log-level">warn</span><span>biomes: перекрытие тундры и степи в 12 клетках</span></div>
-        <div class="log-line"><span class="log-time">19:38:15</span><span class="log-level">info</span><span>resources: проход 3 из 3</span></div>
-        <div class="log-line" data-tone="error"><span class="log-time">19:38:16</span><span class="log-level">error</span><span>paths: 3 узла недостижимы — (18,204) (19,204) (20,205)</span></div>
+    <h3 class="sub" id="log-view">Лог<span class="inst-tooltip"><span class="needs-js" tabindex="0" aria-describedby="js-10">нужен JS</span><span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="js-10">Копирование в буфер</span></span></h3>
+    <div class="inst-copyable">
+      <div class="inst-log" id="log" role="log" aria-label="Лог прогона">
+        <div class="inst-log-line"><span class="inst-log-time">19:38:04</span><span class="inst-log-level">info</span><span>worldgen: seed 8841203, 512×512</span></div>
+        <div class="inst-log-line"><span class="inst-log-time">19:38:06</span><span class="inst-log-level">info</span><span>heightmap: 4 файла прочитано за 2.1s</span></div>
+        <div class="inst-log-line" data-tone="warn"><span class="inst-log-time">19:38:14</span><span class="inst-log-level">warn</span><span>biomes: перекрытие тундры и степи в 12 клетках</span></div>
+        <div class="inst-log-line"><span class="inst-log-time">19:38:15</span><span class="inst-log-level">info</span><span>resources: проход 3 из 3</span></div>
+        <div class="inst-log-line" data-tone="error"><span class="inst-log-time">19:38:16</span><span class="inst-log-level">error</span><span>paths: 3 узла недостижимы — (18,204) (19,204) (20,205)</span></div>
       </div>
-      <button class="btn btn--sm btn--icon copy" type="button" aria-label="Скопировать лог" data-copy="#log">
-        <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg>
+      <button class="inst-btn inst-btn--sm inst-btn--icon inst-copy" type="button" aria-label="Скопировать лог" data-copy="#log">
+        <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
       </button>
     </div>
     <p class="why">
@@ -1668,38 +1668,38 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
       Правило запоминается хуже, чем правило рядом со своим нарушением. Ниже —
       три запрета кита, показанные в действии.
     </p>
-    <div class="grid">
+    <div class="inst-grid">
       <div class="bad">
         <div class="bad-cap">Четыре цвета на четырёх полосках, меряющих одну величину</div>
         <!-- Картинка ошибки, а не данные: роли progressbar здесь намеренно нет. -->
         <div class="bad-bars narrow" aria-hidden="true">
-          <div class="meter"><div class="meter-fill" style="inline-size:43%"></div></div>
-          <div class="meter"><div class="meter-fill" style="inline-size:27%"></div></div>
-          <div class="meter"><div class="meter-fill" style="inline-size:19%"></div></div>
-          <div class="meter"><div class="meter-fill" style="inline-size:11%"></div></div>
+          <div class="inst-meter"><div class="inst-meter-fill" style="inline-size:43%"></div></div>
+          <div class="inst-meter"><div class="inst-meter-fill" style="inline-size:27%"></div></div>
+          <div class="inst-meter"><div class="inst-meter-fill" style="inline-size:19%"></div></div>
+          <div class="inst-meter"><div class="inst-meter-fill" style="inline-size:11%"></div></div>
         </div>
         <p class="why">Это не оформление, а ложное сообщение: цвет говорит о различии, которого нет.</p>
       </div>
       <div class="bad">
         <div class="bad-cap">Заголовок капсом с трекингом и весом 700</div>
         <div class="bad-shout">Время прогона</div>
-        <div class="metric-value">42<span class="metric-unit">&nbsp;с</span></div>
+        <div class="inst-metric-value">42<span class="inst-metric-unit">&nbsp;с</span></div>
         <p class="why">Подпись кричит громче числа, которое она подписывает, — значит, она неправа.</p>
       </div>
       <div class="bad">
         <div class="bad-cap">Тень на карточке</div>
         <div class="bad-card">
-          <div class="card-title">worldgen-01</div>
-          <div class="card-sub">Тень означает «временное и сверху». Карточка не временная.</div>
+          <div class="inst-card-title">worldgen-01</div>
+          <div class="inst-card-sub">Тень означает «временное и сверху». Карточка не временная.</div>
         </div>
         <p class="why">Глубину передаёт порядок поверхностей, а тень остаётся сигналом «сейчас исчезнет».</p>
       </div>
       <div class="bad">
         <div class="bad-cap">Состояние одним лишь цветом</div>
-        <div class="cluster">
-          <span class="badge" data-tone="ok">готово</span>
-          <span class="badge" data-tone="warn">с замечаниями</span>
-          <span class="badge" data-tone="error">упало</span>
+        <div class="inst-cluster">
+          <span class="inst-badge" data-tone="ok">готово</span>
+          <span class="inst-badge" data-tone="warn">с замечаниями</span>
+          <span class="inst-badge" data-tone="error">упало</span>
         </div>
         <p class="why">Без точки и слова это не работает ни для дальтоника, ни для распечатанного скриншота.</p>
       </div>
@@ -1714,27 +1714,27 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
         Дисциплина одна на всё — тихий утилитарный минимализм, отрендеренный плоско.
       </p>
 
-      <div class="grid">
-        <div class="card stack stack--tight">
-          <div class="card-title">Как устроен</div>
-          <div class="card-sub">
+      <div class="inst-grid">
+        <div class="inst-card inst-stack inst-stack--tight">
+          <div class="inst-card-title">Как устроен</div>
+          <div class="inst-card-sub">
             Четыре яруса токенов: рампы, семантика, роли, переменные компонента.
             Тема — две ручки, а не четыре набора значений. Плотность перенастраивает
             только ярус ролей, поэтому в компонентах нет ни одного зашитого размера.
           </div>
         </div>
-        <div class="card stack stack--tight">
-          <div class="card-title">Чем проверен</div>
-          <div class="card-sub">
+        <div class="inst-card inst-stack inst-stack--tight">
+          <div class="inst-card-title">Чем проверен</div>
+          <div class="inst-card-sub">
             <code>tools/contrast.mjs</code> читает настоящий <code>tokens.css</code> и
             резолвит его так же, как браузер. 328 пар цветов против порогов WCAG в
             четырёх темах. Тест не дублирует значения — он их вычисляет, поэтому
             разойтись с китом не может.
           </div>
         </div>
-        <div class="card stack stack--tight">
-          <div class="card-title">Что нужно браузеру</div>
-          <div class="card-sub">
+        <div class="inst-card inst-stack inst-stack--tight">
+          <div class="inst-card-title">Что нужно браузеру</div>
+          <div class="inst-card-sub">
             Chrome 123+, Safari 17.5+, Firefox 120+ — по <code>light-dark()</code>,
             <code>oklch()</code>, каскадным слоям, вложенности, <code>:has()</code> и
             единице <code>lh</code>. Подключение — одна строка, сборки нет.
@@ -1742,7 +1742,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
         </div>
       </div>
 
-      <div class="sub">Авторство и условия</div>
+      <h3 class="sub" id="license">Авторство и условия</h3>
       <p class="why">
         Собран в паре человеком и Claude (Opus&nbsp;5). Половина правил в конституции
         появилась не из замысла, а из найденных багов: жёлтая точка на контрасте 1.92,
@@ -1799,7 +1799,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
 
   /* ── Подсветка текущего раздела в навигаторе ─────────────────────────── */
   const toc = document.getElementById('toc');
-  const tocLinks = new Map([...toc.querySelectorAll('.nav-item')]
+  const tocLinks = new Map([...toc.querySelectorAll('.inst-nav-item')]
     .map(a => [a.getAttribute('href').slice(1), a]));
 
   const spy = new IntersectionObserver(entries => {
@@ -1809,7 +1809,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
       const link = tocLinks.get(e.target.id);
       if (link) link.setAttribute('aria-current', 'page');
     }
-  }, { root: document.querySelector('.shell-main'), rootMargin: '0px 0px -75% 0px' });
+  }, { root: document.querySelector('.inst-shell-main'), rootMargin: '0px 0px -75% 0px' });
 
   document.querySelectorAll('#main section[id]').forEach(s => spy.observe(s));
 
@@ -1820,7 +1820,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
     tocLinks.forEach(a => a.removeAttribute('aria-current'));
     if (link) link.setAttribute('aria-current', 'page');
   };
-  toc.addEventListener('click', e => markActive(e.target.closest('.nav-item')));
+  toc.addEventListener('click', e => markActive(e.target.closest('.inst-nav-item')));
   markActive(tocLinks.values().next().value);
 
   /* ── Сегментированный контрол ───────────────────────────────────────────
@@ -1860,7 +1860,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
 
   /* ── Бегущий tabindex для списков ───────────────────────────────────── */
   function wireRovingList(container, itemSel, onActivate) {
-    const items = () => [...container.querySelectorAll(itemSel)];
+    const items = () => [...inst-container.querySelectorAll(itemSel)];
     const focusItem = (el) => {
       items().forEach(x => { x.tabIndex = x === el ? 0 : -1; });
       el.focus();
@@ -1891,9 +1891,9 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
     });
   }
 
-  wireRovingList(document.getElementById('queue'), '.task');
+  wireRovingList(document.getElementById('queue'), '.inst-task');
 
-  wireRovingList(document.getElementById('tree'), '.tree-item', el => {
+  wireRovingList(document.getElementById('tree'), '.inst-tree-item', el => {
     if (el.hasAttribute('aria-expanded')) {
       el.setAttribute('aria-expanded', el.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
     }
@@ -1902,7 +1902,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
   /* Стрелки вправо/влево раскрывают и сворачивают узел — это то, чем дерево
      отличается от списка. */
   document.getElementById('tree').addEventListener('keydown', e => {
-    const el = e.target.closest('.tree-item');
+    const el = e.target.closest('.inst-tree-item');
     if (!el || !el.hasAttribute('aria-expanded')) return;
     if (e.key === 'ArrowRight') { e.preventDefault(); el.setAttribute('aria-expanded', 'true'); }
     if (e.key === 'ArrowLeft')  { e.preventDefault(); el.setAttribute('aria-expanded', 'false'); }
@@ -1950,10 +1950,10 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
 
   document.querySelectorAll('[data-approve]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const box = btn.closest('.approval');
+      const box = btn.closest('.inst-approval');
       const kind = btn.dataset.approve;
       box.dataset.state = kind === 'deny' ? 'denied' : 'approved';
-      box.querySelector('.approval-head').textContent = 'Решение принято';
+      box.querySelector('.inst-approval-head').textContent = 'Решение принято';
       const v = document.createElement('div');
       v.className = 'approval-verdict';
       v.textContent = (kind === 'deny' ? 'Отклонено' : kind === 'always' ? 'Разрешено, впредь без вопроса' : 'Разрешено')
@@ -1962,9 +1962,9 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
     });
   });
 
-  document.querySelectorAll('.output-more').forEach(btn => {
+  document.querySelectorAll('.inst-output-more').forEach(btn => {
     btn.addEventListener('click', () => {
-      const box = btn.closest('.output');
+      const box = btn.closest('.inst-output');
       const open = box.dataset.truncated === 'true';
       box.dataset.truncated = open ? 'false' : 'true';
       btn.textContent = open ? 'Свернуть' : 'Показать все 240 строк';
@@ -2010,12 +2010,12 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
   }
 
   document.querySelectorAll('[data-dialog]').forEach(btn => {
-    btn.addEventListener('click', () => document.querySelector(btn.dataset.dialog).showModal());
+    btn.addEventListener('click', () => document.querySelector(btn.dataset.inst-dialog).showModal());
   });
 
   document.querySelectorAll('[data-copy]').forEach(btn => {
     btn.addEventListener('click', async () => {
-      const src = document.querySelector(btn.dataset.copy);
+      const src = document.querySelector(btn.dataset.inst-copy);
       await navigator.clipboard.writeText(src.innerText);
       const was = btn.getAttribute('aria-label');
       btn.setAttribute('aria-label', 'Скопировано');

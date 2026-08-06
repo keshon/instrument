@@ -28,7 +28,7 @@
    Пропуск к содержимому — первое, что встречает клавиатура
    ────────────────────────────────────────────────────────────────────────── */
 
-.skip-link {
+.inst-skip-link {
   position: absolute;
   z-index: var(--z-modal);
   inset-inline-start: var(--space-4);
@@ -55,7 +55,7 @@
    боковая навигация не уезжает, пока читают таблицу.
    ────────────────────────────────────────────────────────────────────────── */
 
-.shell {
+.inst-shell {
   display: grid;
   grid-template-areas: "aside header" "aside main";
   grid-template-columns: var(--aside-w) minmax(0, 1fr);
@@ -63,7 +63,7 @@
   block-size: 100dvh;
 }
 
-.shell-aside {
+.inst-shell-aside {
   grid-area: aside;
   display: flex;
   flex-direction: column;
@@ -75,7 +75,7 @@
   background: var(--surface-sunken);
 }
 
-.shell-header {
+.inst-shell-header {
   grid-area: header;
   display: flex;
   align-items: center;
@@ -90,11 +90,11 @@
   background: var(--surface-page);
 }
 
-.shell-main {
+.inst-shell-main {
   grid-area: main;
   min-block-size: 0;
   overflow: auto;
-  /* Вертикальный воздух даёт рабочая область, горизонтальный — .container
+  /* Вертикальный воздух даёт рабочая область, горизонтальный — .inst-container
      внутри неё. Без этого заголовок экрана прилипал к линии шапки.       */
   padding-block: var(--pad-panel);
   /* Область, по ширине которой отвечают компоненты внутри. */
@@ -105,13 +105,13 @@
    горизонтальной полосой над содержимым: это работает без JS. Вариант со
    шторкой приедет вместе с поповером — там он получается декларативно. */
 @media (width < 60rem) {
-  .shell {
+  .inst-shell {
     grid-template-areas: "header" "aside" "main";
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto auto minmax(0, 1fr);
   }
 
-  .shell-aside {
+  .inst-shell-aside {
     flex-direction: row;
     align-items: center;
     gap: var(--gap-inline);
@@ -121,11 +121,11 @@
     border-inline-end: none;
     border-block-end: var(--hairline) solid var(--border);
 
-    & .nav { flex-direction: row; }
-    & .nav-group { flex-direction: row; }
-    & .nav-group + .nav-group { margin-block-start: 0; margin-inline-start: var(--space-5); }
-    & .nav-label { display: none; }
-    & .nav-item { white-space: nowrap; }
+    & .inst-nav { flex-direction: row; }
+    & .inst-nav-group { flex-direction: row; }
+    & .inst-nav-group + .inst-nav-group { margin-block-start: 0; margin-inline-start: var(--space-5); }
+    & .inst-nav-label { display: none; }
+    & .inst-nav-item { white-space: nowrap; }
   }
 }
 
@@ -136,7 +136,7 @@
    теряется на возврате к началу.
    ────────────────────────────────────────────────────────────────────────── */
 
-.container {
+.inst-container {
   inline-size: 100%;
   max-inline-size: var(--container-max);
   margin-inline: auto;
@@ -144,9 +144,9 @@
   container: content / inline-size;
 }
 
-.container--narrow { --container-max: 44rem; }
-.container--prose  { --container-max: 68ch; }
-.container--full   { --container-max: none; }
+.inst-container--narrow { --container-max: 44rem; }
+.inst-container--prose  { --container-max: 68ch; }
+.inst-container--full   { --container-max: none; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Примитивы потока
@@ -157,44 +157,44 @@
    двести утилит отступов возвращают его первым классом.
    ────────────────────────────────────────────────────────────────────────── */
 
-.stack {
+.inst-stack {
   display: flex;
   flex-direction: column;
   gap: var(--pad-panel);
 }
-.stack--tight { gap: var(--gap-row); }
-.stack--loose { gap: var(--space-7); }
+.inst-stack--tight { gap: var(--gap-row); }
+.inst-stack--loose { gap: var(--space-7); }
 
-.cluster {
+.inst-cluster {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--gap-inline);
 }
-.cluster--tight { gap: var(--space-2); }
-.cluster--loose { gap: var(--pad-panel); }
+.inst-cluster--tight { gap: var(--space-2); }
+.inst-cluster--loose { gap: var(--pad-panel); }
 /* Прижать хвост группы к противоположному краю. */
-.cluster-spacer { margin-inline-start: auto; }
+.inst-cluster-spacer { margin-inline-start: auto; }
 
 /* Сетка карточек. Перестраивается сама, без запросов: min() не даёт
    колонке вылезти за контейнер на узком экране.                          */
-.grid {
+.inst-grid {
   display: grid;
   gap: var(--pad-panel);
   grid-template-columns: repeat(auto-fit, minmax(min(var(--col-min), 100%), 1fr));
 }
-.grid--wide { --col-min: 380px; }
-.grid--tight { --col-min: 180px; }
+.inst-grid--wide { --col-min: 380px; }
+.inst-grid--tight { --col-min: 180px; }
 
 /* Сплит: боковая часть желаемой ширины плюс основная. Переносится сам,
    когда основной части перестаёт хватать порога, — без единого запроса. */
-.split {
+.inst-split {
   display: flex;
   flex-wrap: wrap;
   gap: var(--pad-panel);
 }
-.split-side { flex: 1 1 var(--split-side); }
-.split-main {
+.inst-split-side { flex: 1 1 var(--split-side); }
+.inst-split-main {
   flex: 999 1 0;
   min-inline-size: min(var(--split-main), 100%);
 }
@@ -203,14 +203,14 @@
    Шапка экрана и секция
    ────────────────────────────────────────────────────────────────────────── */
 
-.page-header {
+.inst-page-header {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--gap-inline) var(--pad-panel);
 }
 
-.page-header-main {
+.inst-page-header-main {
   flex: 1 1 20rem;
   min-inline-size: 0;
   display: flex;
@@ -218,17 +218,17 @@
   gap: var(--space-2);
 }
 
-.page-title { font-size: var(--text-xl); }
-.page-desc { font-size: var(--text-sm); color: var(--text-secondary); max-inline-size: 68ch; }
-.page-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
+.inst-page-title { font-size: var(--text-xl); }
+.inst-page-desc { font-size: var(--text-sm); color: var(--text-secondary); max-inline-size: 68ch; }
+.inst-page-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
 
-.section {
+.inst-section {
   display: flex;
   flex-direction: column;
   gap: var(--gap-row);
 }
 
-.section-head {
+.inst-section-head {
   display: flex;
   align-items: baseline;
   gap: var(--gap-inline);
@@ -236,8 +236,8 @@
 
 /* Подпись секции — обычное предложение и тише данных, как и заголовок
    панели. Капса здесь нет по той же причине, что и везде.                */
-.section-title { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text-secondary); }
-.section-actions { margin-inline-start: auto; }
+.inst-section-title { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text-secondary); }
+.inst-section-actions { margin-inline-start: auto; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Навигация
@@ -246,18 +246,18 @@
    Разметка: <nav><ul>, текущий пункт несёт aria-current="page".
    ────────────────────────────────────────────────────────────────────────── */
 
-.nav { display: flex; flex-direction: column; gap: var(--space-1); }
-.nav-group { display: flex; flex-direction: column; gap: var(--space-1); }
-.nav-group + .nav-group { margin-block-start: var(--pad-panel); }
+.inst-nav { display: flex; flex-direction: column; gap: var(--space-1); }
+.inst-nav-group { display: flex; flex-direction: column; gap: var(--space-1); }
+.inst-nav-group + .inst-nav-group { margin-block-start: var(--pad-panel); }
 
-.nav-label {
+.inst-nav-label {
   padding-inline: var(--space-3);
   font-size: var(--text-2xs);
   color: var(--text-muted);
   line-height: var(--leading-ui);
 }
 
-.nav-item {
+.inst-nav-item {
   display: flex;
   align-items: center;
   gap: var(--gap-inline);
@@ -280,11 +280,11 @@
   }
 }
 
-.nav-count { margin-inline-start: auto; }
+.inst-nav-count { margin-inline-start: auto; }
 
 /* ── Крошки ─────────────────────────────────────────────────────────────── */
 
-.crumbs {
+.inst-crumbs {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -317,7 +317,7 @@
    переключают панели внутри одной страницы.
    ────────────────────────────────────────────────────────────────────────── */
 
-.tabs {
+.inst-tabs {
   display: flex;
   gap: var(--space-6);
   border-block-end: var(--hairline) solid var(--border);
@@ -327,7 +327,7 @@
   &::-webkit-scrollbar { block-size: 0; }
 }
 
-.tab {
+.inst-tab {
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
@@ -353,7 +353,7 @@
 
 /* ── Постраничная навигация ─────────────────────────────────────────────── */
 
-.pager {
+.inst-pager {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -363,7 +363,7 @@
   list-style: none;
 }
 
-.pager-item {
+.inst-pager-item {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -388,14 +388,14 @@
   &[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
 }
 
-.pager-gap { padding-inline: var(--space-2); color: var(--text-faint); font-size: var(--text-xs); }
+.inst-pager-gap { padding-inline: var(--space-2); color: var(--text-faint); font-size: var(--text-xs); }
 
 /* ── Шаги мастера ───────────────────────────────────────────────────────────
    Состояние несёт СЛОВО под подписью, а не только цвет полосы: «готово»,
    «сейчас», «дальше» читаются и на распечатке.
    ────────────────────────────────────────────────────────────────────────── */
 
-.stepper {
+.inst-stepper {
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap-inline);
@@ -404,7 +404,7 @@
   list-style: none;
 }
 
-.stepper-item {
+.inst-stepper-item {
   flex: 1 1 10rem;
   min-inline-size: 0;
   display: flex;
@@ -427,10 +427,10 @@
   &[data-state="current"]::before { background: var(--accent-mark); }
 }
 
-.stepper-name { font-size: var(--text-sm); color: var(--text-secondary); }
-.stepper-note { font-size: var(--text-xs); color: var(--text-muted); }
+.inst-stepper-name { font-size: var(--text-sm); color: var(--text-secondary); }
+.inst-stepper-note { font-size: var(--text-xs); color: var(--text-muted); }
 
-.stepper-item[data-state="current"] > .stepper-name {
+.inst-stepper-item[data-state="current"] > .inst-stepper-name {
   color: var(--text-primary);
   font-weight: var(--weight-medium);
 }

@@ -22,7 +22,7 @@
    1.31:1 — поля на панели просто не было видно.
    ────────────────────────────────────────────────────────────────────────── */
 
-.input, .textarea, .select {
+.inst-input, .inst-textarea, .inst-select {
   inline-size: 100%;
   min-block-size: var(--control-h-md);
   padding-inline: var(--control-pad-sm);
@@ -53,17 +53,17 @@
    его надо селектором, а не надеждой на порядок строк.
    ────────────────────────────────────────────────────────────────────────── */
 
-:is(.input, .textarea, .select):is(:user-invalid, [aria-invalid="true"]) {
+:is(.inst-input, .inst-textarea, .inst-select):is(:user-invalid, [aria-invalid="true"]) {
   border-color: var(--err-text);
 }
 
-:is(.input, .textarea, .select):hover:not(:disabled):not(:user-invalid):not([aria-invalid="true"]) {
+:is(.inst-input, .inst-textarea, .inst-select):hover:not(:disabled):not(:user-invalid):not([aria-invalid="true"]) {
   border-color: var(--text-muted);
 }
 
-.input--sm, .select--sm { min-block-size: var(--control-h-sm); font-size: var(--text-xs); }
+.inst-input--sm, .inst-select--sm { min-block-size: var(--control-h-sm); font-size: var(--text-xs); }
 
-.textarea {
+.inst-textarea {
   min-block-size: calc(var(--control-h-md) * 2.5);
   padding-block: var(--space-3);
   line-height: var(--leading-ui);
@@ -75,12 +75,12 @@
    положение — логическим (в RTL уезжает вместе с текстом). Прежние два
    linear-gradient давали сплошной треугольник, прибитый к физическому
    правому краю.                                                           */
-.select-wrap {
+.inst-select-wrap {
   position: relative;
   display: block;
   inline-size: 100%;
 
-  & > .select {
+  & > .inst-select {
     appearance: none;
     padding-inline-end: var(--space-7);
     cursor: pointer;
@@ -104,15 +104,15 @@
    теснее, и одинаковый зазор склеивал три разные вещи в одну. Разница
    получается из базового зазора плюс отбивки подписи — без вычитания
    отрицательным полем, которое ломалось от любой перестановки узлов.     */
-.field {
+.inst-field {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-.field > .label { margin-block-end: var(--space-2); }
+.inst-field > .inst-label { margin-block-end: var(--space-2); }
 
-.label {
+.inst-label {
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   color: var(--text-primary);
@@ -121,8 +121,8 @@
 
 /* Подсказка и ошибка занимают один слот: ошибка заменяет подсказку, а не
    сдвигает форму вниз. Форма не перекладывается в момент заполнения.      */
-.field-hint  { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); }
-.field-error { font-size: var(--text-xs); color: var(--err-text);   line-height: var(--leading-ui); }
+.inst-field-hint  { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); }
+.inst-field-error { font-size: var(--text-xs); color: var(--err-text);   line-height: var(--leading-ui); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Чекбокс, радио, свитч
@@ -134,7 +134,7 @@
    второй закон кита.
    ────────────────────────────────────────────────────────────────────────── */
 
-.checkbox, .radio, .switch {
+.inst-checkbox, .inst-radio, .inst-switch {
   display: inline-flex;
   align-items: center;
   gap: var(--gap-inline);
@@ -145,7 +145,7 @@
   &:has(> input:disabled) { opacity: 0.5; cursor: not-allowed; }
 }
 
-.checkbox > input, .radio > input {
+.inst-checkbox > input, .inst-radio > input {
   appearance: none;
   position: relative;
   flex: none;
@@ -173,7 +173,7 @@
   &:checked::after, &:indeterminate::after { opacity: 1; }
 }
 
-.checkbox > input {
+.inst-checkbox > input {
   border-radius: var(--radius-xs);
 
   &::after {
@@ -184,14 +184,14 @@
   }
 }
 
-.radio > input {
+.inst-radio > input {
   border-radius: var(--radius-full);
   &::after {
     background: radial-gradient(circle, var(--accent-on) 0 32%, transparent 33%);
   }
 }
 
-.switch > input {
+.inst-switch > input {
   appearance: none;
   position: relative;
   flex: none;
@@ -233,7 +233,7 @@
    Слайдер
    ────────────────────────────────────────────────────────────────────────── */
 
-.slider {
+.inst-slider {
   appearance: none;
   inline-size: 100%;
   block-size: var(--size-icon);
@@ -287,33 +287,33 @@
    показать пару «имя — значение» не имеют права разъезжаться по метрике.
    ────────────────────────────────────────────────────────────────────────── */
 
-.form {
+.inst-form {
   display: flex;
   flex-direction: column;
   gap: var(--pad-panel);
 }
 
-:is(.field--side, .form--side > .field) {
+:is(.inst-field--side, .inst-form--side > .inst-field) {
   display: grid;
   grid-template-columns: var(--label-col) minmax(0, 1fr);
   align-items: start;
   gap: var(--space-2) var(--gap-inline);
 
-  & > .label {
+  & > .inst-label {
     grid-column: 1;
     grid-row: 1;
     margin-block-end: 0;
     /* Подпись выравнивается по первой строке контрола, а не по его верху. */
     padding-block-start: var(--space-2);
   }
-  & > :not(.label) { grid-column: 2; }
+  & > :not(.inst-label) { grid-column: 2; }
 }
 
 /* Обязательность несёт и знак, и слово: звёздочка в одиночку работает только
    для тех, кто уже знает соглашение. В длинных формах помечать выгоднее
    необязательные — их обычно меньше.                                       */
-.required { color: var(--err-text); margin-inline-start: 2px; }
-.optional {
+.inst-required { color: var(--err-text); margin-inline-start: 2px; }
+.inst-optional {
   color: var(--text-muted);
   font-weight: var(--weight-normal);
   font-size: var(--text-xs);
@@ -328,12 +328,12 @@
    против чего написано правило про ряд метрик. Границу задаёт заголовок и
    воздух, а не линия.
 
-   Если группу всё же надо обвести — .fieldset--framed. Это должно быть
+   Если группу всё же надо обвести — .inst-fieldset--framed. Это должно быть
    решением, а не умолчанием.
 
    min-inline-size обязателен: у fieldset собственная минимальная ширина по
    содержимому, и без сброса он не даёт колонкам сжиматься.                */
-.fieldset {
+.inst-fieldset {
   display: flex;
   flex-direction: column;
   gap: var(--gap-inline);
@@ -351,7 +351,7 @@
   }
 }
 
-.fieldset--framed {
+.inst-fieldset--framed {
   gap: var(--pad-panel);
   padding: var(--pad-card);
   border: var(--hairline) solid var(--border);
@@ -365,10 +365,10 @@
 /* ВАЖНО про область действия. Липкость ограничена ближайшим блочным
    предком, а не экраном: полоса «отлипнет» ровно там, где кончится этот
    предок. Поэтому её место — последним элементом ПРОКРУЧИВАЕМОЙ области
-   формы (.panel-body или собственный контейнер с высотой). Если положить
+   формы (.inst-panel-body или собственный контейнер с высотой). Если положить
    её просто в длинную страницу, она поедет поверх всего, что ниже, до
    самого конца родителя.                                                  */
-.form-actions {
+.inst-form-actions {
   position: sticky;
   inset-block-end: 0;
   display: flex;
@@ -388,7 +388,7 @@
 
    Заодно здесь же правильный фон: внутри панели это её поверхность, а не
    поверхность страницы.                                                   */
-.panel-body > .form-actions {
+.inst-panel-body > .inst-form-actions {
   --form-actions-bg: var(--surface-raised);
   /* Липкая позиция отсчитывается от ВНУТРЕННЕГО края отступа области, а не
      от её видимого низа, поэтому отрицательного поля мало — нужен
@@ -400,8 +400,8 @@
   padding-inline: var(--panel-body-pad, var(--pad-panel));
 }
 
-.form-actions--end { justify-content: flex-end; }
-.form-actions-note { margin-inline-end: auto; font-size: var(--text-xs); color: var(--text-muted); }
+.inst-form-actions--end { justify-content: flex-end; }
+.inst-form-actions-note { margin-inline-end: auto; font-size: var(--text-xs); color: var(--text-muted); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Группа с приставками
@@ -411,7 +411,7 @@
    половину контрола.
    ────────────────────────────────────────────────────────────────────────── */
 
-.input-group {
+.inst-input-group {
   display: flex;
   align-items: stretch;
   min-block-size: var(--control-h-md);
@@ -424,7 +424,7 @@
   &:focus-within { border-color: var(--accent-border); }
 
   /* Поле внутри группы отдаёт рамку и фон наружу. */
-  & > :is(.input, .select) {
+  & > :is(.inst-input, .inst-select) {
     flex: 1;
     min-inline-size: 0;
     min-block-size: auto;
@@ -433,16 +433,16 @@
     background: transparent;
   }
 
-  & > .btn {
+  & > .inst-btn {
     min-block-size: auto;
     border-radius: 0;
     border-block: none;
     border-inline-end: none;
   }
-  & > .btn:first-child { border-inline-start: none; }
+  & > .inst-btn:first-child { border-inline-start: none; }
 }
 
-.input-affix {
+.inst-input-affix {
   display: flex;
   align-items: center;
   flex: none;
@@ -460,11 +460,11 @@
    прятать, а привести к тону кита. Своя кнопка потребовала бы JS.
    ────────────────────────────────────────────────────────────────────────── */
 
-.search {
+.inst-search {
   position: relative;
   display: block;
 
-  & > .input {
+  & > .inst-input {
     padding-inline-start: calc(var(--control-pad-sm) + var(--size-icon) + var(--space-3));
   }
 
@@ -482,7 +482,7 @@
   }
 }
 
-.search > input[type="search"]::-webkit-search-cancel-button {
+.inst-search > input[type="search"]::-webkit-search-cancel-button {
   appearance: none;
   inline-size: var(--size-chevron);
   block-size: var(--size-chevron);
@@ -491,7 +491,7 @@
   cursor: pointer;
 }
 
-.search > input[type="search"]::-webkit-search-cancel-button:hover { background: var(--text-primary); }
+.inst-search > input[type="search"]::-webkit-search-cancel-button:hover { background: var(--text-primary); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Состояния поля
@@ -504,34 +504,34 @@
    ────────────────────────────────────────────────────────────────────────── */
 
 /* Ошибка заменяет подсказку в том же слоте — форма не перекладывается. */
-.field:has(:user-invalid) > .field-hint { display: none; }
-.field-error[data-when="invalid"] { display: none; }
-.field:has(:user-invalid) > .field-error[data-when="invalid"] { display: block; }
+.inst-field:has(:user-invalid) > .inst-field-hint { display: none; }
+.inst-field-error[data-when="invalid"] { display: none; }
+.inst-field:has(:user-invalid) > .inst-field-error[data-when="invalid"] { display: block; }
 
 /* readonly — не disabled. Значение можно прочитать, выделить и скопировать,
    поэтому оно сохраняет цвет текста; недоступен только ввод. Пока они
    выглядели одинаково, пользователь не мог понять, ждать ему разблокировки
    или значение неизменяемо в принципе.                                     */
-:is(.input, .textarea):read-only:not(:disabled) {
+:is(.inst-input, .inst-textarea):read-only:not(:disabled) {
   background: var(--surface-sunken);
   border-color: var(--border);
   cursor: default;
 }
 
-:is(.input, .textarea):read-only:not(:disabled):hover { border-color: var(--border); }
+:is(.inst-input, .inst-textarea):read-only:not(:disabled):hover { border-color: var(--border); }
 
 /* Нативные поля даты и времени. Иконка календаря следует за color-scheme,
    который уже выставлен в токенах, поэтому перекрашивать её не нужно —
    достаточно привести к общей тишине.                                      */
-.input::-webkit-calendar-picker-indicator {
+.inst-input::-webkit-calendar-picker-indicator {
   opacity: 0.55;
   cursor: pointer;
 }
-.input::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+.inst-input::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 
 /* Список с множественным выбором. Шеврон обёртки ему не положен: он ничего
    не раскрывает.                                                           */
-.select[multiple] {
+.inst-select[multiple] {
   min-block-size: calc(var(--control-h-md) * 3);
   /* Внутренний отступ списка плюс отступ пункта дают ровно --control-pad-sm,
      то есть текст встаёт по той же вертикали, что и в обычном поле.
@@ -542,7 +542,7 @@
   padding: var(--space-1);
 }
 
-.select[multiple] option {
+.inst-select[multiple] option {
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-xs);
 }
@@ -551,17 +551,17 @@
    margin-block складывался с отступом самого списка сверху и снизу, но не
    по бокам, — подсветка отступала от рамки сверху вдвое дальше, чем слева.
    Тот же приём, что у строк очереди и узлов дерева.                      */
-.select[multiple] option + option { margin-block-start: var(--space-1); }
+.inst-select[multiple] option + option { margin-block-start: var(--space-1); }
 
 /* Системная подсветка выбранного — серый, не имеющий отношения к киту: он
    не совпадает ни с выделенной строкой таблицы, ни с выбранной карточкой.
    Переопределяется без !important, проверено.                            */
-.select[multiple] option:checked {
+.inst-select[multiple] option:checked {
   background-color: var(--surface-selected);
   color: var(--accent-text);
 }
 
-.select-wrap:has(> .select[multiple])::after { content: none; }
+.inst-select-wrap:has(> .inst-select[multiple])::after { content: none; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Выбираемая карточка
@@ -571,7 +571,7 @@
    не хватает, когда у вариантов есть последствия.
    ────────────────────────────────────────────────────────────────────────── */
 
-.choice-card {
+.inst-choice-card {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
@@ -601,8 +601,8 @@
   &:has(> input:disabled) { opacity: 0.5; cursor: not-allowed; }
 }
 
-.choice-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
-.choice-card-desc { font-size: var(--text-xs); color: var(--text-secondary); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
+.inst-choice-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
+.inst-choice-card-desc { font-size: var(--text-xs); color: var(--text-secondary); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Файл
@@ -615,7 +615,7 @@
    файла, и она работает.
    ────────────────────────────────────────────────────────────────────────── */
 
-.file {
+.inst-file {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -653,4 +653,4 @@
   }
 }
 
-.file-hint { font-size: var(--text-xs); color: var(--text-muted); }
+.inst-file-hint { font-size: var(--text-xs); color: var(--text-muted); }

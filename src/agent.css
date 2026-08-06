@@ -22,7 +22,7 @@
    завершённая задача: история решений остаётся читаемой.
    ────────────────────────────────────────────────────────────────────────── */
 
-.approval {
+.inst-approval {
   display: flex;
   flex-direction: column;
   gap: var(--gap-inline);
@@ -35,7 +35,7 @@
   box-shadow: inset var(--space-1) 0 0 0 var(--accent-solid);
 }
 
-.approval-head {
+.inst-approval-head {
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -43,7 +43,7 @@
   font-weight: var(--weight-medium);
 }
 
-.approval-head::before {
+.inst-approval-head::before {
   content: "";
   flex: none;
   inline-size: var(--size-icon);
@@ -54,7 +54,7 @@
 
 /* Само действие — моноширинным, потому что это команда, путь или вызов,
    и его будут читать посимвольно.                                        */
-.approval-what {
+.inst-approval-what {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   line-height: 1.55;
@@ -64,7 +64,7 @@
   overflow-wrap: anywhere;
 }
 
-.approval-effects {
+.inst-approval-effects {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -94,19 +94,19 @@
   }
 }
 
-.approval-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.inst-approval-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
 /* Решение принято — блок отступает: снимается акцентная граница и
    выделение, остаётся читаемая запись о том, что было решено.            */
-.approval:not([data-state="pending"]) {
+.inst-approval:not([data-state="pending"]) {
   border-color: var(--border);
   box-shadow: none;
   background: transparent;
 }
-.approval:not([data-state="pending"]) .approval-actions { display: none; }
-.approval[data-state="denied"] .approval-what { text-decoration: line-through; color: var(--text-muted); }
+.inst-approval:not([data-state="pending"]) .inst-approval-actions { display: none; }
+.inst-approval[data-state="denied"] .inst-approval-what { text-decoration: line-through; color: var(--text-muted); }
 
-.approval-verdict { font-size: var(--text-xs); color: var(--text-muted); }
+.inst-approval-verdict { font-size: var(--text-xs); color: var(--text-muted); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Шаг — вызов инструмента
@@ -115,19 +115,19 @@
    <details>/<summary>: раскрытие, клавиатура и роль достаются от платформы,
    и компонент работает до того, как приедет JS.
 
-   Это НЕ строка задачи: .task — плоская строка очереди, .step — шаг с
+   Это НЕ строка задачи: .inst-task — плоская строка очереди, .inst-step — шаг с
    телом. Разные работы, разные компоненты.
    ────────────────────────────────────────────────────────────────────────── */
 
-.step {
+.inst-step {
   border-radius: var(--radius-sm);
 
   &[open] { background: var(--surface-hover); }
 }
 
-.step + .step { margin-block-start: var(--space-1); }
+.inst-step + .inst-step { margin-block-start: var(--space-1); }
 
-.step-head {
+.inst-step-head {
   display: grid;
   grid-template-columns: var(--size-chevron) var(--size-dot) auto 1fr auto;
   align-items: center;
@@ -142,7 +142,7 @@
   &:hover { background: var(--surface-hover); }
 }
 
-.step-twist {
+.inst-step-twist {
   inline-size: var(--size-chevron);
   block-size: var(--size-chevron);
   background: var(--text-muted);
@@ -150,14 +150,14 @@
   transition: rotate var(--dur-1) var(--ease-out);
 }
 
-.step[open] > .step-head > .step-twist { rotate: 90deg; }
+.inst-step[open] > .inst-step-head > .inst-step-twist { rotate: 90deg; }
 
 /* Имя инструмента — моноширинное: это идентификатор, а не слово. */
-.step-name { font-family: var(--font-mono); font-size: var(--text-xs); }
-.step-sub  { color: var(--text-muted); font-size: var(--text-xs); min-inline-size: 0; }
-.step-meta { color: var(--text-muted); font-size: var(--text-xs); white-space: nowrap; }
+.inst-step-name { font-family: var(--font-mono); font-size: var(--text-xs); }
+.inst-step-sub  { color: var(--text-muted); font-size: var(--text-xs); min-inline-size: 0; }
+.inst-step-meta { color: var(--text-muted); font-size: var(--text-xs); white-space: nowrap; }
 
-.step-body {
+.inst-step-body {
   padding: var(--space-2) var(--pad-cell-x) var(--pad-cell-x);
   padding-inline-start: calc(var(--pad-cell-x) + var(--size-chevron) + var(--gap-inline));
   display: flex;
@@ -165,10 +165,10 @@
   gap: var(--gap-row);
 }
 
-.step[data-state="running"] { --tone-ink: var(--accent-text); }
-.step[data-state="ok"]      { --tone-ink: var(--ok-text); }
-.step[data-state="failed"]  { --tone-ink: var(--err-text); }
-.step[data-state="running"] .dot { animation: inst-pulse 1.6s var(--ease-in-out) infinite; }
+.inst-step[data-state="running"] { --tone-ink: var(--accent-text); }
+.inst-step[data-state="ok"]      { --tone-ink: var(--ok-text); }
+.inst-step[data-state="failed"]  { --tone-ink: var(--err-text); }
+.inst-step[data-state="running"] .inst-dot { animation: inst-pulse 1.6s var(--ease-in-out) infinite; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Диф
@@ -178,13 +178,13 @@
    не работает ни для дальтоника, ни для распечатки.
    ────────────────────────────────────────────────────────────────────────── */
 
-.diff {
+.inst-diff {
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-md);
   overflow: hidden;
 }
 
-.diff-head {
+.inst-diff-head {
   display: flex;
   align-items: center;
   gap: var(--gap-inline);
@@ -193,12 +193,12 @@
   font-size: var(--text-xs);
 }
 
-.diff-path { font-family: var(--font-mono); min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.diff-stat { margin-inline-start: auto; color: var(--text-muted); white-space: nowrap; }
-.diff-stat > .is-add { color: var(--ok-text); }
-.diff-stat > .is-del { color: var(--err-text); }
+.inst-diff-path { font-family: var(--font-mono); min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inst-diff-stat { margin-inline-start: auto; color: var(--text-muted); white-space: nowrap; }
+.inst-diff-stat > .inst-is-add { color: var(--ok-text); }
+.inst-diff-stat > .inst-is-del { color: var(--err-text); }
 
-.diff-body {
+.inst-diff-body {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   line-height: 1.55;
@@ -219,7 +219,7 @@
    минимальную внутреннюю ширину до одного знака, и на всей строке это
    схлопывало колонки: код переносился по одному символу в столбик. */
 
-.diff-line {
+.inst-diff-line {
   display: grid;
   grid-template-columns: 5ch 5ch 2ch minmax(0, 1fr);
   gap: 0;
@@ -239,7 +239,7 @@
   &[data-kind="del"]::before { content: "−"; color: var(--err-text); }
 }
 
-.diff-num {
+.inst-diff-num {
   grid-row: 1;
   color: var(--text-faint);
   text-align: end;
@@ -251,7 +251,7 @@
   &:nth-child(2) { grid-column: 2; }
 }
 
-.diff-code {
+.inst-diff-code {
   grid-column: 4;
   grid-row: 1;
   min-inline-size: 0;
@@ -259,7 +259,7 @@
   overflow-wrap: anywhere;
 }
 
-.diff-fold {
+.inst-diff-fold {
   padding: var(--space-2) var(--pad-cell-x);
   color: var(--text-muted);
   background: var(--surface-raised);
@@ -278,15 +278,15 @@
    пришлось бы красить в цвет подложки, то есть захардкодить тему.
    ────────────────────────────────────────────────────────────────────────── */
 
-.output { position: relative; }
+.inst-output { position: relative; }
 
-.output[data-truncated="true"] > .output-body {
+.inst-output[data-truncated="true"] > .inst-output-body {
   max-block-size: 12lh;
   overflow: hidden;
   mask-image: linear-gradient(to bottom, #000 calc(100% - 3lh), transparent);
 }
 
-.output-more {
+.inst-output-more {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -298,7 +298,7 @@
   &:hover { text-decoration: underline; }
 }
 
-.output[data-truncated="false"] > .output-more::after { content: " ↑"; }
+.inst-output[data-truncated="false"] > .inst-output-more::after { content: " ↑"; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Бюджет
@@ -308,9 +308,9 @@
    меры, ни у метрики: соотношения «истрачено из отпущенного» и прогноза.
    ────────────────────────────────────────────────────────────────────────── */
 
-.budget { display: flex; flex-direction: column; gap: var(--space-3); }
+.inst-budget { display: flex; flex-direction: column; gap: var(--space-3); }
 
-.budget-row {
+.inst-budget-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -318,13 +318,13 @@
   font-size: var(--text-sm);
 }
 
-.budget-value { font-weight: var(--weight-medium); }
+.inst-budget-value { font-weight: var(--weight-medium); }
 
 /* «из 250 000» — часть числа, а не сосед: мельче и тише, ровно как единица
    измерения у метрики.                                                    */
-.budget-of { font-size: var(--text-xs); font-weight: var(--weight-normal); color: var(--text-muted); }
+.inst-budget-of { font-size: var(--text-xs); font-weight: var(--weight-normal); color: var(--text-muted); }
 
-.budget-note { font-size: var(--text-xs); color: var(--text-muted); }
+.inst-budget-note { font-size: var(--text-xs); color: var(--text-muted); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Скелетон
@@ -336,16 +336,16 @@
    заполняющимся.
    ────────────────────────────────────────────────────────────────────────── */
 
-.skeleton {
+.inst-skeleton {
   background: var(--surface-sunken);
   border-radius: var(--radius-xs);
   block-size: 1lh;
   animation: inst-fade 1.6s var(--ease-in-out) infinite;
 }
 
-.skeleton--title { block-size: 1lh; inline-size: 40%; }
-.skeleton--line  { inline-size: 100%; }
-.skeleton--short { inline-size: 62%; }
+.inst-skeleton--title { block-size: 1lh; inline-size: 40%; }
+.inst-skeleton--line  { inline-size: 100%; }
+.inst-skeleton--short { inline-size: 62%; }
 
 @keyframes inst-fade {
   0%, 100% { opacity: 1; }
@@ -360,7 +360,7 @@
    с текстом ошибки и без хода.
    ────────────────────────────────────────────────────────────────────────── */
 
-.failure {
+.inst-failure {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -370,7 +370,7 @@
   background: var(--err-bg);
 }
 
-.failure-head {
+.inst-failure-head {
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -379,7 +379,7 @@
   color: var(--err-text);
 }
 
-.failure-head::before {
+.inst-failure-head::before {
   content: "";
   flex: none;
   inline-size: var(--size-icon);
@@ -388,15 +388,15 @@
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
-.failure-reason {
+.inst-failure-reason {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   line-height: 1.55;
   overflow-wrap: anywhere;
 }
 
-.failure-tried { font-size: var(--text-xs); color: var(--text-muted); }
-.failure-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-2); }
+.inst-failure-tried { font-size: var(--text-xs); color: var(--text-muted); }
+.inst-failure-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-2); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Дорожки параллельных прогонов
@@ -406,9 +406,9 @@
    поэтому шкалу считает вызывающая сторона, а компонент остаётся тупым.
    ────────────────────────────────────────────────────────────────────────── */
 
-.lanes { display: flex; flex-direction: column; gap: var(--space-2); }
+.inst-lanes { display: flex; flex-direction: column; gap: var(--space-2); }
 
-.lane {
+.inst-lane {
   display: grid;
   grid-template-columns: var(--label-col) 1fr;
   align-items: center;
@@ -416,9 +416,9 @@
   font-size: var(--text-xs);
 }
 
-.lane-label { color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inst-lane-label { color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.lane-track {
+.inst-lane-track {
   position: relative;
   block-size: var(--size-meter);
   border-radius: var(--radius-xs);
@@ -426,7 +426,7 @@
   box-shadow: inset 0 0 0 var(--hairline) var(--border);
 }
 
-.lane-span {
+.inst-lane-span {
   position: absolute;
   inset-block: 0;
   inset-inline-start: calc(var(--from) * 100%);
@@ -442,9 +442,9 @@
    принадлежит машине.
    ────────────────────────────────────────────────────────────────────────── */
 
-.copyable { position: relative; }
+.inst-copyable { position: relative; }
 
-.copyable > .copy {
+.inst-copyable > .inst-copy {
   position: absolute;
   inset-block-start: var(--space-3);
   inset-inline-end: var(--space-3);
@@ -452,8 +452,8 @@
   transition: opacity var(--dur-1) var(--ease-out);
 }
 
-.copyable:hover > .copy,
-.copyable:focus-within > .copy { opacity: 1; }
+.inst-copyable:hover > .inst-copy,
+.inst-copyable:focus-within > .inst-copy { opacity: 1; }
 
 /* ==========================================================================
    Принудительные цвета (Windows High Contrast)
@@ -465,31 +465,31 @@
    ========================================================================== */
 
 @media (forced-colors: active) {
-  .panel, .card, .input, .textarea, .select, .num-field, .btn,
-  .badge, .approval, .failure, .diff, .meter, .lane-track {
+  .inst-panel, .inst-card, .inst-input, .inst-textarea, .inst-select, .inst-num-field, .inst-btn,
+  .inst-badge, .inst-approval, .inst-failure, .inst-diff, .inst-meter, .inst-lane-track {
     border: var(--stroke) solid CanvasText;
   }
 
-  .checkbox > input, .radio > input, .switch > input {
+  .inst-checkbox > input, .inst-radio > input, .inst-switch > input {
     border: var(--stroke) solid CanvasText;
   }
 
   /* Заливки, которые несут значение, обязаны пережить сброс. */
-  .meter-fill, .lane-span, .switch > input:checked, .dot {
+  .inst-meter-fill, .inst-lane-span, .inst-switch > input:checked, .inst-dot {
     forced-color-adjust: none;
     background: Highlight;
   }
 
-  .task[aria-selected="true"], .tree-item[aria-selected="true"],
-  .table tbody tr[aria-selected="true"] td {
+  .inst-task[aria-selected="true"], .inst-tree-item[aria-selected="true"],
+  .inst-table tbody tr[aria-selected="true"] td {
     background: Highlight;
     color: HighlightText;
   }
 
   /* Маскированные глифы в forced-colors теряют цвет фона — переводим их
      на системный текст.                                                  */
-  .tree-twist, .step-twist, .select-wrap::after,
-  .note::before, .approval-head::before, .failure-head::before {
+  .inst-tree-twist, .inst-step-twist, .inst-select-wrap::after,
+  .inst-note::before, .inst-approval-head::before, .inst-failure-head::before {
     background: CanvasText;
   }
 }

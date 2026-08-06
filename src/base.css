@@ -56,7 +56,7 @@ h4, h5, h6 { font-size: var(--text-md); }
    Опт-ин, а не умолчание. Тело ответа агента, описание, документация — всё,
    что читают абзацами, а не сканируют глазом.                             */
 
-.prose {
+.inst-prose {
   font-size: var(--text-md);
   line-height: var(--leading-prose);
   font-variant-numeric: proportional-nums;
@@ -77,17 +77,17 @@ a {
   &:hover { text-decoration-color: currentColor; }
 }
 
-/* Оптическая поправка объявлена ОДИН раз на весь список, включая .u-mono.
+/* Оптическая поправка объявлена ОДИН раз на весь список, включая .inst-u-mono.
    Когда у утилиты было своё правило, <code class="u-mono"> получал
    0.925 × 0.925 и уезжал под объявленный пол в 11px.                      */
-code, kbd, samp, pre, .u-mono {
+code, kbd, samp, pre, .inst-u-mono {
   font-family: var(--font-mono);
   font-size: 0.925em;   /* моно оптически крупнее санса на том же кегле */
   font-variant-ligatures: none;
 }
 
 /* Внутри блока кода поправка уже применена контейнером — второй раз не надо. */
-.code code, pre code { font-size: inherit; }
+.inst-code code, pre code { font-size: inherit; }
 
 /* Инструмент живёт на клавиатуре, поэтому клавиша — элемент интерфейса,
    а не безымянный моноширинный кусок.                                     */
@@ -164,7 +164,7 @@ hr {
    Нарочно крошечный набор. Это не утилитарный фреймворк; если понадобилась
    пятая утилита — ответ обычно «компонент».                               */
 
-.u-visually-hidden {
+.inst-u-visually-hidden {
   position: absolute;
   width: 1px; height: 1px;
   padding: 0; margin: -1px;
@@ -173,13 +173,13 @@ hr {
   white-space: nowrap;
 }
 
-.u-truncate {
+.inst-u-truncate {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.u-prose-nums { font-variant-numeric: proportional-nums; }
+.inst-u-prose-nums { font-variant-numeric: proportional-nums; }
 
-.u-dim { color: var(--text-secondary); }
+.inst-u-dim { color: var(--text-secondary); }

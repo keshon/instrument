@@ -32,7 +32,7 @@
    мимо, возврат фокуса на кнопку.
    ────────────────────────────────────────────────────────────────────────── */
 
-.popover {
+.inst-popover {
   margin: 0;
   padding: var(--space-2);
   inline-size: max-content;
@@ -57,20 +57,20 @@
               overlay var(--dur-2) allow-discrete;
 }
 
-.popover:popover-open { opacity: 1; translate: 0 0; }
+.inst-popover:popover-open { opacity: 1; translate: 0 0; }
 
 /* Стартовое состояние для входящего перехода. */
 @starting-style {
-  .popover:popover-open { opacity: 0; translate: 0 calc(var(--space-1) * -1); }
+  .inst-popover:popover-open { opacity: 0; translate: 0 calc(var(--space-1) * -1); }
 }
 
 /* У поповера подложки нет: он не блокирует страницу. */
-.popover::backdrop { background: transparent; }
+.inst-popover::backdrop { background: transparent; }
 
 /* Привязка к вызвавшей кнопке. Неявный якорь — сама кнопка с
    popovertarget, поэтому имена якорей заводить не нужно.                 */
 @supports (position-area: block-end) {
-  .popover--anchored {
+  .inst-popover--anchored {
     /* «Под кнопкой, растёт в сторону конца строки» — то есть начальный край
        поповера совпадает с начальным краем кнопки. В RTL это зеркалится
        само, потому что область логическая.                                */
@@ -89,20 +89,20 @@
    платформа берёт на себя.
    ────────────────────────────────────────────────────────────────────────── */
 
-.menu {
+.inst-menu {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
 }
 
-.menu-label {
+.inst-menu-label {
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-2xs);
   color: var(--text-muted);
   line-height: var(--leading-ui);
 }
 
-.menu-item {
+.inst-menu-item {
   display: flex;
   align-items: center;
   gap: var(--gap-inline);
@@ -132,9 +132,9 @@
 
 /* Горячая клавиша прижимается к дальнему краю и тише подписи: она
    подсказка, а не второе название пункта.                                */
-.menu-shortcut { margin-inline-start: auto; padding-inline-start: var(--space-6); color: var(--text-muted); }
+.inst-menu-shortcut { margin-inline-start: auto; padding-inline-start: var(--space-6); color: var(--text-muted); }
 
-.menu-sep {
+.inst-menu-sep {
   block-size: var(--hairline);
   margin-block: var(--space-2);
   background: var(--border-subtle);
@@ -151,13 +151,13 @@
    Тултип не заменяет подпись и не содержит того, без чего нельзя обойтись:
    он не открывается с клавиатуры на сенсорном экране.
 
-   ОГРАНИЧЕНИЕ: внутри .panel с overflow: hidden тултип обрежется. Там
-   нужен .popover, который живёт в верхнем слое.
+   ОГРАНИЧЕНИЕ: внутри .inst-panel с overflow: hidden тултип обрежется. Там
+   нужен .inst-popover, который живёт в верхнем слое.
    ────────────────────────────────────────────────────────────────────────── */
 
-.tooltip { position: relative; display: inline-flex; }
+.inst-tooltip { position: relative; display: inline-flex; }
 
-.tooltip-text {
+.inst-tooltip-text {
   position: absolute;
   z-index: var(--z-popover);
   inset-block-end: calc(100% + var(--space-3));
@@ -177,13 +177,13 @@
   transition: opacity var(--dur-1) var(--ease-out);
 }
 
-.tooltip:hover > .tooltip-text,
-.tooltip:focus-within > .tooltip-text { opacity: 1; }
+.inst-tooltip:hover > .inst-tooltip-text,
+.inst-tooltip:focus-within > .inst-tooltip-text { opacity: 1; }
 
 /* Тултип в одну строку годится для короткой подписи. Как только внутри
    предложение, nowrap растягивает его за край экрана — поэтому длинному
    тексту нужен явный вариант с переносом и потолком ширины.             */
-.tooltip-text--wide {
+.inst-tooltip-text--wide {
   inline-size: max-content;
   max-inline-size: 22rem;
   white-space: normal;
@@ -200,7 +200,7 @@
    Модалка — второй и последний носитель тени в ките.
    ────────────────────────────────────────────────────────────────────────── */
 
-.dialog {
+.inst-dialog {
   margin: auto;
   padding: 0;
   inline-size: min(34rem, 100vw - var(--space-8));
@@ -215,9 +215,9 @@
 
 /* Раскладка задаётся только открытому: у <dialog> закрытое состояние — это
    display: none, и безусловный display: flex показал бы модалку всегда.  */
-.dialog[open] { display: flex; flex-direction: column; }
+.inst-dialog[open] { display: flex; flex-direction: column; }
 
-.dialog::backdrop { background: var(--scrim); }
+.inst-dialog::backdrop { background: var(--scrim); }
 
 /* Блокировка прокрутки фона — и она тоже без JS.
 
@@ -236,15 +236,15 @@
    scrollbar-gutter здесь не спасает: резерв места действует только при
    overflow auto/scroll, а у нас hidden.
 
-   В приложении на .shell документ не прокручивается вообще — прокручивается
-   .shell-main, — поэтому сдвига нет и платить не за что. Если у вас
+   В приложении на .inst-shell документ не прокручивается вообще — прокручивается
+   .inst-shell-main, — поэтому сдвига нет и платить не за что. Если у вас
    прокручивается именно документ, поставьте `scrollbar-gutter: stable` на
    html постоянно: место будет зарезервировано заранее и ширина не изменится.
    Кит не делает этого сам, потому что на нескроллящемся экране это была бы
    пустая полоса в 10px у правого края.                                     */
 html:has(dialog[open]) { overflow: hidden; }
 
-.dialog-head {
+.inst-dialog-head {
   display: flex;
   align-items: center;
   gap: var(--gap-inline);
@@ -253,17 +253,17 @@ html:has(dialog[open]) { overflow: hidden; }
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 
-.dialog-title { font-size: var(--text-md); font-weight: var(--weight-medium); }
-.dialog-close { margin-inline-start: auto; }
+.inst-dialog-title { font-size: var(--text-md); font-weight: var(--weight-medium); }
+.inst-dialog-close { margin-inline-start: auto; }
 
-.dialog-body {
+.inst-dialog-body {
   flex: 1;
   min-block-size: 0;
   overflow: auto;
   padding: var(--pad-card);
 }
 
-.dialog-foot {
+.inst-dialog-foot {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -273,15 +273,15 @@ html:has(dialog[open]) { overflow: hidden; }
   border-block-start: var(--hairline) solid var(--border-subtle);
 }
 
-.dialog-foot--end { justify-content: flex-end; }
-.dialog-foot-note { margin-inline-end: auto; font-size: var(--text-xs); color: var(--text-muted); }
+.inst-dialog-foot--end { justify-content: flex-end; }
+.inst-dialog-foot-note { margin-inline-end: auto; font-size: var(--text-xs); color: var(--text-muted); }
 
 /* ── Шторка ─────────────────────────────────────────────────────────────────
    Тот же <dialog>, другая раскладка: во всю высоту у края. Для длинных
    форм и подробностей, которые не хочется терять из контекста.
    ────────────────────────────────────────────────────────────────────────── */
 
-.sheet {
+.inst-sheet {
   margin: 0;
   margin-inline-start: auto;
   inline-size: min(28rem, 100vw);
@@ -292,4 +292,4 @@ html:has(dialog[open]) { overflow: hidden; }
   border-radius: 0;
 }
 
-.sheet--start { margin-inline-start: 0; margin-inline-end: auto; border-inline: none; border-inline-end: var(--hairline) solid var(--border); }
+.inst-sheet--start { margin-inline-start: 0; margin-inline-end: auto; border-inline: none; border-inline-end: var(--hairline) solid var(--border); }

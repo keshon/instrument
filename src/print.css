@@ -20,30 +20,30 @@
   body { background: none; }
 
   /* Хром приложения на бумаге не нужен: он не данные. */
-  .shell-aside,
-  .page-actions,
-  .form-actions,
-  .toolbar,
-  .skip-link,
-  .pager,
-  .copy,
-  .segmented { display: none; }
+  .inst-shell-aside,
+  .inst-page-actions,
+  .inst-form-actions,
+  .inst-toolbar,
+  .inst-skip-link,
+  .inst-pager,
+  .inst-copy,
+  .inst-segmented { display: none; }
 
   /* Оболочка разворачивается в обычный поток: три независимо
      прокручиваемые области на листе не имеют смысла.                     */
-  .shell {
+  .inst-shell {
     display: block;
     block-size: auto;
   }
 
   /* Всё, что на экране прокручивалось, на бумаге печатается целиком.
      Иначе лог обрывается на первом экране и молча теряет остальное.      */
-  .shell-main,
-  .panel-body,
-  .log,
-  .code,
-  .diff-body,
-  .output-body {
+  .inst-shell-main,
+  .inst-panel-body,
+  .inst-log,
+  .inst-code,
+  .inst-diff-body,
+  .inst-output-body {
     overflow: visible;
     block-size: auto;
     max-block-size: none;
@@ -51,8 +51,8 @@
 
   /* Свёрнутый вывод на печати разворачивается: обрезка была экранной
      экономией места, а на листе она превращается в потерю данных.        */
-  .output[data-truncated="true"] > .output-body { mask-image: none; }
-  .output-more { display: none; }
+  .inst-output[data-truncated="true"] > .inst-output-body { mask-image: none; }
+  .inst-output-more { display: none; }
 
   /* Раскрыть все свёрнутые шаги: закрытый <details> на бумаге —
      невосстановимо потерянное содержимое.                                */
@@ -61,28 +61,28 @@
   details:not([open]) > :not(summary) { display: revert; }
 
   /* Блоки не рвутся между листами. */
-  .panel, .card, .metric, .approval, .failure, .diff, .banner { break-inside: avoid; }
-  tr, .task, .step, .log-line, .prop { break-inside: avoid; }
-  h1, h2, h3, .page-title, .section-title, .panel-title { break-after: avoid; }
+  .inst-panel, .inst-card, .inst-metric, .inst-approval, .inst-failure, .inst-diff, .inst-banner { break-inside: avoid; }
+  tr, .inst-task, .inst-step, .inst-log-line, .inst-prop { break-inside: avoid; }
+  h1, h2, h3, .inst-page-title, .inst-section-title, .inst-panel-title { break-after: avoid; }
 
   /* Шапка таблицы повторяется на каждом листе. */
-  .table thead { display: table-header-group; }
-  .table tfoot { display: table-footer-group; }
+  .inst-table thead { display: table-header-group; }
+  .inst-table tfoot { display: table-footer-group; }
 
   /* Тени на бумаге не воспроизводятся, но съедают тонер по краям. */
-  .panel, .card, .dialog, .popover { box-shadow: none; }
+  .inst-panel, .inst-card, .inst-dialog, .inst-popover { box-shadow: none; }
 
   /* Оверлеи печатать нечего: они по определению временные. */
-  .popover, .tooltip-text, dialog { display: none; }
+  .inst-popover, .inst-tooltip-text, dialog { display: none; }
 
   /* Адрес ссылки виден только на экране — на бумаге его надо написать. */
-  .prose a[href^="http"]::after {
+  .inst-prose a[href^="http"]::after {
     content: " (" attr(href) ")";
     font-size: 0.85em;
     color: var(--text-muted);
   }
 
   /* Индикаторы активности на листе бессмысленны: печать статична. */
-  .spinner, .caret, .skeleton { display: none; }
-  .meter[data-state="indeterminate"] > .meter-fill { display: none; }
+  .inst-spinner, .inst-caret, .inst-skeleton { display: none; }
+  .inst-meter[data-state="indeterminate"] > .inst-meter-fill { display: none; }
 }

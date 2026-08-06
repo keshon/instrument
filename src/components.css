@@ -51,7 +51,7 @@
    разные метрики в разных шрифтах и риск подстановки эмодзи.
    ────────────────────────────────────────────────────────────────────────── */
 
-.icon {
+.inst-icon {
   flex: none;
   inline-size: var(--size-icon);
   block-size: var(--size-icon);
@@ -62,7 +62,7 @@
   stroke-linejoin: round;
 }
 
-.icon--sm { inline-size: var(--size-chevron); block-size: var(--size-chevron); }
+.inst-icon--sm { inline-size: var(--size-chevron); block-size: var(--size-chevron); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Кнопка
@@ -75,7 +75,7 @@
    механизма в одном компоненте вместо обещанных «двух строк на вариант».
    ────────────────────────────────────────────────────────────────────────── */
 
-.btn {
+.inst-btn {
   --btn-fg: var(--text-primary);
   --btn-bg: transparent;
   --btn-bg-hover: var(--surface-hover);
@@ -113,7 +113,7 @@
   &[aria-busy="true"] { pointer-events: none; }
 }
 
-.btn--primary {
+.inst-btn--primary {
   --btn-fg: var(--accent-on);
   --btn-bg: var(--accent-solid);
   /* Вниз, а не вверх: заливка обязана уходить ОТ цвета подписи. */
@@ -122,43 +122,43 @@
   --btn-border: transparent;
 }
 
-.btn--ghost { --btn-border: transparent; }
+.inst-btn--ghost { --btn-border: transparent; }
 
-.btn--danger {
+.inst-btn--danger {
   --btn-fg: var(--err-text);
   --btn-border: color-mix(in oklab, var(--err-text) 40%, transparent);
   --btn-bg-hover: var(--err-bg);
   --btn-bg-active: var(--err-bg);
 }
 
-.btn--sm { min-block-size: var(--control-h-sm); padding-inline: var(--control-pad-sm); font-size: var(--text-xs); }
-.btn--lg { min-block-size: var(--control-h-lg); padding-inline: var(--control-pad-lg); font-size: var(--text-md); }
+.inst-btn--sm { min-block-size: var(--control-h-sm); padding-inline: var(--control-pad-sm); font-size: var(--text-xs); }
+.inst-btn--lg { min-block-size: var(--control-h-lg); padding-inline: var(--control-pad-lg); font-size: var(--text-md); }
 
 /* Иконочная кнопка квадратная, а не «узкая»: прямоугольник 32×28 — самый
    частый признак самодельного кита.                                       */
-.btn--icon { inline-size: var(--control-h-md); padding-inline: 0; }
-.btn--sm.btn--icon { inline-size: var(--control-h-sm); }
-.btn--lg.btn--icon { inline-size: var(--control-h-lg); }
+.inst-btn--icon { inline-size: var(--control-h-md); padding-inline: 0; }
+.inst-btn--sm.inst-btn--icon { inline-size: var(--control-h-sm); }
+.inst-btn--lg.inst-btn--icon { inline-size: var(--control-h-lg); }
 
 /* Шов группы — снятая рамка у соседа, а не отрицательное поле. Сдвиг в
    -0.5px при нарисованной рамке в 1px оставлял полпикселя двойной линии:
    браузер никогда не рисует рамку тоньше физического пикселя.             */
-.btn-group {
+.inst-btn-group {
   display: inline-flex;
 
-  & > .btn { border-radius: 0; }
-  & > .btn + .btn { border-inline-start: none; }
-  & > .btn:first-child {
+  & > .inst-btn { border-radius: 0; }
+  & > .inst-btn + .inst-btn { border-inline-start: none; }
+  & > .inst-btn:first-child {
     border-start-start-radius: var(--radius-md);
     border-end-start-radius: var(--radius-md);
   }
-  & > .btn:last-child {
+  & > .inst-btn:last-child {
     border-start-end-radius: var(--radius-md);
     border-end-end-radius: var(--radius-md);
   }
   /* Элементы флекса подчиняются z-index без position — кольцо фокуса
      ложится поверх соседей.                                              */
-  & > .btn:hover, & > .btn:focus-visible { z-index: 1; }
+  & > .inst-btn:hover, & > .inst-btn:focus-visible { z-index: 1; }
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -169,7 +169,7 @@
    этом были завязаны стили.
    ────────────────────────────────────────────────────────────────────────── */
 
-.segmented {
+.inst-segmented {
   display: inline-flex;
   padding: var(--space-1);
   gap: var(--space-1);
@@ -207,7 +207,7 @@
    Ни та, ни другая не получает тени. Тень означает «временное и сверху».
    ────────────────────────────────────────────────────────────────────────── */
 
-.panel {
+.inst-panel {
   display: flex;
   flex-direction: column;
   min-block-size: 0;
@@ -224,7 +224,7 @@
   overflow: hidden;
 }
 
-.panel-header {
+.inst-panel-header {
   display: flex;
   align-items: center;
   gap: var(--gap-inline);
@@ -234,10 +234,10 @@
 
   /* Тулбар сразу под шапкой сам приносит нижнюю линию — вторая была бы
      двойным правилом на 30 пикселей.                                     */
-  &:has(+ .toolbar) { border-block-end: none; }
+  &:has(+ .inst-toolbar) { border-block-end: none; }
 }
 
-.panel-title {
+.inst-panel-title {
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-normal);
@@ -245,35 +245,35 @@
      капс делает подпись громче данных, которые она подписывает.          */
 }
 
-.panel-actions { margin-inline-start: auto; display: flex; align-items: center; gap: var(--space-2); }
+.inst-panel-actions { margin-inline-start: auto; display: flex; align-items: center; gap: var(--space-2); }
 
-.panel-body {
+.inst-panel-body {
   flex: 1;
   min-block-size: 0;
   overflow: auto;
   padding: var(--panel-body-pad, var(--pad-panel));
 }
 
-.panel-body--flush { --panel-body-pad: 0; }
-.panel-body--list  { --panel-body-pad: var(--gap-row); }
+.inst-panel-body--flush { --panel-body-pad: 0; }
+.inst-panel-body--list  { --panel-body-pad: var(--gap-row); }
 
-.card {
+.inst-card {
   background: var(--surface-raised);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--pad-card);
 }
 
-.card--interactive {
+.inst-card--interactive {
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
   &:hover { border-color: var(--border-strong); background: var(--surface-hover); }
 }
 
-.card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
-.card-sub   { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
+.inst-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
+.inst-card-sub   { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
 
-.toolbar {
+.inst-toolbar {
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -282,14 +282,14 @@
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 
-.toolbar-sep {
+.inst-toolbar-sep {
   inline-size: var(--hairline);
   align-self: stretch;
   margin-inline: var(--space-2);
   background: var(--border);
 }
 
-.toolbar-spacer { margin-inline-start: auto; }
+.inst-toolbar-spacer { margin-inline-start: auto; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Метрика
@@ -298,15 +298,15 @@
    одна группа; рамка вокруг каждой превращает четыре числа в четыре объекта.
    ────────────────────────────────────────────────────────────────────────── */
 
-.metric {
+.inst-metric {
   background: var(--surface-sunken);
   border-radius: var(--radius-md);
   padding: var(--pad-panel);
 }
 
-.metric-label { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-ui); }
+.inst-metric-label { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-ui); }
 
-.metric-value {
+.inst-metric-value {
   margin-block-start: var(--space-3);
   font-size: var(--text-2xl);
   font-weight: var(--weight-medium);
@@ -315,7 +315,7 @@
 }
 
 /* Единица — часть числа, поэтому она не имеет права с ним соревноваться. */
-.metric-unit {
+.inst-metric-unit {
   font-size: var(--text-md);
   color: var(--text-secondary);
   margin-inline-start: 2px;
@@ -327,7 +327,7 @@
    времени это хорошо, «↑ 5 новых» предупреждений это плохо. Класс,
    названный стрелкой и означающий оценку, — гарантированная ошибка
    применения.                                                            */
-.metric-delta {
+.inst-metric-delta {
   margin-block-start: var(--space-2);
   font-size: var(--text-xs);
   color: var(--text-muted);
@@ -354,7 +354,7 @@
   }
 }
 
-.metric-row {
+.inst-metric-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--pad-panel);
@@ -367,7 +367,7 @@
    примерно для 8% мужчин и вообще ни для одного распечатанного скриншота.
    ────────────────────────────────────────────────────────────────────────── */
 
-.badge {
+.inst-badge {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -384,7 +384,7 @@
 
 /* Точка внутри бейджа наследует тон от бейджа — атрибут проставляется один
    раз на группу, а не дублируется в разметке.                            */
-.dot {
+.inst-dot {
   flex: none;
   inline-size: var(--size-dot);
   block-size: var(--size-dot);
@@ -392,7 +392,7 @@
   background: var(--tone-mark, var(--text-faint));
 }
 
-[data-tone="running"] .dot, .dot[data-tone="running"] {
+[data-tone="running"] .inst-dot, .inst-dot[data-tone="running"] {
   animation: inst-pulse 1.6s var(--ease-in-out) infinite;
 }
 
@@ -410,7 +410,7 @@
 
    Разметка: <svg class="spinner"><circle class="spinner-track"/><circle
    class="spinner-arc"/></svg> с viewBox="0 0 16 16".                      */
-.spinner {
+.inst-spinner {
   flex: none;
   inline-size: var(--size-spinner);
   block-size: var(--size-spinner);
@@ -419,8 +419,8 @@
   stroke-linecap: round;
   animation: inst-spin 0.7s linear infinite;
 
-  & > .spinner-track { stroke: var(--border-control); }
-  & > .spinner-arc {
+  & > .inst-spinner-track { stroke: var(--border-control); }
+  & > .inst-spinner-arc {
     stroke: var(--accent-mark);
     /* Длина окружности при r=6.5 — примерно 40.8. Четверть на дугу. */
     stroke-dasharray: 11 30;
@@ -436,7 +436,7 @@
 
    Ступенями, а не плавно: затухающая каретка читается как артефакт
    отрисовки, а не как активность.                                        */
-.caret {
+.inst-caret {
   display: inline-block;
   inline-size: 0.45em;
   block-size: 1.05em;
@@ -460,7 +460,7 @@
    скринридеру, ни тесту.
    ────────────────────────────────────────────────────────────────────────── */
 
-.meter {
+.inst-meter {
   block-size: var(--size-meter);
   border-radius: var(--radius-xs);
   background: var(--track);
@@ -471,14 +471,14 @@
   overflow: hidden;
 }
 
-.meter-fill {
+.inst-meter-fill {
   block-size: 100%;
   border-radius: var(--radius-xs);
   background: var(--tone-mark, var(--accent-mark));
   transition: inline-size var(--dur-3) var(--ease-out);
 }
 
-.meter[data-state="indeterminate"] > .meter-fill {
+.inst-meter[data-state="indeterminate"] > .inst-meter-fill {
   inline-size: 35%;
   animation: inst-sweep 1.3s var(--ease-in-out) infinite;
 }
@@ -488,7 +488,7 @@
   100% { translate: 340% 0; }
 }
 
-.meter-row {
+.inst-meter-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -497,13 +497,13 @@
   margin-block-end: var(--space-3);
 }
 
-.meter-value { color: var(--text-secondary); }
+.inst-meter-value { color: var(--text-secondary); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Таблица
    ────────────────────────────────────────────────────────────────────────── */
 
-.table {
+.inst-table {
   --table-head-bg: var(--surface-raised);
 
   inline-size: 100%;
@@ -533,12 +533,12 @@
 
   /* Числа выравниваются вправо и остаются табличными — величина читается
      как форма колонки, без чтения цифр.                                  */
-  & .num { text-align: end; }
+  & .inst-num { text-align: end; }
 }
 
 /* Липкая шапка — опция, а не умолчание: в нескроллящемся контексте sticky
    прилипал бы к вьюпорту, что на длинной странице неожиданно.            */
-.table--sticky thead th {
+.inst-table--sticky thead th {
   position: sticky;
   inset-block-start: 0;
   z-index: var(--z-sticky);
@@ -553,7 +553,7 @@
    против 92px и разная типографика.
    ────────────────────────────────────────────────────────────────────────── */
 
-.kv {
+.inst-kv {
   display: grid;
   grid-template-columns: minmax(0, var(--label-col)) 1fr;
   gap: var(--space-3) var(--pad-panel);
@@ -572,9 +572,9 @@
    вложенности.
    ────────────────────────────────────────────────────────────────────────── */
 
-.props { display: flex; flex-direction: column; }
+.inst-props { display: flex; flex-direction: column; }
 
-.prop {
+.inst-prop {
   display: grid;
   grid-template-columns: var(--label-col) 1fr;
   align-items: center;
@@ -587,7 +587,7 @@
 
 /* Обрезанная подпись обязана иметь title: иначе полное имя свойства
    прочитать нечем.                                                        */
-.prop-label {
+.inst-prop-label {
   font-size: var(--text-xs);
   color: var(--text-secondary);
   line-height: var(--leading-ui);
@@ -596,13 +596,13 @@
   white-space: nowrap;
 }
 
-.prop-control { min-inline-size: 0; display: flex; gap: var(--space-2); align-items: center; }
+.inst-prop-control { min-inline-size: 0; display: flex; gap: var(--space-2); align-items: center; }
 
 /* Числовое поле: подпись оси служит ручкой перетаскивания, поэтому курсор
    меняется на ней, а не на отдельном степпере — тянуть будут за букву.
    Контракт: у input обязан быть aria-label с осью, иначе скринридер
    прочитает «поле, 128» без указания, чего именно.                       */
-.num-field {
+.inst-num-field {
   display: flex;
   align-items: center;
   min-block-size: var(--control-h-sm);
@@ -615,7 +615,7 @@
   &:hover { border-color: var(--text-muted); }
   &:focus-within { border-color: var(--accent-border); }
 
-  & > .num-axis {
+  & > .inst-num-axis {
     flex: none;
     padding-inline: var(--space-3);
     font-size: var(--text-2xs);
@@ -641,14 +641,14 @@
    перестаёт быть двухколоночной — подпись встаёт над контролом. Раньше
    инспектор в боковой колонке просто расплющивался.                      */
 @container panel (inline-size < 22rem) {
-  .prop {
+  .inst-prop {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-1);
     align-items: start;
   }
 }
 
-.vec { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--space-2); min-inline-size: 0; }
+.inst-vec { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--space-2); min-inline-size: 0; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Строка задачи — примитив очереди
@@ -659,7 +659,7 @@
    голом div невалиден.
    ────────────────────────────────────────────────────────────────────────── */
 
-.task {
+.inst-task {
   display: grid;
   grid-template-columns: var(--size-gutter) 1fr auto;
   align-items: center;
@@ -679,11 +679,11 @@
   &[data-state="done"]    { --tone-ink: var(--ok-text); }
   &[data-state="failed"]  { --tone-ink: var(--err-text); }
   &[data-state="warn"]    { --tone-ink: var(--warn-text); }
-  &[data-state="running"] .dot { animation: inst-pulse 1.6s var(--ease-in-out) infinite; }
+  &[data-state="running"] .inst-dot { animation: inst-pulse 1.6s var(--ease-in-out) infinite; }
 
   /* Завершённые отступают, а не гаснут: история остаётся читаемой, но
      перестаёт спорить с тем, что идёт сейчас.                            */
-  &[data-state="done"] .task-title { color: var(--text-secondary); }
+  &[data-state="done"] .inst-task-title { color: var(--text-secondary); }
   /* Пропущенное — единственный случай прозрачности, и она мягкая: 0.55
      роняло подпись под порог читаемости.                                 */
   &[data-state="skipped"] { opacity: 0.7; }
@@ -692,19 +692,19 @@
 /* Зазор между строками. Он не косметический: без него подсветка выделенной
    строки смыкается с подсветкой соседней под курсором, и две строки
    читаются как один блок.                                               */
-.task + .task { margin-block-start: var(--space-1); }
+.inst-task + .inst-task { margin-block-start: var(--space-1); }
 
-.task-gutter { display: flex; justify-content: center; }
-.task-main { min-inline-size: 0; }
-.task-meta { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
-.task-title { line-height: var(--leading-ui); }
-.task-sub { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: 1px; }
+.inst-task-gutter { display: flex; justify-content: center; }
+.inst-task-main { min-inline-size: 0; }
+.inst-task-meta { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
+.inst-task-title { line-height: var(--leading-ui); }
+.inst-task-sub { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: 1px; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Лог и код
    ────────────────────────────────────────────────────────────────────────── */
 
-.log {
+.inst-log {
   background: var(--surface-sunken);
   border-radius: var(--radius-md);
   padding: var(--space-4) var(--pad-panel);
@@ -713,14 +713,14 @@
   line-height: 1.55;
   overflow: auto;
   /* Место под скроллбар резервируется ТОЛЬКО здесь и в двух других
-     растущих областях (.code, .diff-body). На обычной панели это
+     растущих областях (.inst-code, .inst-diff-body). На обычной панели это
      оборачивалось мёртвой полосой в 10px у правого края, которой нет у
      шапки и тулбара выше, — содержимое переставало с ними совпадать.
      Резервировать имеет смысл там, где содержимое реально прибывает.   */
   scrollbar-gutter: stable;
 }
 
-.log-line {
+.inst-log-line {
   display: grid;
   grid-template-columns: max-content max-content 1fr;
   gap: var(--gap-inline);
@@ -734,10 +734,10 @@
 /* Ширина в ch, а не по контенту. Сетка объявлена на СТРОКЕ, то есть у
    каждой строки она своя, и колонка уровня раньше меняла ширину от слова
    к слову: сообщение уезжало на 7px, как только в логе появлялся error. */
-.log-time  { inline-size: 8ch; color: var(--text-muted); }
-.log-level { inline-size: 5ch; color: var(--level-ink, var(--text-muted)); }
+.inst-log-time  { inline-size: 8ch; color: var(--text-muted); }
+.inst-log-level { inline-size: 5ch; color: var(--level-ink, var(--text-muted)); }
 
-.code {
+.inst-code {
   background: var(--surface-sunken);
   border: var(--hairline) solid var(--border-subtle);
   border-radius: var(--radius-md);
@@ -748,7 +748,7 @@
   scrollbar-gutter: stable;
 }
 
-code:not(.code) {
+code:not(.inst-code) {
   padding: 1px 5px;
   border-radius: var(--radius-xs);
   background: var(--surface-sunken);
@@ -762,9 +762,9 @@ code:not(.code) {
    и aria-selected на голых div невалидны.
    ────────────────────────────────────────────────────────────────────────── */
 
-.tree { font-size: var(--text-sm); }
+.inst-tree { font-size: var(--text-sm); }
 
-.tree-item {
+.inst-tree-item {
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -780,9 +780,9 @@ code:not(.code) {
   &[aria-selected="true"]:hover { background: color-mix(in oklab, var(--surface-selected), var(--surface-hover)); }
 }
 
-.tree-item + .tree-item { margin-block-start: var(--space-1); }
+.inst-tree-item + .inst-tree-item { margin-block-start: var(--space-1); }
 
-.tree-twist {
+.inst-tree-twist {
   flex: none;
   inline-size: var(--size-chevron);
   block-size: var(--size-chevron);
@@ -792,8 +792,8 @@ code:not(.code) {
 }
 
 /* Лист: место под завиток сохраняется, чтобы подписи держали колонку. */
-.tree-item:not([aria-expanded]) > .tree-twist { background: none; }
-.tree-item[aria-expanded="true"] > .tree-twist { rotate: 90deg; }
+.inst-tree-item:not([aria-expanded]) > .inst-tree-twist { background: none; }
+.inst-tree-item[aria-expanded="true"] > .inst-tree-twist { rotate: 90deg; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Сноска — врезка в поток. Только левая граница, поэтому углы прямые.
@@ -803,7 +803,7 @@ code:not(.code) {
    собственного закона «цвет не может быть единственным носителем».
    ────────────────────────────────────────────────────────────────────────── */
 
-.note {
+.inst-note {
   display: flex;
   align-items: flex-start;
   gap: var(--gap-inline);
@@ -832,16 +832,16 @@ code:not(.code) {
 /* Иконки тона — общие для сноски и баннера. Один набор масок на два
    компонента: дублировать data-URI значило бы завести второй источник
    истины для формы значка.                                              */
-:is(.note, .banner)[data-tone="running"]::before, :is(.note, .banner)[data-tone="neutral"]::before {
+:is(.inst-note, .inst-banner)[data-tone="running"]::before, :is(.inst-note, .inst-banner)[data-tone="neutral"]::before {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M8 7.4v3.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='5.2' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
 }
-:is(.note, .banner)[data-tone="ok"]::before {
+:is(.inst-note, .inst-banner)[data-tone="ok"]::before {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.4 8.2 7.2 10 10.6 6.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
-:is(.note, .banner)[data-tone="warn"]::before {
+:is(.inst-note, .inst-banner)[data-tone="warn"]::before {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 2.2 14.6 13.4H1.4z' fill='none' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M8 6.6v3' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='11.6' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
 }
-:is(.note, .banner)[data-tone="error"]::before {
+:is(.inst-note, .inst-banner)[data-tone="error"]::before {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
@@ -849,7 +849,7 @@ code:not(.code) {
    Пустое состояние
    ────────────────────────────────────────────────────────────────────────── */
 
-.empty {
+.inst-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -860,13 +860,13 @@ code:not(.code) {
   font-size: var(--text-sm);
 }
 
-.empty-title { color: var(--text-secondary); }
-.empty-desc  { font-size: var(--text-xs); max-inline-size: 44ch; }
+.inst-empty-title { color: var(--text-secondary); }
+.inst-empty-desc  { font-size: var(--text-xs); max-inline-size: 44ch; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Баннер — сообщение уровня страницы
 
-   Это НЕ сноска. Сноска (.note) — врезка в поток, она поясняет то, рядом с
+   Это НЕ сноска. Сноска (.inst-note) — врезка в поток, она поясняет то, рядом с
    чем стоит, и несёт только полосу у края. Баннер относится ко всему
    экрану, поэтому у него заливка, рамка и место под действие: «доступ
    истекает через три дня», «идёт обслуживание», «изменения не сохранены».
@@ -875,7 +875,7 @@ code:not(.code) {
    Закрытие баннера — это JS: без него он остаётся на месте и не мешает.
    ────────────────────────────────────────────────────────────────────────── */
 
-.banner {
+.inst-banner {
   display: flex;
   align-items: flex-start;
   gap: var(--gap-inline);
@@ -901,10 +901,10 @@ code:not(.code) {
   &:not([data-tone])::before { content: none; }
 }
 
-.banner-body { min-inline-size: 0; }
-.banner-title { font-weight: var(--weight-medium); }
-.banner-text { color: var(--text-secondary); }
-.banner-actions { flex: none; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
+.inst-banner-body { min-inline-size: 0; }
+.inst-banner-title { font-weight: var(--weight-medium); }
+.inst-banner-text { color: var(--text-secondary); }
+.inst-banner-actions { flex: none; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Аккордеон
@@ -913,20 +913,20 @@ code:not(.code) {
    платформы. Атрибут name на элементах делает группу взаимоисключающей —
    открытой остаётся ровно одна секция, и тоже без единой строки JS.
 
-   Это не .step: шаг — строка вызова инструмента с телом, аккордеон —
+   Это не .inst-step: шаг — строка вызова инструмента с телом, аккордеон —
    раздел содержимого. Разные работы.
    ────────────────────────────────────────────────────────────────────────── */
 
-.accordion { display: flex; flex-direction: column; gap: var(--space-1); }
+.inst-accordion { display: flex; flex-direction: column; gap: var(--space-1); }
 
-.accordion-item {
+.inst-accordion-item {
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-md);
   background: var(--surface-raised);
   overflow: hidden;
 }
 
-.accordion-head {
+.inst-accordion-head {
   display: flex;
   align-items: center;
   gap: var(--gap-inline);
@@ -952,12 +952,12 @@ code:not(.code) {
   }
 }
 
-.accordion-item[open] > .accordion-head {
+.inst-accordion-item[open] > .inst-accordion-head {
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
-.accordion-item[open] > .accordion-head::after { rotate: 180deg; }
+.inst-accordion-item[open] > .inst-accordion-head::after { rotate: 180deg; }
 
-.accordion-body { padding: var(--pad-panel) var(--pad-cell-x); }
+.inst-accordion-body { padding: var(--pad-panel) var(--pad-cell-x); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Таблица: сортировка, выбор, действия, итоги
@@ -970,7 +970,7 @@ code:not(.code) {
 /* Заголовок-сортировка — настоящая кнопка внутри th: её надо нажимать с
    клавиатуры. Направление несёт ЗНАЧОК, а не только позиция: aria-sort
    озвучивает то же самое.                                                */
-.table th > .sort {
+.inst-table th > .inst-sort {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -994,40 +994,40 @@ code:not(.code) {
 
 /* Числовые колонки сортируются от правого края — значок идёт перед
    подписью, иначе он отрывается от неё на всю ширину ячейки.             */
-.table th.num > .sort { justify-content: flex-end; flex-direction: row-reverse; }
+.inst-table th.inst-num > .inst-sort { justify-content: flex-end; flex-direction: row-reverse; }
 
-.table th[aria-sort] {
+.inst-table th[aria-sort] {
   color: var(--text-primary);
 }
-.table th[aria-sort="ascending"] > .sort::after {
+.inst-table th[aria-sort="ascending"] > .inst-sort::after {
   background: var(--accent-text);
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 9.5V2.8M3.4 5.4 6 2.8l2.6 2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
-.table th[aria-sort="descending"] > .sort::after {
+.inst-table th[aria-sort="descending"] > .inst-sort::after {
   background: var(--accent-text);
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v6.7M3.4 6.6 6 9.2l2.6-2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 /* Колонка выбора и колонка действий прижаты к краям и не растягиваются. */
-.table .col-select { inline-size: var(--control-h-md); }
-.table .col-actions { inline-size: 1%; white-space: nowrap; text-align: end; }
+.inst-table .inst-col-select { inline-size: var(--control-h-md); }
+.inst-table .inst-col-actions { inline-size: 1%; white-space: nowrap; text-align: end; }
 
 /* Действия строки появляются на наведении, но с клавиатуры доступны
    ВСЕГДА: спрятать их от Tab значило бы сделать таблицу неуправляемой без
    мыши. Поэтому opacity, а не display, и возврат при :focus-within.      */
-.table .row-actions {
+.inst-table .inst-row-actions {
   display: inline-flex;
   gap: var(--space-2);
   opacity: 0;
   transition: opacity var(--dur-1) var(--ease-out);
 }
-.table tbody tr:hover .row-actions,
-.table tbody tr:focus-within .row-actions,
-.table tbody tr[aria-selected="true"] .row-actions { opacity: 1; }
+.inst-table tbody tr:hover .inst-row-actions,
+.inst-table tbody tr:focus-within .inst-row-actions,
+.inst-table tbody tr[aria-selected="true"] .inst-row-actions { opacity: 1; }
 
 /* Итоги. Верхняя граница плотнее строчной: это черта под данными, а не
    ещё одна строка.                                                       */
-.table tfoot td {
+.inst-table tfoot td {
   border-block-start: var(--hairline) solid var(--border);
   border-block-end: none;
   font-weight: var(--weight-medium);
@@ -1035,15 +1035,15 @@ code:not(.code) {
 
 /* Липкая первая колонка — для широких таблиц, которые скроллятся вбок.
    Фон обязателен, иначе под ней просвечивает уезжающее содержимое.       */
-.table--sticky-col :is(th, td):first-child {
+.inst-table--sticky-col :is(th, td):first-child {
   position: sticky;
   inset-inline-start: 0;
   z-index: 1;
   background: var(--table-head-bg);
 }
-.table--sticky-col.table--sticky thead th:first-child { z-index: 2; }
+.inst-table--sticky-col.inst-table--sticky thead th:first-child { z-index: 2; }
 
 /* Строка выбранной подсветкой не должна терять ховер. */
-.table tbody tr[aria-selected="true"]:hover td {
+.inst-table tbody tr[aria-selected="true"]:hover td {
   background: color-mix(in oklab, var(--surface-selected), var(--surface-hover));
 }
