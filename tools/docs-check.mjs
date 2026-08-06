@@ -67,7 +67,6 @@ function walk(dir) {
 }
 
 const pages = walk(DOCS).filter(p => !p.includes('internal'));
-const pageSet = new Set(pages.map(p => p.replace(/\\/g, '/')));
 const documented = new Set();
 const problems = [];
 const pending = new Map();   /* ссылка → откуда. Ещё не написанные страницы */
@@ -90,7 +89,9 @@ for (const p of pages) {
        неё не провалится. Поэтому они собираются отдельным списком. */
     for (const m of line.matchAll(/\]\((\.[^)#]+\.md)(#[^)]*)?\)/g)) {
       const target = new URL(m[1], 'file:///' + p.replace(/\\/g, '/')).pathname.replace(/^\/([A-Z]:)/, '$1');
-      if (!pageSet.has(target.replace(/\\/g, '/'))) {
+      /* Наличие на диске, а не членство в списке страниц: цель может лежать
+         и вне docs/ — например, конституция в корне. */
+      if (!existsSync(target)) {
         const rt = relative(ROOT, target).replace(/\\/g, '/');
         if (!pending.has(rt)) pending.set(rt, []);
         pending.get(rt).push(at);
