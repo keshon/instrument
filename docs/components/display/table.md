@@ -137,48 +137,57 @@ needs-js: Сама сортировка, «выбрать всё» и дейст
 ```html preview context
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Очередь агентов</span>
-    <span class="inst-panel-actions"><span class="inst-badge">7 из 12</span></span>
+    <span class="inst-panel-title">Модули прогона</span>
+    <span class="inst-panel-actions"><span class="inst-badge">выбрано 1</span></span>
   </div>
-  <div class="inst-panel-body inst-panel-body--list">
-    <div class="tree-none" role="listbox" aria-label="Очередь агентов" id="queue">
-      <div class="inst-task" role="option" data-state="done" aria-selected="false" tabindex="-1">
-        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
-        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Разбор карты высот</span>
-          <span class="inst-task-sub">terrain/heightmap.ts · 4 файла</span></span>
-        <span class="inst-task-meta">2,1 с</span>
-      </div>
-      <div class="inst-task" role="option" data-state="done" aria-selected="false" tabindex="-1">
-        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
-        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Генерация биомов</span>
-          <span class="inst-task-sub">world/biomes.ts · 11 файлов</span></span>
-        <span class="inst-task-meta">8,4 с</span>
-      </div>
-      <div class="inst-task" role="option" data-state="running" aria-selected="true" tabindex="0">
-        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
-        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Расстановка ресурсов</span>
-          <span class="inst-task-sub">идёт третий проход<span class="inst-caret"></span></span></span>
-        <span class="inst-task-meta">14,0 с</span>
-      </div>
-      <div class="inst-task" role="option" data-state="failed" aria-selected="false" tabindex="-1">
-        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
-        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Валидация путей</span>
-          <span class="inst-task-sub">3 узла недостижимы</span></span>
-        <span class="inst-task-meta">1,2 с</span>
-      </div>
-      <div class="inst-task" role="option" data-state="queued" aria-selected="false" tabindex="-1">
-        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
-        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Запекание навмеша</span>
-          <span class="inst-task-sub">ждёт валидацию</span></span>
-        <span class="inst-task-meta">—</span>
-      </div>
-      <div class="inst-task" role="option" data-state="skipped" aria-selected="false" tabindex="-1">
-        <span class="inst-task-gutter"><span class="inst-dot"></span></span>
-        <span class="inst-task-main"><span class="inst-task-title inst-u-truncate">Экспорт превью</span>
-          <span class="inst-task-sub">пропущено флагом</span></span>
-        <span class="inst-task-meta">—</span>
-      </div>
-    </div>
+  <div class="inst-panel-body inst-panel-body--flush">
+    <table class="inst-table inst-table--sticky">
+      <thead>
+        <tr>
+          <th class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать все строки"></label></th>
+          <th aria-sort="descending"><button class="inst-sort" type="button">Модуль</button></th>
+          <th>Состояние</th>
+          <th class="inst-num"><button class="inst-sort" type="button">Время, с</button></th>
+          <th class="inst-num"><button class="inst-sort" type="button">Токенов</button></th>
+          <th class="inst-col-actions"><span class="inst-u-visually-hidden">Действия</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr aria-selected="true">
+          <td><label class="inst-checkbox"><input type="checkbox" checked aria-label="Выбрать «Рендер»"></label></td>
+          <td>Рендер</td>
+          <td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span></td>
+          <td class="inst-num">18,2</td><td class="inst-num">61 204</td>
+          <td class="inst-col-actions"><span class="inst-row-actions">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Рендер">
+              <svg class="inst-icon" aria-hidden="true"><use href="#"/></svg></button>
+          </span></td>
+        </tr>
+        <tr>
+          <td><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать «Физика»"></label></td>
+          <td>Физика</td>
+          <td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span></td>
+          <td class="inst-num">11,5</td><td class="inst-num">38 910</td>
+          <td class="inst-col-actions"><span class="inst-row-actions">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Физика">
+              <svg class="inst-icon" aria-hidden="true"><use href="#"/></svg></button>
+          </span></td>
+        </tr>
+        <tr>
+          <td><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать «Аудио»"></label></td>
+          <td>Аудио</td>
+          <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>упало</span></td>
+          <td class="inst-num">4,2</td><td class="inst-num">1 180</td>
+          <td class="inst-col-actions"><span class="inst-row-actions">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Аудио">
+              <svg class="inst-icon" aria-hidden="true"><use href="#"/></svg></button>
+          </span></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr><td></td><td>Итого</td><td></td><td class="inst-num">33,9</td><td class="inst-num">101 294</td><td></td></tr>
+      </tfoot>
+    </table>
   </div>
 </div>
 ```
