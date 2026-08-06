@@ -42,6 +42,22 @@ for (const f of readdirSync(SRC).filter(f => f.endsWith('.css'))) {
 }
 const allCss = rawCss.join('\n');
 
+/* Токены. Выдуманный токен в справочнике так же нем, как выдуманный класс:
+   var(--нету) молча отдаёт пустоту, и страница врёт беззвучно. Берутся все
+   объявления кастомных свойств из кита — и глобальные из tokens.css, и
+   компонентные вроде --btn-bg. */
+const tokens = new Set();
+for (const m of allCss.matchAll(/(?<![\w-])(--[a-z][\w-]*)\s*:/g)) tokens.add(m[1]);
+/* Переменные, которые кит только ЧИТАЕТ, а задаёт разметка: глубина узла
+   дерева, доля кольца, номер ряда. Объявления в CSS у них нет по замыслу —
+   это входные параметры компонента, и в справочниках они законны. */
+for (const m of allCss.matchAll(/var\(\s*(--[a-z][\w-]*)/g)) tokens.add(m[1]);
+
+/* Хвосты модификаторов: из inst-btn--danger получается danger. Нужны, чтобы
+   не принимать «вариант --danger» в прозе за ссылку на несуществующий токен. */
+const modifiers = new Set();
+for (const c of kit) { const i = c.indexOf('--'); if (i > 0) modifiers.add(c.slice(i + 2)); }
+
 /* Словари data-атрибутов — из селекторов, а не из головы. */
 const vocab = new Map();
 for (const m of allCss.matchAll(/\[data-([a-z-]+)="([^"]+)"\]/g)) {
@@ -95,6 +111,23 @@ for (const p of pages) {
         const rt = relative(ROOT, target).replace(/\\/g, '/');
         if (!pending.has(rt)) pending.set(rt, []);
         pending.get(rt).push(at);
+      }
+    }
+
+    /* Токены. Сокращения вида --text-xs/sm/md в справочниках раскрываются:
+       это принятая на страницах форма записи, а не опечатка. */
+    for (const m of line.matchAll(/(?<![\w-])--[a-z][\w-]*(?:\/[a-z0-9-]+)*/g)) {
+      const [head, ...tails] = m[0].split('/');
+      /* Две законные формы записи, которые токенами не являются:
+         · модификатор класса, названный в прозе без префикса («вариант
+           --danger»). Он существует как inst-btn--danger;
+         · сокращение семейства с оборванным хвостом («--space-*»,
+           «--control-h-sm/md/lg» в развёрнутом виде уже разобрано выше). */
+      if (head.endsWith('-')) continue;
+      if (modifiers.has(head.slice(2))) continue;
+      const stem = head.replace(/-[^-]+$/, '');
+      for (const n of [head, ...tails.map(t => `${stem}-${t}`)]) {
+        if (!tokens.has(n)) problems.push(`${at}  токена нет в ките: ${n}`);
       }
     }
 

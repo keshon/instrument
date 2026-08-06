@@ -7,19 +7,23 @@
 ## Структура
 
 ```
-docs/
+docs/                                                    71 страница
   components/
     actions/     button · button-group · segmented
-    inputs/      input · select · checkbox · switch · slider · form · …
-    display/     badge · card · panel · table · metric · avatar · tag · …
-    charts/      sparkline · ring · meter · legend · palette
-    navigation/  nav · tabs · breadcrumbs · pagination · steps · toolbar
-    overlays/    popover · menu · tooltip · dialog · sheet
-    feedback/    banner · note · empty · skeleton · spinner · failure
-  agent/         task · step · approval · diff · lane · log · budget · tree
-  foundations/   colors · typography · spacing · elevation · motion ·
-                 density · icons · tokens
-  layout/        shell · container · stack · cluster · grid · split
+    charts/      legend · meter · palette · ring · sparkline
+    display/     avatar · badge · calendar · card · code · kv ·
+                 metric · panel · table · tag · timeline
+    feedback/    accordion · banner · empty · note · skeleton ·
+                 spinner · states
+    inputs/      choice-card · file · form · input · num-field ·
+                 search · select · slider · toggles
+    navigation/  breadcrumbs · nav · pagination · steps · tabs · toolbar
+    overlays/    dialog · menu · popover · sheet · tooltip
+  agent/         approval · budget · diff · failure · lane · log ·
+                 step · task · tree
+  foundations/   colors · density · elevation · icons · motion ·
+                 spacing · tokens · typography · utilities
+  layout/        container · flow · page-header · section · shell · split
   internal/      процессные документы, не документация
 ```
 
@@ -121,10 +125,18 @@ node tools/docs-check.mjs
   находится, что для потребителя равно его отсутствию. Это **метрика**,
   проверка не падает.
 
-Заодно сверяются значения `data-атрибутов` против словарей, вынутых из
+Заодно сверяются **значения `data-атрибутов`** против словарей, вынутых из
 настоящего CSS: словари закрыты, и опечатка вроде `quued` вместо `queued`
 выглядит ровно как базовое значение, то есть молча ничего не делает. Глазами
 такое не ловится.
+
+И **имена токенов**. Выдуманный токен так же нем, как выдуманный класс:
+`var(--нету)` молча отдаёт пустоту, и страница врёт беззвучно. Проверка знает
+две законные формы записи, которые токенами не являются: модификатор класса,
+названный в прозе без префикса (`--danger`), и сокращение семейства с
+оборванным хвостом (`--space-*`). Переменные, которые кит только читает, а
+задаёт разметка — `--depth` у дерева, `--value` у кольца, — законны наравне с
+объявленными: это входные параметры компонента.
 
 > Проверка строгая намеренно и не знает исключений для прозы: пример опечатки
 > в тексте выше пришлось написать без кавычек именно поэтому. Инструмент,
