@@ -108,6 +108,60 @@ source: src/forms.css
 Рамка возвращается модификатором `inst-fieldset--framed`, когда группа стоит
 сама по себе.
 
+## Собранный экран
+
+Форма редко живёт сама по себе — она стоит внутри панели, и половина её
+поведения видна только там. Прокрутите тело панели: **полоса действий
+прилипает к нижнему краю**, а не уезжает вместе с полями. В длинной форме
+кнопка «Сохранить», до которой надо доскроллить, — это кнопка, которую не
+нажмут.
+
+```html preview context
+<div class="inst-panel">
+  <div class="inst-panel-header"><span class="inst-panel-title">Уведомления</span></div>
+  <div class="inst-panel-body">
+    <div class="inst-form">
+      <div class="inst-field">
+        <span class="inst-label">Импорт списка получателей</span>
+        <label class="inst-file">
+          <input type="file" multiple>
+          Перетащите файлы или выберите
+          <span class="inst-file-hint">До 20 МБ, форматы .json и .csv</span>
+        </label>
+      </div>
+
+      <div class="inst-field">
+        <label class="inst-label" for="f13">Кого оповещать</label>
+        <span class="inst-select-wrap">
+          <select class="inst-select" id="f13" multiple>
+            <option selected>Дежурный инженер</option>
+            <option selected>Владелец проекта</option>
+            <option>Вся команда</option>
+          </select>
+        </span>
+        <span class="inst-field-hint">Шеврон не рисуется — список ничего не раскрывает</span>
+      </div>
+
+      <fieldset class="inst-fieldset">
+        <legend>Когда оповещать</legend>
+        <div class="inst-cluster inst-cluster--loose">
+          <label class="inst-checkbox"><input type="checkbox" checked>При падении</label>
+          <label class="inst-checkbox"><input type="checkbox">При каждом прогоне</label>
+          <label class="inst-switch"><input type="checkbox" checked>Дублировать в почту</label>
+        </div>
+      </fieldset>
+
+    </div>
+
+    <div class="inst-form-actions">
+      <span class="inst-form-actions-note">Изменения не сохранены</span>
+      <button class="inst-btn" type="button">Отмена</button>
+      <button class="inst-btn inst-btn--primary" type="button">Сохранить</button>
+    </div>
+  </div>
+</div>
+```
+
 ## Справочник
 
 ### Классы

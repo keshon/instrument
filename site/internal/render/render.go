@@ -30,9 +30,10 @@ type pageData struct {
 }
 
 type demoData struct {
-	Sprite template.HTML
-	Markup template.HTML
-	Title  string
+	Sprite  template.HTML
+	Markup  template.HTML
+	Title   string
+	Context bool
 }
 
 func Site(pages []*content.Page, sections []nav.Section, o Options) error {
@@ -74,9 +75,10 @@ func Site(pages []*content.Page, sections []nav.Section, o Options) error {
 				return err
 			}
 			if err := write(f, tpl, "demo.html", demoData{
-				Sprite: template.HTML(sprite),
-				Markup: template.HTML(d.Markup),
-				Title:  p.Title,
+				Sprite:  template.HTML(sprite),
+				Markup:  template.HTML(d.Markup),
+				Title:   p.Title,
+				Context: d.Context,
 			}); err != nil {
 				return err
 			}

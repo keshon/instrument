@@ -20,7 +20,7 @@
 </head>
 <body>
 {{ .Sprite }}
-<div class="demo-root">{{ .Markup }}</div>
+<div class="demo-root{{ if .Context }} demo-root--context{{ end }}">{{ .Markup }}</div>
 <script src="/demo.js" defer></script>
 </body>
 </html>

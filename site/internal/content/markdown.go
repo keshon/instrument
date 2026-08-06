@@ -90,7 +90,10 @@ func (r *codeRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindFencedCodeBlock, r.render)
 }
 
-var previewRe = regexp.MustCompile(`(^|\s)preview(\s|$)`)
+var (
+	previewRe = regexp.MustCompile(`(^|\s)preview(\s|$)`)
+	contextRe = regexp.MustCompile(`(^|\s)context(\s|$)`)
+)
 
 func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
 	if !entering {
@@ -119,14 +122,20 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 			id = "index"
 		}
 		id = fmt.Sprintf("%s-%d", id, r.n)
-		r.page.Demos = append(r.page.Demos, Demo{ID: id, Markup: raw})
+		ctx := contextRe.MatchString(info)
+		r.page.Demos = append(r.page.Demos, Demo{ID: id, Markup: raw, Context: ctx})
+
+		label := "Пример"
+		if ctx {
+			label = "В контексте"
+		}
 
 		// Заголовок сцены — это её адрес, а не украшение: пример живёт
 		// отдельным документом, и его можно открыть в новой вкладке.
 		fmt.Fprintf(w, `<figure class="demo" data-demo>`+
 			`<figcaption class="demo-bar">`+
 			`<span class="demo-chrome" aria-hidden="true"></span>`+
-			`<span class="demo-label">Пример</span>`+
+			`<span class="demo-label">`+label+`</span>`+
 			`<span class="demo-tools">`+
 			`<span class="inst-select-wrap demo-theme"><select class="inst-select inst-select--sm" aria-label="Тема примера" data-demo-theme>`+
 			`<option value="">как у сайта</option><option value="light">светлая тёплая</option>`+

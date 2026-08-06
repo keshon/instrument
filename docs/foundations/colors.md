@@ -36,6 +36,34 @@ source: src/tokens.css
 
 ### Нейтраль — 15 шагов
 
+```html preview
+<div class="ramp">
+  <span class="ramp-step" style="--c: var(--n-0)"></span>
+  <span class="ramp-step" style="--c: var(--n-1)"></span>
+  <span class="ramp-step" style="--c: var(--n-2)"></span>
+  <span class="ramp-step" style="--c: var(--n-3)"></span>
+  <span class="ramp-step" style="--c: var(--n-4)"></span>
+  <span class="ramp-step" style="--c: var(--n-5)"></span>
+  <span class="ramp-step" style="--c: var(--n-6)"></span>
+  <span class="ramp-step" style="--c: var(--n-7)"></span>
+  <span class="ramp-step" style="--c: var(--n-8)"></span>
+  <span class="ramp-step" style="--c: var(--n-9)"></span>
+  <span class="ramp-step" style="--c: var(--n-10)"></span>
+  <span class="ramp-step" style="--c: var(--n-11)"></span>
+  <span class="ramp-step" style="--c: var(--n-12)"></span>
+  <span class="ramp-step" style="--c: var(--n-13)"></span>
+  <span class="ramp-step" style="--c: var(--n-14)"></span>
+</div>
+<div class="ramp ramp-scale">
+  <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span>
+  <span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+  <span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+</div>
+```
+
+Переключите тему стола: рампа **не изменится**. Она сырая и не знает о темах —
+меняется только то, какие её шаги берёт семантика.
+
 Одна ручка задаёт направление уклона: `--hue-neutral: 75` — тёплый, `250` —
 холодный. Цветность 0.002–0.006: ниже порога осознанного замечания, и в этом её
 работа. Пятнадцатый шаг существует потому, что тёмному концу нужно четыре
@@ -64,6 +92,20 @@ source: src/tokens.css
 
 ### Акцент — один тон
 
+```html preview
+<div class="ramp">
+  <span class="ramp-step" style="--c: var(--a-1)"></span>
+  <span class="ramp-step" style="--c: var(--a-2)"></span>
+  <span class="ramp-step" style="--c: var(--a-3)"></span>
+  <span class="ramp-step" style="--c: var(--a-4)"></span>
+  <span class="ramp-step" style="--c: var(--a-5)"></span>
+  <span class="ramp-step" style="--c: var(--a-6)"></span>
+</div>
+<div class="ramp ramp-scale">
+  <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+</div>
+```
+
 Второй акцентный тон не заводится. Это не запрос фичи, а сигнал, что смысл
 должно нести что-то другое.
 
@@ -80,6 +122,36 @@ source: src/tokens.css
 белая подпись перестаёт держать 4.5:1.
 
 ### Статусы — три зарезервированных тона
+
+```html preview
+<div class="ramp">
+  <span class="ramp-step" style="--c: var(--ok-1)"></span>
+  <span class="ramp-step" style="--c: var(--ok-3)"></span>
+  <span class="ramp-step" style="--c: var(--ok-4)"></span>
+  <span class="ramp-step" style="--c: var(--ok-5)"></span>
+  <span class="ramp-step" style="--c: var(--ok-6)"></span>
+</div>
+<div class="ramp">
+  <span class="ramp-step" style="--c: var(--warn-1)"></span>
+  <span class="ramp-step" style="--c: var(--warn-3)"></span>
+  <span class="ramp-step" style="--c: var(--warn-4)"></span>
+  <span class="ramp-step" style="--c: var(--warn-5)"></span>
+  <span class="ramp-step" style="--c: var(--warn-6)"></span>
+</div>
+<div class="ramp">
+  <span class="ramp-step" style="--c: var(--err-1)"></span>
+  <span class="ramp-step" style="--c: var(--err-3)"></span>
+  <span class="ramp-step" style="--c: var(--err-4)"></span>
+  <span class="ramp-step" style="--c: var(--err-5)"></span>
+  <span class="ramp-step" style="--c: var(--err-6)"></span>
+</div>
+<div class="ramp ramp-scale">
+  <span>1</span><span>3</span><span>4</span><span>5</span><span>6</span>
+</div>
+```
+
+Шага 2 в статусных рядах нет: он не понадобился ни одной роли, а рампа
+заводится под роли, а не под ровный счёт.
 
 `ok` — 150°, `warn` — 85°, `err` — 25°. Никогда не используются как украшение
 или как «четвёртая серия на графике».
@@ -101,6 +173,20 @@ source: src/tokens.css
 не существует — значит, и расходиться нечему.
 
 ### Поверхности
+
+```html preview
+<div class="swatches">
+  <div class="sw"><div class="sw-chip" style="--c: var(--surface-sunken)"></div><div class="sw-cap">--surface-sunken</div></div>
+  <div class="sw"><div class="sw-chip" style="--c: var(--surface-page)"></div><div class="sw-cap">--surface-page</div></div>
+  <div class="sw"><div class="sw-chip" style="--c: var(--surface-raised)"></div><div class="sw-cap">--surface-raised</div></div>
+  <div class="sw"><div class="sw-chip" style="--c: var(--surface-overlay)"></div><div class="sw-cap">--surface-overlay</div></div>
+  <div class="sw"><div class="sw-chip" style="--c: var(--surface-field)"></div><div class="sw-cap">--surface-field</div></div>
+</div>
+```
+
+Переключите тему стола — вот здесь всё и меняется. Рампа осталась прежней,
+а семантика взяла другие её шаги: в тёмной теме перепад между соседними
+поверхностями шире, потому что тёмная тема **не инверсия**, а авторская.
 
 Читаются как стопка. Глубина передаётся **порядком светлоты и никогда тенью**.
 
@@ -189,6 +275,24 @@ source: src/tokens.css
 «менее светлая» светлая тема — это просто серый фон, а не тема.
 
 ## Категориальная палитра
+
+```html preview
+<div class="ramp">
+  <span class="ramp-step" style="--c: var(--chart-1)"></span>
+  <span class="ramp-step" style="--c: var(--chart-2)"></span>
+  <span class="ramp-step" style="--c: var(--chart-3)"></span>
+  <span class="ramp-step" style="--c: var(--chart-4)"></span>
+  <span class="ramp-step" style="--c: var(--chart-5)"></span>
+  <span class="ramp-step" style="--c: var(--chart-6)"></span>
+</div>
+<div class="ramp ramp-scale">
+  <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+</div>
+```
+
+Светлота внутри ряда намеренно **разная**, а не выровненная: так ряды
+остаются различимыми и при дальтонизме, и на чёрно-белой печати, где тон
+исчезает вовсе. Прищурьтесь — порядок по светлоте всё ещё читается.
 
 Единственное место, где цвет кодирует **ряд**, а не состояние. Поэтому у неё
 свои правила.
