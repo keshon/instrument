@@ -45,7 +45,7 @@ var sections = []struct {
 		"popover", "menu", "tooltip", "dialog", "sheet",
 	}},
 	{"components/feedback", "Обратная связь", []string{
-		"banner", "note", "empty", "skeleton", "spinner", "states", "accordion",
+		"banner", "toast", "note", "empty", "skeleton", "spinner", "states", "accordion",
 	}},
 	{"agent", "Агентный слой", []string{
 		"run", "task", "step", "approval", "failure", "diff", "output",

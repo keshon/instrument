@@ -165,7 +165,6 @@ api-from: kit
 | `--z-sticky` | 10 |
 | `--z-popover` | 100 |
 | `--z-modal` | 1000 |
-| `--z-toast` | 2000 |
 
 ## Ярус 3 — роли
 

@@ -299,3 +299,126 @@ html:has(dialog:modal) { overflow: hidden; }
 }
 
 .inst-sheet--start { margin-inline-start: 0; margin-inline-end: auto; border-inline: none; border-inline-end: var(--hairline) solid var(--border); }
+
+/* ── Тост ───────────────────────────────────────────────────────────────────
+
+   Результат действия, которое запустил человек, — когда результату не место
+   на экране, куда он смотрит. «Прогон поставлен в очередь», «настройки
+   сохранены», «не удалось отправить».
+
+   Это НЕ баннер: баннер про состояние экрана и живёт на нём, пока состояние
+   держится. Это и НЕ сноска: она поясняет то, рядом с чем стоит. Тост
+   привязан к МОМЕНТУ, а не к месту, и потому уходит сам.
+
+   ── Почему popover, а не z-index ──────────────────────────────────────────
+
+   Тост обязан быть виден поверх модалки: подтвердили удаление в диалоге —
+   результат приходит туда же. Модалка, открытая через showModal(), живёт в
+   ВЕРХНЕМ СЛОЕ, а верхний слой не пробивается никаким z-index: 2000 в нём
+   проигрывает всегда. Поэтому область тостов сама объявлена popover.
+
+   Отсюда же исчез --z-toast: он был объявлен с первого дня, ни разу не
+   использован, и теперь выяснилось, что использован быть и не мог. Токен,
+   который нельзя применить, — не резерв, а долг.
+
+   ── Почему область открыта всегда ─────────────────────────────────────────
+
+   popover="manual" открывается один раз при инициализации и не закрывается.
+   Закрытый popover — это display: none, а живой регион в display: none не
+   озвучивается: скринридер не сообщил бы ни одного тоста. Пустая открытая
+   область невидима и ничего не перехватывает — pointer-events возвращаются
+   только самим тостам.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-toasts {
+  /* Сброс UA-раскладки popover: она центрирует по экрану, а тостам нужен угол. */
+  position: fixed;
+  inset: auto var(--space-6) var(--space-6) auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  overflow: visible;
+
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: var(--space-3);
+  inline-size: min(24rem, 100vw - var(--space-8));
+  max-block-size: 100dvh;
+
+  /* Область — не мишень. Клики проходят сквозь неё к странице; сами тосты
+     их возвращают.                                                        */
+  pointer-events: none;
+
+  &:popover-open { display: flex; }
+}
+
+/* Снизу вверх — умолчание: угол у действия ближе, чем шапка, и новый тост не
+   двигает те, что человек уже начал читать.                               */
+.inst-toasts--start { inset: var(--space-6) var(--space-6) auto auto; flex-direction: column-reverse; }
+
+.inst-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-inline);
+  inline-size: 100%;
+  padding: var(--space-4) var(--pad-panel);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-overlay);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-ui);
+  /* Третий и последний носитель тени в ките — и по той же причине, что у
+     первых двух: «плавает сверху и сейчас исчезнет».                      */
+  box-shadow: var(--shadow-popover);
+
+  /* Появление и уход без единой строки JS: allow-discrete доигрывает переход
+     на display и overlay.                                                 */
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity var(--dur-2) var(--ease-out),
+              translate var(--dur-2) var(--ease-out),
+              display var(--dur-2) allow-discrete;
+
+  &::before {
+    content: "";
+    flex: none;
+    inline-size: var(--size-icon);
+    block-size: var(--size-icon);
+    margin-block-start: calc((1lh - var(--size-icon)) / 2);
+    background: var(--tone-ink, var(--text-secondary));
+  }
+  &:not([data-tone])::before { content: none; }
+
+  /* Уходящий тост помечается атрибутом, а не удаляется мгновенно: переход
+     обязан доиграть, иначе строка исчезает рывком.                        */
+  &[data-state="leaving"] { opacity: 0; translate: var(--space-5) 0; }
+}
+
+@starting-style {
+  .inst-toast { opacity: 0; translate: var(--space-5) 0; }
+}
+
+.inst-toast-body { min-inline-size: 0; flex: 1; }
+.inst-toast-title { font-weight: var(--weight-medium); }
+.inst-toast-text { color: var(--text-secondary); font-size: var(--text-xs); }
+.inst-toast-actions { flex: none; display: flex; align-items: center; gap: var(--space-2); }
+
+/* Значки тона — тот же общий набор масок, что у сноски и баннера. Третий
+   компонент на одном источнике формы; заводить свой data-URI значило бы
+   завести второй источник истины для значка.                             */
+:is(.inst-toast)[data-tone="running"]::before, :is(.inst-toast)[data-tone="neutral"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M8 7.4v3.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='5.2' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.inst-toast[data-tone="ok"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.4 8.2 7.2 10 10.6 6.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.inst-toast[data-tone="warn"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 2.2 14.6 13.4H1.4z' fill='none' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M8 6.6v3' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='11.6' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.inst-toast[data-tone="error"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}

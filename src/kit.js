@@ -248,6 +248,154 @@ function onFocusin(e) {
   if (item) roving(group, spec, item);
 }
 
+/* ── Тосты ──────────────────────────────────────────────────────────────────
+
+   Здесь скрипт делает то, чего CSS не может в принципе: считает время и
+   держит очередь. Вид по-прежнему целиком в CSS — ни одного присвоения style.
+
+   Область открывается popover'ом ОДИН раз и не закрывается. Причина не в
+   удобстве: закрытый popover это display: none, а живой регион в display:
+   none не озвучивается — скринридер не услышал бы ни одного тоста.
+   ───────────────────────────────────────────────────────────────────────── */
+
+const TOAST_LIMIT = 4;
+const TOAST_DURATION = 5000;
+
+function toastRegion(doc) {
+  let region = doc.querySelector('.inst-toasts');
+  if (region) {
+    ensureOpen(region);
+    return region;
+  }
+  region = doc.createElement('div');
+  region.className = 'inst-toasts';
+  region.setAttribute('popover', 'manual');
+  // Живой регион вежливый: тост сообщает результат, а не прерывает работу.
+  // Ошибка перебивает — на ней самой стоит role="alert".
+  region.setAttribute('aria-live', 'polite');
+  region.setAttribute('aria-label', 'Уведомления');
+  doc.body.append(region);
+  ensureOpen(region);
+  return region;
+}
+
+/* Открыть область один раз.
+ *
+ * Перевести её НАВЕРХ верхнего слоя нельзя, и это проверено: hidePopover() с
+ * последующим showPopover() — и в одной задаче, и через задачу — не поднимает
+ * область над модалкой, открытой showModal(). Модальный диалог остаётся выше.
+ *
+ * Значит и притворяться незачем: тост живёт выше любого z-index и любого
+ * overflow: hidden, но НЕ выше модалки. Ограничение записано в справочнике
+ * вместе с тем, что делать вместо.                                        */
+function ensureOpen(region) {
+  try {
+    if (!region.matches(':popover-open')) region.showPopover();
+  } catch {
+    // Область без атрибута popover — приложение решило иначе, и это его
+    // право: тосты будут работать, просто не в верхнем слое.
+  }
+}
+
+/* Убрать с доигранным переходом.
+ *
+ * transitionend со страховкой по таймеру: под prefers-reduced-motion переход
+ * схлопывается до 0.01ms и событие может не прийти вовсе — без страховки
+ * тост остался бы на экране навсегда. */
+function removeToast(el) {
+  if (el.dataset.state === 'leaving') return;
+  el.dataset.state = 'leaving';
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    el.remove();
+  };
+  el.addEventListener('transitionend', finish, { once: true });
+  setTimeout(finish, 400);
+}
+
+/**
+ * Показать тост.
+ *
+ * Разметку строит кит, но она вся описана в справочнике: если стандартной не
+ * хватает, соберите свой узел и положите в `.inst-toasts` сами — очередь и
+ * таймер подхватят его так же.
+ */
+export function toast(options = {}) {
+  const {
+    title = '',
+    text = '',
+    tone = '',
+    duration = TOAST_DURATION,
+    action = null, // { label, onClick }
+    doc = document,
+  } = options;
+
+  const region = toastRegion(doc);
+
+  const el = doc.createElement('div');
+  el.className = 'inst-toast';
+  if (tone) el.dataset.tone = tone;
+  // Ошибка обязана перебить: она сообщает, что действие НЕ выполнено.
+  el.setAttribute('role', tone === 'error' ? 'alert' : 'status');
+
+  const body = doc.createElement('div');
+  body.className = 'inst-toast-body';
+  if (title) {
+    const t = doc.createElement('div');
+    t.className = 'inst-toast-title';
+    t.textContent = title;
+    body.append(t);
+  }
+  if (text) {
+    const s = doc.createElement('div');
+    s.className = 'inst-toast-text';
+    s.textContent = text;
+    body.append(s);
+  }
+  el.append(body);
+
+  if (action) {
+    const wrap = doc.createElement('div');
+    wrap.className = 'inst-toast-actions';
+    const btn = doc.createElement('button');
+    btn.className = 'inst-btn inst-btn--sm inst-btn--ghost';
+    btn.type = 'button';
+    btn.textContent = action.label;
+    btn.addEventListener('click', () => {
+      action.onClick?.();
+      removeToast(el);
+    });
+    wrap.append(btn);
+    el.append(wrap);
+  }
+
+  region.append(el);
+
+  // Потолок очереди. Двадцать тостов подряд — не сообщение, а стена: самые
+  // старые уходят, чтобы новое было видно.
+  const live = [...region.children].filter((x) => x.dataset.state !== 'leaving');
+  for (const old of live.slice(0, Math.max(0, live.length - TOAST_LIMIT))) {
+    removeToast(old);
+  }
+
+  if (duration > 0) {
+    let timer = setTimeout(() => removeToast(el), duration);
+    /* Таймер замирает под курсором и на фокусе. Тост, исчезнувший ровно
+       тогда, когда его начали читать, — это потерянное сообщение, и WCAG
+       2.2.1 требует ровно этого: у времени должна быть пауза. */
+    const hold = () => clearTimeout(timer);
+    const resume = () => { timer = setTimeout(() => removeToast(el), duration); };
+    el.addEventListener('pointerenter', hold);
+    el.addEventListener('pointerleave', resume);
+    el.addEventListener('focusin', hold);
+    el.addEventListener('focusout', resume);
+  }
+
+  return el;
+}
+
 /** Расставить бегущий tabindex во всех группах внутри root. */
 export function refresh(root = document) {
   for (const group of root.querySelectorAll?.(GROUP_SELECTOR) || []) {

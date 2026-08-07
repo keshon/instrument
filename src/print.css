@@ -109,7 +109,7 @@
   .inst-panel, .inst-card, .inst-dialog, .inst-popover { box-shadow: none; }
 
   /* Оверлеи печатать нечего: они по определению временные. */
-  .inst-popover, .inst-tooltip-text, dialog { display: none; }
+  .inst-popover, .inst-tooltip-text, .inst-toasts, dialog { display: none; }
 
   /* Адрес ссылки виден только на экране — на бумаге его надо написать. */
   .inst-prose a[href^="http"]::after {
