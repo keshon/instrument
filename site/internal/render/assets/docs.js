@@ -124,29 +124,84 @@
 
     const norm = (s) => s.toLowerCase().replace(/ё/g, 'е');
 
+    /* Разметка собирается узлами, а не строкой. innerHTML со вставкой t/g/r
+       сегодня безопасен, потому что содержимое своё, но это мина: первый же
+       заголовок страницы с «<» или кавычкой ломает результаты молча. Проект,
+       у которого выдуманный токен ловится машиной, не имеет права оставлять
+       такое на «пока не случалось». */
+    const setOpen = (on) => {
+      box.hidden = !on;
+      input.setAttribute('aria-expanded', String(on));
+      if (!on) {
+        active = -1;
+        input.removeAttribute('aria-activedescendant');
+      }
+    };
+
     const render = (items) => {
       active = -1;
+      input.removeAttribute('aria-activedescendant');
+      box.replaceChildren();
       if (!items.length) {
-        box.innerHTML = '<div class="site-result-empty">Ничего не найдено</div>';
+        const empty = document.createElement('div');
+        empty.className = 'site-result-empty';
+        empty.textContent = 'Ничего не найдено';
+        box.append(empty);
       } else {
-        box.innerHTML = items.map((p) =>
-          `<a class="site-result" role="option" href="${p.r}">` +
-          `<div class="site-result-title">${p.t}</div>` +
-          (p.g ? `<div class="site-result-group">${p.g}</div>` : '') +
-          `</a>`).join('');
+        items.forEach((p, i) => {
+          const a = document.createElement('a');
+          a.className = 'site-result';
+          a.id = 'site-result-' + i;
+          a.setAttribute('role', 'option');
+          a.setAttribute('aria-selected', 'false');
+          a.href = p.r;
+          const t = document.createElement('div');
+          t.className = 'site-result-title';
+          t.textContent = p.t;
+          a.append(t);
+          if (p.g) {
+            const g = document.createElement('div');
+            g.className = 'site-result-group';
+            g.textContent = p.g;
+            a.append(g);
+          }
+          box.append(a);
+        });
       }
-      box.hidden = false;
+      setOpen(true);
     };
 
     const search = async () => {
       const q = norm(input.value.trim());
-      if (q.length < 2) { box.hidden = true; return; }
+      if (q.length < 2) { setOpen(false); return; }
       const words = q.split(/\s+/);
+      /* Веса расставлены по тому, ЧТО человек набрал, а не по тому, где
+         совпало. Точное имя класса — это адрес, а не поиск: тот, кто ввёл
+         «inst-badge», знает, чего хочет, и ему нельзя показывать пять
+         страниц, где это слово просто упомянуто.
+
+         Слаг стоит наравне с заголовком, потому что для латинского запроса
+         он И ЕСТЬ заголовок: документация по-русски, API по-английски. */
       const scored = (await load()).map((p) => {
-        const t = norm(p.t), b = norm(p.b), g = norm(p.g || '');
+        const t = norm(p.t), s0 = norm(p.s || ''), g = norm(p.g || '');
+        const own = norm(p.o || '').split(' ');
+        const names = norm(p.n || '').split(' ');
+        const b = norm(p.b);
         let s = 0;
         for (const w of words) {
-          if (t.startsWith(w)) s += 10;
+          /* ОПИСЫВАЕТ важнее, чем УПОМИНАЕТ, и разрыв должен быть таким,
+             чтобы никакое число совпадений в теле его не перекрыло.
+             `inst-btn` встречается на 26 страницах: без этого разрыва
+             первой выходила конституция, где перечислено всё. */
+          if (own.includes(w)) s += 120;
+          else if (own.some((n) => n.startsWith(w))) s += 60;
+          else if (names.includes(w)) s += 12;
+          else if (names.some((n) => n.startsWith(w))) s += 6;
+
+          if (s0 === w) s += 100;                       // слаг целиком: dialog → Модалка
+          else if (s0.startsWith(w)) s += 40;
+
+          if (t.startsWith(w)) s += 12;
           else if (t.includes(w)) s += 6;
           if (g.includes(w)) s += 2;
           if (b.includes(w)) s += 1;
@@ -161,13 +216,17 @@
 
     input.addEventListener('keydown', (e) => {
       const opts = [...box.querySelectorAll('.site-result')];
-      if (e.key === 'Escape') { box.hidden = true; input.blur(); return; }
+      if (e.key === 'Escape') { setOpen(false); input.blur(); return; }
       if (!opts.length) return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         e.preventDefault();
         active = (active + (e.key === 'ArrowDown' ? 1 : -1) + opts.length) % opts.length;
         opts.forEach((o, i) => o.setAttribute('aria-selected', String(i === active)));
         opts[active].scrollIntoView({ block: 'nearest' });
+        /* Фокус остаётся в поле, поэтому «где я» скринридеру сообщает
+           aria-activedescendant. Без неё стрелки двигали подсветку молча:
+           роль listbox была объявлена и не выполнена. */
+        input.setAttribute('aria-activedescendant', opts[active].id);
       } else if (e.key === 'Enter' && active >= 0) {
         e.preventDefault();
         location.href = opts[active].getAttribute('href');
@@ -175,7 +234,7 @@
     });
 
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('.site-search')) box.hidden = true;
+      if (!e.target.closest('.site-search')) setOpen(false);
     });
 
     /* «/» — фокус в поиск. Ожидаемо там, где сидят часами. */
@@ -189,26 +248,70 @@
 
   /* ── Копирование ───────────────────────────────────────────────────────── */
 
+  /* Подпись возвращается из dataset, а НЕ из текущего textContent: второе
+     нажатие в пределах 1400мс запоминало «скопировано» как исходную подпись,
+     и кнопка оставалась такой навсегда. Таймер тоже свой на кнопку и
+     сбрасывается — иначе два таймера доигрывали вразнобой.
+
+     aria-live объявлен в разметке заранее: регион, созданный одновременно с
+     изменением текста, не озвучивается. */
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-copy]');
     if (!btn) return;
     const code = btn.parentElement.querySelector('code');
-    await navigator.clipboard.writeText(code.innerText);
-    const was = btn.textContent;
-    btn.textContent = 'скопировано';
-    /* Смена подписи для скринридера — событие без содержания, поэтому
-       результат объявляется отдельно и вежливо. */
-    btn.setAttribute('aria-live', 'polite');
-    setTimeout(() => { btn.textContent = was; }, 1400);
+    if (!code) return;
+
+    if (!btn.dataset.label) {
+      btn.dataset.label = btn.textContent;
+      btn.setAttribute('aria-live', 'polite');
+    }
+    clearTimeout(+btn.dataset.timer || 0);
+
+    try {
+      await navigator.clipboard.writeText(code.innerText);
+      btn.textContent = 'скопировано';
+    } catch (err) {
+      /* Незащищённый origin (LAN по http) отклоняет запись молча. Молчать
+         в ответ — значит соврать: кнопка выглядела бы сработавшей. */
+      btn.textContent = 'не вышло';
+    }
+    btn.dataset.timer = setTimeout(() => {
+      btn.textContent = btn.dataset.label;
+    }, 1400);
   });
 
-  /* ── Бургер ────────────────────────────────────────────────────────────── */
+  /* ── Бургер ──────────────────────────────────────────────────────────────
+     Выезд ящика рисует кит по aria-expanded. Сайту остаётся ровно то, что
+     кит объявил слоем приложения: переключение атрибута, Escape, клик мимо
+     и возврат фокуса. Раньше здесь было только первое — ящик открывался и
+     не закрывался ничем, кроме повторного нажатия. */
 
   const burger = document.querySelector('[data-burger]');
-  if (burger) {
-    burger.addEventListener('click', () => {
-      const open = burger.getAttribute('aria-expanded') === 'true';
-      burger.setAttribute('aria-expanded', String(!open));
+  const drawer = document.getElementById('sidebar');
+  if (burger && drawer) {
+    const setNav = (open) => {
+      burger.setAttribute('aria-expanded', String(open));
+      if (open) {
+        const first = drawer.querySelector('a, button');
+        if (first) first.focus();
+      } else if (drawer.contains(document.activeElement)) {
+        burger.focus();
+      }
+    };
+    const isOpen = () => burger.getAttribute('aria-expanded') === 'true';
+
+    burger.addEventListener('click', () => setNav(!isOpen()));
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) setNav(false);
+    });
+
+    /* Клик по подложке. Подложка — псевдоэлемент оболочки, поэтому цели у
+       события нет: считаем промахом всё, что не ящик и не кнопка. */
+    document.addEventListener('click', (e) => {
+      if (!isOpen()) return;
+      if (e.target.closest('#sidebar') || e.target.closest('[data-burger]')) return;
+      setNav(false);
     });
   }
 

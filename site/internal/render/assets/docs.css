@@ -27,15 +27,22 @@
   letter-spacing: var(--tracking-tight); line-height: 1;
 }
 
-.site-burger { display: none; }
-
 /* ── Поиск ──────────────────────────────────────────────────────────────── */
 
-/* Поиск ужимается, а не выталкивает соседей на вторую строку. Между
-   порогом боковой колонки (60rem) и просторной шириной шапке не хватало
-   места, и селект темы переносился — шапка из одной строки превращалась
-   в две, а высота оболочки считается по первой. */
-.site-search { position: relative; flex: 1 1 12rem; max-inline-size: 20rem; min-inline-size: 0; }
+/* Поиск ужимается, но НЕ ДО НУЛЯ. Пока минимум был нулевой, на 390px поле
+   сжималось до 18 пикселей: переключатели плотности и темы забирали 411 из
+   390 доступных, шапка переполнялась на 83px и заводила документу
+   горизонтальную прокрутку.
+
+   Теперь у поля есть пол, а переключатели уехали в поповер и ширину больше
+   не отнимают. Перенос строки в шапке при этом снова разрешён — его гасил
+   сайт, хотя кит ставит его намеренно и объясняет почему. */
+.site-search {
+  position: relative;
+  flex: 1 1 12rem;
+  min-inline-size: 8rem;
+  max-inline-size: 20rem;
+}
 
 .site-results {
   position: absolute; inset-inline: 0; inset-block-start: calc(100% + var(--space-3));
@@ -55,10 +62,15 @@
 .site-result-group { font-size: var(--text-xs); color: var(--text-muted); }
 .site-result-empty { padding: var(--space-5); color: var(--text-muted); font-size: var(--text-sm); }
 
-.site-theme { inline-size: 11rem; flex: none; }
+/* Тема и плотность живут в поповере, а не в ряду шапки.
 
-/* Шапка — одна строка всегда: перенос ломает высоту, заданную сеткой. */
-.inst-shell-header { flex-wrap: nowrap; }
+   Причина не в экономии места на телефоне, хотя и в ней тоже. Пока они
+   стояли голыми контролами, переключатель плотности был безымянным — одна
+   из двух уникальных идей кита существовала как три кнопки без подписи.
+   Кнопка «Вид» даёт им имя, а поповеру — работу на каждой странице. */
+.site-view-body { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-3); }
+.site-view-row { display: flex; flex-direction: column; gap: var(--space-3); }
+.site-theme { inline-size: 100%; }
 
 /* ── Раскладка страницы ─────────────────────────────────────────────────── */
 
@@ -181,6 +193,83 @@
   background: var(--surface-page);
 }
 
+/* ── Разметка примера: свёрнута ─────────────────────────────────────────── */
+
+/* Ручка прижата к столу примера снизу и выглядит его частью, а не отдельным
+   блоком: это продолжение кадра, а не новый раздел. */
+.demo-code { border-block-start: var(--hairline) solid var(--border-subtle); }
+
+.demo-code-head {
+  display: flex; align-items: center; gap: var(--space-3);
+  min-block-size: var(--control-h-md);
+  padding-inline: var(--space-5);
+  background: var(--surface-sunken);
+  color: var(--text-muted); font-size: var(--text-xs);
+  cursor: pointer; list-style: none;
+}
+.demo-code-head::-webkit-details-marker { display: none; }
+.demo-code-head:hover { color: var(--text-primary); }
+
+.demo-code-head::before {
+  content: ""; flex: none;
+  inline-size: var(--size-chevron); block-size: var(--size-chevron);
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: rotate var(--dur-1) var(--ease-out);
+}
+.demo-code[open] > .demo-code-head::before { rotate: 90deg; }
+
+/* ── Справочник ─────────────────────────────────────────────────────────── */
+
+/* Одна таблица с постоянными колонками вместо шести с разными. Ширины
+   заданы явно: имя и вид не должны прыгать от страницы к странице, иначе
+   постоянство колонок теряется ровно там, ради чего затевалось. */
+.api { overflow-x: auto; margin-block: var(--space-6); }
+
+.api-table {
+  inline-size: 100%; border-collapse: collapse;
+  font-size: var(--text-sm); line-height: var(--leading-ui);
+}
+.api-table th {
+  text-align: start; font-weight: var(--weight-normal); color: var(--text-muted);
+  padding: var(--space-3) var(--pad-cell-x);
+  border-block-end: var(--hairline) solid var(--border);
+  white-space: nowrap;
+}
+.api-table td {
+  padding: var(--row-pad-y) var(--pad-cell-x);
+  border-block-end: var(--hairline) solid var(--border-subtle);
+  vertical-align: baseline;
+}
+.api-table tbody tr:hover td { background: var(--surface-hover); }
+.api-table th:nth-child(1), .api-table td:nth-child(1) { inline-size: 1%; white-space: nowrap; }
+
+/* Значение не переносится, пока короткое, и переносится, когда длинное:
+   у --font-mono оно в девяносто знаков, и nowrap распирал им таблицу так,
+   что колонка «Что делает» уезжала за край. */
+.api-table th:nth-child(2), .api-table td:nth-child(2) { inline-size: 1%; }
+.api-table td:nth-child(2) > code {
+  display: inline-block;
+  max-inline-size: 22rem;
+  overflow-wrap: anywhere;
+}
+
+.api-name { color: var(--text-primary); }
+.api-none { color: var(--text-faint); }
+
+/* Строка-заголовок вида. Утопленная поверхность, а не жирное начертание:
+   она делит список, но не спорит с именами, которые здесь главные.
+   Первой группе верхняя линия не нужна — над ней уже шапка таблицы. */
+.api-group > th {
+  padding: var(--space-4) var(--pad-cell-x) var(--space-2);
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-xs);
+  border-block: var(--hairline) solid var(--border-subtle);
+}
+.api-table tbody tr.api-group:first-child > th { border-block-start: none; }
+
 /* ── Код ────────────────────────────────────────────────────────────────── */
 
 .code-block { position: relative; }
@@ -274,13 +363,12 @@
   .site-toc { display: none; }
 }
 
+/* Ниже 60rem колонка становится выезжающим ящиком — это делает САМ КИТ по
+   классу inst-shell-aside--drawer. Здесь не осталось ни одного правила про
+   неё, и это правильный признак: раньше сайт прятал колонку своим
+   display: none и открывал своим display: block, из-за чего внутри
+   вертикальной панели навигация оставалась выложенной в строку от кита. Два
+   механизма на одну работу расходятся всегда. */
 @media (width < 60rem) {
   .site-layout { padding-inline: var(--space-6); }
-  .site-burger { display: inline-flex; }
-  .site-search { inline-size: auto; flex: 1 1 auto; }
-  .inst-shell-aside { display: none; }
-  .inst-shell:has(.site-burger[aria-expanded="true"]) .inst-shell-aside {
-    display: block; grid-area: main; z-index: var(--z-sticky);
-    background: var(--surface-raised);
-  }
 }

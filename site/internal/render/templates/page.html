@@ -25,7 +25,7 @@
 <a class="inst-skip-link" href="#main">Перейти к содержимому</a>
 
 <div class="inst-shell">
-  <aside class="inst-shell-aside" id="sidebar">
+  <aside class="inst-shell-aside inst-shell-aside--drawer" id="sidebar">
     <a class="site-logo" href="/">
       <svg class="site-logo-mark" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-grid"/></svg>
       <span class="site-logo-name">instrument</span>
@@ -68,36 +68,56 @@
   </script>
 
   <header class="inst-shell-header">
-    <button class="inst-btn inst-btn--sm inst-btn--icon site-burger" type="button"
+    <!-- Класс кита, а не свой: показом кнопки и выездом ящика управляет
+         inst-shell-nav-toggle. Сайту остаётся одна строка — переключить
+         aria-expanded. -->
+    <button class="inst-btn inst-btn--sm inst-btn--icon inst-shell-nav-toggle" type="button"
             aria-label="Разделы" aria-expanded="false" aria-controls="sidebar" data-burger>
       <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>
     </button>
 
     <div class="site-search">
       <input class="inst-input inst-input--sm" type="search" placeholder="Поиск  /"
-             aria-label="Поиск по документации" autocomplete="off" data-search>
-      <div class="site-results inst-panel" role="listbox" aria-label="Результаты" hidden data-results></div>
+             role="combobox" aria-expanded="false" aria-controls="site-results"
+             aria-autocomplete="list" aria-label="Поиск по документации"
+             autocomplete="off" data-search>
+      <div class="site-results inst-panel" id="site-results" role="listbox"
+           aria-label="Результаты" hidden data-results></div>
     </div>
 
     <span class="inst-cluster-spacer"></span>
 
-    <div class="inst-segmented" role="radiogroup" aria-label="Плотность" data-density-picker>
-      <button type="button" role="radio" data-v="compact" aria-checked="false">Плотно</button>
-      <button type="button" role="radio" data-v="default" aria-checked="true">Обычно</button>
-      <button type="button" role="radio" data-v="comfortable" aria-checked="false">Свободно</button>
-    </div>
+    <!-- Тема и плотность — в поповере. Он даёт им общее имя «Вид» и
+         освобождает шапку: на 390px эти два контрола забирали 411px. -->
+    <button class="inst-btn inst-btn--sm" type="button" popovertarget="site-view">Вид</button>
 
-    <span class="inst-select-wrap site-theme">
-      <select class="inst-select inst-select--sm" aria-label="Тема оформления" data-theme-picker>
-        <option value="">По системе</option>
-        <option value="light-neutral">Светлая нейтральная</option>
-        <option value="light">Светлая тёплая</option>
-        <option value="light-cool">Светлая холодная</option>
-        <option value="dark-light">Тёмная светло-серая</option>
-        <option value="dark-soft">Тёмная серая</option>
-        <option value="dark">Тёмная чёрная</option>
-      </select>
-    </span>
+    <div class="inst-popover inst-popover--anchored" id="site-view" popover>
+      <div class="site-view-body">
+        <div class="site-view-row">
+          <span class="inst-nav-label">Плотность</span>
+          <div class="inst-segmented" role="radiogroup" aria-label="Плотность" data-density-picker>
+            <button type="button" role="radio" data-v="compact" aria-checked="false">Плотно</button>
+            <button type="button" role="radio" data-v="default" aria-checked="true">Обычно</button>
+            <button type="button" role="radio" data-v="comfortable" aria-checked="false">Свободно</button>
+          </div>
+        </div>
+
+        <div class="site-view-row">
+          <span class="inst-nav-label">Тема</span>
+          <span class="inst-select-wrap site-theme">
+            <select class="inst-select inst-select--sm" aria-label="Тема оформления" data-theme-picker>
+              <option value="">По системе</option>
+              <option value="light-neutral">Светлая нейтральная</option>
+              <option value="light">Светлая тёплая</option>
+              <option value="light-cool">Светлая холодная</option>
+              <option value="dark-light">Тёмная светло-серая</option>
+              <option value="dark-soft">Тёмная серая</option>
+              <option value="dark">Тёмная чёрная</option>
+            </select>
+          </span>
+        </div>
+      </div>
+    </div>
   </header>
 
   <main class="inst-shell-main" id="main">
@@ -118,7 +138,12 @@
         {{ .Body }}
 
         {{ if .Page.Source }}
-        <p class="site-source">Исходник: <code>{{ .Page.Source }}</code></p>
+        <!-- Подпись собирается ЗДЕСЬ, а не пишется хвостом в каждой странице.
+             Пока её писали руками, она стояла на странице дважды — рядом с
+             той, что печатает шаблон, — и в семидесяти копиях успела разойтись
+             по глубине относительной ссылки на конституцию. -->
+        <p class="site-source">Исходник: <code>{{ .Page.Source }}</code>{{ if not .Page.Splash }} ·
+          Почему кит устроен именно так — <a href="/about/design-principles/">конституция</a>{{ end }}</p>
         {{ end }}
       </article>
 

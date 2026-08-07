@@ -56,6 +56,19 @@ func main() {
 		}
 	}
 
+	// Значения токенов приходят из самого кита, а не из страниц. Написанное
+	// руками разошлось бы с tokens.css при первой же правке.
+	tokens, err := content.TokenValues(*kit)
+	if err != nil {
+		log.Fatalf("не прочитать токены кита: %v", err)
+	}
+	content.ResolveTokens(pages, tokens)
+
+	// Разметка рендерится ПОСЛЕ того, как справочник достроен.
+	if err := content.Render(pages); err != nil {
+		log.Fatalf("разметка: %v", err)
+	}
+
 	// Проверка идёт ДО записи: страница с битой ссылкой выглядит целой, и
 	// увидеть её глазами нельзя.
 	if problems := append(check.Verify(pages), missing...); len(problems) > 0 {

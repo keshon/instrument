@@ -115,6 +115,14 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 		info = string(node.Info.Segment.Value(source))
 	}
 
+	// Ограда ```api разворачивается в справочник из frontmatter. Место в
+	// потоке задаёт автор — оно разное на разных страницах, — а колонки и
+	// порядок задаёт шаблон, и разойтись они не могут.
+	if lang == "api" {
+		writeAPI(w, r.page)
+		return ast.WalkSkipChildren, nil
+	}
+
 	if lang == "html" && previewRe.MatchString(info) {
 		r.n++
 		id := strings.Trim(strings.ReplaceAll(r.page.Route, "/", "-"), "-")
@@ -154,13 +162,81 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 	return ast.WalkSkipChildren, nil
 }
 
+// writeCode печатает блок кода. У примера он СВЁРНУТ.
+//
+// Разметка примера — это подтверждение, а не содержание: сначала смотрят, что
+// компонент делает, и только потом, из чего он собран. Развёрнутым кодом
+// страница получала в среднем 31 лишнюю строку вертикального шума между
+// читателем и справочником, ради которого сюда чаще всего и приходят.
+//
+// Носитель — <details>, поэтому раскрытие, клавиатура и роль достаются от
+// платформы, и без JS блок остаётся доступен.
 func writeCode(w util.BufWriter, raw, lang string, inDemo bool) {
+	if inDemo {
+		w.WriteString(`<details class="demo-code"><summary class="demo-code-head">Разметка</summary>`)
+	}
 	cls := "code-block"
 	if inDemo {
 		cls += " code-block--demo"
 	}
 	fmt.Fprintf(w, `<div class="%s"><button class="code-copy inst-btn inst-btn--sm" type="button" data-copy>копировать</button><pre><code class="lang-%s">%s</code></pre></div>`,
 		cls, escape(lang), highlight(raw, lang))
+	if inDemo {
+		w.WriteString(`</details>`)
+	}
+}
+
+// writeAPI печатает справочник одной таблицей с постоянными колонками.
+//
+// Колонок ровно четыре, и они не меняются от страницы к странице: имя, вид,
+// значение, работа. Именно постоянство колонок делает таблицу
+// просматриваемой — глаз учится читать её один раз, а не заново на каждом
+// компоненте.
+func writeAPI(w util.BufWriter, p *Page) {
+	if len(p.API) == 0 {
+		return
+	}
+	// Вид вынесен в строку-заголовок, а не повторяется колонкой. Колонка
+	// «Вид» печатала одно и то же слово по семь раз подряд — это ровно та
+	// трудночитаемость, ради устранения которой таблицу и объединяли.
+	// Строка-заголовок даёт то же знание один раз и заодно делит длинный
+	// список на куски, по которым можно прыгать глазом.
+	w.WriteString(`<div class="api"><table class="api-table"><thead><tr>` +
+		`<th>Имя</th><th>Значение</th><th>Что делает</th>` +
+		`</tr></thead><tbody>`)
+	kind := ""
+	for _, r := range p.API {
+		if r.Kind != kind {
+			kind = r.Kind
+			fmt.Fprintf(w, `<tr class="api-group"><th colspan="3" scope="colgroup">%s</th></tr>`,
+				escape(kind))
+		}
+		val := escape(r.Value)
+		if val == "" {
+			// Прочерк, а не пустота: пустая ячейка читается как «забыли».
+			val = `<span class="api-none">—</span>`
+		} else {
+			val = `<code>` + val + `</code>`
+		}
+		fmt.Fprintf(w,
+			`<tr data-kind="%s"><td><code class="api-name">%s</code></td><td>%s</td><td>%s</td></tr>`,
+			escape(r.Kind), escape(r.Name), val, inlineCode(r.Doc))
+	}
+	w.WriteString(`</tbody></table></div>`)
+}
+
+// inlineCode — минимальный markdown внутри ячейки: `код` и **важное**.
+// Полный парсер здесь был бы избыточен, а совсем без него в описании нельзя
+// назвать ни класс, ни значение.
+var (
+	tickRe = regexp.MustCompile("`([^`]+)`")
+	boldRe = regexp.MustCompile(`\*\*([^*]+)\*\*`)
+)
+
+func inlineCode(s string) string {
+	out := escape(s)
+	out = tickRe.ReplaceAllString(out, "<code>$1</code>")
+	return boldRe.ReplaceAllString(out, "<b>$1</b>")
 }
 
 // ── Подсветка ─────────────────────────────────────────────────────────────

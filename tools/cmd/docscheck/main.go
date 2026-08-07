@@ -87,6 +87,14 @@ func main() {
 			if i < 0 {
 				continue
 			}
+			// Правила «собаки» — не селекторы, и точка внутри них не класс.
+			// «@layer kit.components {» давала несуществующий .components,
+			// а он выглядел как класс без страницы, то есть как настоящая
+			// находка. Ложное срабатывание в проверке дороже пропуска:
+			// пропуск ищут, ложному верят.
+			if strings.HasPrefix(strings.TrimSpace(line), "@") {
+				continue
+			}
 			for _, m := range classRe.FindAllStringSubmatch(line[:i], -1) {
 				kit[m[1]] = true
 			}
