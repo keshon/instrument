@@ -71,7 +71,7 @@ func main() {
 
 	// Проверка идёт ДО записи: страница с битой ссылкой выглядит целой, и
 	// увидеть её глазами нельзя.
-	if problems := append(check.Verify(pages), missing...); len(problems) > 0 {
+	if problems := append(check.Verify(pages, string(sprite)), missing...); len(problems) > 0 {
 		for _, p := range problems {
 			fmt.Fprintln(os.Stderr, "  "+p)
 		}

@@ -6,8 +6,6 @@ import (
 	"instrument/site/internal/content"
 )
 
-
-
 type Section struct {
 	Label string
 	Items []*content.Page

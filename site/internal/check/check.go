@@ -25,9 +25,37 @@ import (
 var (
 	hrefRe   = regexp.MustCompile(`href="(/[^"#?]*)"`)
 	leftMdRe = regexp.MustCompile(`href="([^"]*\.md(?:#[^"]*)?)"`)
+
+	// Ссылка на символ спрайта. Пустая (`#`) и выдуманная одинаково молчаливы:
+	// <svg> рисует ничего, кнопка выходит пустым квадратом. Три таких стояли в
+	// главном примере таблицы и пережили и сборку, и docs-check, и вычитку.
+	useRe = regexp.MustCompile(`<use\s[^>]*href="#([^"]*)"`)
+
+	// Верхнеуровневые узлы разметки примера.
+	nodeRe = regexp.MustCompile(`(?m)^<([a-z][\w-]*)([^>]*)>`)
+
+	// Атрибут целиком, а не подстрока. Наивный поиск " popover" находил его
+	// внутри popovertarget у КНОПКИ, вызывающей поповер, и объявлял пустыми
+	// четыре живых примера — ложное срабатывание, то есть худший вид ошибки
+	// в проверке: пропуск ищут, ложному верят.
+	hiddenAttrRe = regexp.MustCompile(`\s(popover|hidden)(\s|=|>|$)`)
 )
 
-func Verify(pages []*content.Page) []string {
+// hidden — элементы, которые сами по себе не рисуют ничего.
+//
+// Пример, у которого ВСЕ верхнеуровневые узлы такие, — пустой кадр. Ровно так
+// выглядели примеры модалки и шторки: закрытый <dialog> это display: none, а
+// кнопки-триггера в разметке не было. Читатель видел белый прямоугольник и
+// решал, что сломан кит.
+var hidden = map[string]bool{
+	"dialog": true, "template": true, "script": true, "style": true,
+}
+
+// Verify проверяет собранные страницы и разметку примеров.
+//
+// sprite — содержимое assets/sprite.svg: ссылки на символы проверяются по
+// нему, а не по списку в голове.
+func Verify(pages []*content.Page, sprite string) []string {
 	routes := map[string]bool{}
 	demos := map[string]bool{}
 	for _, p := range pages {
@@ -70,7 +98,55 @@ func Verify(pages []*content.Page) []string {
 		if strings.Contains(p.HTML, "```html preview") {
 			problems = append(problems, p.Route+"  ограда preview не развернулась")
 		}
+
+		for _, d := range p.Demos {
+			problems = append(problems, verifyDemo(p, d, sprite)...)
+		}
 	}
 	sort.Strings(problems)
 	return problems
+}
+
+// verifyDemo проверяет разметку одного стола примера.
+//
+// Обе проверки существуют по факту найденной ошибки, и обе невидимы при
+// беглом просмотре: страница остаётся целой, а кадр внутри неё — пустым или с
+// пустыми квадратами вместо кнопок.
+func verifyDemo(p *content.Page, d content.Demo, sprite string) []string {
+	var out []string
+
+	for _, m := range useRe.FindAllStringSubmatch(d.Markup, -1) {
+		id := m[1]
+		if id == "" {
+			out = append(out, fmt.Sprintf("%s  пустая ссылка на символ: <use href=\"#\">", p.Route))
+			continue
+		}
+		if !strings.Contains(sprite, `id="`+id+`"`) {
+			out = append(out, fmt.Sprintf("%s  нет символа в спрайте: #%s", p.Route, id))
+		}
+	}
+
+	// Верхнеуровневые узлы примера. Разметка отформатирована с нулевым
+	// отступом у корней, поэтому «строка, начинающаяся с тега» и есть корень.
+	nodes := nodeRe.FindAllStringSubmatch(d.Markup, -1)
+	if len(nodes) == 0 {
+		return out
+	}
+	visible := 0
+	for _, n := range nodes {
+		tag, attrs := n[1], n[2]
+		if hidden[tag] {
+			continue
+		}
+		if hiddenAttrRe.MatchString(attrs + ">") {
+			continue
+		}
+		visible++
+	}
+	if visible == 0 {
+		out = append(out, fmt.Sprintf(
+			"%s  пустой кадр: всё содержимое примера скрыто по умолчанию (%s)",
+			p.Route, d.ID))
+	}
+	return out
 }
