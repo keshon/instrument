@@ -4,6 +4,22 @@ group: Ввод
 status: stable
 source: src/components.css
 needs-js: перетаскивание подписи оси для изменения значения
+api:
+  - { name: "inst-num-field", kind: "класс", doc: "Обёртка: рамка, врез, фокус. Высота — `--control-h-sm`" }
+  - { name: "inst-num-axis", kind: "класс", doc: "Буква оси. Ручка перетаскивания, **не подпись**" }
+  - { name: "inst-vec", kind: "класс", doc: "Ряд из нескольких полей равной ширины" }
+  - { name: "inst-prop", kind: "класс", doc: "Строка свойства инспектора" }
+  - { name: "inst-prop-label", kind: "класс", doc: "Имя свойства. Обрезается, поэтому обязателен `title`" }
+  - { name: "inst-prop-control", kind: "класс", doc: "Контрольная часть строки" }
+  - { name: "--control-h-sm", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--surface-field", kind: "токен" }
+  - { name: "--border-control", kind: "токен" }
+  - { name: "--accent-border", kind: "токен" }
+  - { name: "--text-2xs", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
 ---
 
 Число с буквой оси слева — примитив инспектора: три таких поля составляют
@@ -130,16 +146,8 @@ needs-js: перетаскивание подписи оси для измене
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-num-field` | Обёртка: рамка, врез, фокус. Высота — `--control-h-sm` |
-| `inst-num-axis` | Буква оси. Ручка перетаскивания, **не подпись** |
-| `inst-vec` | Ряд из нескольких полей равной ширины |
-| `inst-prop` | Строка свойства инспектора |
-| `inst-prop-label` | Имя свойства. Обрезается, поэтому обязателен `title` |
-| `inst-prop-control` | Контрольная часть строки |
+```api
+```
 
 ### Обязательная разметка
 
@@ -148,11 +156,6 @@ needs-js: перетаскивание подписи оси для измене
 | `aria-label` с осью на `<input>` | Единственный носитель имени поля |
 | `type="number"` | Стрелки, шаг, числовая клавиатура |
 | `title` на `inst-prop-label` | Обрезанное имя свойства иначе не прочитать |
-
-### Токены
-
-`--control-h-sm` · `--radius-sm` · `--surface-field` · `--border-control` ·
-`--accent-border` · `--text-2xs` · `--text-xs` · `--space-2` · `--space-3`
 
 ## Доступность
 
@@ -171,5 +174,3 @@ needs-js: перетаскивание подписи оси для измене
 [Текстовое поле](./input.md) · [Слайдер](./slider.md) · [Селект](./select.md) ·
 [Форма](./form.md) · [Панель](../display/panel.md) ·
 [Мера](../charts/meter.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

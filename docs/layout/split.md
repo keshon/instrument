@@ -3,6 +3,13 @@ title: Сплит
 group: Раскладка
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-split", kind: "класс", doc: "Контейнер. Ряд с переносом, зазор `--pad-panel`" }
+  - { name: "inst-split-main", kind: "класс", doc: "Основная часть. Забирает остаток, не уже `--split-main`" }
+  - { name: "inst-split-side", kind: "класс", doc: "Боковая часть. Желаемая ширина `--split-side`" }
+  - { name: "--split-side", kind: "переменная", value: "18rem", doc: "Желаемая ширина боковой части" }
+  - { name: "--split-main", kind: "переменная", value: "30rem", doc: "Ниже этого основная часть переносится вниз" }
+  - { name: "--pad-panel", kind: "токен" }
 ---
 
 Две колонки разной важности: основная и боковая. Переносится сама, когда
@@ -111,24 +118,8 @@ source: src/layout.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-split` | Контейнер. Ряд с переносом, зазор `--pad-panel` |
-| `inst-split-main` | Основная часть. Забирает остаток, не уже `--split-main` |
-| `inst-split-side` | Боковая часть. Желаемая ширина `--split-side` |
-
-### CSS-переменные
-
-| Переменная | По умолчанию | Значит |
-|---|---|---|
-| `--split-side` | `18rem` | Желаемая ширина боковой части |
-| `--split-main` | `30rem` | Ниже этого основная часть переносится вниз |
-
-### Токены
-
-`--pad-panel` · `--split-side` · `--split-main`
+```api
+```
 
 ## Доступность
 
@@ -144,5 +135,3 @@ source: src/layout.css
 [Оболочка](./shell.md) · [Примитивы потока](./flow.md) ·
 [Контейнер](./container.md) · [Панель](../components/display/panel.md) ·
 [Секция](./section.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

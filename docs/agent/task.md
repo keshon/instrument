@@ -4,6 +4,26 @@ group: Агентный слой
 status: stable
 source: src/components.css
 needs-js: Бегущий tabindex, стрелки, выбор строки
+api:
+  - { name: "inst-task", kind: "класс", doc: "Строка" }
+  - { name: "inst-task-gutter", kind: "класс", doc: "Левый жёлоб под точку" }
+  - { name: "inst-task-main", kind: "класс", doc: "Заголовок и подпись" }
+  - { name: "inst-task-title", kind: "класс", doc: "Название задачи" }
+  - { name: "inst-task-sub", kind: "класс", doc: "Что именно делается" }
+  - { name: "inst-task-meta", kind: "класс", doc: "Время или счётчик, прижат к концу" }
+  - { name: "data-state", kind: "атрибут", doc: "`queued` `running` `done` `warn` `failed` `skipped`" }
+  - { name: "aria-selected", kind: "атрибут", doc: "`true` · `false`" }
+  - { name: "--size-gutter", kind: "токен" }
+  - { name: "--size-dot", kind: "токен" }
+  - { name: "--row-pad-y", kind: "токен" }
+  - { name: "--pad-cell-x", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--space-1", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--surface-selected", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--tone-ink", kind: "токен" }
 ---
 
 Одна задача в очереди агентов. Строка **плоская**: у неё нет тела, потому что
@@ -145,32 +165,11 @@ needs-js: Бегущий tabindex, стрелки, выбор строки
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-task` | Строка |
-| `inst-task-gutter` | Левый жёлоб под точку |
-| `inst-task-main` | Заголовок и подпись |
-| `inst-task-title` | Название задачи |
-| `inst-task-sub` | Что именно делается |
-| `inst-task-meta` | Время или счётчик, прижат к концу |
+```api
+```
 
 Длинный заголовок обрезается через `inst-u-truncate` — иначе он выталкивает
 метаданные за край.
-
-### Атрибуты
-
-| Атрибут | Значения |
-|---|---|
-| `data-state` | `queued` `running` `done` `warn` `failed` `skipped` |
-| `aria-selected` | `true` · `false` |
-
-### Токены
-
-`--size-gutter` · `--size-dot` · `--row-pad-y` · `--pad-cell-x` ·
-`--gap-inline` · `--space-1` · `--text-sm` · `--text-xs` ·
-`--surface-selected` · `--surface-hover` · `--tone-ink`
 
 ## Доступность
 
@@ -188,5 +187,3 @@ needs-js: Бегущий tabindex, стрелки, выбор строки
 [Шаг](./step.md) · [Лог](./log.md) · [Дорожки прогонов](./lane.md) ·
 [Бейдж](../components/display/badge.md) ·
 [Таблица](../components/display/table.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

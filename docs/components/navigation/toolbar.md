@@ -3,6 +3,16 @@ title: Тулбар
 group: Навигация
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-toolbar", kind: "класс", doc: "Полоса. Ряд с зазором `--space-3` и нижней линией" }
+  - { name: "inst-toolbar-sep", kind: "класс", doc: "Вертикальный разделитель групп" }
+  - { name: "inst-toolbar-spacer", kind: "класс", doc: "Прижать хвост полосы к дальнему краю" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--pad-cell-x", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--border-subtle", kind: "токен" }
+  - { name: "--border", kind: "токен" }
 ---
 
 Полоса инструментов внутри [панели](../display/panel.md): режимы, фильтры,
@@ -72,13 +82,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-toolbar` | Полоса. Ряд с зазором `--space-3` и нижней линией |
-| `inst-toolbar-sep` | Вертикальный разделитель групп |
-| `inst-toolbar-spacer` | Прижать хвост полосы к дальнему краю |
+```api
+```
 
 ### Обязательная разметка
 
@@ -92,11 +97,6 @@ source: src/components.css
 Роль `toolbar` кит не назначает: она обещает стрелочную навигацию и бегущий
 `tabindex`, а это поведение — слой приложения. Полоса из обычных кнопок без
 роли доступна и без обещаний.
-
-### Токены
-
-`--space-2` · `--space-3` · `--pad-cell-x` · `--hairline` ·
-`--border-subtle` · `--border`
 
 ## Доступность
 
@@ -115,5 +115,3 @@ source: src/components.css
 [Группа кнопок](../actions/button-group.md) ·
 [Сегментированный контрол](../actions/segmented.md) · [Меню](../overlays/menu.md) ·
 [Секция](../../layout/section.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

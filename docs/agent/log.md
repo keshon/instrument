@@ -4,6 +4,22 @@ group: Агентный слой
 status: stable
 source: src/components.css
 needs-js: Копирование в буфер, виртуализация
+api:
+  - { name: "inst-log", kind: "класс", doc: "Контейнер, прокручивается" }
+  - { name: "inst-log-line", kind: "класс", doc: "Строка: три колонки" }
+  - { name: "inst-log-time", kind: "класс", doc: "Отметка времени" }
+  - { name: "inst-log-level", kind: "класс", doc: "Уровень, ширина `5ch`" }
+  - { name: "data-tone", kind: "атрибут", doc: "`warn` · `error`" }
+  - { name: "--level-ink", kind: "переменная", value: "--text-muted" }
+  - { name: "--font-mono", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--space-4", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--warn-text", kind: "токен" }
+  - { name: "--err-text", kind: "токен" }
 ---
 
 Поток строк от машины: время, уровень, сообщение. Моноширинный набор и
@@ -51,31 +67,8 @@ needs-js: Копирование в буфер, виртуализация
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-log` | Контейнер, прокручивается |
-| `inst-log-line` | Строка: три колонки |
-| `inst-log-time` | Отметка времени |
-| `inst-log-level` | Уровень, ширина `5ch` |
-
-### Атрибуты
-
-| Атрибут | Значения |
-|---|---|
-| `data-tone` | `warn` · `error` |
-
-### CSS-переменные
-
-| Переменная | По умолчанию |
-|---|---|
-| `--level-ink` | `--text-muted`. Цвет колонки уровня, переопределяется тоном |
-
-### Токены
-
-`--font-mono` · `--text-xs` · `--surface-sunken` · `--radius-md` ·
-`--space-4` · `--pad-panel` · `--gap-inline` · `--warn-text` · `--err-text`
+```api
+```
 
 ## Доступность
 
@@ -93,5 +86,3 @@ needs-js: Копирование в буфер, виртуализация
 
 [Шаг](./step.md) · [Лента событий](../components/display/timeline.md) ·
 [Код](../components/display/code.md) · [Блок отказа](./failure.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

@@ -3,6 +3,20 @@ title: Бейдж
 group: Отображение данных
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-badge", kind: "класс", doc: "Базовый" }
+  - { name: "inst-dot", kind: "класс", doc: "Точка состояния внутри. Наследует тон от бейджа" }
+  - { name: "inst-nav-count", kind: "класс", doc: "Модификатор положения для счётчика в навигации" }
+  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт" }
+  - { name: "--control-h-xs", kind: "токен" }
+  - { name: "--radius-xs", kind: "токен" }
+  - { name: "--text-2xs", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--size-dot", kind: "токен" }
+  - { name: "--tone-ink", kind: "токен" }
+  - { name: "--tone-bg", kind: "токен" }
 ---
 
 Состояние объекта, названное словом из **фиксированного словаря кита**. Пять
@@ -74,24 +88,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-badge` | Базовый |
-| `inst-dot` | Точка состояния внутри. Наследует тон от бейджа |
-| `inst-nav-count` | Модификатор положения для счётчика в навигации |
-
-### Атрибуты
-
-| Атрибут | Словарь |
-|---|---|
-| `data-tone` | `neutral` `running` `ok` `warn` `error`. Закрыт |
-
-### Токены
-
-`--control-h-xs` · `--radius-xs` · `--text-2xs` · `--weight-medium` ·
-`--space-2` · `--space-3` · `--size-dot` · `--tone-ink` · `--tone-bg`
+```api
+```
 
 Если строите на тоне свой компонент: у тона **два** передних плана, и брать
 надо тот, что по работе. `--tone-ink` — для текста, порог 4.5:1.
@@ -108,10 +106,7 @@ source: src/components.css
 | Режим принудительных цветов | Точка переживает сброс (`forced-color-adjust: none`), потому что несёт значение |
 | Кегль | `--text-2xs` — 11px, пол кита. Ниже не опускаемся |
 
-
 ## Связанное
 
 [Тег](./tag.md) · [Точка и состояния](../feedback/states.md) ·
 [Сноска и баннер](../feedback/banner.md) · [Строка очереди](../../agent/task.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

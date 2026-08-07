@@ -4,6 +4,20 @@ group: Отображение данных
 status: stable
 source: src/data.css
 needs-js: Снятие тега
+api:
+  - { name: "inst-tag", kind: "класс", doc: "Метка" }
+  - { name: "inst-tag-remove", kind: "класс", doc: "Кнопка снятия. Настоящая `<button>`" }
+  - { name: "--control-h-sm", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--size-chevron", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--err-text", kind: "токен" }
 ---
 
 Произвольная метка, которую завёл **пользователь**. Её можно снять — и это
@@ -47,18 +61,8 @@ needs-js: Снятие тега
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-tag` | Метка |
-| `inst-tag-remove` | Кнопка снятия. Настоящая `<button>` |
-
-### Токены
-
-`--control-h-sm` · `--radius-sm` · `--text-xs` · `--space-2` · `--space-3` ·
-`--surface-sunken` · `--border` · `--hairline` · `--size-chevron` ·
-`--text-muted` · `--err-text`
+```api
+```
 
 ## Доступность
 
@@ -74,5 +78,3 @@ needs-js: Снятие тега
 
 [Бейдж](./badge.md) · [Аватар](./avatar.md) · [Таблица](./table.md) ·
 [Поле ввода](../inputs/input.md)
-
-Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -3,6 +3,19 @@ title: Сноска
 group: Обратная связь
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-note", kind: "класс", doc: "Всё. У сноски нет частей: заголовка и действий у неё не бывает по определению" }
+  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт. Без атрибута значок не рисуется" }
+  - { name: "--size-marker", kind: "токен" }
+  - { name: "--size-icon", kind: "токен" }
+  - { name: "--tone-ink", kind: "токен" }
+  - { name: "--border-strong", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-secondary", kind: "токен" }
+  - { name: "--leading-ui", kind: "токен" }
 ---
 
 Врезка **в поток**: поясняет то, рядом с чем стоит. Только полоса у ближнего
@@ -65,23 +78,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-note` | Всё. У сноски нет частей: заголовка и действий у неё не бывает по определению |
-
-### Атрибуты
-
-| Атрибут | Словарь |
-|---|---|
-| `data-tone` | `neutral` `running` `ok` `warn` `error`. Закрыт. Без атрибута значок не рисуется |
-
-### Токены
-
-`--size-marker` · `--size-icon` · `--tone-ink` · `--border-strong` ·
-`--pad-panel` · `--space-3` · `--gap-inline` · `--text-sm` ·
-`--text-secondary` · `--leading-ui`
+```api
+```
 
 Углы прямые намеренно: у сноски только одна граница — левая, — и скругление на
 одной стороне выглядит как обрезанный блок.
@@ -107,5 +105,3 @@ source: src/components.css
 [Баннер](./banner.md) · [Пустое состояние](./empty.md) ·
 [Блок отказа](../../agent/failure.md) · [Бейдж](../display/badge.md) ·
 [Форма](../inputs/form.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

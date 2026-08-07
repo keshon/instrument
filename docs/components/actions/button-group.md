@@ -3,6 +3,10 @@ title: Группа кнопок
 group: Действия
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-btn-group", kind: "класс", doc: "Контейнер. Внутри — только `inst-btn`" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
 ---
 
 Несколько **разных действий**, поставленных вплотную. Группа говорит «эти
@@ -41,15 +45,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-btn-group` | Контейнер. Внутри — только `inst-btn` |
-
-### Токены
-
-`--radius-md` · `--hairline`
+```api
+```
 
 ## Доступность
 
@@ -59,10 +56,7 @@ source: src/components.css
 | Фокус | Кнопка под фокусом поднимается по `z-index`, иначе кольцо срезал бы сосед. Элементы флекса подчиняются `z-index` без `position` |
 | Имена | Каждая кнопка несёт своё имя. Группа не нуждается в `aria-label`, потому что не является одним контролом |
 
-
 ## Связанное
 
 [Кнопка](./button.md) · [Сегментированный контрол](./segmented.md) ·
 [Меню](../overlays/menu.md) · [Тулбар](../navigation/toolbar.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

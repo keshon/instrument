@@ -3,6 +3,23 @@ title: Выбираемая карточка
 group: Ввод
 status: stable
 source: src/forms.css
+api:
+  - { name: "inst-choice-card", kind: "класс", doc: "`<label>`-контейнер. Сетка, рамка, состояния" }
+  - { name: "inst-choice-card-title", kind: "класс", doc: "Заголовок варианта" }
+  - { name: "inst-choice-card-desc", kind: "класс", doc: "Объяснение последствий" }
+  - { name: "--pad-card", kind: "токен" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--surface-raised", kind: "токен" }
+  - { name: "--border-control", kind: "токен" }
+  - { name: "--accent-border", kind: "токен" }
+  - { name: "--accent-bg", kind: "токен" }
+  - { name: "--accent-solid", kind: "токен" }
+  - { name: "--size-marker", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--leading-ui", kind: "токен" }
+  - { name: "--dur-1", kind: "токен" }
 ---
 
 Радиокнопка или чекбокс, у которых есть заголовок **и объяснение
@@ -153,13 +170,8 @@ source: src/forms.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-choice-card` | `<label>`-контейнер. Сетка, рамка, состояния |
-| `inst-choice-card-title` | Заголовок варианта |
-| `inst-choice-card-desc` | Объяснение последствий |
+```api
+```
 
 ### Обязательная разметка
 
@@ -169,12 +181,6 @@ source: src/forms.css
 | `<input>` прямым ребёнком | Все состояния написаны через `:has(> input…)` |
 | Общий `name` у радиогруппы | Без него варианты не исключают друг друга |
 | `fieldset` с `legend` вокруг группы | Иначе вопрос, на который отвечают карточки, нигде не назван |
-
-### Токены
-
-`--pad-card` · `--radius-md` · `--surface-raised` · `--border-control` ·
-`--accent-border` · `--accent-bg` · `--accent-solid` · `--size-marker` ·
-`--gap-inline` · `--text-sm` · `--text-xs` · `--leading-ui` · `--dur-1`
 
 ## Доступность
 
@@ -194,5 +200,3 @@ source: src/forms.css
 [Переключатели](./toggles.md) · [Селект](./select.md) · [Форма](./form.md) ·
 [Сегментированный контрол](../actions/segmented.md) ·
 [Карточка](../display/card.md) · [Бейдж](../display/badge.md)
-
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

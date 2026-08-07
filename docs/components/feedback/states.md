@@ -3,6 +3,16 @@ title: Точка и каретка
 group: Обратная связь
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-dot", kind: "класс", doc: "Точка состояния. Читает `--tone-mark`" }
+  - { name: "inst-caret", kind: "класс", doc: "Каретка потокового текста" }
+  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт. Ставится на точке или на любом её предке" }
+  - { name: "--size-dot", kind: "токен" }
+  - { name: "--radius-full", kind: "токен" }
+  - { name: "--tone-mark", kind: "токен" }
+  - { name: "--text-faint", kind: "токен" }
+  - { name: "--accent-mark", kind: "токен" }
+  - { name: "--ease-in-out", kind: "токен" }
 ---
 
 Две мельчайшие метки кита. Точка называет состояние объекта, каретка
@@ -93,23 +103,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-dot` | Точка состояния. Читает `--tone-mark` |
-| `inst-caret` | Каретка потокового текста |
-
-### Атрибуты
-
-| Атрибут | Словарь |
-|---|---|
-| `data-tone` | `neutral` `running` `ok` `warn` `error`. Закрыт. Ставится на точке или на любом её предке |
-
-### Токены
-
-`--size-dot` · `--radius-full` · `--tone-mark` · `--text-faint` ·
-`--accent-mark` · `--ease-in-out`
+```api
+```
 
 `--tone-mark`, а не `--tone-ink`: у тона **два** передних плана, и брать надо
 тот, что по работе. `--tone-ink` — для текста, порог 4.5:1. `--tone-mark` — для
@@ -139,5 +134,3 @@ source: src/components.css
 [Бейдж](../display/badge.md) · [Спиннер](./spinner.md) ·
 [Скелетон](./skeleton.md) · [Строка очереди](../../agent/task.md) ·
 [Шаг агента](../../agent/step.md) · [Движение](../../foundations/motion.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

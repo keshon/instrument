@@ -3,6 +3,19 @@ title: Кольцо
 group: Графики
 status: stable
 source: src/data.css
+api:
+  - { name: "inst-ring-wrap", kind: "класс", doc: "Обёртка. Позиционирует подпись" }
+  - { name: "inst-ring", kind: "класс", doc: "`<svg>`. Размер — `--control-h-lg`, поворот `-90°`" }
+  - { name: "inst-ring-track", kind: "класс", doc: "Полная окружность дорожки" }
+  - { name: "inst-ring-fill", kind: "класс", doc: "Дуга значения. Читает `--value`" }
+  - { name: "inst-ring-label", kind: "класс", doc: "Подпись по центру" }
+  - { name: "--value", kind: "переменная", value: "0", doc: "Доля 0…1. Ставится инлайном как данные" }
+  - { name: "--tone-mark", kind: "переменная", value: "--accent-mark", doc: "Цвет дуги. Приходит из `data-tone`" }
+  - { name: "--track", kind: "переменная", value: "—", doc: "Цвет дорожки" }
+  - { name: "--control-h-lg", kind: "токен" }
+  - { name: "--accent-mark", kind: "токен" }
+  - { name: "--text-2xs", kind: "токен" }
+  - { name: "--radius-full", kind: "токен" }
 ---
 
 Та же доля, что у [меры](./meter.md), но в габарите контрола: кольцо встаёт
@@ -137,15 +150,8 @@ SVG. `aria-label` остаётся тем более — без подписи �
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-ring-wrap` | Обёртка. Позиционирует подпись |
-| `inst-ring` | `<svg>`. Размер — `--control-h-lg`, поворот `-90°` |
-| `inst-ring-track` | Полная окружность дорожки |
-| `inst-ring-fill` | Дуга значения. Читает `--value` |
-| `inst-ring-label` | Подпись по центру |
+```api
+```
 
 ### Обязательная разметка
 
@@ -156,23 +162,10 @@ SVG. `aria-label` остаётся тем более — без подписи �
 | `viewBox="0 0 20 20"`, `cx="10" cy="10" r="8"` | Пунктир дуги посчитан из длины окружности при `r=8` |
 | `--value` в долях 0…1 | Не проценты и не градусы |
 
-### CSS-переменные
-
-| Переменная | По умолчанию | Что делает |
-|---|---|---|
-| `--value` | `0` | Доля 0…1. Ставится инлайном как данные |
-| `--tone-mark` | `--accent-mark` | Цвет дуги. Приходит из `data-tone` |
-| `--track` | — | Цвет дорожки |
-
 ```css
 /* Кольцо крупнее — снаружи, а не радиусом внутри */
 .my-ring { inline-size: 48px; block-size: 48px; }
 ```
-
-### Токены
-
-`--control-h-lg` · `--track` · `--tone-mark` · `--accent-mark` ·
-`--text-2xs` · `--radius-full`
 
 ## Доступность
 
@@ -190,5 +183,3 @@ SVG. `aria-label` остаётся тем более — без подписи �
 [Мера](./meter.md) · [Спарклайн](./sparkline.md) · [Легенда](./legend.md) ·
 [Палитра](./palette.md) · [Метрика](../display/metric.md) ·
 [Карточка](../display/card.md) · [Бюджет прогона](../../agent/budget.md)
-
-Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

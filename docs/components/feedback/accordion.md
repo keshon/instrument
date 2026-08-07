@@ -3,6 +3,29 @@ title: Аккордеон
 group: Обратная связь
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-accordion", kind: "класс", doc: "Контейнер. Колонка секций с зазором `--space-1`" }
+  - { name: "inst-accordion-item", kind: "класс", doc: "Секция. Рамка, радиус, `overflow: hidden`" }
+  - { name: "inst-accordion-head", kind: "класс", doc: "Заголовок. Высота от `--control-h-lg`, шеврон у дальнего края" }
+  - { name: "inst-accordion-body", kind: "класс", doc: "Содержимое" }
+  - { name: "--space-1", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--pad-cell-x", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--control-h-lg", kind: "токен" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--border-subtle", kind: "токен" }
+  - { name: "--surface-raised", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--size-chevron", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--dur-1", kind: "токен" }
+  - { name: "--ease-out", kind: "токен" }
 ---
 
 Группа сворачиваемых разделов, из которых открыт ровно один. На нативных
@@ -79,14 +102,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-accordion` | Контейнер. Колонка секций с зазором `--space-1` |
-| `inst-accordion-item` | Секция. Рамка, радиус, `overflow: hidden` |
-| `inst-accordion-head` | Заголовок. Высота от `--control-h-lg`, шеврон у дальнего края |
-| `inst-accordion-body` | Содержимое |
+```api
+```
 
 ### Обязательная разметка
 
@@ -96,14 +113,6 @@ source: src/components.css
 | `<summary>` под `inst-accordion-head` | Только `<summary>` фокусируем и переключает `<details>` |
 | Общий `name` | Делает группу взаимоисключающей. Без него секции независимы |
 | Прямое вложение | Правила открытой секции записаны через `>`: заголовок обязан быть прямым потомком `<details>` |
-
-### Токены
-
-`--space-1` · `--space-3` · `--pad-cell-x` · `--pad-panel` ·
-`--gap-inline` · `--control-h-lg` · `--radius-md` · `--hairline` ·
-`--border` · `--border-subtle` · `--surface-raised` · `--surface-hover` ·
-`--size-chevron` · `--text-muted` · `--text-sm` · `--weight-medium` ·
-`--dur-1` · `--ease-out`
 
 ## Доступность
 
@@ -122,5 +131,3 @@ source: src/components.css
 [Вкладки](../navigation/tabs.md) · [Панель](../display/panel.md) ·
 [Шаг агента](../../agent/step.md) · [Таймлайн](../display/timeline.md) ·
 [Форма](../inputs/form.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

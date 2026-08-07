@@ -3,6 +3,13 @@ title: Контейнер
 group: Раскладка
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-container", kind: "класс", doc: "Ширина 100%, потолок `--container-max`, центрирование, боковые поля `--pad-panel`" }
+  - { name: "inst-container--narrow", kind: "модификатор", doc: "Потолок 44rem" }
+  - { name: "inst-container--prose", kind: "модификатор", doc: "Потолок 68ch" }
+  - { name: "inst-container--full", kind: "модификатор", doc: "Потолок снят" }
+  - { name: "--container-max", kind: "переменная", value: "76rem" }
+  - { name: "--pad-panel", kind: "токен" }
 ---
 
 Потолок ширины и горизонтальный воздух рабочей области. Ограничивает не
@@ -105,24 +112,8 @@ source: src/layout.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-container` | Ширина 100%, потолок `--container-max`, центрирование, боковые поля `--pad-panel` |
-| `inst-container--narrow` | Потолок 44rem |
-| `inst-container--prose` | Потолок 68ch |
-| `inst-container--full` | Потолок снят |
-
-### CSS-переменные
-
-| Переменная | По умолчанию |
-|---|---|
-| `--container-max` | `76rem` |
-
-### Токены
-
-`--container-max` · `--pad-panel`
+```api
+```
 
 ## Доступность
 
@@ -137,5 +128,3 @@ source: src/layout.css
 
 [Оболочка](./shell.md) · [Примитивы потока](./flow.md) · [Сплит](./split.md) ·
 [Шапка экрана](./page-header.md) · [Панель](../components/display/panel.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

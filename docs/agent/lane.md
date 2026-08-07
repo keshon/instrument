@@ -3,6 +3,22 @@ title: Дорожки прогонов
 group: Агентный слой
 status: stable
 source: src/agent.css
+api:
+  - { name: "inst-lanes", kind: "класс", doc: "Набор дорожек" }
+  - { name: "inst-lane", kind: "класс", doc: "Одна дорожка: подпись и ось" }
+  - { name: "inst-lane-label", kind: "класс", doc: "Имя исполнителя, обрезается" }
+  - { name: "inst-lane-track", kind: "класс", doc: "Ось времени" }
+  - { name: "inst-lane-span", kind: "класс", doc: "Отрезок работы" }
+  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`" }
+  - { name: "--label-col", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--size-meter", kind: "токен" }
+  - { name: "--radius-xs", kind: "токен" }
+  - { name: "--track", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--tone-mark", kind: "токен" }
 ---
 
 Несколько агентов, работающих параллельно, на общей оси времени. Отвечает на
@@ -50,26 +66,8 @@ source: src/agent.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-lanes` | Набор дорожек |
-| `inst-lane` | Одна дорожка: подпись и ось |
-| `inst-lane-label` | Имя исполнителя, обрезается |
-| `inst-lane-track` | Ось времени |
-| `inst-lane-span` | Отрезок работы |
-
-### Атрибуты
-
-| Атрибут | Значения |
-|---|---|
-| `data-tone` | `neutral` `running` `ok` `warn` `error` |
-
-### Токены
-
-`--label-col` · `--gap-inline` · `--size-meter` · `--radius-xs` ·
-`--track` · `--border` · `--hairline` · `--text-xs` · `--tone-mark`
+```api
+```
 
 ## Доступность
 
@@ -87,5 +85,3 @@ source: src/agent.css
 [Строка очереди](./task.md) · [Бюджет](./budget.md) ·
 [Мера](../components/charts/meter.md) ·
 [Лента событий](../components/display/timeline.md)
-
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

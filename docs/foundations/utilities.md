@@ -3,6 +3,9 @@ title: Утилиты
 group: Основания
 status: stable
 source: src/base.css
+api:
+  - { name: "--text-secondary", kind: "токен" }
+  - { name: "--font-mono", kind: "токен" }
 ---
 
 Пять утилит, и это **потолок**, а не текущее состояние. Правило кита: если
@@ -64,9 +67,8 @@ code, kbd, samp, pre, .inst-u-mono {
 
 ## Справочник
 
-### Токены
-
-`--text-secondary` · `--font-mono`
+```api
+```
 
 Утилиты намеренно не имеют собственных токенов: каждая либо переключает
 свойство платформы, либо берёт один существующий семантический токен.
@@ -86,5 +88,3 @@ code, kbd, samp, pre, .inst-u-mono {
 [Примитивы потока](../layout/flow.md) · [Типографика](./typography.md) ·
 [Отступы и форма](./spacing.md) · [Код](../components/display/code.md) ·
 [Оболочка](../layout/shell.md)
-
-Исходник: `src/base.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

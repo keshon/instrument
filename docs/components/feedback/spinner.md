@@ -3,6 +3,13 @@ title: Спиннер
 group: Обратная связь
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-spinner", kind: "класс", doc: "Базовый. Ставится на `<svg>`" }
+  - { name: "inst-spinner-track", kind: "класс", doc: "Дорожка. Прямой потомок `inst-spinner`" }
+  - { name: "inst-spinner-arc", kind: "класс", doc: "Дуга. Прямой потомок `inst-spinner`" }
+  - { name: "--size-spinner", kind: "токен" }
+  - { name: "--border-control", kind: "токен" }
+  - { name: "--accent-mark", kind: "токен" }
 ---
 
 Кольцо, показывающее, что машина занята, когда долю выполненного назвать
@@ -54,13 +61,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-spinner` | Базовый. Ставится на `<svg>` |
-| `inst-spinner-track` | Дорожка. Прямой потомок `inst-spinner` |
-| `inst-spinner-arc` | Дуга. Прямой потомок `inst-spinner` |
+```api
+```
 
 Правила для частей записаны как прямые потомки — вложить окружности глубже
 нельзя, обводка не применится.
@@ -83,10 +85,6 @@ source: src/components.css
 | концы | `stroke-linecap: round` |
 | оборот | 0.7с, линейно, бесконечно |
 
-### Токены
-
-`--size-spinner` · `--border-control` · `--accent-mark`
-
 `--accent-mark`, а не `--accent-text`: у тона два передних плана, и метка без
 подписи берёт тот, что проверен на 3:1 против дорожки.
 
@@ -105,5 +103,3 @@ source: src/components.css
 [Скелетон](./skeleton.md) · [Точка и каретка](./states.md) ·
 [Мера](../charts/meter.md) · [Кнопка](../actions/button.md) ·
 [Движение](../../foundations/motion.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

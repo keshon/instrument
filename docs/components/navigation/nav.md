@@ -3,6 +3,30 @@ title: Навигация
 group: Навигация
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-nav", kind: "класс", doc: "Контейнер списка. Колонка с зазором `--space-1`" }
+  - { name: "inst-nav-group", kind: "класс", doc: "Смысловой блок пунктов" }
+  - { name: "inst-nav-label", kind: "класс", doc: "Подпись группы" }
+  - { name: "inst-nav-item", kind: "класс", doc: "Пункт. Ссылка, а не кнопка" }
+  - { name: "inst-nav-count", kind: "класс", doc: "Прижать счётчик к дальнему краю пункта" }
+  - { name: "--control-h-md", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-2xs", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--space-1", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--size-marker", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--surface-selected", kind: "токен" }
+  - { name: "--accent-solid", kind: "токен" }
+  - { name: "--accent-text", kind: "токен" }
+  - { name: "--text-secondary", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--dur-1", kind: "токен" }
+  - { name: "--ease-out", kind: "токен" }
 ---
 
 Список разделов приложения в боковой колонке. Текущий пункт помечен **не только
@@ -99,15 +123,8 @@ source: src/layout.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-nav` | Контейнер списка. Колонка с зазором `--space-1` |
-| `inst-nav-group` | Смысловой блок пунктов |
-| `inst-nav-label` | Подпись группы |
-| `inst-nav-item` | Пункт. Ссылка, а не кнопка |
-| `inst-nav-count` | Прижать счётчик к дальнему краю пункта |
+```api
+```
 
 ### Обязательная разметка
 
@@ -117,13 +134,6 @@ source: src/layout.css
 | `<a href>` у пункта | Навигация — это адрес. Кнопка ломает средний клик, «открыть в новой вкладке» и копирование ссылки |
 | `aria-current="page"` | Единственный источник текущего состояния. Класса для него нет |
 | `aria-hidden="true"` у иконки | Имя пункта даёт подпись |
-
-### Токены
-
-`--control-h-md` · `--radius-sm` · `--text-sm` · `--text-2xs` ·
-`--weight-medium` · `--space-1` · `--space-3` · `--gap-inline` · `--pad-panel` ·
-`--size-marker` · `--surface-hover` · `--surface-selected` · `--accent-solid` ·
-`--accent-text` · `--text-secondary` · `--text-muted` · `--dur-1` · `--ease-out`
 
 ## Доступность
 
@@ -141,5 +151,3 @@ source: src/layout.css
 [Оболочка](../../layout/shell.md) · [Крошки](./breadcrumbs.md) ·
 [Вкладки](./tabs.md) · [Бейдж](../display/badge.md) ·
 [Дерево](../../agent/tree.md) · [Иконка](../../foundations/icons.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

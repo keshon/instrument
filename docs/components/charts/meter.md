@@ -3,6 +3,25 @@ title: Мера
 group: Графики
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-meter", kind: "класс", doc: "Дорожка. Носитель роли и значений" }
+  - { name: "inst-meter-fill", kind: "класс", doc: "Заливка. Обязательный единственный ребёнок" }
+  - { name: "inst-meter-row", kind: "класс", doc: "Строка «подпись — величина» над полосой" }
+  - { name: "inst-meter-value", kind: "класс", doc: "Величина в этой строке, приглушённым цветом" }
+  - { name: "data-state", kind: "атрибут", doc: "`indeterminate` — единственное значение у меры. Без атрибута полоса определённая" }
+  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт. Без атрибута — акцент" }
+  - { name: "--size-meter", kind: "токен" }
+  - { name: "--radius-xs", kind: "токен" }
+  - { name: "--track", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--tone-mark", kind: "токен" }
+  - { name: "--accent-mark", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--dur-3", kind: "токен" }
+  - { name: "--ease-out", kind: "токен" }
 ---
 
 Одна величина относительно своего потолка: расход бюджета, доля времени,
@@ -138,14 +157,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-meter` | Дорожка. Носитель роли и значений |
-| `inst-meter-fill` | Заливка. Обязательный единственный ребёнок |
-| `inst-meter-row` | Строка «подпись — величина» над полосой |
-| `inst-meter-value` | Величина в этой строке, приглушённым цветом |
+```api
+```
 
 ### Обязательная разметка
 
@@ -156,19 +169,6 @@ source: src/components.css
 | `aria-label` или `aria-labelledby` | У полосы нет своего текста. Подпись из `inst-meter-row` связывается через `aria-labelledby`, если она видима |
 | **отсутствие** `aria-valuenow` у `indeterminate` | Ровно так объявляется «занято, длительность неизвестна» |
 | `inst-meter-fill` внутри | Дорожка сама ничего не заливает |
-
-### Атрибуты
-
-| Атрибут | Словарь |
-|---|---|
-| `data-state` | `indeterminate` — единственное значение у меры. Без атрибута полоса определённая |
-| `data-tone` | `neutral` `running` `ok` `warn` `error`. Закрыт. Без атрибута — акцент |
-
-### Токены
-
-`--size-meter` · `--radius-xs` · `--track` · `--hairline` · `--border` ·
-`--tone-mark` · `--accent-mark` · `--text-sm` · `--space-3` · `--gap-inline` ·
-`--dur-3` · `--ease-out`
 
 Протяжённость дорожки показывает **внутренний хайрлайн**, а не её собственный
 цвет: так дорожка остаётся достаточно светлой, чтобы заливка держала на ней
@@ -192,5 +192,3 @@ source: src/components.css
 [Кольцо](./ring.md) · [Спарклайн](./sparkline.md) · [Легенда](./legend.md) ·
 [Метрика](../display/metric.md) · [Бюджет прогона](../../agent/budget.md) ·
 [Дорожка агента](../../agent/lane.md) · [Заглушка](../feedback/skeleton.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

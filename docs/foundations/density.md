@@ -3,6 +3,24 @@ title: Плотность
 group: Основания
 status: stable
 source: src/tokens.css
+api:
+  - { name: "data-density", kind: "атрибут", doc: "`compact` `comfortable`. Отсутствие атрибута — третье, базовое значение" }
+  - { name: "--control-h-xs/sm/md/lg", kind: "токен" }
+  - { name: "--control-pad-sm/md/lg", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--pad-card", kind: "токен" }
+  - { name: "--pad-cell-x", kind: "токен" }
+  - { name: "--row-pad-y", kind: "токен" }
+  - { name: "--gap-row", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--size-check", kind: "токен" }
+  - { name: "--size-switch-w", kind: "токен" }
+  - { name: "--size-switch-h", kind: "токен" }
+  - { name: "--size-thumb", kind: "токен" }
+  - { name: "--size-spinner", kind: "токен" }
+  - { name: "--size-gutter", kind: "токен" }
+  - { name: "--size-indent", kind: "токен" }
+  - { name: "--label-col", kind: "токен" }
 ---
 
 Плотность — **атрибут контейнера**, а не вариант на каждом компоненте. Один
@@ -117,18 +135,8 @@ source: src/tokens.css
 
 ## Справочник
 
-### Атрибуты
-
-| Атрибут | Словарь |
-|---|---|
-| `data-density` | `compact` `comfortable`. Отсутствие атрибута — третье, базовое значение |
-
-### Токены
-
-`--control-h-xs/sm/md/lg` · `--control-pad-sm/md/lg` · `--pad-panel` ·
-`--pad-card` · `--pad-cell-x` · `--row-pad-y` · `--gap-row` · `--gap-inline` ·
-`--size-check` · `--size-switch-w` · `--size-switch-h` · `--size-thumb` ·
-`--size-spinner` · `--size-gutter` · `--size-indent` · `--label-col`
+```api
+```
 
 ## Доступность
 
@@ -165,5 +173,3 @@ source: src/tokens.css
 [Ритм и форма](./spacing.md) · [Токены](./tokens.md) ·
 [Таблица](../components/display/table.md) · [Строка очереди](../agent/task.md) ·
 [Форма](../components/inputs/form.md) · [Оболочка](../layout/shell.md)
-
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

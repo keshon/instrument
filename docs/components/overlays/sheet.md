@@ -4,12 +4,27 @@ group: Оверлеи
 status: stable
 source: src/overlay.css
 needs-js: "Открытие — одна строка: dlg.showModal(). Закрытие, подложка, блокировка прокрутки фона и возврат фокуса скрипта не требуют"
+api:
+  - { name: "inst-sheet", kind: "класс", doc: "Раскладка во всю высоту у конечного края. Только вместе с `inst-dialog`" }
+  - { name: "inst-sheet--start", kind: "модификатор", doc: "Тот же блок у начального края" }
+  - { name: "--surface-overlay", kind: "токен" }
+  - { name: "--shadow-modal", kind: "токен" }
+  - { name: "--scrim", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--pad-card", kind: "токен" }
+  - { name: "--space-5", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--text-md", kind: "токен" }
 ---
 
 Панель во всю высоту у края экрана. Тот же нативный `<dialog>`, что и у
 [модалки](./dialog.md), — **другая раскладка, не другой компонент**.
 
 ```html preview
+<button class="inst-btn" type="button"
+        onclick="document.getElementById('dlg-params').showModal()">Параметры прогона</button>
+
 <dialog class="inst-dialog inst-sheet" id="dlg-params">
   <form method="dialog">
     <div class="inst-dialog-head">
@@ -31,9 +46,9 @@ needs-js: "Открытие — одна строка: dlg.showModal(). Закр
 </dialog>
 ```
 
-> Открытие — **одна строка скрипта**: `document.getElementById('dlg-params').showModal()`.
-> Подложка, ловушка фокуса, `Escape` и возврат фокуса на кнопку — от
-> платформы, как у модалки.
+> Открытие — **одна строка скрипта**, и она стоит прямо в примере выше:
+> `document.getElementById('dlg-params').showModal()`. Подложка, ловушка
+> фокуса, `Escape` и возврат фокуса на кнопку — от платформы, как у модалки.
 
 `inst-sheet` — модификатор поверх `inst-dialog`, а не замена: класс базы
 остаётся, части (`-head`, `-body`, `-foot`) те же.
@@ -67,12 +82,8 @@ needs-js: "Открытие — одна строка: dlg.showModal(). Закр
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-sheet` | Раскладка во всю высоту у конечного края. Только вместе с `inst-dialog` |
-| `inst-sheet--start` | Тот же блок у начального края |
+```api
+```
 
 Все части — от [модалки](./dialog.md): `inst-dialog-head`,
 `inst-dialog-title`, `inst-dialog-close`, `inst-dialog-body`,
@@ -101,11 +112,6 @@ needs-js: "Открытие — одна строка: dlg.showModal(). Закр
 | `<form method="dialog">` внутри | Закрытие кнопкой без скрипта |
 | `aria-label` у крестика | Кнопка без текста иначе не имеет доступного имени |
 
-### Токены
-
-`--surface-overlay` · `--shadow-modal` · `--scrim` · `--border` ·
-`--hairline` · `--pad-card` · `--space-5` · `--gap-inline` · `--text-md`
-
 ## Доступность
 
 | | |
@@ -113,7 +119,7 @@ needs-js: "Открытие — одна строка: dlg.showModal(). Закр
 | Фокус | Ловушка фокуса и возврат на вызвавшую кнопку — от `showModal()` |
 | Клавиатура | `Escape` закрывает. Кнопки внутри `<form method="dialog">` закрывают нажатием |
 | Фон инертен | Подложка выключает фон для мыши и для скринридера. Если нужен доступ к фону, это не шторка, а колонка [оболочки](../../layout/shell.md) |
-| Прокрутка фона | Останавливается тем же правилом `html:has(dialog[open])`, что и у модалки |
+| Прокрутка фона | Останавливается тем же правилом `html:has(dialog:modal)`, что и у модалки |
 | Высота | `100dvh`, а не `100vh`: на мобильных панель браузера не срезает подвал с кнопками |
 | Печать | Шторка на листе не печатается |
 
@@ -122,5 +128,3 @@ needs-js: "Открытие — одна строка: dlg.showModal(). Закр
 [Модалка](./dialog.md) · [Поповер](./popover.md) ·
 [Оболочка](../../layout/shell.md) · [Форма](../inputs/form.md) ·
 [Панель](../display/panel.md)
-
-Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

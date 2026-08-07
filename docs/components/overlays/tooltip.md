@@ -3,6 +3,22 @@ title: Тултип
 group: Оверлеи
 status: stable
 source: src/overlay.css
+api:
+  - { name: "inst-tooltip", kind: "класс", doc: "Обёртка триггера. `position: relative`, отсюда считается положение" }
+  - { name: "inst-tooltip-text", kind: "класс", doc: "Сама подпись. Над триггером, по центру" }
+  - { name: "inst-tooltip-text--wide", kind: "модификатор", doc: "Перенос строк и потолок ширины `22rem`" }
+  - { name: "--z-popover", kind: "токен" }
+  - { name: "--surface-overlay", kind: "токен" }
+  - { name: "--shadow-popover", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--leading-ui", kind: "токен" }
+  - { name: "--dur-1", kind: "токен" }
+  - { name: "--ease-out", kind: "токен" }
 ---
 
 Короткая подпись, появляющаяся при наведении и при фокусе. Единственный
@@ -56,13 +72,8 @@ source: src/overlay.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-tooltip` | Обёртка триггера. `position: relative`, отсюда считается положение |
-| `inst-tooltip-text` | Сама подпись. Над триггером, по центру |
-| `inst-tooltip-text--wide` | Перенос строк и потолок ширины `22rem` |
+```api
+```
 
 ### Обязательная разметка
 
@@ -84,12 +95,6 @@ source: src/overlay.css
 (`pointer-events: none`): курсор, идущий к тултипу, не перехватывается им и не
 роняет наведение.
 
-### Токены
-
-`--z-popover` · `--surface-overlay` · `--shadow-popover` · `--border` ·
-`--hairline` · `--radius-sm` · `--space-2` · `--space-3` · `--text-xs` ·
-`--leading-ui` · `--dur-1` · `--ease-out`
-
 ## Доступность
 
 | | |
@@ -105,5 +110,3 @@ source: src/overlay.css
 
 [Поповер](./popover.md) · [Меню](./menu.md) · [Сноска](../feedback/note.md) ·
 [Кнопка](../actions/button.md) · [Панель](../display/panel.md)
-
-Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -3,6 +3,20 @@ title: Типографика
 group: Основания
 status: stable
 source: src/tokens.css
+api:
+  - { name: "inst-prose", kind: "класс", doc: "Абзацный режим: 15/1.65, пропорциональные цифры, 68ch" }
+  - { name: "inst-u-mono", kind: "класс", doc: "Моноширинный кусок в потоке" }
+  - { name: "inst-u-prose-nums", kind: "класс", doc: "Пропорциональные цифры точечно" }
+  - { name: "inst-u-dim", kind: "класс", doc: "Приглушение до `--text-secondary`" }
+  - { name: "inst-u-truncate", kind: "класс", doc: "Обрезка одной строки многоточием" }
+  - { name: "--font-sans", kind: "токен" }
+  - { name: "--font-mono", kind: "токен" }
+  - { name: "--text-2xs/xs/sm/md/lg/xl/2xl", kind: "токен" }
+  - { name: "--weight-normal", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--leading-tight/ui/prose", kind: "токен" }
+  - { name: "--tracking-tight", kind: "токен" }
+  - { name: "--tracking-normal", kind: "токен" }
 ---
 
 Семь ступеней и два начертания. База документа — **интерфейс, а не проза**:
@@ -169,21 +183,8 @@ source: src/tokens.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-prose` | Абзацный режим: 15/1.65, пропорциональные цифры, 68ch |
-| `inst-u-mono` | Моноширинный кусок в потоке |
-| `inst-u-prose-nums` | Пропорциональные цифры точечно |
-| `inst-u-dim` | Приглушение до `--text-secondary` |
-| `inst-u-truncate` | Обрезка одной строки многоточием |
-
-### Токены
-
-`--font-sans` · `--font-mono` · `--text-2xs/xs/sm/md/lg/xl/2xl` ·
-`--weight-normal` · `--weight-medium` · `--leading-tight/ui/prose` ·
-`--tracking-tight` · `--tracking-normal`
+```api
+```
 
 ## Доступность
 
@@ -202,5 +203,3 @@ source: src/tokens.css
 [Блок кода](../components/display/code.md) ·
 [Метрика](../components/display/metric.md) ·
 [Строка лога](../agent/log.md)
-
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

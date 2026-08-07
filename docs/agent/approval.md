@@ -4,6 +4,25 @@ group: Агентный слой
 status: stable
 source: src/agent.css
 needs-js: Обработка решения и перевод блока в состояние «решено»
+api:
+  - { name: "inst-approval", kind: "класс", doc: "Блок" }
+  - { name: "inst-approval-head", kind: "класс", doc: "Заголовок со значком" }
+  - { name: "inst-approval-what", kind: "класс", doc: "Что будет сделано" }
+  - { name: "inst-approval-effects", kind: "класс", doc: "Список последствий, на `<ul>`" }
+  - { name: "inst-approval-actions", kind: "класс", doc: "Решение" }
+  - { name: "inst-approval-verdict", kind: "класс", doc: "Что решили и когда. Показывается после ответа" }
+  - { name: "data-state", kind: "атрибут", value: "pending · approved · denied", doc: "на `inst-approval`" }
+  - { name: "data-tone", kind: "атрибут", value: "warn · error", doc: "на `<li>` последствия" }
+  - { name: "--pad-card", kind: "токен" }
+  - { name: "--radius-lg", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--warn-bg", kind: "токен" }
+  - { name: "--warn-text", kind: "токен" }
+  - { name: "--err-text", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
 ---
 
 Определяющее взаимодействие агентных систем: агент останавливается и
@@ -115,28 +134,8 @@ needs-js: Обработка решения и перевод блока в со
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-approval` | Блок |
-| `inst-approval-head` | Заголовок со значком |
-| `inst-approval-what` | Что будет сделано |
-| `inst-approval-effects` | Список последствий, на `<ul>` |
-| `inst-approval-actions` | Решение |
-| `inst-approval-verdict` | Что решили и когда. Показывается после ответа |
-
-### Атрибуты
-
-| Атрибут | Значения | Где |
-|---|---|---|
-| `data-state` | `pending` · `approved` · `denied` | на `inst-approval` |
-| `data-tone` | `warn` · `error` | на `<li>` последствия |
-
-### Токены
-
-`--pad-card` · `--radius-lg` · `--space-3` · `--gap-inline` · `--text-sm` ·
-`--text-xs` · `--warn-bg` · `--warn-text` · `--err-text` · `--text-muted`
+```api
+```
 
 ## Доступность
 
@@ -154,5 +153,3 @@ needs-js: Обработка решения и перевод блока в со
 [Блок отказа](./failure.md) · [Шаг](./step.md) · [Диф](./diff.md) ·
 [Модалка](../components/overlays/dialog.md) ·
 [Баннер](../components/feedback/banner.md)
-
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

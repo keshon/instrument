@@ -3,6 +3,30 @@ title: Шаг — вызов инструмента
 group: Агентный слой
 status: stable
 source: src/agent.css
+api:
+  - { name: "inst-step", kind: "класс", doc: "Шаг, на `<details>`" }
+  - { name: "inst-step-head", kind: "класс", doc: "Шапка, на `<summary>`" }
+  - { name: "inst-step-twist", kind: "класс", doc: "Треугольник раскрытия. Поворачивается по `[open]`" }
+  - { name: "inst-step-name", kind: "класс", doc: "Имя инструмента, моноширинное" }
+  - { name: "inst-step-sub", kind: "класс", doc: "Аргумент вызова" }
+  - { name: "inst-step-meta", kind: "класс", doc: "Объём и время, прижаты к концу" }
+  - { name: "inst-step-body", kind: "класс", doc: "Тело: аргументы и вывод" }
+  - { name: "inst-output", kind: "класс", doc: "Обёртка сворачиваемого вывода" }
+  - { name: "inst-output-body", kind: "класс", doc: "Сам вывод" }
+  - { name: "inst-output-more", kind: "класс", doc: "Кнопка разворота с числом" }
+  - { name: "data-state", kind: "атрибут", value: "running · ok · failed", doc: "на `inst-step`" }
+  - { name: "open", kind: "атрибут", value: "нативный", doc: "на `<details>`" }
+  - { name: "data-truncated", kind: "атрибут", value: "true · false", doc: "на `inst-output`" }
+  - { name: "--space-1", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--pad-cell-x", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--font-mono", kind: "токен" }
+  - { name: "--size-dot", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--tone-ink", kind: "токен" }
+  - { name: "--dur-1", kind: "токен" }
 ---
 
 Один вызов инструмента агентом: что вызвали, с чем и что вернулось. У шага
@@ -169,33 +193,8 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-step` | Шаг, на `<details>` |
-| `inst-step-head` | Шапка, на `<summary>` |
-| `inst-step-twist` | Треугольник раскрытия. Поворачивается по `[open]` |
-| `inst-step-name` | Имя инструмента, моноширинное |
-| `inst-step-sub` | Аргумент вызова |
-| `inst-step-meta` | Объём и время, прижаты к концу |
-| `inst-step-body` | Тело: аргументы и вывод |
-| `inst-output` | Обёртка сворачиваемого вывода |
-| `inst-output-body` | Сам вывод |
-| `inst-output-more` | Кнопка разворота с числом |
-
-### Атрибуты
-
-| Атрибут | Значения | Где |
-|---|---|---|
-| `data-state` | `running` · `ok` · `failed` | на `inst-step` |
-| `open` | нативный | на `<details>` |
-| `data-truncated` | `true` · `false` | на `inst-output` |
-
-### Токены
-
-`--space-1` · `--space-3` · `--gap-inline` · `--pad-cell-x` · `--text-xs` ·
-`--font-mono` · `--size-dot` · `--text-muted` · `--tone-ink` · `--dur-1`
+```api
+```
 
 ## Доступность
 
@@ -214,5 +213,3 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
 [Блок отказа](./failure.md) · [Лог](./log.md) ·
 [Код](../components/display/code.md) ·
 [Аккордеон](../components/feedback/accordion.md)
-
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

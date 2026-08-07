@@ -3,6 +3,26 @@ title: Форма
 group: Ввод
 status: stable
 source: src/forms.css
+api:
+  - { name: "inst-form", kind: "класс", doc: "Форма: вертикальный поток с шагом `--pad-panel`" }
+  - { name: "inst-field", kind: "класс", doc: "Одно поле: подпись + контрол + подсказка" }
+  - { name: "inst-form-actions", kind: "класс", doc: "Полоса действий" }
+  - { name: "inst-form-actions-note", kind: "класс", doc: "Пояснение в полосе" }
+  - { name: "inst-fieldset", kind: "класс", doc: "Группа полей" }
+  - { name: "inst-required", kind: "класс", doc: "Пометки обязательности" }
+  - { name: "inst-optional", kind: "класс", doc: "Пометки обязательности" }
+  - { name: "inst-form--side", kind: "модификатор", doc: "Все подписи сбоку" }
+  - { name: "inst-field--side", kind: "модификатор", doc: "Подпись сбоку у одного поля" }
+  - { name: "inst-form-actions--end", kind: "модификатор", doc: "Действия к концу строки" }
+  - { name: "inst-fieldset--framed", kind: "модификатор", doc: "С рамкой" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--label-col", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--err-text", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--z-sticky", kind: "токен" }
 ---
 
 Раскладка полей и полоса действий. Два варианта раскладки, и выбор между ними
@@ -164,25 +184,8 @@ source: src/forms.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-form` | Форма: вертикальный поток с шагом `--pad-panel` |
-| `inst-form--side` | Все подписи сбоку |
-| `inst-field` | Одно поле: подпись + контрол + подсказка |
-| `inst-field--side` | Подпись сбоку у одного поля |
-| `inst-form-actions` | Полоса действий |
-| `inst-form-actions--end` | Действия к концу строки |
-| `inst-form-actions-note` | Пояснение в полосе |
-| `inst-fieldset` | Группа полей |
-| `inst-fieldset--framed` | С рамкой |
-| `inst-required` `inst-optional` | Пометки обязательности |
-
-### Токены
-
-`--pad-panel` · `--label-col` · `--gap-inline` · `--space-2` · `--text-xs` ·
-`--err-text` · `--text-muted` · `--z-sticky`
+```api
+```
 
 ## Доступность
 
@@ -194,11 +197,8 @@ source: src/forms.css
 | Подписи | Каждый контрол связан с `<label for>`. Форма без единого `for` проходит визуальную проверку и проваливает любую другую |
 | Порядок обхода | Совпадает с порядком в разметке. Визуальная перестановка колонок без перестановки узлов ломает `Tab` |
 
-
 ## Связанное
 
 [Текстовое поле](./input.md) · [Селект](./select.md) ·
 [Переключатели](./toggles.md) · [Кнопка](../actions/button.md) ·
 [Панель](../display/panel.md)
-
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

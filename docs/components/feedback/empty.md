@@ -3,6 +3,15 @@ title: Пустое состояние
 group: Обратная связь
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-empty", kind: "класс", doc: "Контейнер, центрирует содержимое" }
+  - { name: "inst-empty-title", kind: "класс", doc: "Заголовок: почему пусто" }
+  - { name: "inst-empty-desc", kind: "класс", doc: "Пояснение" }
+  - { name: "--space-9", kind: "токен" }
+  - { name: "--space-6", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
 ---
 
 Область, в которой пока нечего показать. Пустое состояние — не отсутствие
@@ -39,19 +48,10 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-empty` | Контейнер, центрирует содержимое |
-| `inst-empty-title` | Заголовок: почему пусто |
-| `inst-empty-desc` | Пояснение |
+```api
+```
 
 Действие — обычная [кнопка](../actions/button.md), своего класса не имеет.
-
-### Токены
-
-`--space-9` · `--space-6` · `--gap-inline` · `--text-sm` · `--text-muted`
 
 ## Доступность
 
@@ -66,5 +66,3 @@ source: src/components.css
 
 [Скелетон](./skeleton.md) · [Блок отказа](../../agent/failure.md) ·
 [Таблица](../display/table.md) · [Панель](../display/panel.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

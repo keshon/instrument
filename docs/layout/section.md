@@ -3,6 +3,16 @@ title: Секция
 group: Раскладка
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-section", kind: "класс", doc: "Колонка с зазором `--gap-row`" }
+  - { name: "inst-section-head", kind: "класс", doc: "Строка заголовка. Выравнивание по базовой линии" }
+  - { name: "inst-section-title", kind: "класс", doc: "Подпись секции" }
+  - { name: "inst-section-actions", kind: "класс", doc: "Хвост строки заголовка, прижатый к дальнему краю" }
+  - { name: "--gap-row", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--text-secondary", kind: "токен" }
 ---
 
 Именованный блок внутри экрана: подпись, необязательные действия и содержимое.
@@ -116,14 +126,8 @@ source: src/layout.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-section` | Колонка с зазором `--gap-row` |
-| `inst-section-head` | Строка заголовка. Выравнивание по базовой линии |
-| `inst-section-title` | Подпись секции |
-| `inst-section-actions` | Хвост строки заголовка, прижатый к дальнему краю |
+```api
+```
 
 ### Обязательная разметка
 
@@ -132,11 +136,6 @@ source: src/layout.css
 | Тег заголовка по уровню (`<h2>`, `<h3>`) | Класс даёт кегль, а не уровень. Скринридер строит оглавление по тегам |
 | `inst-section-head` как обёртка | Без неё заголовок и действия становятся детьми колонки и встают друг под друга |
 | `type="button"` у действий | Иначе внутри формы они её отправят |
-
-### Токены
-
-`--gap-row` · `--gap-inline` · `--text-sm` · `--weight-medium` ·
-`--text-secondary`
 
 ## Доступность
 
@@ -154,5 +153,3 @@ source: src/layout.css
 [Контейнер](./container.md) · [Панель](../components/display/panel.md) ·
 [Метрика](../components/display/metric.md) ·
 [Тулбар](../components/navigation/toolbar.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

@@ -3,6 +3,12 @@ title: Движение
 group: Основания
 status: stable
 source: src/tokens.css
+api:
+  - { name: "--dur-1", kind: "токен" }
+  - { name: "--dur-2", kind: "токен" }
+  - { name: "--dur-3", kind: "токен" }
+  - { name: "--ease-out", kind: "токен" }
+  - { name: "--ease-in-out", kind: "токен" }
 ---
 
 Три длительности и две функции плавности. Достаточно быстро, чтобы движение
@@ -124,9 +130,8 @@ source: src/tokens.css
 
 ## Справочник
 
-### Токены
-
-`--dur-1` · `--dur-2` · `--dur-3` · `--ease-out` · `--ease-in-out`
+```api
+```
 
 ### Что кит не анимирует
 
@@ -153,5 +158,3 @@ source: src/tokens.css
 [Высота и поверхности](./elevation.md) · [Токены](./tokens.md) ·
 [Кнопка](../components/actions/button.md) · [Мера](../components/charts/meter.md) ·
 [Шаг](../agent/step.md) · [Строка очереди](../agent/task.md)
-
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

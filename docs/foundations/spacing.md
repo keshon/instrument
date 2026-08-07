@@ -3,6 +3,48 @@ title: Ритм и форма
 group: Основания
 status: stable
 source: src/tokens.css
+api:
+  - { name: "inst-stack", kind: "класс", doc: "Вертикальный поток, зазор `--gap-inline`" }
+  - { name: "inst-cluster", kind: "класс", doc: "Горизонтальный поток с переносом" }
+  - { name: "inst-cluster-spacer", kind: "класс", doc: "Разрыв в ряду: всё после него уходит вправо" }
+  - { name: "inst-grid", kind: "класс", doc: "Адаптивная сетка `auto-fit` по `--col-min`" }
+  - { name: "inst-stack--tight", kind: "модификатор", doc: "Шаг зазора" }
+  - { name: "inst-stack--loose", kind: "модификатор", doc: "Шаг зазора" }
+  - { name: "inst-cluster--tight", kind: "модификатор", doc: "Шаг зазора" }
+  - { name: "inst-cluster--loose", kind: "модификатор", doc: "Шаг зазора" }
+  - { name: "inst-grid--tight", kind: "модификатор", doc: "Другая минимальная колонка" }
+  - { name: "inst-grid--wide", kind: "модификатор", doc: "Другая минимальная колонка" }
+  - { name: "--space-1", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--space-2", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--space-3", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--space-4", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--space-5", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--space-6", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--space-7", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--space-8", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--space-9", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--space-10", kind: "токен", doc: "Шаг шкалы" }
+  - { name: "--pad-panel", kind: "токен", doc: "Внутренний отступ панели" }
+  - { name: "--pad-card", kind: "токен", doc: "Внутренний отступ карточки" }
+  - { name: "--pad-cell-x", kind: "токен", doc: "Горизонтальный отступ ячейки" }
+  - { name: "--row-pad-y", kind: "токен", doc: "Вертикальный отступ строки" }
+  - { name: "--gap-row", kind: "токен", doc: "Зазор между строками" }
+  - { name: "--gap-inline", kind: "токен", doc: "Зазор в ряду" }
+  - { name: "--control-pad-sm", kind: "токен", doc: "Отступ малого контрола" }
+  - { name: "--control-pad-md", kind: "токен", doc: "Отступ базового контрола" }
+  - { name: "--control-pad-lg", kind: "токен", doc: "Отступ крупного контрола" }
+  - { name: "--radius-xs", kind: "токен", doc: "Инлайн: бейджи, образцы, торцы полос" }
+  - { name: "--radius-sm", kind: "токен", doc: "Контролы внутри карточки" }
+  - { name: "--radius-md", kind: "токен", doc: "Отдельно стоящие контролы" }
+  - { name: "--radius-lg", kind: "токен", doc: "Карточки и панели" }
+  - { name: "--radius-full", kind: "токен", doc: "Круг и капсула" }
+  - { name: "--hairline", kind: "токен", doc: "Волосок. На 1x равен пикселю, выше — половине" }
+  - { name: "--stroke", kind: "токен", doc: "Линия, которая обязана быть видна всегда" }
+  - { name: "--aside-w", kind: "токен", doc: "Боковая колонка оболочки" }
+  - { name: "--container-max", kind: "токен", doc: "Потолок ширины рабочей области" }
+  - { name: "--split-side", kind: "токен", doc: "Желаемая ширина боковой части сплита" }
+  - { name: "--split-main", kind: "токен", doc: "Порог переноса основной части" }
+  - { name: "--col-min", kind: "токен", doc: "Минимальная колонка адаптивной сетки" }
 ---
 
 Шаг 4px, шкала нарочно **разрежена сверху** — чтобы «чуть побольше» просто не
@@ -154,24 +196,11 @@ source: src/tokens.css
 
 ## Справочник
 
-### Классы
+```api
+```
 
-| Класс | Работа |
-|---|---|
-| `inst-stack` | Вертикальный поток, зазор `--gap-inline` |
-| `inst-stack--tight` `inst-stack--loose` | Шаг зазора |
-| `inst-cluster` | Горизонтальный поток с переносом |
-| `inst-cluster--tight` `inst-cluster--loose` | Шаг зазора |
-| `inst-cluster-spacer` | Разрыв в ряду: всё после него уходит вправо |
-| `inst-grid` | Адаптивная сетка `auto-fit` по `--col-min` |
-| `inst-grid--tight` `inst-grid--wide` | Другая минимальная колонка |
-
-### Токены
-
-`--space-1` … `--space-10` · `--pad-panel` · `--pad-card` · `--pad-cell-x` ·
-`--row-pad-y` · `--gap-row` · `--gap-inline` · `--control-pad-sm/md/lg` ·
-`--radius-xs/sm/md/lg/full` · `--hairline` · `--stroke` · `--size-*` ·
-`--aside-w` · `--container-max` · `--split-side` · `--split-main` · `--col-min`
+```api
+```
 
 ## Доступность
 
@@ -187,5 +216,3 @@ source: src/tokens.css
 [Плотность](./density.md) · [Токены](./tokens.md) ·
 [Поток](../layout/flow.md) · [Оболочка](../layout/shell.md) ·
 [Панель](../components/display/panel.md) · [Карточка](../components/display/card.md)
-
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

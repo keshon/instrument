@@ -3,6 +3,19 @@ title: Шапка экрана
 group: Раскладка
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-page-header", kind: "класс", doc: "Контейнер. Ряд с переносом, выравнивание по верху" }
+  - { name: "inst-page-header-main", kind: "класс", doc: "Колонка «название + пояснение». Порог переноса 20rem" }
+  - { name: "inst-page-title", kind: "класс", doc: "Название экрана. Кегль `--text-xl`" }
+  - { name: "inst-page-desc", kind: "класс", doc: "Пояснение. `--text-sm`, `--text-secondary`, мера 68ch" }
+  - { name: "inst-page-actions", kind: "класс", doc: "Действия. Прижаты к дальнему краю, переносятся" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--text-xl", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-secondary", kind: "токен" }
 ---
 
 Название экрана, его пояснение и главные действия. Одна на экран — ровно как
@@ -83,15 +96,8 @@ primary, не имеет primary вовсе — см. [кнопку](../componen
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-page-header` | Контейнер. Ряд с переносом, выравнивание по верху |
-| `inst-page-header-main` | Колонка «название + пояснение». Порог переноса 20rem |
-| `inst-page-title` | Название экрана. Кегль `--text-xl` |
-| `inst-page-desc` | Пояснение. `--text-sm`, `--text-secondary`, мера 68ch |
-| `inst-page-actions` | Действия. Прижаты к дальнему краю, переносятся |
+```api
+```
 
 ### Обязательная разметка
 
@@ -100,11 +106,6 @@ primary, не имеет primary вовсе — см. [кнопку](../componen
 | `<h1>` под `inst-page-title` | Класс даёт кегль, а не уровень. Уровень — работа тега, и скринридер читает именно его |
 | `inst-page-header-main` как обёртка | Без неё название и пояснение становятся отдельными детьми ряда и встают в строку |
 | `type="button"` у действий | Иначе внутри формы они её отправят |
-
-### Токены
-
-`--gap-inline` · `--pad-panel` · `--space-2` · `--space-3` · `--text-xl` ·
-`--text-sm` · `--text-secondary`
 
 ## Доступность
 
@@ -123,5 +124,3 @@ primary, не имеет primary вовсе — см. [кнопку](../componen
 [Контейнер](./container.md) · [Кнопка](../components/actions/button.md) ·
 [Крошки](../components/navigation/breadcrumbs.md) ·
 [Вкладки](../components/navigation/tabs.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

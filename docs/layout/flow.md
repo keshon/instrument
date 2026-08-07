@@ -3,6 +3,23 @@ title: Примитивы потока
 group: Раскладка
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-stack", kind: "класс", doc: "Колонка. Зазор `--pad-panel`" }
+  - { name: "inst-cluster", kind: "класс", doc: "Ряд с переносом, выравнивание по центру. Зазор `--gap-inline`" }
+  - { name: "inst-cluster-spacer", kind: "класс", doc: "Прижать хвост ряда к дальнему краю" }
+  - { name: "inst-grid", kind: "класс", doc: "Адаптивная сетка. Зазор `--pad-panel`" }
+  - { name: "inst-stack--tight", kind: "модификатор", doc: "Шаг зазора" }
+  - { name: "inst-stack--loose", kind: "модификатор", doc: "Шаг зазора" }
+  - { name: "inst-cluster--tight", kind: "модификатор", doc: "Шаг зазора" }
+  - { name: "inst-cluster--loose", kind: "модификатор", doc: "Шаг зазора" }
+  - { name: "inst-grid--tight", kind: "модификатор", doc: "Минимальная ширина колонки" }
+  - { name: "inst-grid--wide", kind: "модификатор", doc: "Минимальная ширина колонки" }
+  - { name: "--col-min", kind: "переменная", value: "260px" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--gap-row", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-7", kind: "токен" }
 ---
 
 Три способа расставить элементы: стопкой, рядом, сеткой. У каждого три шага
@@ -127,33 +144,13 @@ source: src/layout.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-stack` | Колонка. Зазор `--pad-panel` |
-| `inst-stack--tight` `inst-stack--loose` | Шаг зазора |
-| `inst-cluster` | Ряд с переносом, выравнивание по центру. Зазор `--gap-inline` |
-| `inst-cluster--tight` `inst-cluster--loose` | Шаг зазора |
-| `inst-cluster-spacer` | Прижать хвост ряда к дальнему краю |
-| `inst-grid` | Адаптивная сетка. Зазор `--pad-panel` |
-| `inst-grid--tight` `inst-grid--wide` | Минимальная ширина колонки |
-
-### CSS-переменные
-
-| Переменная | По умолчанию |
-|---|---|
-| `--col-min` | `260px` |
+```api
+```
 
 ```css
 /* Своя плотность сетки — одна строка */
 .my-board { --col-min: 320px; }
 ```
-
-### Токены
-
-`--pad-panel` · `--gap-row` · `--gap-inline` · `--space-2` · `--space-7` ·
-`--col-min`
 
 ## Доступность
 
@@ -170,5 +167,3 @@ source: src/layout.css
 [Контейнер](./container.md) · [Сплит](./split.md) · [Секция](./section.md) ·
 [Шапка экрана](./page-header.md) · [Плотность](../foundations/density.md) ·
 [Шкала отступов](../foundations/spacing.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

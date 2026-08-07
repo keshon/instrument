@@ -3,6 +3,19 @@ title: Поповер
 group: Оверлеи
 status: stable
 source: src/overlay.css
+api:
+  - { name: "inst-popover", kind: "класс", doc: "Базовый. Поверхность, рамка, тень, переход" }
+  - { name: "inst-popover--anchored", kind: "модификатор", doc: "Привязка к вызвавшей кнопке. Под `@supports`" }
+  - { name: "--surface-overlay", kind: "токен" }
+  - { name: "--shadow-popover", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--space-1", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-8", kind: "токен" }
+  - { name: "--dur-2", kind: "токен" }
+  - { name: "--ease-out", kind: "токен" }
 ---
 
 Небольшой блок, всплывающий над интерфейсом по нажатию на кнопку и
@@ -80,12 +93,8 @@ source: src/overlay.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-popover` | Базовый. Поверхность, рамка, тень, переход |
-| `inst-popover--anchored` | Привязка к вызвавшей кнопке. Под `@supports` |
+```api
+```
 
 Содержимое поповера своего класса не имеет: чаще всего это
 [меню](./menu.md), но может быть любая разметка.
@@ -107,12 +116,6 @@ source: src/overlay.css
 | максимальная ширина | `min(22rem, 100vw - var(--space-8))` — на узком экране поповер не вылезет за край |
 | ширина по содержимому | `max-content` в этих пределах |
 
-### Токены
-
-`--surface-overlay` · `--shadow-popover` · `--border` · `--hairline` ·
-`--radius-md` · `--space-1` · `--space-2` · `--space-8` · `--dur-2` ·
-`--ease-out`
-
 Тень здесь при деле: `--shadow-popover` означает «плавает сверху и сейчас
 исчезнет» — ровно то, что делает поповер. Второй и последний носитель тени в
 ките — [модалка](./dialog.md).
@@ -132,5 +135,3 @@ source: src/overlay.css
 [Меню](./menu.md) · [Тултип](./tooltip.md) · [Модалка](./dialog.md) ·
 [Шторка](./sheet.md) · [Кнопка](../actions/button.md) ·
 [Слои и тени](../../foundations/elevation.md)
-
-Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

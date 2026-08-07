@@ -3,6 +3,27 @@ title: Высота и поверхности
 group: Основания
 status: stable
 source: src/tokens.css
+api:
+  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--surface-page", kind: "токен" }
+  - { name: "--surface-raised", kind: "токен" }
+  - { name: "--surface-overlay", kind: "токен" }
+  - { name: "--surface-field", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--surface-active", kind: "токен" }
+  - { name: "--surface-selected", kind: "токен" }
+  - { name: "--shadow-popover", kind: "токен" }
+  - { name: "--shadow-modal", kind: "токен" }
+  - { name: "--shadow-color-near", kind: "токен" }
+  - { name: "--shadow-color-far", kind: "токен" }
+  - { name: "--scrim", kind: "токен" }
+  - { name: "--z-sticky", kind: "токен" }
+  - { name: "--z-popover", kind: "токен" }
+  - { name: "--z-modal", kind: "токен" }
+  - { name: "--z-toast", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--border-subtle", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
 ---
 
 Глубина передаётся **порядком светлоты, а не тенью**. Тень в этом ките означает
@@ -139,13 +160,8 @@ source: src/tokens.css
 
 ## Справочник
 
-### Токены
-
-`--surface-sunken` · `--surface-page` · `--surface-raised` · `--surface-overlay` ·
-`--surface-field` · `--surface-hover` · `--surface-active` · `--surface-selected` ·
-`--shadow-popover` · `--shadow-modal` · `--shadow-color-near` ·
-`--shadow-color-far` · `--scrim` · `--z-sticky` · `--z-popover` · `--z-modal` ·
-`--z-toast` · `--border` · `--border-subtle` · `--hairline`
+```api
+```
 
 ## Доступность
 
@@ -162,5 +178,3 @@ source: src/tokens.css
 [Цвет](./colors.md) · [Движение](./motion.md) ·
 [Панель](../components/display/panel.md) · [Карточка](../components/display/card.md) ·
 [Поповер](../components/overlays/popover.md) · [Модалка](../components/overlays/dialog.md)
-
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

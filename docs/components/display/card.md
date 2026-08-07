@@ -3,6 +3,16 @@ title: Карточка
 group: Отображение данных
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-card", kind: "класс", doc: "Базовый" }
+  - { name: "inst-card-title", kind: "класс", doc: "Заголовок объекта" }
+  - { name: "inst-card-sub", kind: "класс", doc: "Подпись под заголовком" }
+  - { name: "inst-card--interactive", kind: "модификатор", doc: "Отклик на наведение и фокус" }
+  - { name: "--surface-raised", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--radius-lg", kind: "токен" }
+  - { name: "--pad-card", kind: "токен" }
 ---
 
 Объект, который можно было бы перетащить. Карточек столько, сколько пришло из
@@ -39,18 +49,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-card` | Базовый |
-| `inst-card--interactive` | Отклик на наведение и фокус |
-| `inst-card-title` | Заголовок объекта |
-| `inst-card-sub` | Подпись под заголовком |
-
-### Токены
-
-`--surface-raised` · `--border` · `--hairline` · `--radius-lg` · `--pad-card`
+```api
+```
 
 ## Доступность
 
@@ -66,5 +66,3 @@ source: src/components.css
 
 [Панель](./panel.md) · [Метрика](./metric.md) ·
 [Выбираемая карточка](../inputs/choice-card.md) · [Сетка](../../layout/flow.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -3,6 +3,24 @@ title: Метрика
 group: Отображение данных
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-metric", kind: "класс", doc: "Одна метрика" }
+  - { name: "inst-metric-row", kind: "класс", doc: "Ряд метрик" }
+  - { name: "inst-metric-label", kind: "класс", doc: "Подпись над числом" }
+  - { name: "inst-metric-value", kind: "класс", doc: "Само число" }
+  - { name: "inst-metric-unit", kind: "класс", doc: "Единица внутри числа: мельче и тише" }
+  - { name: "inst-metric-delta", kind: "класс", doc: "Изменение к прошлому периоду" }
+  - { name: "data-dir", kind: "атрибут", value: "up · down", doc: "на `inst-metric-delta`" }
+  - { name: "data-tone", kind: "атрибут", value: "neutral · running · ok · warn · error", doc: "там же" }
+  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--text-2xl", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--tracking-tight", kind: "токен" }
+  - { name: "--tone-ink", kind: "токен" }
+  - { name: "--size-chevron", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
 ---
 
 Одно число, за которым следят. Единица набирается мельче и тише самого числа:
@@ -112,29 +130,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-metric` | Одна метрика |
-| `inst-metric-row` | Ряд метрик |
-| `inst-metric-label` | Подпись над числом |
-| `inst-metric-value` | Само число |
-| `inst-metric-unit` | Единица внутри числа: мельче и тише |
-| `inst-metric-delta` | Изменение к прошлому периоду |
-
-### Атрибуты
-
-| Атрибут | Значения | Где |
-|---|---|---|
-| `data-dir` | `up` · `down` | на `inst-metric-delta` |
-| `data-tone` | `neutral` `running` `ok` `warn` `error` | там же |
-
-### Токены
-
-`--surface-sunken` · `--radius-md` · `--pad-panel` · `--text-2xl` ·
-`--text-xs` · `--tracking-tight` · `--tone-ink` · `--size-chevron` ·
-`--space-2`
+```api
+```
 
 ## Доступность
 
@@ -150,5 +147,3 @@ source: src/components.css
 
 [Мера](../charts/meter.md) · [Спарклайн](../charts/sparkline.md) ·
 [Кольцо](../charts/ring.md) · [Таблица](./table.md) · [Карточка](./card.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -3,6 +3,21 @@ title: Переключатели
 group: Ввод
 status: stable
 source: src/forms.css
+api:
+  - { name: "inst-checkbox", kind: "класс", doc: "Обёртка-подпись чекбокса" }
+  - { name: "inst-radio", kind: "класс", doc: "То же для радио" }
+  - { name: "inst-switch", kind: "класс", doc: "То же для свитча" }
+  - { name: "--size-check", kind: "токен" }
+  - { name: "--size-switch-w", kind: "токен" }
+  - { name: "--size-switch-h", kind: "токен" }
+  - { name: "--size-thumb", kind: "токен" }
+  - { name: "--border-control", kind: "токен" }
+  - { name: "--accent-mark", kind: "токен" }
+  - { name: "--accent-on", kind: "токен" }
+  - { name: "--track", kind: "токен" }
+  - { name: "--radius-xs", kind: "токен" }
+  - { name: "--radius-full", kind: "токен" }
+  - { name: "--dur-1", kind: "токен" }
 ---
 
 Чекбокс, радио и свитч. Все три построены на нативном `input`: клавиатура,
@@ -67,21 +82,10 @@ el.indeterminate = true;   // «часть вложенных выбрана»
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-checkbox` | Обёртка-подпись чекбокса |
-| `inst-radio` | То же для радио |
-| `inst-switch` | То же для свитча |
+```api
+```
 
 Своего класса у `input` нет: он опознаётся по типу и родителю.
-
-### Токены
-
-`--size-check` · `--size-switch-w` · `--size-switch-h` · `--size-thumb` ·
-`--border-control` · `--accent-mark` · `--accent-on` · `--track` ·
-`--radius-xs` · `--radius-full` · `--dur-1`
 
 ## Доступность
 
@@ -94,11 +98,8 @@ el.indeterminate = true;   // «часть вложенных выбрана»
 | Контраст | Рамка невыбранного берёт `--border-control` и держит 3:1: у всех трёх граница **и есть** контрол. У свитча к дорожке добавляется кольцо по той же причине |
 | Не только цвет | Чекбокс несёт галочку, радио — точку, свитч — положение бегунка. Тон вторичен |
 
-
 ## Связанное
 
 [Текстовое поле](./input.md) · [Селект](./select.md) ·
 [Выбираемая карточка](./choice-card.md) ·
 [Сегментированный контрол](../actions/segmented.md) · [Форма](./form.md)
-
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

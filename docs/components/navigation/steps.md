@@ -3,6 +3,25 @@ title: Шаги мастера
 group: Навигация
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-stepper", kind: "класс", doc: "Список шагов. Ставится на `<ol>`" }
+  - { name: "inst-stepper-item", kind: "класс", doc: "Шаг. Носитель `data-state`" }
+  - { name: "inst-stepper-name", kind: "класс", doc: "Название шага" }
+  - { name: "inst-stepper-note", kind: "класс", doc: "Слово состояния под названием" }
+  - { name: "data-state", kind: "атрибут", doc: "`todo` `current` `done`. Закрыт, база — `todo`" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-4", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--size-marker", kind: "токен" }
+  - { name: "--radius-full", kind: "токен" }
+  - { name: "--track", kind: "токен" }
+  - { name: "--accent-mark", kind: "токен" }
+  - { name: "--text-primary", kind: "токен" }
+  - { name: "--text-secondary", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
 ---
 
 Последовательность этапов процесса с отметкой, где он сейчас. Состояние несёт
@@ -77,20 +96,8 @@ source: src/layout.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-stepper` | Список шагов. Ставится на `<ol>` |
-| `inst-stepper-item` | Шаг. Носитель `data-state` |
-| `inst-stepper-name` | Название шага |
-| `inst-stepper-note` | Слово состояния под названием |
-
-### Атрибуты
-
-| Атрибут | Словарь |
-|---|---|
-| `data-state` | `todo` `current` `done`. Закрыт, база — `todo` |
+```api
+```
 
 ### Обязательная разметка
 
@@ -99,12 +106,6 @@ source: src/layout.css
 | `<ol>` с `<li>` | Шаги упорядочены, и порядок — весь смысл компонента |
 | `data-state` на каждом шаге, включая `todo` | Отсутствие атрибута неотличимо от опечатки в нём |
 | `inst-stepper-note` со словом состояния | Цвет полосы не имеет права быть единственным носителем |
-
-### Токены
-
-`--gap-inline` · `--space-2` · `--space-4` · `--text-sm` · `--text-xs` ·
-`--weight-medium` · `--size-marker` · `--radius-full` · `--track` ·
-`--accent-mark` · `--text-primary` · `--text-secondary` · `--text-muted`
 
 ## Доступность
 
@@ -122,5 +123,3 @@ source: src/layout.css
 [Шаг прогона](../../agent/step.md) · [Мера](../charts/meter.md) ·
 [Вкладки](./tabs.md) · [Лента](../display/timeline.md) ·
 [Форма](../inputs/form.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

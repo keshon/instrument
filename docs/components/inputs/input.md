@@ -3,6 +3,33 @@ title: Текстовое поле
 group: Ввод
 status: stable
 source: src/forms.css
+api:
+  - { name: "inst-input", kind: "класс", doc: "Однострочное поле" }
+  - { name: "inst-textarea", kind: "класс", doc: "Многострочное" }
+  - { name: "inst-field", kind: "класс", doc: "Обёртка: подпись + контрол + подсказка" }
+  - { name: "inst-label", kind: "класс", doc: "Подпись" }
+  - { name: "inst-field-hint", kind: "класс", doc: "Подсказка" }
+  - { name: "inst-field-error", kind: "класс", doc: "Сообщение об ошибке" }
+  - { name: "inst-input-group", kind: "класс", doc: "Группа с приставками" }
+  - { name: "inst-input-affix", kind: "класс", doc: "Приставка или суффикс" }
+  - { name: "inst-required", kind: "класс", doc: "Пометка обязательности" }
+  - { name: "inst-optional", kind: "класс", doc: "Пометка обязательности" }
+  - { name: "inst-input--sm", kind: "модификатор", doc: "Размер" }
+  - { name: "inst-input--lg", kind: "модификатор", doc: "Размер" }
+  - { name: "inst-textarea--sm", kind: "модификатор", doc: "Размер" }
+  - { name: "inst-textarea--lg", kind: "модификатор", doc: "Размер" }
+  - { name: "inst-field--side", kind: "модификатор", doc: "Подпись сбоку вместо «сверху»" }
+  - { name: "aria-invalid", kind: "атрибут", doc: "`true` — ошибка от приложения" }
+  - { name: "data-when", kind: "атрибут", doc: "`invalid` — показом управляет платформа" }
+  - { name: "--surface-field", kind: "токен" }
+  - { name: "--control-h-sm/md/lg", kind: "токен" }
+  - { name: "--control-pad-sm", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--text-xs/sm/md", kind: "токен" }
+  - { name: "--label-col", kind: "токен" }
+  - { name: "--border-control", kind: "токен" }
+  - { name: "--err-text", kind: "токен" }
+  - { name: "--leading-ui", kind: "токен" }
 ---
 
 Однострочный и многострочный ввод. Поле стоит во **врезе**
@@ -129,35 +156,8 @@ source: src/forms.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-input` | Однострочное поле |
-| `inst-textarea` | Многострочное |
-| `inst-input--sm` `inst-input--lg` | Размер |
-| `inst-textarea--sm` `inst-textarea--lg` | Размер |
-| `inst-field` | Обёртка: подпись + контрол + подсказка |
-| `inst-field--side` | Подпись сбоку вместо «сверху» |
-| `inst-label` | Подпись |
-| `inst-field-hint` | Подсказка |
-| `inst-field-error` | Сообщение об ошибке |
-| `inst-input-group` | Группа с приставками |
-| `inst-input-affix` | Приставка или суффикс |
-| `inst-required` `inst-optional` | Пометка обязательности |
-
-### Атрибуты
-
-| Атрибут | Значения |
-|---|---|
-| `aria-invalid` | `true` — ошибка от приложения |
-| `data-when` | `invalid` — показом управляет платформа |
-
-### Токены
-
-`--surface-field` · `--control-h-sm/md/lg` · `--control-pad-sm` ·
-`--radius-sm` · `--text-xs/sm/md` · `--label-col` · `--border-control` ·
-`--err-text` · `--leading-ui`
+```api
+```
 
 ## Доступность
 
@@ -170,11 +170,8 @@ source: src/forms.css
 | Контраст | Рамка поля берёт `--border-control` и держит 3:1: здесь граница **и есть** контрол |
 | Порядок состояний | Записан селектором: отключено > ошибка > фокус > наведение. У `:hover:not(:disabled)` специфичность (0,3,0), а у `:user-invalid` всего (0,2,0) — курсор над невалидным полем прятал красную рамку, пока наведение не начало уступать явно |
 
-
 ## Связанное
 
 [Селект](./select.md) · [Переключатели](./toggles.md) · [Форма](./form.md) ·
 [Поиск](./search.md) · [Числовое поле](./num-field.md) ·
 [Кнопка](../actions/button.md)
-
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

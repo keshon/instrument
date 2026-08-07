@@ -3,6 +3,14 @@ title: Скелетон
 group: Обратная связь
 status: stable
 source: src/agent.css
+api:
+  - { name: "inst-skeleton", kind: "класс", doc: "Базовый. Обязателен всегда" }
+  - { name: "inst-skeleton--title", kind: "модификатор", doc: "Ширина `40%`" }
+  - { name: "inst-skeleton--line", kind: "модификатор", doc: "Ширина `100%`" }
+  - { name: "inst-skeleton--short", kind: "модификатор", doc: "Ширина `62%`" }
+  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--radius-xs", kind: "токен" }
+  - { name: "--ease-in-out", kind: "токен" }
 ---
 
 Место, где содержимое ещё не пришло. Кит про ожидание обязан иметь примитив
@@ -83,20 +91,10 @@ source: src/agent.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-skeleton` | Базовый. Обязателен всегда |
-| `inst-skeleton--title` | Ширина `40%` |
-| `inst-skeleton--line` | Ширина `100%` |
-| `inst-skeleton--short` | Ширина `62%` |
+```api
+```
 
 Ширину можно задать и своим правилом — модификаторы лишь три частых значения.
-
-### Токены
-
-`--surface-sunken` · `--radius-xs` · `--ease-in-out`
 
 Пульсация — собственные ключевые кадры кита: 1.6с, бесконечно.
 
@@ -115,5 +113,3 @@ source: src/agent.css
 [Спиннер](./spinner.md) · [Пустое состояние](./empty.md) ·
 [Точка и каретка](./states.md) · [Мера](../charts/meter.md) ·
 [Шаг агента](../../agent/step.md)
-
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

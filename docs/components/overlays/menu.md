@@ -4,6 +4,34 @@ group: Оверлеи
 status: stable
 source: src/overlay.css
 needs-js: Перемещение стрелками между пунктами и бегущий tabindex. Открытие, закрытие и возврат фокуса скрипта не требуют — их берёт на себя Popover API
+api:
+  - { name: "inst-menu", kind: "класс", doc: "Контейнер. Колонка пунктов с зазором `--space-1`" }
+  - { name: "inst-menu-item", kind: "класс", doc: "Пункт: `<button>` или `<a>`" }
+  - { name: "inst-menu-label", kind: "класс", doc: "Подпись группы. Не интерактивна" }
+  - { name: "inst-menu-sep", kind: "класс", doc: "Разделитель толщиной в волосок" }
+  - { name: "inst-menu-shortcut", kind: "класс", doc: "Горячая клавиша у дальнего края пункта" }
+  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт. На пункте осмыслен только `error`" }
+  - { name: "aria-checked", kind: "атрибут", doc: "`true` — пункт отмечен" }
+  - { name: "aria-current", kind: "атрибут", doc: "Любое значение, кроме `false`" }
+  - { name: "aria-disabled", kind: "атрибут", doc: "`true` — пункт недоступен" }
+  - { name: "--space-1", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--space-6", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--control-h-sm", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--text-2xs", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--border-subtle", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--accent-text", kind: "токен" }
+  - { name: "--err-text", kind: "токен" }
+  - { name: "--err-bg", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--leading-ui", kind: "токен" }
 ---
 
 Список действий над объектом. Меню — это **содержимое**
@@ -94,15 +122,8 @@ needs-js: Перемещение стрелками между пунктами 
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-menu` | Контейнер. Колонка пунктов с зазором `--space-1` |
-| `inst-menu-item` | Пункт: `<button>` или `<a>` |
-| `inst-menu-label` | Подпись группы. Не интерактивна |
-| `inst-menu-sep` | Разделитель толщиной в волосок |
-| `inst-menu-shortcut` | Горячая клавиша у дальнего края пункта |
+```api
+```
 
 ### Обязательная разметка
 
@@ -113,23 +134,6 @@ needs-js: Перемещение стрелками между пунктами 
 | `type="button"` у пунктов-кнопок | Иначе внутри формы меню её отправит |
 | `aria-hidden="true"` у иконки | Имя пункту даёт подпись, а не иконка |
 | Обёртка [поповера](./popover.md) | Меню само по себе не всплывает: верхний слой и закрытие приходят от `popover` |
-
-### Атрибуты
-
-| Атрибут | Словарь |
-|---|---|
-| `data-tone` | `neutral` `running` `ok` `warn` `error`. Закрыт. На пункте осмыслен только `error` |
-| `aria-checked` | `true` — пункт отмечен |
-| `aria-current` | Любое значение, кроме `false` |
-| `aria-disabled` | `true` — пункт недоступен |
-
-### Токены
-
-`--space-1` · `--space-2` · `--space-3` · `--space-6` · `--gap-inline` ·
-`--control-h-sm` · `--radius-sm` · `--text-2xs` · `--text-sm` ·
-`--weight-medium` · `--hairline` · `--border-subtle` · `--surface-hover` ·
-`--accent-text` · `--err-text` · `--err-bg` · `--text-muted` ·
-`--leading-ui`
 
 ## Доступность
 
@@ -147,5 +151,3 @@ needs-js: Перемещение стрелками между пунктами 
 [Поповер](./popover.md) · [Кнопка](../actions/button.md) ·
 [Селект](../inputs/select.md) · [Панель инструментов](../navigation/toolbar.md) ·
 [Иконка](../../foundations/icons.md)
-
-Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

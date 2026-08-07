@@ -4,6 +4,22 @@ group: Агентный слой
 status: stable
 source: src/components.css
 needs-js: Раскрытие узлов, стрелки, бегущий tabindex
+api:
+  - { name: "inst-tree", kind: "класс", doc: "Контейнер" }
+  - { name: "inst-tree-item", kind: "класс", doc: "Узел" }
+  - { name: "inst-tree-twist", kind: "класс", doc: "Треугольник раскрытия. Поворачивается по `aria-expanded`" }
+  - { name: "aria-expanded", kind: "атрибут", doc: "`true` · `false`. Только у узлов с детьми" }
+  - { name: "aria-selected", kind: "атрибут", doc: "`true` · `false`" }
+  - { name: "aria-level", kind: "атрибут", doc: "целое, с 1" }
+  - { name: "--depth", kind: "переменная", value: "0" }
+  - { name: "--size-indent", kind: "токен" }
+  - { name: "--control-h-sm", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--surface-selected", kind: "токен" }
+  - { name: "--size-chevron", kind: "токен" }
 ---
 
 Иерархия: файлы проекта, структура сцены, вложенность вызовов.
@@ -62,32 +78,8 @@ needs-js: Раскрытие узлов, стрелки, бегущий tabindex
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-tree` | Контейнер |
-| `inst-tree-item` | Узел |
-| `inst-tree-twist` | Треугольник раскрытия. Поворачивается по `aria-expanded` |
-
-### Атрибуты
-
-| Атрибут | Значения |
-|---|---|
-| `aria-expanded` | `true` · `false`. Только у узлов с детьми |
-| `aria-selected` | `true` · `false` |
-| `aria-level` | целое, с 1 |
-
-### CSS-переменные
-
-| Переменная | По умолчанию |
-|---|---|
-| `--depth` | `0`. Глубина узла, задаётся инлайном |
-
-### Токены
-
-`--size-indent` · `--control-h-sm` · `--space-3` · `--radius-sm` ·
-`--text-sm` · `--surface-hover` · `--surface-selected` · `--size-chevron`
+```api
+```
 
 ## Доступность
 
@@ -105,5 +97,3 @@ needs-js: Раскрытие узлов, стрелки, бегущий tabindex
 [Строка очереди](./task.md) · [Шаг](./step.md) ·
 [Список свойств](../components/display/kv.md) ·
 [Диф](./diff.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

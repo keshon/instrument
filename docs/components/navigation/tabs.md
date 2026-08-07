@@ -3,6 +3,20 @@ title: Вкладки
 group: Навигация
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-tabs", kind: "класс", doc: "Полоса вкладок. Нижняя линия и горизонтальная прокрутка без видимого скроллбара" }
+  - { name: "inst-tab", kind: "класс", doc: "Вкладка. Ссылка или кнопка с `role=\"tab\"`" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--space-4", kind: "токен" }
+  - { name: "--space-6", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--size-marker", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--accent-solid", kind: "токен" }
+  - { name: "--text-primary", kind: "токен" }
+  - { name: "--text-secondary", kind: "токен" }
 ---
 
 Горизонтальный переключатель видов внутри одного раздела. По умолчанию — **на
@@ -82,12 +96,8 @@ source: src/layout.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-tabs` | Полоса вкладок. Нижняя линия и горизонтальная прокрутка без видимого скроллбара |
-| `inst-tab` | Вкладка. Ссылка или кнопка с `role="tab"` |
+```api
+```
 
 ### Обязательная разметка
 
@@ -110,12 +120,6 @@ source: src/layout.css
 а не сдвигом на полпикселя: браузер не рисует рамку тоньше физического
 пикселя, и остаток был бы виден на каждом стыке.
 
-### Токены
-
-`--space-3` · `--space-4` · `--space-6` · `--text-sm` · `--weight-medium` ·
-`--size-marker` · `--hairline` · `--border` · `--accent-solid` ·
-`--text-primary` · `--text-secondary`
-
 ## Доступность
 
 | | |
@@ -132,5 +136,3 @@ source: src/layout.css
 [Навигация](./nav.md) · [Крошки](./breadcrumbs.md) ·
 [Сегментированный контрол](../actions/segmented.md) ·
 [Шапка экрана](../../layout/page-header.md) · [Секция](../../layout/section.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

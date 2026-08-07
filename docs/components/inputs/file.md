@@ -4,6 +4,22 @@ group: Ввод
 status: stable
 source: src/forms.css
 needs-js: перетаскивание файлов в зону и список выбранного
+api:
+  - { name: "inst-file", kind: "класс", doc: "`<label>`-зона: пунктир, значок, состояния" }
+  - { name: "inst-file-hint", kind: "класс", doc: "Ограничения формата и размера" }
+  - { name: "--space-7", kind: "токен" }
+  - { name: "--pad-card", kind: "токен" }
+  - { name: "--stroke", kind: "токен" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--surface-field", kind: "токен" }
+  - { name: "--border-control", kind: "токен" }
+  - { name: "--accent-border", kind: "токен" }
+  - { name: "--accent-bg", kind: "токен" }
+  - { name: "--focus-ring", kind: "токен" }
+  - { name: "--size-icon", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
 ---
 
 Выбор файла и зона, в которую его кладут, — **один компонент**, а не два.
@@ -139,12 +155,8 @@ needs-js: перетаскивание файлов в зону и список 
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-file` | `<label>`-зона: пунктир, значок, состояния |
-| `inst-file-hint` | Ограничения формата и размера |
+```api
+```
 
 ### Обязательная разметка
 
@@ -154,12 +166,6 @@ needs-js: перетаскивание файлов в зону и список 
 | `<input type="file">` прямым ребёнком | Состояния написаны через `:has(> input…)` |
 | Текст внутри `<label>` | Доступное имя поля |
 | Никакого `display: none` на поле | Поле уведено в клип и остаётся в порядке обхода |
-
-### Токены
-
-`--space-7` · `--pad-card` · `--stroke` · `--radius-md` · `--surface-field` ·
-`--border-control` · `--accent-border` · `--accent-bg` · `--focus-ring` ·
-`--size-icon` · `--text-sm` · `--text-xs` · `--space-3`
 
 ## Доступность
 
@@ -179,5 +185,3 @@ needs-js: перетаскивание файлов в зону и список 
 [Текстовое поле](./input.md) · [Форма](./form.md) ·
 [Выбираемая карточка](./choice-card.md) · [Мера](../charts/meter.md) ·
 [Кнопка](../actions/button.md) · [Сноска и баннер](../feedback/banner.md)
-
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

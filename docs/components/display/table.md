@@ -4,6 +4,30 @@ group: Отображение данных
 status: stable
 source: src/components.css
 needs-js: Сама сортировка, «выбрать всё» и действия строки
+api:
+  - { name: "inst-table", kind: "класс", doc: "Базовый, на `<table>`" }
+  - { name: "inst-num", kind: "класс", doc: "Числовая ячейка: выравнивание по концу" }
+  - { name: "inst-sort", kind: "класс", doc: "Кнопка-заголовок сортировки" }
+  - { name: "inst-col-select", kind: "класс", doc: "Колонка чекбоксов, ширина по контролу" }
+  - { name: "inst-col-actions", kind: "класс", doc: "Колонка действий, ширина по содержимому" }
+  - { name: "inst-row-actions", kind: "класс", doc: "Обёртка действий: проявляется на наведении и фокусе" }
+  - { name: "inst-table--sticky", kind: "модификатор", doc: "Липкая шапка" }
+  - { name: "inst-table--sticky-col", kind: "модификатор", doc: "Липкая первая колонка" }
+  - { name: "aria-sort", kind: "атрибут", value: "ascending · descending", doc: "на `<th>`" }
+  - { name: "aria-selected", kind: "атрибут", value: "true · false", doc: "на `<tr>`" }
+  - { name: "--table-head-bg", kind: "переменная", value: "--surface-raised" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--pad-cell-x", kind: "токен" }
+  - { name: "--row-pad-y", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--border-subtle", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--surface-selected", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--control-h-md", kind: "токен" }
+  - { name: "--z-sticky", kind: "токен" }
 ---
 
 Сравнимые записи в колонках. Настоящая `<table>` — с семантикой заголовков,
@@ -160,7 +184,7 @@ needs-js: Сама сортировка, «выбрать всё» и дейст
           <td class="inst-num">18,2</td><td class="inst-num">61 204</td>
           <td class="inst-col-actions"><span class="inst-row-actions">
             <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Рендер">
-              <svg class="inst-icon" aria-hidden="true"><use href="#"/></svg></button>
+              <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </span></td>
         </tr>
         <tr>
@@ -170,7 +194,7 @@ needs-js: Сама сортировка, «выбрать всё» и дейст
           <td class="inst-num">11,5</td><td class="inst-num">38 910</td>
           <td class="inst-col-actions"><span class="inst-row-actions">
             <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Физика">
-              <svg class="inst-icon" aria-hidden="true"><use href="#"/></svg></button>
+              <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </span></td>
         </tr>
         <tr>
@@ -180,7 +204,7 @@ needs-js: Сама сортировка, «выбрать всё» и дейст
           <td class="inst-num">4,2</td><td class="inst-num">1 180</td>
           <td class="inst-col-actions"><span class="inst-row-actions">
             <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Аудио">
-              <svg class="inst-icon" aria-hidden="true"><use href="#"/></svg></button>
+              <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </span></td>
         </tr>
       </tbody>
@@ -194,37 +218,8 @@ needs-js: Сама сортировка, «выбрать всё» и дейст
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-table` | Базовый, на `<table>` |
-| `inst-table--sticky` | Липкая шапка |
-| `inst-table--sticky-col` | Липкая первая колонка |
-| `inst-num` | Числовая ячейка: выравнивание по концу |
-| `inst-sort` | Кнопка-заголовок сортировки |
-| `inst-col-select` | Колонка чекбоксов, ширина по контролу |
-| `inst-col-actions` | Колонка действий, ширина по содержимому |
-| `inst-row-actions` | Обёртка действий: проявляется на наведении и фокусе |
-
-### Атрибуты
-
-| Атрибут | Значения | Где |
-|---|---|---|
-| `aria-sort` | `ascending` · `descending` | на `<th>` |
-| `aria-selected` | `true` · `false` | на `<tr>` |
-
-### CSS-переменные
-
-| Переменная | По умолчанию |
-|---|---|
-| `--table-head-bg` | `--surface-raised` — фон липкой шапки. Прозрачный фон пропустил бы под неё строки |
-
-### Токены
-
-`--text-sm` · `--pad-cell-x` · `--row-pad-y` · `--space-3` · `--border` ·
-`--border-subtle` · `--hairline` · `--text-muted` · `--surface-selected` ·
-`--surface-hover` · `--control-h-md` · `--z-sticky`
+```api
+```
 
 ## Доступность
 
@@ -243,5 +238,3 @@ needs-js: Сама сортировка, «выбрать всё» и дейст
 [Карточка](./card.md) · [Список свойств](./kv.md) · [Панель](./panel.md) ·
 [Очередь](../../agent/task.md) · [Пагинация](../navigation/pagination.md) ·
 [Пустое состояние](../feedback/empty.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

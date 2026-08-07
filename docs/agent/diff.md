@@ -3,6 +3,28 @@ title: Диф
 group: Агентный слой
 status: stable
 source: src/agent.css
+api:
+  - { name: "inst-diff", kind: "класс", doc: "Контейнер" }
+  - { name: "inst-diff-head", kind: "класс", doc: "Шапка: путь и статистика" }
+  - { name: "inst-diff-path", kind: "класс", doc: "Путь к файлу. Обрезается с конца" }
+  - { name: "inst-diff-stat", kind: "класс", doc: "`+N` / `−M`" }
+  - { name: "inst-diff-body", kind: "класс", doc: "Тело, прокручивается" }
+  - { name: "inst-diff-line", kind: "класс", doc: "Строка" }
+  - { name: "inst-diff-num", kind: "класс", doc: "Номер строки. Не выделяется мышью" }
+  - { name: "inst-diff-code", kind: "класс", doc: "Сам код" }
+  - { name: "inst-diff-fold", kind: "класс", doc: "Свёрнутый участок" }
+  - { name: "data-kind", kind: "атрибут", value: "add · del", doc: "на `inst-diff-line` и на числах в `inst-diff-stat`" }
+  - { name: "--font-mono", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--ok-bg", kind: "токен" }
+  - { name: "--ok-text", kind: "токен" }
+  - { name: "--err-bg", kind: "токен" }
+  - { name: "--err-text", kind: "токен" }
+  - { name: "--border-subtle", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--radius-lg", kind: "токен" }
+  - { name: "--pad-cell-x", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
 ---
 
 Основной артефакт работы агента: что именно он изменил в файле.
@@ -96,31 +118,8 @@ source: src/agent.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-diff` | Контейнер |
-| `inst-diff-head` | Шапка: путь и статистика |
-| `inst-diff-path` | Путь к файлу. Обрезается с конца |
-| `inst-diff-stat` | `+N` / `−M` |
-| `inst-diff-body` | Тело, прокручивается |
-| `inst-diff-line` | Строка |
-| `inst-diff-num` | Номер строки. Не выделяется мышью |
-| `inst-diff-code` | Сам код |
-| `inst-diff-fold` | Свёрнутый участок |
-
-### Атрибуты
-
-| Атрибут | Значения | Где |
-|---|---|---|
-| `data-kind` | `add` · `del` | на `inst-diff-line` и на числах в `inst-diff-stat` |
-
-### Токены
-
-`--font-mono` · `--text-xs` · `--ok-bg` · `--ok-text` · `--err-bg` ·
-`--err-text` · `--border-subtle` · `--hairline` · `--radius-lg` ·
-`--pad-cell-x` · `--text-muted`
+```api
+```
 
 ## Доступность
 
@@ -137,5 +136,3 @@ source: src/agent.css
 
 [Шаг](./step.md) · [Запрос подтверждения](./approval.md) ·
 [Код](../components/display/code.md) · [Лог](./log.md)
-
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

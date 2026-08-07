@@ -3,6 +3,19 @@ title: Бюджет
 group: Агентный слой
 status: stable
 source: src/agent.css
+api:
+  - { name: "inst-budget", kind: "класс", doc: "Контейнер" }
+  - { name: "inst-budget-row", kind: "класс", doc: "Строка: имя ресурса и значение" }
+  - { name: "inst-budget-value", kind: "класс", doc: "Израсходовано" }
+  - { name: "inst-budget-of", kind: "класс", doc: "«из N» — мельче и тише" }
+  - { name: "inst-budget-note", kind: "класс", doc: "Прогноз" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--weight-normal", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
 ---
 
 Расход против лимита: токены, время, деньги. Компонент агентных систем,
@@ -50,23 +63,11 @@ source: src/agent.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-budget` | Контейнер |
-| `inst-budget-row` | Строка: имя ресурса и значение |
-| `inst-budget-value` | Израсходовано |
-| `inst-budget-of` | «из N» — мельче и тише |
-| `inst-budget-note` | Прогноз |
+```api
+```
 
 Полосу даёт [мера](../components/charts/meter.md), своего примитива у бюджета
 нет.
-
-### Токены
-
-`--space-3` · `--gap-inline` · `--text-sm` · `--text-xs` ·
-`--weight-medium` · `--weight-normal` · `--text-muted`
 
 ## Доступность
 
@@ -83,5 +84,3 @@ source: src/agent.css
 [Мера](../components/charts/meter.md) ·
 [Метрика](../components/display/metric.md) · [Дорожки прогонов](./lane.md) ·
 [Строка очереди](./task.md)
-
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

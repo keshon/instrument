@@ -3,6 +3,22 @@ title: Список свойств
 group: Отображение данных
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-kv", kind: "класс", doc: "Список только для чтения, на `<dl>`" }
+  - { name: "inst-props", kind: "класс", doc: "Инспектор: контейнер редактируемых свойств" }
+  - { name: "inst-prop", kind: "класс", doc: "Одна строка инспектора" }
+  - { name: "inst-prop-label", kind: "класс", doc: "Имя свойства. Обрезается — нужен `title`" }
+  - { name: "inst-prop-control", kind: "класс", doc: "Ячейка контрола" }
+  - { name: "--label-col", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--pad-cell-x", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--control-h-sm", kind: "токен" }
 ---
 
 Пары «имя — значение» одного объекта. Настоящий `<dl>`: связь имени со
@@ -44,21 +60,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-kv` | Список только для чтения, на `<dl>` |
-| `inst-props` | Инспектор: контейнер редактируемых свойств |
-| `inst-prop` | Одна строка инспектора |
-| `inst-prop-label` | Имя свойства. Обрезается — нужен `title` |
-| `inst-prop-control` | Ячейка контрола |
-
-### Токены
-
-`--label-col` · `--pad-panel` · `--pad-cell-x` · `--gap-inline` ·
-`--space-2` · `--space-3` · `--text-sm` · `--text-muted` · `--surface-hover` ·
-`--control-h-sm`
+```api
+```
 
 ## Доступность
 
@@ -73,5 +76,3 @@ source: src/components.css
 
 [Таблица](./table.md) · [Форма](../inputs/form.md) ·
 [Числовое поле](../inputs/num-field.md) · [Карточка](./card.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -3,6 +3,19 @@ title: Селект
 group: Ввод
 status: stable
 source: src/forms.css
+api:
+  - { name: "inst-select-wrap", kind: "класс", doc: "Обёртка. **Обязательна** — в ней шеврон" }
+  - { name: "inst-select", kind: "класс", doc: "Сам `<select>`" }
+  - { name: "inst-select--sm", kind: "модификатор", doc: "Размер" }
+  - { name: "inst-select--lg", kind: "модификатор", doc: "Размер" }
+  - { name: "--surface-field", kind: "токен" }
+  - { name: "--control-h-sm/md/lg", kind: "токен" }
+  - { name: "--control-pad-sm", kind: "токен" }
+  - { name: "--size-chevron", kind: "токен" }
+  - { name: "--space-7", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--border-control", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
 ---
 
 Выбор одного значения из списка. Нативный `<select>` — со всей клавиатурой,
@@ -61,19 +74,8 @@ source: src/forms.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-select-wrap` | Обёртка. **Обязательна** — в ней шеврон |
-| `inst-select` | Сам `<select>` |
-| `inst-select--sm` `inst-select--lg` | Размер |
-
-### Токены
-
-`--surface-field` · `--control-h-sm/md/lg` · `--control-pad-sm` ·
-`--size-chevron` · `--space-7` · `--radius-sm` · `--border-control` ·
-`--text-muted`
+```api
+```
 
 ## Доступность
 
@@ -85,10 +87,7 @@ source: src/forms.css
 | Режим принудительных цветов | Шеврон — маска, в `forced-colors` теряющая цвет фона, поэтому переводится на `CanvasText` явно |
 | Мобильные | Нативный список превращается в системное колесо. Самодельный выпадающий список это теряет |
 
-
 ## Связанное
 
 [Текстовое поле](./input.md) · [Переключатели](./toggles.md) ·
 [Сегментированный контрол](../actions/segmented.md) · [Форма](./form.md)
-
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

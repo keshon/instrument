@@ -3,6 +3,19 @@ title: Аватар
 group: Отображение данных
 status: stable
 source: src/data.css
+api:
+  - { name: "inst-avatar", kind: "класс", doc: "Один аватар. Размер `--control-h-md`" }
+  - { name: "inst-avatars", kind: "класс", doc: "Группа с наложением" }
+  - { name: "inst-avatars-more", kind: "класс", doc: "Счётчик «ещё N» в конце группы" }
+  - { name: "inst-avatar--sm", kind: "модификатор", doc: "Размер" }
+  - { name: "inst-avatar--lg", kind: "модификатор", doc: "Размер" }
+  - { name: "--control-h-sm/md/lg", kind: "токен" }
+  - { name: "--radius-full", kind: "токен" }
+  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--surface-raised", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--size-marker", kind: "токен" }
 ---
 
 Опознавательный знак человека или агента: изображение либо инициалы.
@@ -39,19 +52,8 @@ source: src/data.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-avatar` | Один аватар. Размер `--control-h-md` |
-| `inst-avatar--sm` `inst-avatar--lg` | Размер |
-| `inst-avatars` | Группа с наложением |
-| `inst-avatars-more` | Счётчик «ещё N» в конце группы |
-
-### Токены
-
-`--control-h-sm/md/lg` · `--radius-full` · `--surface-sunken` ·
-`--surface-raised` · `--text-xs` · `--weight-medium` · `--size-marker`
+```api
+```
 
 ## Доступность
 
@@ -68,5 +70,3 @@ source: src/data.css
 
 [Тег](./tag.md) · [Бейдж](./badge.md) · [Таблица](./table.md) ·
 [Лента событий](./timeline.md)
-
-Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

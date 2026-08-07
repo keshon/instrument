@@ -4,6 +4,19 @@ group: Ввод
 status: stable
 source: src/forms.css
 needs-js: вывод текущего значения рядом с бегунком
+api:
+  - { name: "inst-slider", kind: "класс", doc: "Единственный класс. Ставится на `input[type=range]`" }
+  - { name: "--size-track", kind: "токен" }
+  - { name: "--size-thumb", kind: "токен" }
+  - { name: "--size-icon", kind: "токен" }
+  - { name: "--track", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--accent-mark", kind: "токен" }
+  - { name: "--surface-raised", kind: "токен" }
+  - { name: "--radius-full", kind: "токен" }
+  - { name: "--dur-1", kind: "токен" }
+  - { name: "--ease-out", kind: "токен" }
 ---
 
 Нативный `input[type=range]`, приведённый к метрике кита. Значение
@@ -118,11 +131,8 @@ needs-js: вывод текущего значения рядом с бегун�
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-slider` | Единственный класс. Ставится на `input[type=range]` |
+```api
+```
 
 ### Обязательная разметка
 
@@ -132,12 +142,6 @@ needs-js: вывод текущего значения рядом с бегун�
 | `min` и `max` | Границы шкалы и источник `aria-valuemin/max` |
 | `<label for>` или `aria-label` | У контрола нет своего текста |
 | `<output for>` для числа | Семантическая связь вместо подписи, меняющейся на каждом шаге |
-
-### Токены
-
-`--size-track` · `--size-thumb` · `--size-icon` · `--track` · `--border` ·
-`--hairline` · `--accent-mark` · `--surface-raised` · `--radius-full` ·
-`--dur-1` · `--ease-out`
 
 ## Доступность
 
@@ -157,5 +161,3 @@ needs-js: вывод текущего значения рядом с бегун�
 [Числовое поле](./num-field.md) · [Текстовое поле](./input.md) ·
 [Переключатели](./toggles.md) · [Форма](./form.md) ·
 [Мера](../charts/meter.md) · [Панель](../display/panel.md)
-
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

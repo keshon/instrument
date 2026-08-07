@@ -4,6 +4,19 @@ group: Действия
 status: stable
 source: src/components.css
 needs-js: Выбор, стрелки и бегущий tabindex
+api:
+  - { name: "inst-segmented", kind: "класс", doc: "Контейнер. Внутри — голые `button`, свой класс им не нужен" }
+  - { name: "aria-checked", kind: "атрибут", doc: "`true` · `false`. Ровно один `true` в группе" }
+  - { name: "--control-h-md", kind: "токен" }
+  - { name: "--control-pad-md", kind: "токен" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--space-1", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--surface-raised", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
 ---
 
 Один выбор среди равных вариантов. У него **всегда ровно одно** выбранное
@@ -54,23 +67,8 @@ needs-js: Выбор, стрелки и бегущий tabindex
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-segmented` | Контейнер. Внутри — голые `button`, свой класс им не нужен |
-
-### Атрибуты
-
-| Атрибут | Значения |
-|---|---|
-| `aria-checked` | `true` · `false`. Ровно один `true` в группе |
-
-### Токены
-
-`--control-h-md` · `--control-pad-md` · `--radius-md` · `--radius-sm` ·
-`--space-1` · `--text-sm` · `--surface-sunken` · `--surface-raised` ·
-`--border` · `--hairline`
+```api
+```
 
 ## Доступность
 
@@ -82,11 +80,8 @@ needs-js: Выбор, стрелки и бегущий tabindex
 | Контраст | Подпись невыбранного — `--text-secondary`, проверена на 4.5:1 в шести темах |
 | Цель нажатия | Высота на `--space-2` меньше `--control-h-md`. В плотности `compact` уходит ниже 24px по WCAG 2.5.8 — как и всё размера `sm` |
 
-
 ## Связанное
 
 [Группа кнопок](./button-group.md) · [Кнопка](./button.md) ·
 [Вкладки](../navigation/tabs.md) · [Селект](../inputs/select.md) ·
 [Плотность](../../foundations/density.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

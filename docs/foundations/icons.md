@@ -3,6 +3,12 @@ title: Иконки
 group: Основания
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-icon", kind: "класс", doc: "Базовый. Обязателен всегда" }
+  - { name: "inst-icon--sm", kind: "модификатор", doc: "Уменьшение до `--size-chevron`" }
+  - { name: "--size-icon", kind: "токен" }
+  - { name: "--size-chevron", kind: "токен" }
+  - { name: "--stroke", kind: "токен" }
 ---
 
 Inline SVG на сетке 16, обводка `currentColor` толщиной 1.5. Иконка наследует
@@ -152,16 +158,8 @@ Inline SVG на сетке 16, обводка `currentColor` толщиной 1.
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-icon` | Базовый. Обязателен всегда |
-| `inst-icon--sm` | Уменьшение до `--size-chevron` |
-
-### Токены
-
-`--size-icon` · `--size-chevron` · `--stroke`
+```api
+```
 
 ## Доступность
 
@@ -180,5 +178,3 @@ Inline SVG на сетке 16, обводка `currentColor` толщиной 1.
 [Кнопка](../components/actions/button.md) ·
 [Поповер и меню](../components/overlays/popover.md) ·
 [Пустое состояние](../components/feedback/empty.md)
-
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

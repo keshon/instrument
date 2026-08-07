@@ -3,6 +3,15 @@ title: Поиск
 group: Ввод
 status: stable
 source: src/forms.css
+api:
+  - { name: "inst-search", kind: "класс", doc: "Обёртка. Рисует лупу и отводит под неё место" }
+  - { name: "inst-input", kind: "класс", doc: "Само поле. Все размеры и состояния — оттуда" }
+  - { name: "--control-pad-sm", kind: "токен" }
+  - { name: "--size-icon", kind: "токен" }
+  - { name: "--size-chevron", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--text-primary", kind: "токен" }
 ---
 
 Текстовое поле с лупой и **нативной кнопкой очистки**. Обёртка вокруг
@@ -111,12 +120,8 @@ source: src/forms.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-search` | Обёртка. Рисует лупу и отводит под неё место |
-| `inst-input` | Само поле. Все размеры и состояния — оттуда |
+```api
+```
 
 ### Обязательная разметка
 
@@ -125,11 +130,6 @@ source: src/forms.css
 | `type="search"` | Нативная очистка. Без него это обычное текстовое поле с лупой |
 | `<label for>` или `aria-label` | `placeholder` подписью не является: он исчезает при вводе |
 | `inst-input` внутри `inst-search` | Отступ под лупу задан селектором `& > .inst-input` — поле без класса встанет под значок |
-
-### Токены
-
-`--control-pad-sm` · `--size-icon` · `--size-chevron` · `--space-3` ·
-`--text-muted` · `--text-primary`
 
 ## Доступность
 
@@ -147,5 +147,3 @@ source: src/forms.css
 [Текстовое поле](./input.md) · [Селект](./select.md) · [Форма](./form.md) ·
 [Тег](../display/tag.md) · [Таблица](../display/table.md) ·
 [Пустое состояние](../feedback/empty.md)
-
-Исходник: `src/forms.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

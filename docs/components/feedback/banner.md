@@ -4,6 +4,27 @@ group: Обратная связь
 status: stable
 source: src/components.css
 needs-js: Закрытие баннера. Кит не даёт крестика и не прячет блок — без скрипта баннер просто остаётся на месте
+api:
+  - { name: "inst-banner", kind: "класс", doc: "Контейнер. Заливка тона, рамка, значок" }
+  - { name: "inst-banner-body", kind: "класс", doc: "Текстовая часть. `min-inline-size: 0`, чтобы длинное слово не распирало баннер" }
+  - { name: "inst-banner-title", kind: "класс", doc: "Заголовок, средняя насыщенность" }
+  - { name: "inst-banner-text", kind: "класс", doc: "Подробность, `--text-secondary`" }
+  - { name: "inst-banner-actions", kind: "класс", doc: "Действия у дальнего края. Не сжимаются, переносятся при нехватке места" }
+  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт" }
+  - { name: "--tone-bg", kind: "токен" }
+  - { name: "--tone-ink", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--space-4", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--size-icon", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-secondary", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--leading-ui", kind: "токен" }
 ---
 
 Сообщение **уровня страницы**: оно относится ко всему экрану, а не к тому,
@@ -89,27 +110,8 @@ needs-js: Закрытие баннера. Кит не даёт крестика
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-banner` | Контейнер. Заливка тона, рамка, значок |
-| `inst-banner-body` | Текстовая часть. `min-inline-size: 0`, чтобы длинное слово не распирало баннер |
-| `inst-banner-title` | Заголовок, средняя насыщенность |
-| `inst-banner-text` | Подробность, `--text-secondary` |
-| `inst-banner-actions` | Действия у дальнего края. Не сжимаются, переносятся при нехватке места |
-
-### Атрибуты
-
-| Атрибут | Словарь |
-|---|---|
-| `data-tone` | `neutral` `running` `ok` `warn` `error`. Закрыт |
-
-### Токены
-
-`--tone-bg` · `--tone-ink` · `--border` · `--hairline` · `--radius-md` ·
-`--pad-panel` · `--space-3` · `--space-4` · `--gap-inline` · `--size-icon` ·
-`--text-sm` · `--text-secondary` · `--weight-medium` · `--leading-ui`
+```api
+```
 
 Значок центрируется по **первой строке** текста: `calc((1lh - var(--size-icon))
 / 2)`. Формула сама подстраивается под кегль и плотность, поэтому баннер с
@@ -130,5 +132,3 @@ needs-js: Закрытие баннера. Кит не даёт крестика
 [Сноска](./note.md) · [Пустое состояние](./empty.md) ·
 [Блок отказа](../../agent/failure.md) · [Бейдж](../display/badge.md) ·
 [Модалка](../overlays/dialog.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

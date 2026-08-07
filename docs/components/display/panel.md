@@ -3,6 +3,20 @@ title: Панель
 group: Отображение данных
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-panel", kind: "класс", doc: "Область. Контейнер по инлайновой оси" }
+  - { name: "inst-panel-header", kind: "класс", doc: "Шапка: имя и действия" }
+  - { name: "inst-panel-title", kind: "класс", doc: "Имя области" }
+  - { name: "inst-panel-actions", kind: "класс", doc: "Действия в шапке, прижаты к концу" }
+  - { name: "inst-panel-body", kind: "класс", doc: "Тело с прокруткой" }
+  - { name: "inst-panel-body--flush", kind: "модификатор", doc: "Без внутреннего отступа" }
+  - { name: "inst-panel-body--list", kind: "модификатор", doc: "Отступ только по вертикали" }
+  - { name: "--surface-raised", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--radius-lg", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
 ---
 
 Область приложения: она стоит на экране постоянно и имеет своё имя. Панель —
@@ -77,22 +91,8 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-panel` | Область. Контейнер по инлайновой оси |
-| `inst-panel-header` | Шапка: имя и действия |
-| `inst-panel-title` | Имя области |
-| `inst-panel-actions` | Действия в шапке, прижаты к концу |
-| `inst-panel-body` | Тело с прокруткой |
-| `inst-panel-body--flush` | Без внутреннего отступа |
-| `inst-panel-body--list` | Отступ только по вертикали |
-
-### Токены
-
-`--surface-raised` · `--border` · `--hairline` · `--radius-lg` ·
-`--pad-panel` · `--text-sm`
+```api
+```
 
 ## Доступность
 
@@ -113,5 +113,3 @@ source: src/components.css
 [Карточка](./card.md) · [Секция](../../layout/section.md) ·
 [Оболочка](../../layout/shell.md) · [Поповер](../overlays/popover.md) ·
 [Таблица](./table.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

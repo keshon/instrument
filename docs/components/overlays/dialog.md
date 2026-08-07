@@ -4,6 +4,32 @@ group: Оверлеи
 status: stable
 source: src/overlay.css
 needs-js: "Открытие — одна строка: dlg.showModal(). Закрытие, подложка, блокировка прокрутки фона и возврат фокуса скрипта не требуют"
+api:
+  - { name: "inst-dialog", kind: "класс", doc: "Базовый. Ставится на `<dialog>`" }
+  - { name: "inst-dialog-head", kind: "класс", doc: "Шапка" }
+  - { name: "inst-dialog-title", kind: "класс", doc: "Заголовок" }
+  - { name: "inst-dialog-close", kind: "класс", doc: "Крестик у дальнего края шапки" }
+  - { name: "inst-dialog-body", kind: "класс", doc: "Прокручиваемое тело" }
+  - { name: "inst-dialog-foot", kind: "класс", doc: "Подвал с действиями" }
+  - { name: "inst-dialog-foot-note", kind: "класс", doc: "Пояснение, отжимающее кнопки к дальнему краю" }
+  - { name: "inst-sheet", kind: "класс", doc: "Другая раскладка того же `<dialog>` — [шторка](./sheet.md)" }
+  - { name: "inst-dialog-foot--end", kind: "модификатор", doc: "Действия у дальнего края" }
+  - { name: "--surface-overlay", kind: "токен" }
+  - { name: "--shadow-modal", kind: "токен" }
+  - { name: "--scrim", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--border-subtle", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--radius-lg", kind: "токен" }
+  - { name: "--pad-card", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--space-5", kind: "токен" }
+  - { name: "--space-8", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--text-md", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
 ---
 
 Окно, которое забирает фокус и гасит фон, потому что без ответа продолжать
@@ -11,6 +37,9 @@ needs-js: "Открытие — одна строка: dlg.showModal(). Закр
 не нарисованная.
 
 ```html preview
+<button class="inst-btn inst-btn--danger" type="button"
+        onclick="document.getElementById('dlg-confirm').showModal()">Удалить прогон</button>
+
 <dialog class="inst-dialog" id="dlg-confirm">
   <form method="dialog">
     <div class="inst-dialog-head">
@@ -30,10 +59,14 @@ needs-js: "Открытие — одна строка: dlg.showModal(). Закр
 </dialog>
 ```
 
-> Открытие — **одна строка скрипта**: `document.getElementById('dlg-confirm').showModal()`.
-> Всё остальное платформа делает сама: подложка, ловушка фокуса, закрытие по
-> `Escape`, возврат фокуса на вызвавшую кнопку. Декларативные `command` и
-> `commandfor` пока прогрессивны и в контракт кита не берутся.
+> Открытие — **одна строка скрипта**, и она стоит прямо в примере выше:
+> `document.getElementById('dlg-confirm').showModal()`. Всё остальное
+> платформа делает сама: подложка, ловушка фокуса, закрытие по `Escape`,
+> возврат фокуса на вызвавшую кнопку. Декларативные `command` и `commandfor`
+> пока прогрессивны и в контракт кита не берутся.
+>
+> `onclick` в примере — сокращение ради одного файла. В приложении обработчик
+> вешается кодом; кит на способ его повесить не смотрит.
 
 ## Когда использовать
 
@@ -95,8 +128,14 @@ needs-js: "Открытие — одна строка: dlg.showModal(). Закр
 к которому вернётся. Кит закрывает это одним правилом:
 
 ```css
-html:has(dialog[open]) { overflow: hidden; }
+html:has(dialog:modal) { overflow: hidden; }
 ```
+
+Селектор `:modal`, а не `[open]`, и разница здесь принципиальная. Атрибут
+`open` стоит и на немодальном `show()`, у которого вся работа в том, чтобы
+**не** блокировать страницу. Пока правило смотрело на атрибут, немодальная
+панель замораживала прокрутку всего документа — и делала это с любым
+`<dialog>` на странице, даже без единого класса кита.
 
 Останавливается пользовательская прокрутка — колесо, тачпад, клавиши.
 Программный `scrollTo` продолжает работать, и это правильно: приложению может
@@ -119,19 +158,8 @@ html { scrollbar-gutter: stable; }
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-dialog` | Базовый. Ставится на `<dialog>` |
-| `inst-dialog-head` | Шапка |
-| `inst-dialog-title` | Заголовок |
-| `inst-dialog-close` | Крестик у дальнего края шапки |
-| `inst-dialog-body` | Прокручиваемое тело |
-| `inst-dialog-foot` | Подвал с действиями |
-| `inst-dialog-foot--end` | Действия у дальнего края |
-| `inst-dialog-foot-note` | Пояснение, отжимающее кнопки к дальнему краю |
-| `inst-sheet` | Другая раскладка того же `<dialog>` — [шторка](./sheet.md) |
+```api
+```
 
 ### Обязательная разметка
 
@@ -154,13 +182,6 @@ html { scrollbar-gutter: stable; }
 | ширина | `min(34rem, 100vw - var(--space-8))` |
 | максимальная высота | `min(80dvh, 100dvh - var(--space-8))` |
 
-### Токены
-
-`--surface-overlay` · `--shadow-modal` · `--scrim` · `--border` ·
-`--border-subtle` · `--hairline` · `--radius-lg` · `--pad-card` ·
-`--space-3` · `--space-5` · `--space-8` · `--gap-inline` · `--text-md` ·
-`--text-xs` · `--weight-medium` · `--text-muted`
-
 Модалка — **второй и последний носитель тени в ките**. Первый —
 [поповер](./popover.md).
 
@@ -171,7 +192,7 @@ html { scrollbar-gutter: stable; }
 | Фокус | `showModal()` уводит фокус внутрь, держит его там и возвращает на вызвавшую кнопку при закрытии. Ничего из этого писать не надо |
 | Клавиатура | `Escape` закрывает. `Tab` не выходит за пределы модалки |
 | Фон инертен | Содержимое под подложкой недоступно ни мыши, ни скринридеру — это делает платформа |
-| Прокрутка фона | Останавливается правилом `html:has(dialog[open])`. Иначе пользователь теряет место |
+| Прокрутка фона | Останавливается правилом `html:has(dialog:modal)`. Иначе пользователь теряет место |
 | Заголовок | `inst-dialog-title` оформляет, но не объявляет. Если модалке нужно доступное имя, свяжите её `aria-labelledby` с заголовком |
 | Подложка | `--scrim` — 0.32 в светлой теме и 0.58 в тёмной: фон читается как выключенный, но не исчезает |
 | Печать | Модалка на листе не печатается |
@@ -181,5 +202,3 @@ html { scrollbar-gutter: stable; }
 [Шторка](./sheet.md) · [Поповер](./popover.md) ·
 [Баннер](../feedback/banner.md) · [Согласование](../../agent/approval.md) ·
 [Форма](../inputs/form.md) · [Оболочка](../../layout/shell.md)
-
-Исходник: `src/overlay.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -4,6 +4,27 @@ group: Отображение данных
 status: stable
 source: src/data.css
 needs-js: Выбор даты и переключение месяцев
+api:
+  - { name: "inst-calendar", kind: "класс", doc: "Сетка на семь колонок" }
+  - { name: "inst-calendar-dow", kind: "класс", doc: "Шапка: сокращение дня недели" }
+  - { name: "inst-calendar-day", kind: "класс", doc: "Ячейка дня" }
+  - { name: "data-today", kind: "атрибут", value: "true", doc: "на `inst-calendar-day`" }
+  - { name: "data-outside", kind: "атрибут", value: "true", doc: "там же" }
+  - { name: "aria-selected", kind: "атрибут", value: "true · false", doc: "там же" }
+  - { name: "aria-disabled", kind: "атрибут", value: "true", doc: "там же" }
+  - { name: "--space-1", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--control-h-sm", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--text-2xs", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--surface-selected", kind: "токен" }
+  - { name: "--accent-text", kind: "токен" }
+  - { name: "--accent-solid", kind: "токен" }
+  - { name: "--size-marker", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
 ---
 
 Статическая сетка дат. Кит отвечает за то, чтобы сетка была сеткой, а
@@ -57,29 +78,8 @@ needs-js: Выбор даты и переключение месяцев
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-calendar` | Сетка на семь колонок |
-| `inst-calendar-dow` | Шапка: сокращение дня недели |
-| `inst-calendar-day` | Ячейка дня |
-
-### Атрибуты
-
-| Атрибут | Значения | Где |
-|---|---|---|
-| `data-today` | `true` | на `inst-calendar-day` |
-| `data-outside` | `true` | там же |
-| `aria-selected` | `true` · `false` | там же |
-| `aria-disabled` | `true` | там же |
-
-### Токены
-
-`--space-1` · `--space-2` · `--control-h-sm` · `--radius-sm` ·
-`--text-xs` · `--text-2xs` · `--text-muted` · `--text-faint` ·
-`--surface-hover` · `--surface-selected` · `--accent-text` ·
-`--accent-solid` · `--size-marker` · `--weight-medium`
+```api
+```
 
 ## Доступность
 
@@ -98,5 +98,3 @@ needs-js: Выбор даты и переключение месяцев
 
 [Лента событий](./timeline.md) · [Текстовое поле](../inputs/input.md) ·
 [Дорожки прогонов](../../agent/lane.md) · [Таблица](./table.md)
-
-Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

@@ -3,6 +3,24 @@ title: Лента событий
 group: Отображение данных
 status: stable
 source: src/data.css
+api:
+  - { name: "inst-timeline", kind: "класс", doc: "Контейнер" }
+  - { name: "inst-timeline-item", kind: "класс", doc: "Одно событие" }
+  - { name: "inst-timeline-dot", kind: "класс", doc: "Точка на линии" }
+  - { name: "inst-timeline-body", kind: "класс", doc: "Описание события" }
+  - { name: "inst-timeline-sub", kind: "класс", doc: "Подробность под описанием" }
+  - { name: "inst-timeline-time", kind: "класс", doc: "Отметка времени, прижата к концу" }
+  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`" }
+  - { name: "--size-gutter", kind: "токен" }
+  - { name: "--gap-inline", kind: "токен" }
+  - { name: "--row-pad-y", kind: "токен" }
+  - { name: "--size-dot", kind: "токен" }
+  - { name: "--size-marker", kind: "токен" }
+  - { name: "--border", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--tone-mark", kind: "токен" }
 ---
 
 Хронология: что произошло и когда. Точки соединены линией, поэтому лента
@@ -52,28 +70,8 @@ source: src/data.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-timeline` | Контейнер |
-| `inst-timeline-item` | Одно событие |
-| `inst-timeline-dot` | Точка на линии |
-| `inst-timeline-body` | Описание события |
-| `inst-timeline-sub` | Подробность под описанием |
-| `inst-timeline-time` | Отметка времени, прижата к концу |
-
-### Атрибуты
-
-| Атрибут | Значения |
-|---|---|
-| `data-tone` | `neutral` `running` `ok` `warn` `error` |
-
-### Токены
-
-`--size-gutter` · `--gap-inline` · `--row-pad-y` · `--size-dot` ·
-`--size-marker` · `--border` · `--text-sm` · `--text-xs` · `--text-muted` ·
-`--tone-mark`
+```api
+```
 
 ## Доступность
 
@@ -89,5 +87,3 @@ source: src/data.css
 
 [Лог](../../agent/log.md) · [Шаги мастера](../navigation/steps.md) ·
 [Таблица](./table.md) · [Бейдж](./badge.md)
-
-Исходник: `src/data.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

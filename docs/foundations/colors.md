@@ -373,5 +373,3 @@ source: src/tokens.css
 [Токены](./tokens.md) · [Высота и поверхности](./elevation.md) ·
 [Бейдж](../components/display/badge.md) · [Легенда графика](../components/charts/legend.md) ·
 [Метрика](../components/display/metric.md)
-
-Исходник: `src/tokens.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

@@ -3,6 +3,35 @@ title: Кнопка
 group: Действия
 status: stable
 source: src/components.css
+api:
+  - { name: "inst-btn",          kind: "класс",       doc: "Базовый. На `<button>` или `<a>`. Обязателен всегда" }
+  - { name: "inst-btn-group",    kind: "класс",       doc: "Контейнер группы: снимает рамку у соседа и скругляет только торцы" }
+
+  - { name: "inst-btn--primary", kind: "модификатор", doc: "Сплошная заливка акцентом. **Одно** главное действие на экран" }
+  - { name: "inst-btn--ghost",   kind: "модификатор", doc: "Без рамки. Для второстепенных действий в плотном ряду" }
+  - { name: "inst-btn--danger",  kind: "модификатор", doc: "Разрушительное действие: тон ошибки в подписи и рамке" }
+  - { name: "inst-btn--sm",      kind: "модификатор", value: "26px", doc: "Высота из `--control-h-sm`, кегль `--text-xs`" }
+  - { name: "inst-btn--lg",      kind: "модификатор", value: "38px", doc: "Высота из `--control-h-lg`, кегль `--text-md`" }
+  - { name: "inst-btn--icon",    kind: "модификатор", doc: "Квадратная, только иконка. Требует `aria-label`" }
+
+  - { name: "type",       kind: "атрибут", value: "button · submit", doc: "Обязателен. Без него кнопка внутри формы её отправит" }
+  - { name: "aria-busy",  kind: "атрибут", value: "true",            doc: "Действие пошло: подпись гаснет, на её месте крутится кольцо. Ширина не меняется" }
+  - { name: "aria-label", kind: "атрибут",                           doc: "Обязателен у `inst-btn--icon`: кнопка без текста не имеет доступного имени" }
+  - { name: "disabled",   kind: "атрибут",                           doc: "Недоступно. Для занятости **не применяется** — выбрасывает кнопку из обхода с клавиатуры" }
+
+  - { name: "--btn-fg",       kind: "переменная", value: "--text-primary",   doc: "Цвет подписи" }
+  - { name: "--btn-bg",       kind: "переменная", value: "transparent",      doc: "Заливка. Наведение меняет **только** её" }
+  - { name: "--btn-bg-hover", kind: "переменная", value: "--surface-hover",  doc: "Заливка под курсором" }
+  - { name: "--btn-bg-active",kind: "переменная", value: "--surface-active", doc: "Заливка при нажатии" }
+  - { name: "--btn-border",   kind: "переменная", value: "--border-control", doc: "Рамка" }
+
+  - { name: "--control-h-md",   kind: "токен", value: "32px", doc: "Высота. Перенастраивается плотностью" }
+  - { name: "--control-pad-md", kind: "токен", value: "12px", doc: "Горизонтальный отступ" }
+  - { name: "--radius-md",      kind: "токен", value: "7px",  doc: "Скругление отдельно стоящего контрола" }
+  - { name: "--text-sm",        kind: "токен", value: "13px", doc: "Кегль подписи" }
+  - { name: "--weight-medium",  kind: "токен", value: "500",  doc: "Начертание подписи" }
+  - { name: "--size-spinner",   kind: "токен", value: "13px", doc: "Кольцо занятости" }
+  - { name: "--dur-1",          kind: "токен", value: "80ms", doc: "Длительность перехода заливки" }
 ---
 
 Действие, которое пользователь запускает сам. По умолчанию кнопка **тихая**:
@@ -156,41 +185,12 @@ source: src/components.css
 
 ## Справочник
 
-### Классы
+```api
+```
 
-| Класс | Работа |
-|---|---|
-| `inst-btn` | Базовый. Обязателен всегда |
-| `inst-btn--primary` | Сплошная заливка акцентом |
-| `inst-btn--ghost` | Без рамки |
-| `inst-btn--danger` | Разрушительное действие |
-| `inst-btn--sm` `inst-btn--lg` | Размер |
-| `inst-btn--icon` | Квадратная, только иконка |
-| `inst-btn-group` | Контейнер группы |
-
-### Обязательная разметка
-
-| Что | Почему |
-|---|---|
-| `type="button"` | Иначе внутри формы кнопка её отправит. Исключение — кнопка, которая **должна** отправлять: `type="submit"` |
-| `aria-label` у `--icon` | Кнопка без текста иначе не имеет доступного имени |
-| `aria-hidden="true"` у иконки | Иконка декоративна, имя даёт подпись или `aria-label` |
-| `aria-busy="true"` для занятости | Не `disabled` и не свой атрибут |
-
-### CSS-переменные
-
-Вариант описывается ими, а не переписыванием правила.
-
-| Переменная | По умолчанию |
-|---|---|
-| `--btn-fg` | `--text-primary` |
-| `--btn-bg` | `transparent` |
-| `--btn-bg-hover` | `--surface-hover` |
-| `--btn-bg-active` | `--surface-active` |
-| `--btn-border` | `--border-control` |
+### Свой вариант — две строки
 
 ```css
-/* Свой вариант — две строки, а не копия блока */
 .my-btn--accent {
   --btn-fg: var(--accent-on);
   --btn-bg: var(--accent-solid);
@@ -205,12 +205,6 @@ source: src/components.css
   Выше этого порога белый текст перестаёт держать 4.5:1. По той же причине
   `--btn-bg-hover` уходит **от** цвета подписи, а не к нему: зеркальное
   «в тёмной теме светлее» роняет контраст подписи до 2.61.
-
-### Токены
-
-`--control-h-sm/md/lg` · `--control-pad-sm/md/lg` · `--radius-md` ·
-`--hairline` · `--text-xs/sm/md` · `--weight-medium` · `--space-3` ·
-`--size-spinner` · `--dur-1` · `--ease-out`
 
 ## Доступность
 
@@ -230,5 +224,3 @@ source: src/components.css
 [Группа кнопок](./button-group.md) · [Сегментированный контрол](./segmented.md) ·
 [Иконка](../../foundations/icons.md) · [Меню](../overlays/menu.md) ·
 [Полоса действий формы](../inputs/form.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

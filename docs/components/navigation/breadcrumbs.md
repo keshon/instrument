@@ -3,6 +3,14 @@ title: Крошки
 group: Навигация
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-crumbs", kind: "класс", doc: "Список пути. Ставится на `<ol>`" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--size-chevron", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
+  - { name: "--text-faint", kind: "токен" }
+  - { name: "--text-primary", kind: "токен" }
 ---
 
 Путь от корня до текущего экрана. Отвечает на вопрос «где я и как отсюда
@@ -67,11 +75,8 @@ source: src/layout.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-crumbs` | Список пути. Ставится на `<ol>` |
+```api
+```
 
 Отдельного класса у элемента и у ссылки нет: кит оформляет `& > li` и `& a`
 внутри списка. Разметка и есть API.
@@ -84,11 +89,6 @@ source: src/layout.css
 | `<ol>` с `<li>` | Путь упорядочен, и порядок — часть смысла. `<div>` его теряет |
 | `aria-current="page"` на последнем | Помечает текущий экран и получает `--text-primary` вместо приглушённого |
 | Последний элемент — не `<a>` | Ссылка на страницу, где уже находишься, — ложное действие |
-
-### Токены
-
-`--space-2` · `--text-xs` · `--size-chevron` · `--text-muted` ·
-`--text-faint` · `--text-primary`
 
 ## Доступность
 
@@ -106,5 +106,3 @@ source: src/layout.css
 [Оболочка](../../layout/shell.md) · [Навигация](./nav.md) ·
 [Вкладки](./tabs.md) · [Шапка экрана](../../layout/page-header.md) ·
 [Дерево](../../agent/tree.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

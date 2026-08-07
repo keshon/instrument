@@ -3,6 +3,23 @@ title: Постраничная навигация
 group: Навигация
 status: stable
 source: src/layout.css
+api:
+  - { name: "inst-pager", kind: "класс", doc: "Список страниц. Ставится на `<ol>`, переносится по ширине" }
+  - { name: "inst-pager-item", kind: "класс", doc: "Страница или стрелка. Квадрат не ниже `--control-h-sm`" }
+  - { name: "inst-pager-gap", kind: "класс", doc: "Многоточие на месте пропущенного диапазона. Не ссылка" }
+  - { name: "--control-h-sm", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--surface-selected", kind: "токен" }
+  - { name: "--accent-text", kind: "токен" }
+  - { name: "--accent-border", kind: "токен" }
+  - { name: "--text-secondary", kind: "токен" }
+  - { name: "--text-faint", kind: "токен" }
 ---
 
 Переход по страницам длинного списка. Каждая страница — **свой адрес**, поэтому
@@ -71,13 +88,8 @@ source: src/layout.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-pager` | Список страниц. Ставится на `<ol>`, переносится по ширине |
-| `inst-pager-item` | Страница или стрелка. Квадрат не ниже `--control-h-sm` |
-| `inst-pager-gap` | Многоточие на месте пропущенного диапазона. Не ссылка |
+```api
+```
 
 ### Обязательная разметка
 
@@ -87,12 +99,6 @@ source: src/layout.css
 | `<ol>` с `<li>` | Страницы упорядочены |
 | `aria-current="page"` | Единственный источник текущей страницы. Класса для неё нет |
 | `aria-disabled="true"` | Край диапазона у ссылки. Не `disabled` — его у `<a>` не существует |
-
-### Токены
-
-`--control-h-sm` · `--radius-sm` · `--space-2` · `--space-3` · `--text-xs` ·
-`--weight-medium` · `--hairline` · `--surface-hover` · `--surface-selected` ·
-`--accent-text` · `--accent-border` · `--text-secondary` · `--text-faint`
 
 ## Доступность
 
@@ -110,5 +116,3 @@ source: src/layout.css
 [Таблица](../display/table.md) · [Пустое состояние](../feedback/empty.md) ·
 [Панель](../display/panel.md) · [Тулбар](./toolbar.md) ·
 [Секция](../../layout/section.md)
-
-Исходник: `src/layout.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)

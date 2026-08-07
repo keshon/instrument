@@ -3,6 +3,21 @@ title: Блок отказа
 group: Агентный слой
 status: stable
 source: src/agent.css
+api:
+  - { name: "inst-failure", kind: "класс", doc: "Блок" }
+  - { name: "inst-failure-head", kind: "класс", doc: "Что не вышло. Со значком" }
+  - { name: "inst-failure-reason", kind: "класс", doc: "Причина: машинный код и расшифровка" }
+  - { name: "inst-failure-tried", kind: "класс", doc: "Что уже пробовали, на `<ul>`" }
+  - { name: "inst-failure-actions", kind: "класс", doc: "Выход. **Обязателен**" }
+  - { name: "--pad-card", kind: "токен" }
+  - { name: "--radius-lg", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--err-bg", kind: "токен" }
+  - { name: "--err-text", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--text-muted", kind: "токен" }
 ---
 
 Агент не смог. Блок отвечает на три вопроса подряд: **что не вышло**, **что
@@ -53,20 +68,8 @@ source: src/agent.css
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-failure` | Блок |
-| `inst-failure-head` | Что не вышло. Со значком |
-| `inst-failure-reason` | Причина: машинный код и расшифровка |
-| `inst-failure-tried` | Что уже пробовали, на `<ul>` |
-| `inst-failure-actions` | Выход. **Обязателен** |
-
-### Токены
-
-`--pad-card` · `--radius-lg` · `--space-3` · `--err-bg` · `--err-text` ·
-`--hairline` · `--text-sm` · `--text-xs` · `--text-muted`
+```api
+```
 
 ## Доступность
 
@@ -84,5 +87,3 @@ source: src/agent.css
 [Запрос подтверждения](./approval.md) · [Шаг](./step.md) ·
 [Баннер](../components/feedback/banner.md) ·
 [Пустое состояние](../components/feedback/empty.md) · [Лог](./log.md)
-
-Исходник: `src/agent.css` · Почему кит устроен именно так — [конституция](../about/design-principles.md)

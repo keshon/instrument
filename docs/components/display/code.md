@@ -4,6 +4,18 @@ group: Отображение данных
 status: stable
 source: src/components.css
 needs-js: Копирование в буфер
+api:
+  - { name: "inst-code", kind: "класс", doc: "Блок кода. Прокручивается по горизонтали" }
+  - { name: "inst-copyable", kind: "класс", doc: "Однострочное значение с кнопкой" }
+  - { name: "inst-copy", kind: "класс", doc: "Кнопка копирования" }
+  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--border-subtle", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--radius-md", kind: "токен" }
+  - { name: "--space-4", kind: "токен" }
+  - { name: "--pad-panel", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--font-mono", kind: "токен" }
 ---
 
 Блок кода и однострочное значение, которое хочется скопировать: путь, хеш,
@@ -31,18 +43,8 @@ needs-js: Копирование в буфер
 
 ## Справочник
 
-### Классы
-
-| Класс | Работа |
-|---|---|
-| `inst-code` | Блок кода. Прокручивается по горизонтали |
-| `inst-copyable` | Однострочное значение с кнопкой |
-| `inst-copy` | Кнопка копирования |
-
-### Токены
-
-`--surface-sunken` · `--border-subtle` · `--hairline` · `--radius-md` ·
-`--space-4` · `--pad-panel` · `--text-xs` · `--font-mono`
+```api
+```
 
 ## Доступность
 
@@ -59,5 +61,3 @@ needs-js: Копирование в буфер
 
 [Лог](../../agent/log.md) · [Диф](../../agent/diff.md) ·
 [Шаг и свёрнутый вывод](../../agent/step.md) · [Типографика](../../foundations/typography.md)
-
-Исходник: `src/components.css` · Почему кит устроен именно так — [конституция](../../about/design-principles.md)
