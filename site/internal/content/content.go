@@ -28,6 +28,14 @@ type Page struct {
 	Status  string
 	Splash  bool
 
+	// Icon — идентификатор символа в спрайте, выведенный из слага.
+	//
+	// Не поле frontmatter намеренно: связь «страница ↔ иконка» взаимно
+	// однозначна, и выводить её из имени дешевле, чем поддерживать в
+	// семидесяти одной шапке. Отсутствие символа ловит сборка — страница
+	// без иконки иначе потерялась бы молча.
+	Icon string
+
 	HTML  string // готовое тело страницы
 	TOC   []Heading
 	Demos []Demo // живые примеры, каждый уедет в свой документ
@@ -149,6 +157,9 @@ func parse(fsPath, rel string) (*Page, error) {
 	}
 	if p.Title == "" {
 		p.Title = slug
+	}
+	if slug != "index" {
+		p.Icon = "i-p-" + slug
 	}
 
 	if err := renderMarkdown(p, body); err != nil {

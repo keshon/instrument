@@ -15,6 +15,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"instrument/site/internal/check"
 	"instrument/site/internal/content"
@@ -40,9 +42,23 @@ func main() {
 		log.Fatalf("в %s не найдено ни одной страницы", *docs)
 	}
 
+	// Иконка выводится из слага, поэтому новая страница получает ссылку на
+	// символ, которого может не быть. Пустой <use> ничего не рисует и ничего
+	// не сообщает — ловим здесь.
+	sprite, err := os.ReadFile(filepath.Join(*assets, "sprite.svg"))
+	if err != nil {
+		log.Fatalf("не прочитать спрайт: %v", err)
+	}
+	var missing []string
+	for _, p := range pages {
+		if p.Icon != "" && !strings.Contains(string(sprite), `id="`+p.Icon+`"`) {
+			missing = append(missing, fmt.Sprintf("%s  нет символа %s в спрайте", p.Route, p.Icon))
+		}
+	}
+
 	// Проверка идёт ДО записи: страница с битой ссылкой выглядит целой, и
 	// увидеть её глазами нельзя.
-	if problems := check.Verify(pages); len(problems) > 0 {
+	if problems := append(check.Verify(pages), missing...); len(problems) > 0 {
 		for _, p := range problems {
 			fmt.Fprintln(os.Stderr, "  "+p)
 		}

@@ -10,7 +10,6 @@ import (
 
 type Section struct {
 	Label string
-	Icon  string // id символа в спрайте
 	Items []*content.Page
 }
 
@@ -19,42 +18,42 @@ type Section struct {
 // агентный слой отдельным разделом, потому что он и есть причина брать
 // именно этот кит.
 var sections = []struct {
-	dir, label, icon string
-	order            []string // явный порядок внутри; остальное по заголовку
+	dir, label string
+	order      []string // явный порядок внутри; остальное по заголовку
 }{
-	{"foundations", "Основания", "i-swatch", []string{
+	{"foundations", "Основания", []string{
 		"colors", "typography", "spacing", "elevation", "motion",
 		"density", "icons", "utilities", "tokens",
 	}},
-	{"layout", "Раскладка", "i-grid", []string{
+	{"layout", "Раскладка", []string{
 		"shell", "container", "flow", "split", "page-header", "section",
 	}},
-	{"components/actions", "Действия", "i-pointer", nil},
-	{"components/inputs", "Ввод", "i-input", []string{
+	{"components/actions", "Действия", nil},
+	{"components/inputs", "Ввод", []string{
 		"input", "select", "toggles", "slider", "num-field", "search",
 		"choice-card", "file", "form",
 	}},
-	{"components/display", "Отображение данных", "i-list", []string{
+	{"components/display", "Отображение данных", []string{
 		"panel", "card", "table", "kv", "metric", "badge", "tag",
 		"avatar", "timeline", "calendar", "code",
 	}},
-	{"components/charts", "Графики", "i-chart", []string{
+	{"components/charts", "Графики", []string{
 		"meter", "ring", "sparkline", "legend", "palette",
 	}},
-	{"components/navigation", "Навигация", "i-nav", []string{
+	{"components/navigation", "Навигация", []string{
 		"nav", "tabs", "breadcrumbs", "pagination", "steps", "toolbar",
 	}},
-	{"components/overlays", "Оверлеи", "i-layers", []string{
+	{"components/overlays", "Оверлеи", []string{
 		"popover", "menu", "tooltip", "dialog", "sheet",
 	}},
-	{"components/feedback", "Обратная связь", "i-alert", []string{
+	{"components/feedback", "Обратная связь", []string{
 		"banner", "note", "empty", "skeleton", "spinner", "states", "accordion",
 	}},
-	{"agent", "Агентный слой", "i-agent", []string{
+	{"agent", "Агентный слой", []string{
 		"task", "step", "approval", "failure", "diff", "output",
 		"log", "lane", "budget", "tree",
 	}},
-	{"about", "О проекте", "i-book", nil},
+	{"about", "О проекте", nil},
 }
 
 func Build(pages []*content.Page) []Section {
@@ -90,7 +89,7 @@ func Build(pages []*content.Page) []Section {
 				return items[i].Title < items[j].Title
 			}
 		})
-		out = append(out, Section{Label: s.label, Icon: s.icon, Items: items})
+		out = append(out, Section{Label: s.label, Items: items})
 		delete(byDir, s.dir)
 	}
 
