@@ -81,16 +81,45 @@
 
 /* Кнопка снятия — настоящая кнопка, а не крестик текстом: её надо уметь
    нажать с клавиатуры и озвучить скринридеру.                            */
+/* Крестик 10×10 — самая маленькая цель кита, и единственная, у которой нет
+   ни подписи рядом, ни строки-обёртки: соседний тег стоит вплотную, поэтому
+   исключение по расстоянию к ней неприменимо. Область нажатия дорастает до
+   нормы невидимым ::before; сам крестик остаётся 10px.                     */
 .inst-tag-remove {
+  position: relative;
   flex: none;
   inline-size: var(--size-chevron);
   block-size: var(--size-chevron);
   margin-inline-end: calc(var(--space-1) * -1);
-  background: var(--text-muted);
   cursor: pointer;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
 
-  &:hover { background: var(--err-text); }
+  /* Область нажатия до нормы WCAG 2.2 AA. Размер задан ЯВНО, а не
+     отрицательным inset: тот отсчитывается от padding-box и промахивается на
+     толщину рамки.                                                        */
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+    inline-size: var(--tap-min);
+    block-size: var(--tap-min);
+  }
+
+  /* Крестик рисует ::after, а не сама кнопка, и это не украшательство.
+     Маска на элементе обрезает ВСЁ его содержимое, включая псевдоэлементы:
+     пока mask стоял на кнопке, невидимая область нажатия вырезалась вместе
+     с фоном и не ловила ни одного нажатия за пределами десяти пикселей.
+     Проверено попаданием: было 0 из 4 точек, стало 4 из 4.                */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--text-muted);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  &:hover::after { background: var(--err-text); }
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
