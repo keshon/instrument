@@ -35,7 +35,7 @@
    порогом боковой колонки (60rem) и просторной шириной шапке не хватало
    места, и селект темы переносился — шапка из одной строки превращалась
    в две, а высота оболочки считается по первой. */
-.site-search { position: relative; flex: 1 1 12rem; max-inline-size: 28rem; min-inline-size: 0; }
+.site-search { position: relative; flex: 1 1 12rem; max-inline-size: 20rem; min-inline-size: 0; }
 
 .site-results {
   position: absolute; inset-inline: 0; inset-block-start: calc(100% + var(--space-3));
