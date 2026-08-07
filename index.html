@@ -321,7 +321,7 @@
       </p>
 
       <h3 class="sub" id="checks">Проверка</h3>
-      <div class="inst-code">node tools/contrast.mjs</div>
+      <div class="inst-code">go -C tools run ./cmd/contrast</div>
       <p class="why">
         328 пар цветов против порогов WCAG в четырёх темах. Инструмент читает настоящий
         <code>tokens.css</code> и резолвит <code>var()</code>, <code>light-dark()</code> и
@@ -377,7 +377,7 @@
       текста, точки состояния, заливки меры — и <code>--*-bg</code> для тонированного
       фона под ней. Третьего, «заливки» между ними, нет намеренно: метка обязана
       держать порог и на поверхности, и на приглушённой дорожке, а это одно и то же
-      требование, самое жёсткое. Проверка лежит в <code>tools/contrast.mjs</code>: она
+      требование, самое жёсткое. Проверка лежит в <code>tools/cmd/contrast</code>: она
       читает настоящий <code>tokens.css</code> и резолвит его как браузер, поэтому
       разойтись с китом не может.
     </p>
@@ -1786,7 +1786,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
         <div class="inst-card inst-stack inst-stack--tight">
           <div class="inst-card-title">Чем проверен</div>
           <div class="inst-card-sub">
-            <code>tools/contrast.mjs</code> читает настоящий <code>tokens.css</code> и
+            <code>tools/cmd/contrast</code> читает настоящий <code>tokens.css</code> и
             резолвит его так же, как браузер. 328 пар цветов против порогов WCAG в
             четырёх темах. Тест не дублирует значения — он их вычисляет, поэтому
             разойтись с китом не может.

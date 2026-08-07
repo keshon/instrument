@@ -96,7 +96,7 @@ kit.tokens → kit.base → kit.layout → kit.components → kit.overlay
 Контраст проверяется машиной, а не на глаз:
 
 ```bash
-node tools/contrast.mjs
+go -C tools run ./cmd/contrast
 ```
 
 **328 пар цветов против порогов WCAG в четырёх темах.** Инструмент читает
@@ -162,8 +162,8 @@ go -C site run ./cmd/site -serve :4321
 go -C site run ./cmd/site
 
 # проверки
-node tools/contrast.mjs      # 328 пар цветов против порогов WCAG в 4 темах
-node tools/docs-check.mjs    # документация против кита, в обе стороны
+go -C tools run ./cmd/contrast    # 328 пар цветов против порогов WCAG в 4 темах
+go -C tools run ./cmd/docscheck   # документация против кита, в обе стороны
 
 # живая спецификация без сборки
 python -m http.server 8321

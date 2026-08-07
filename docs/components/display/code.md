@@ -10,7 +10,7 @@ needs-js: Копирование в буфер
 идентификатор.
 
 ```html preview
-<div class="inst-code">node tools/contrast.mjs</div>
+<div class="inst-code">go -C tools run ./cmd/contrast</div>
 ```
 
 ```html preview
