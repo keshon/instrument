@@ -31,7 +31,11 @@
 
 /* ── Поиск ──────────────────────────────────────────────────────────────── */
 
-.site-search { position: relative; inline-size: min(28rem, 42vw); }
+/* Поиск ужимается, а не выталкивает соседей на вторую строку. Между
+   порогом боковой колонки (60rem) и просторной шириной шапке не хватало
+   места, и селект темы переносился — шапка из одной строки превращалась
+   в две, а высота оболочки считается по первой. */
+.site-search { position: relative; flex: 1 1 12rem; max-inline-size: 28rem; min-inline-size: 0; }
 
 .site-results {
   position: absolute; inset-inline: 0; inset-block-start: calc(100% + var(--space-3));
@@ -52,6 +56,9 @@
 .site-result-empty { padding: var(--space-5); color: var(--text-muted); font-size: var(--text-sm); }
 
 .site-theme { inline-size: 11rem; flex: none; }
+
+/* Шапка — одна строка всегда: перенос ломает высоту, заданную сеткой. */
+.inst-shell-header { flex-wrap: nowrap; }
 
 /* ── Раскладка страницы ─────────────────────────────────────────────────── */
 
