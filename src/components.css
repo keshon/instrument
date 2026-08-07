@@ -177,6 +177,27 @@
 .inst-btn--sm { min-block-size: var(--control-h-sm); padding-inline: var(--control-pad-sm); font-size: var(--text-xs); }
 .inst-btn--lg { min-block-size: var(--control-h-lg); padding-inline: var(--control-pad-lg); font-size: var(--text-md); }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   Кнопка вызова боковой колонки
+
+   Раскладка оболочки — в layout.css, и по теме кнопка принадлежит ей. Но
+   правило живёт ЗДЕСЬ, потому что оно перебивает `display` у .inst-btn, а
+   kit.layout объявлен РАНЬШЕ kit.components: порядок слоёв бьёт
+   специфичность, и из layout.css это правило не выигрывало никаким
+   селектором. Вложенный @layer там тоже не спасает — импорт в слой
+   вкладывает всё содержимое файла, давая подслой внутри kit.layout.
+
+   Отсюда же второй @media в ките. Он на том же пороге, что единственный
+   @media оболочки, и описывает то же событие; разнесены они каскадом, а не
+   замыслом.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-shell-nav-toggle { display: none; }
+
+@media (width < 60rem) {
+  .inst-shell-nav-toggle { display: inline-flex; }
+}
+
 /* Иконочная кнопка квадратная, а не «узкая»: прямоугольник 32×28 — самый
    частый признак самодельного кита.                                       */
 .inst-btn--icon { inline-size: var(--control-h-md); padding-inline: 0; }
@@ -431,8 +452,16 @@
 }
 
 /* Точка внутри бейджа наследует тон от бейджа — атрибут проставляется один
-   раз на группу, а не дублируется в разметке.                            */
+   раз на группу, а не дублируется в разметке.
+
+   display обязателен. Без него точка живёт только внутри флекс- или
+   грид-родителя, где display заменяется на блочный автоматически; в ячейке
+   таблицы, в абзаце и в любом обычном контейнере это был инлайновый span,
+   к которому inline-size и block-size НЕ ПРИМЕНЯЮТСЯ, — точка занимала 0×0 и
+   не рисовалась вовсе. Компонент не имеет права зависеть от раскладки
+   родителя.                                                              */
 .inst-dot {
+  display: inline-block;
   flex: none;
   inline-size: var(--size-dot);
   block-size: var(--size-dot);
@@ -1089,14 +1118,49 @@
 }
 
 /* Липкая первая колонка — для широких таблиц, которые скроллятся вбок.
-   Фон обязателен, иначе под ней просвечивает уезжающее содержимое.       */
+   Фон обязателен, иначе под ней просвечивает уезжающее содержимое.
+
+   И он обязан быть НЕПРОЗРАЧНЫМ. Ховер и выделение строки объявлены выше и
+   специфичнее (`.inst-table tbody tr:hover td` — 0,2,3 против 0,2,1), поэтому
+   выигрывали, а значения у них полупрозрачные: под выделенной строкой липкая
+   колонка становилась стеклянной ровно там, где её работа — быть стеной.
+
+   Отсюда приём: фон колонки остаётся НЕПРОЗРАЧНЫМ всегда, а состояние
+   кладётся поверх него внутренней тенью с огромным разбросом. Это настоящая
+   композиция — полупрозрачный слой ЛОЖИТСЯ на непрозрачный, — в отличие от
+   color-mix, который усредняет и альфу тоже: смесь 14%-цвета с непрозрачным
+   давала 0.57, то есть колонка оставалась стеклянной наполовину.
+
+   Тень здесь не тень: тем же приёмом в ките нарисованы хайрлайн меры и
+   кольцо свитча. Альфа состояния при этом остаётся какой была — токены
+   менять не нужно, и состояния по-прежнему складываются.                 */
 .inst-table--sticky-col :is(th, td):first-child {
   position: sticky;
   inset-inline-start: 0;
   z-index: 1;
   background: var(--table-head-bg);
 }
-.inst-table--sticky-col.inst-table--sticky thead th:first-child { z-index: 2; }
+
+.inst-table--sticky-col tbody tr:hover :is(th, td):first-child {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 0 0 100vmax var(--surface-hover);
+}
+.inst-table--sticky-col tbody tr[aria-selected="true"] :is(th, td):first-child {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 0 0 100vmax var(--surface-selected);
+}
+.inst-table--sticky-col tbody tr[aria-selected="true"]:hover :is(th, td):first-child {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 0 0 100vmax var(--surface-selected),
+              inset 0 0 0 100vmax var(--surface-hover);
+}
+
+/* Угол — пересечение двух липких осей, и он обязан быть НАД обеими. Раньше
+   здесь стояло 2, а у липкой шапки --z-sticky (10), то есть заголовки
+   проезжали поверх угла — ровно наоборот замыслу.                        */
+.inst-table--sticky-col.inst-table--sticky thead th:first-child {
+  z-index: calc(var(--z-sticky) + 1);
+}
 
 /* Строка выбранной подсветкой не должна терять ховер. */
 .inst-table tbody tr[aria-selected="true"]:hover td {

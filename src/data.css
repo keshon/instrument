@@ -270,7 +270,10 @@
 
   &:hover { background: var(--surface-hover); }
   &[aria-selected="true"] { background: var(--surface-selected); color: var(--accent-text); font-weight: var(--weight-medium); }
-  &[data-outside="true"] { color: var(--text-faint); }
+  /* День соседнего месяца тише, но остаётся ЧИТАЕМОЙ датой: на него нажимают
+     и его сравнивают. На --text-faint он давал 3.27 — порог декорации, а не
+     чтения.                                                              */
+  &[data-outside="true"] { color: var(--text-muted); }
   &[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
 
   /* Сегодня помечено подчёркиванием, а не только цветом. */

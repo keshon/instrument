@@ -243,9 +243,13 @@
   &[data-kind="del"]::before { content: "−"; color: var(--err-text); }
 }
 
+/* Номер строки — ДАННЫЕ, а не декорация: по нему находят место в файле,
+   значит порог у него читательский (4.5), а не декоративный (3.0). На
+   --text-faint он давал 3.41 в трёх светлых темах — прямое нарушение
+   правила, записанного в tokens.css рядом с самим токеном.               */
 .inst-diff-num {
   grid-row: 1;
-  color: var(--text-faint);
+  color: var(--text-muted);
   text-align: end;
   padding-inline-end: var(--space-3);
   white-space: nowrap;

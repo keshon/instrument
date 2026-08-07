@@ -13,9 +13,35 @@
 @media print {
 
   /* Главное правило: печатается СВЕТЛАЯ тема, какая бы ни стояла на экране.
-     Достаточно сменить color-scheme — light-dark() в семантике сама начнёт
-     отдавать светлую ветку, и переопределять токены поштучно не нужно.   */
-  :root, [data-theme="dark"] { color-scheme: light; }
+     Смены color-scheme ДЛЯ ЭТОГО НЕ ХВАТАЕТ, и это стоило белого текста на
+     белой бумаге в двух темах из шести.
+
+     light-dark() действительно переключается вместе со схемой — но темы
+     «серая» и «светло-серая» задают поверхности НЕ через light-dark(), а
+     прямым присвоением шага рампы (tokens.css, ручка глубины). Прямое
+     присвоение про схему ничего не знает: на печати оставались surface на
+     --n-10…--n-13 и --text-primary на --n-1, то есть белое по тёмному, а с
+     выключенной печатью фонов — белое по белому.
+
+     Поэтому здесь возвращается ВСЁ, что зависело от ручки глубины: пять
+     поверхностей, четыре подписи статусов и дорожка. Селектор [data-theme]
+     без значения — любая заданная тема, включая ещё не написанную седьмую. */
+  :root, [data-theme] {
+    color-scheme: light;
+
+    --surface-sunken:  var(--n-2);
+    --surface-page:    var(--n-1);
+    --surface-raised:  var(--n-0);
+    --surface-overlay: var(--n-0);
+    --surface-field:   var(--n-1);
+
+    --accent-text: var(--a-5);
+    --ok-text:     var(--ok-5);
+    --warn-text:   var(--warn-5);
+    --err-text:    var(--err-5);
+
+    --track: oklch(0 0 0 / 0.10);
+  }
 
   body { background: none; }
 
@@ -55,10 +81,20 @@
   .inst-output-more { display: none; }
 
   /* Раскрыть все свёрнутые шаги: закрытый <details> на бумаге —
-     невосстановимо потерянное содержимое.                                */
+     невосстановимо потерянное содержимое.
+
+     ЭТО НЕ РАБОТАЛО. Правило `details:not([open]) > :not(summary) { display:
+     revert }` стояло здесь и не делало ничего: `revert` откатывает к стилю
+     браузера, а браузер закрытый <details> прячет НЕ через display —
+     содержимое лежит в слоте с content-visibility: hidden. Замерено: высота
+     блока с этим правилом 33px, без него 33px, у открытого 135px.
+
+     Правильная ручка — псевдоэлемент ::details-content. Прежнее правило
+     оставлено запасным для движков, которые всё ещё прячут через display.  */
   details { display: block; }
   details > summary { list-style: none; }
   details:not([open]) > :not(summary) { display: revert; }
+  details::details-content { content-visibility: visible; }
 
   /* Блоки не рвутся между листами. */
   .inst-panel, .inst-card, .inst-metric, .inst-approval, .inst-failure, .inst-diff, .inst-banner { break-inside: avoid; }
