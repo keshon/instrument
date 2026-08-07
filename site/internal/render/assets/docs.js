@@ -28,7 +28,9 @@
   if (density) {
     const items = [...density.querySelectorAll('[role="radio"]')];
     const saved = localStorage.getItem('instrument-density') || 'default';
+    let current = saved;
     const select = (btn) => {
+      current = btn.dataset.v;
       items.forEach((x) => {
         const on = x === btn;
         x.setAttribute('aria-checked', String(on));
@@ -44,16 +46,17 @@
       const b = e.target.closest('[role="radio"]');
       if (b) select(b);
     });
-    /* Стрелки — часть контракта radiogroup: без них с клавиатуры до
-       вариантов не добраться, а роль уже обещала, что можно. */
-    density.addEventListener('keydown', (e) => {
-      const i = items.indexOf(document.activeElement);
-      if (i < 0) return;
-      const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
-      if (!d) return;
-      e.preventDefault();
-      const next = items[(i + d + items.length) % items.length];
-      next.focus(); select(next);
+    /* Стрелок здесь больше нет: их ставит сам кит по role="radiogroup".
+       Сайт слушает только результат — смену aria-checked. Это и есть
+       проверка поведения: если бы оно не работало, плотность перестала бы
+       переключаться с клавиатуры на глазах.
+
+       Контракт кита — атрибуты, а не события: он ставит aria-checked, а что
+       по этому поводу делать, решает приложение. */
+    density.addEventListener('keyup', (e) => {
+      if (!/^Arrow|^Home$|^End$/.test(e.key)) return;
+      const checked = items.find((x) => x.getAttribute('aria-checked') === 'true');
+      if (checked && checked.dataset.v !== current) select(checked);
     });
   }
 

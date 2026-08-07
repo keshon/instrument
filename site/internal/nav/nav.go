@@ -21,7 +21,7 @@ var sections = []struct {
 }{
 	{"foundations", "Основания", []string{
 		"colors", "typography", "spacing", "elevation", "motion",
-		"density", "icons", "utilities", "tokens",
+		"density", "icons", "behavior", "utilities", "tokens",
 	}},
 	{"layout", "Раскладка", []string{
 		"shell", "container", "flow", "split", "page-header", "section",
