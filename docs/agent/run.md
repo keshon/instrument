@@ -1,0 +1,183 @@
+---
+title: Прогон
+group: Агентный слой
+status: stable
+source: src/agent.css
+needs-js: "Свёртка фаз — на <details>, скрипта не требует. Живые числа и остановка — слой приложения"
+api:
+  - { name: "inst-dots", kind: "класс", doc: "Счётная мера: сколько единиц из скольких. Единица — `inst-dot`" }
+  - { name: "role", kind: "атрибут", value: "progressbar", doc: "На `inst-dots`. Вместе с `aria-valuenow/min/max`" }
+  - { name: "data-tone", kind: "атрибут", value: "neutral · running · ok · warn · error", doc: "На каждой точке: `ok` — сделано, `running` — идёт, без атрибута — ещё не начиналось" }
+  - { name: "--space-1", kind: "токен", doc: "Зазор между точками" }
+  - { name: "--size-dot", kind: "токен", doc: "Сторона точки — от `inst-dot`" }
+---
+
+Экран прогона — это не компонент, а **сборка**: шапка с именем и счётчиками,
+фазы со свёрткой, таблица участников. Отдельного класса у него нет намеренно —
+всё уже есть, и заводить свой класс значило бы завести панель под другим именем.
+
+Новое здесь ровно одно: **счётная мера**.
+
+```html preview context
+<div class="inst-panel">
+  <div class="inst-panel-header">
+    <span class="inst-panel-title">audit-worldbox-1</span>
+    <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
+    <span class="inst-panel-actions">
+      <button class="inst-btn inst-btn--sm inst-btn--danger" type="button">Остановить</button>
+    </span>
+  </div>
+
+  <div class="inst-panel-body inst-stack">
+    <p class="inst-prose">Враждебный аудит worldbox-1: поиск самообмана по классам A–F.</p>
+
+    <dl class="inst-kv">
+      <dt>Идёт</dt><dd>21 с</dd>
+      <dt>Агентов</dt><dd>7</dd>
+      <dt>Токенов</dt><dd>186 000</dd>
+    </dl>
+
+    <div class="inst-section">
+      <div class="inst-section-head">
+        <span class="inst-section-title">Фазы</span>
+      </div>
+
+      <details class="inst-accordion-item" open>
+        <summary class="inst-accordion-head">
+          Разбор
+          <span class="inst-dots" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="7"
+                aria-label="Разбор: агентов завершено">
+            <span class="inst-dot" data-tone="ok"></span>
+            <span class="inst-dot" data-tone="ok"></span>
+            <span class="inst-dot" data-tone="ok"></span>
+            <span class="inst-dot" data-tone="ok"></span>
+            <span class="inst-dot" data-tone="running"></span>
+            <span class="inst-dot"></span>
+            <span class="inst-dot"></span>
+          </span>
+        </summary>
+        <div class="inst-accordion-body inst-panel-body--flush">
+          <table class="inst-table">
+            <thead>
+              <tr><th>Агент</th><th class="inst-num">Токенов</th><th class="inst-num">Вызовов</th><th class="inst-num">Время</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>разбор:docs-drift</td><td class="inst-num">38 200</td><td class="inst-num">4</td><td class="inst-num">18 с</td></tr>
+              <tr><td>разбор:shared-and-chunk</td><td class="inst-num">39 600</td><td class="inst-num">5</td><td class="inst-num">18 с</td></tr>
+              <tr><td>разбор:probes-assert</td><td class="inst-num">37 900</td><td class="inst-num">7</td><td class="inst-num">18 с</td></tr>
+              <tr><td>разбор:silent-failure</td><td class="inst-num">36 800</td><td class="inst-num">4</td><td class="inst-num">18 с</td></tr>
+              <tr data-state="running"><td>разбор:coverage-hole</td><td class="inst-num">—</td><td class="inst-num">—</td><td class="inst-num">—</td></tr>
+              <tr><td>разбор:history</td><td class="inst-num">—</td><td class="inst-num">—</td><td class="inst-num">—</td></tr>
+              <tr><td>разбор:eyes-only</td><td class="inst-num">—</td><td class="inst-num">—</td><td class="inst-num">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="inst-accordion-item">
+        <summary class="inst-accordion-head">
+          Опровержение
+          <span class="inst-dots" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="3"
+                aria-label="Опровержение: агентов завершено">
+            <span class="inst-dot"></span>
+            <span class="inst-dot"></span>
+            <span class="inst-dot"></span>
+          </span>
+        </summary>
+        <div class="inst-accordion-body">
+          <div class="inst-empty">
+            <span class="inst-empty-title">Ещё не начиналось</span>
+            <span class="inst-empty-desc">Фаза стартует, когда разбор закроет все семь агентов.</span>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+```
+
+## Счётная мера
+
+```html preview
+<span class="inst-dots" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="7"
+      aria-label="Агентов завершено">
+  <span class="inst-dot" data-tone="ok"></span>
+  <span class="inst-dot" data-tone="ok"></span>
+  <span class="inst-dot" data-tone="ok"></span>
+  <span class="inst-dot" data-tone="ok"></span>
+  <span class="inst-dot" data-tone="running"></span>
+  <span class="inst-dot"></span>
+  <span class="inst-dot"></span>
+</span>
+```
+
+Единиц семь, и каждая либо сделана, либо нет. **Доля здесь — выдуманная
+точность:** 4 из 7, нарисованные полосой на 57%, выглядят правдоподобно и
+сообщают то, чего система не знает. Это та же ложь, что определённая полоса,
+застрявшая на 90%, только тише.
+
+Своей точки компонент не заводит: единица — обычный [`inst-dot`](../components/feedback/states.md).
+Он уже умеет тон, пульсацию «идёт» и режим принудительных цветов, и второй
+кружок в ките был бы вторым именем для того же.
+
+## Когда использовать
+
+| Используйте | Возьмите другое |
+|---|---|
+| Единиц мало и они СЧИТАЮТСЯ: агенты фазы, попытки, шарды | **Непрерывная величина** — [мера](../components/charts/meter.md): байты, проценты, заполненность |
+| У каждой единицы своё состояние: сделана, идёт, упала | **Именованные шаги мастера** — [шаги](../components/navigation/steps.md): там у каждого есть слово |
+| Больше двух и меньше примерно пятнадцати | **Десятки и сотни** — [мера](../components/charts/meter.md) с числом: пятьдесят точек не считаются глазом |
+| Порядок между единицами не важен | **Порядок важен и виден** — [дорожки прогонов](./lane.md): они про время |
+
+## Состояние единицы
+
+| Тон | Что значит |
+|---|---|
+| без атрибута | Ещё не начиналось |
+| `data-tone="running"` | Идёт. Точка пульсирует |
+| `data-tone="ok"` | Сделано |
+| `data-tone="error"` | Упало |
+| `data-tone="warn"` | Сделано с замечанием |
+
+Пульсирует **только** идущая, и это та же пульсация, что у строки очереди и у
+шага: в ките она означает ровно одно, и заводить ей второй смысл нельзя.
+
+## Из чего собран экран
+
+Ни одного нового класса, кроме `inst-dots`:
+
+| Часть экрана | Чем собрана |
+|---|---|
+| Рамка и шапка | [Панель](../components/display/panel.md) |
+| Состояние прогона | [Бейдж](../components/display/badge.md) с точкой |
+| Остановка | [Кнопка](../components/actions/button.md), вариант `--danger` |
+| Счётчики | [Список пар](../components/display/kv.md) |
+| Фаза со свёрткой | [Аккордеон](../components/feedback/accordion.md) на `<details>` |
+| Участники | [Таблица](../components/display/table.md) с `inst-num` |
+| Пустая фаза | [Пустое состояние](../components/feedback/empty.md) |
+
+**Это и есть проверка покрытия.** Экран, который не собирается без
+инлайнового оформления, означает дыру в ките — правило
+[конституции](../about/design-principles.md) про живую спецификацию
+распространяется и сюда.
+
+## Справочник
+
+```api
+```
+
+## Доступность
+
+| | |
+|---|---|
+| Роль | `role="progressbar"` на `inst-dots` плюс `aria-valuenow/min/max`. Без них «сколько сделано» существует только в числе закрашенных кружков |
+| Имя | `aria-label` с тем, что именно считается. «4 из 7» без предмета не является сообщением |
+| Точки | Декоративны для скринридера: значение несёт контейнер, а не они. Отдельных подписей им не нужно |
+| Не только цвет | Идущая единица **пульсирует**, а не просто окрашена; завершённость озвучивается `aria-valuenow` |
+| Уменьшенное движение | Пульсация замедляется, а не гаснет: кит обязан показывать занятость всегда |
+| Печать | Точки печатаются: это данные, а не индикатор активности |
+
+## Связанное
+
+[Мера](../components/charts/meter.md) · [Дорожки прогонов](./lane.md) ·
+[Шаг](./step.md) · [Строка очереди](./task.md) · [Бюджет](./budget.md)

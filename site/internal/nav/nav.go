@@ -50,7 +50,7 @@ var sections = []struct {
 		"banner", "note", "empty", "skeleton", "spinner", "states", "accordion",
 	}},
 	{"agent", "Агентный слой", []string{
-		"task", "step", "approval", "failure", "diff", "output",
+		"run", "task", "step", "approval", "failure", "diff", "output",
 		"log", "lane", "budget", "tree",
 	}},
 	{"about", "О проекте", nil},
