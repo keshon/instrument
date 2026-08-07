@@ -25,7 +25,7 @@ import (
 func main() {
 	var (
 		docs   = flag.String("docs", "../docs", "каталог с исходниками страниц")
-		out    = flag.String("out", "../dist", "каталог вывода")
+		out    = flag.String("out", "dist", "каталог вывода")
 		kit    = flag.String("kit", "../src", "каталог кита")
 		assets = flag.String("assets", "../assets", "каталог ресурсов кита")
 		serve  = flag.String("serve", "", "поднять сервер после сборки, например :4321")

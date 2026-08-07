@@ -7,7 +7,7 @@ Thumbs.db
 .claude/settings.local.json
 
 # Собранный сайт. Источник — docs/ и site/, здесь только вывод.
-dist/
+site/dist/
 
 # Скомпилированный генератор
 site/site
