@@ -43,7 +43,7 @@ source: src/tokens.css
 |---|---|---|
 | Нейтраль | `--n-0` … `--n-14` | `--hue-neutral` (75 тёплый / 250 холодный) |
 | Акцент | `--a-1` … `--a-6` | 250° |
-| Успех | `--ok-1` `--ok-3` `--ok-4` `--ok-5` `--ok-6` | 150° |
+| Успех | `--ok-1` `--ok-2` `--ok-3` `--ok-4` `--ok-5` `--ok-6` | 150° |
 | Предупреждение | `--warn-1` `--warn-3` `--warn-4` `--warn-5` `--warn-6` | 85° |
 | Ошибка | `--err-1` `--err-3` `--err-4` `--err-5` `--err-6` | 25° |
 
@@ -276,10 +276,12 @@ source: src/tokens.css
 | Атрибут | `color-scheme` | `--hue-neutral` | Ещё |
 |---|---|---|---|
 | нет | по системе | 75 | |
+| `data-theme="light-neutral"` | `light` | — | `--tint: 0` — уклон выключен |
 | `data-theme="light"` | `light` | 75 | |
 | `data-theme="light-cool"` | `light` | 250 | |
+| `data-theme="dark-light"` | `dark` | 75 | Стопка на две ступени вверх, плюс подписи статусов и дорожка |
+| `data-theme="dark-soft"` | `dark` | 75 | Переопределены `--surface-sunken` `--surface-page` `--surface-raised` `--surface-overlay` `--surface-field` |
 | `data-theme="dark"` | `dark` | 75 | |
-| `data-theme="dark-soft"` | `dark` | 250 | Переопределены `--surface-sunken` `--surface-page` `--surface-raised` `--surface-overlay` `--surface-field` |
 
 ## Правила ярусов
 
@@ -299,7 +301,7 @@ source: src/tokens.css
 |---|---|
 | Проверка | `go -C tools run ./cmd/contrast` читает настоящий `tokens.css` и резолвит `light-dark()`, `color-mix()` и `var()` так же, как браузер. Новая пара токенов добавляется туда вместе с токеном |
 | Пороги | Текст 4.5:1, метка 3:1 (против поверхности и против дорожки), несущая рамка 3:1 |
-| Четыре темы | Каждая пара проверяется во всех четырёх, а не в двух |
+| Шесть тем | Каждая пара проверяется во всех шести, а не в двух |
 | Кегли в `rem` | Настройка «размер шрифта по умолчанию» в браузере работает; высоты применяются как `min-block-size` |
 | Пол кегля | `--text-2xs`, 11px. Ниже токена нет |
 

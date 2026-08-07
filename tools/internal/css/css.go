@@ -167,6 +167,60 @@ func OklchToSrgb(L, C, H, alpha float64) RGBA {
 	}
 }
 
+// calcRe находит простое арифметическое выражение целиком.
+//
+// Кит использует calc() ровно для одного: домножить цветность шага рампы на
+// ручку уклона. Полноценный вычислитель CSS здесь не нужен и был бы враньём
+// о возможностях — поддержаны числа и четыре действия, всё остальное честно
+// падает с ошибкой.
+var calcRe = regexp.MustCompile(`calc\(([^()]*)\)`)
+
+// evalCalc сворачивает calc() в число. Умножение и деление раньше сложения
+// и вычитания — как в арифметике и как в CSS.
+func evalCalc(expr string) (float64, bool) {
+	f := strings.Fields(expr)
+	if len(f) == 0 || len(f)%2 == 0 {
+		return 0, false
+	}
+	num := func(s string) (float64, bool) { v, err := strconv.ParseFloat(s, 64); return v, err == nil }
+
+	first, ok := num(f[0])
+	if !ok {
+		return 0, false
+	}
+	vals := []float64{first}
+	var ops []string
+	for i := 1; i < len(f); i += 2 {
+		rhs, ok := num(f[i+1])
+		if !ok {
+			return 0, false
+		}
+		switch f[i] {
+		case "*":
+			vals[len(vals)-1] *= rhs
+		case "/":
+			if rhs == 0 {
+				return 0, false
+			}
+			vals[len(vals)-1] /= rhs
+		case "+", "-":
+			ops = append(ops, f[i])
+			vals = append(vals, rhs)
+		default:
+			return 0, false
+		}
+	}
+	out := vals[0]
+	for i, op := range ops {
+		if op == "+" {
+			out += vals[i+1]
+		} else {
+			out -= vals[i+1]
+		}
+	}
+	return out, true
+}
+
 var (
 	oklchRe = regexp.MustCompile(`^oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*(?:/\s*([\d.]+)\s*)?\)$`)
 	mixRe   = regexp.MustCompile(`^(.*?)\s+([\d.]+)%$`)
@@ -179,6 +233,23 @@ func (t *Theme) Resolve(value string) (RGBA, error) {
 		return RGBA{}, err
 	}
 	v = strings.TrimSpace(v)
+
+	// calc() сворачивается ДО разбора цвета: браузер к моменту отрисовки
+	// делает то же самое, и oklch() получает уже число.
+	for calcRe.MatchString(v) {
+		bad := false
+		v = calcRe.ReplaceAllStringFunc(v, func(m string) string {
+			n, ok := evalCalc(calcRe.FindStringSubmatch(m)[1])
+			if !ok {
+				bad = true
+				return m
+			}
+			return strconv.FormatFloat(n, 'f', -1, 64)
+		})
+		if bad {
+			return RGBA{}, fmt.Errorf("не вычислить calc: %s", v)
+		}
+	}
 
 	if v == "transparent" {
 		return RGBA{}, nil

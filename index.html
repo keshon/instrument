@@ -235,10 +235,12 @@
     <span class="inst-select-wrap theme-picker">
       <select class="inst-select inst-select--sm" id="theme" aria-label="Тема оформления">
         <option value="">По системе</option>
+        <option value="light-neutral">Светлая нейтральная</option>
         <option value="light">Светлая тёплая</option>
         <option value="light-cool">Светлая холодная</option>
-        <option value="dark">Тёмная глубокая</option>
-        <option value="dark-soft">Тёмная мягкая</option>
+        <option value="dark-light">Тёмная светло-серая</option>
+        <option value="dark-soft">Тёмная серая</option>
+        <option value="dark">Тёмная чёрная</option>
       </select>
     </span>
   </header>
@@ -300,7 +302,7 @@
       </p>
 
       <h3 class="sub" id="theming">Тема и плотность</h3>
-      <div class="inst-code">&lt;html data-theme="dark"&gt;              &lt;!-- light | light-cool | dark | dark-soft --&gt;
+      <div class="inst-code">&lt;html data-theme="dark"&gt;              &lt;!-- light-neutral | light | light-cool | dark-light | dark-soft | dark --&gt;
 &lt;html&gt;                                &lt;!-- атрибута нет — тема по настройке ОС --&gt;
 
 &lt;section data-density="compact"&gt;      &lt;!-- compact | comfortable --&gt;</div>
@@ -323,7 +325,7 @@
       <h3 class="sub" id="checks">Проверка</h3>
       <div class="inst-code">go -C tools run ./cmd/contrast</div>
       <p class="why">
-        328 пар цветов против порогов WCAG в четырёх темах. Инструмент читает настоящий
+        492 пары цветов против порогов WCAG в шести темах. Инструмент читает настоящий
         <code>tokens.css</code> и резолвит <code>var()</code>, <code>light-dark()</code> и
         <code>color-mix()</code> так же, как браузер, поэтому разойтись с китом не может.
         Заводите новый семантический токен — добавьте туда его пары.
@@ -1788,7 +1790,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
           <div class="inst-card-sub">
             <code>tools/cmd/contrast</code> читает настоящий <code>tokens.css</code> и
             резолвит его так же, как браузер. 328 пар цветов против порогов WCAG в
-            четырёх темах. Тест не дублирует значения — он их вычисляет, поэтому
+            шести темах. Тест не дублирует значения — он их вычисляет, поэтому
             разойтись с китом не может.
           </div>
         </div>
@@ -1839,7 +1841,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
   const root = document.documentElement;
 
   /* ── Тема ───────────────────────────────────────────────────────────────
-     Четыре темы — это две ручки в токенах, а здесь просто значение
+     Шесть тем — это три ручки в токенах, а здесь просто значение
      атрибута. «По системе» — пустое значение: атрибут снимается, и
      light-dark() снова слушает настройку ОС.                            */
   const themeSel = document.getElementById('theme');

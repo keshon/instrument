@@ -138,9 +138,9 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 			`<span class="demo-label">`+label+`</span>`+
 			`<span class="demo-tools">`+
 			`<span class="inst-select-wrap demo-theme"><select class="inst-select inst-select--sm" aria-label="Тема примера" data-demo-theme>`+
-			`<option value="">как у сайта</option><option value="light">светлая тёплая</option>`+
-			`<option value="light-cool">светлая холодная</option><option value="dark">тёмная глубокая</option>`+
-			`<option value="dark-soft">тёмная мягкая</option></select></span>`+
+			`<option value="">как у сайта</option>`+
+			`<option value="light-neutral">светлая нейтральная</option><option value="light">светлая тёплая</option><option value="light-cool">светлая холодная</option>`+
+			`<option value="dark-light">тёмная светло-серая</option><option value="dark-soft">тёмная серая</option><option value="dark">тёмная чёрная</option></select></span>`+
 			`<a class="demo-open" href="/demo/%s.html" target="_blank" rel="noopener" title="Открыть пример отдельно">↗</a>`+
 			`</span></figcaption>`+
 			`<iframe class="demo-frame" src="/demo/%s.html" title="Живой пример" loading="lazy"></iframe>`,

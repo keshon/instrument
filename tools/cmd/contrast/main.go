@@ -156,10 +156,12 @@ var cases = []kase{
 }
 
 var themes = []*css.Theme{
+	{ID: "light-neutral", Label: "светлая нейтральная", Scheme: "light"},
 	{ID: "light", Label: "светлая тёплая", Scheme: "light"},
 	{ID: "light-cool", Label: "светлая холодная", Scheme: "light"},
-	{ID: "dark", Label: "тёмная глубокая", Scheme: "dark"},
-	{ID: "dark-soft", Label: "тёмная мягкая", Scheme: "dark"},
+	{ID: "dark-light", Label: "тёмная светло-серая", Scheme: "dark"},
+	{ID: "dark-soft", Label: "тёмная серая", Scheme: "dark"},
+	{ID: "dark", Label: "тёмная чёрная", Scheme: "dark"},
 }
 
 func main() {
