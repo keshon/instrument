@@ -17,6 +17,8 @@ api:
   - { name: "--size-dot", kind: "токен" }
   - { name: "--tone-ink", kind: "токен" }
   - { name: "--tone-bg", kind: "токен" }
+title-en: "Badge"
+group-en: "Data display"
 ---
 
 Состояние объекта, названное словом из **фиксированного словаря кита**. Пять

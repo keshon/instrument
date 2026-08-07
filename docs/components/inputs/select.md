@@ -16,6 +16,8 @@ api:
   - { name: "--radius-sm", kind: "токен" }
   - { name: "--border-control", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
+title-en: "Select"
+group-en: "Inputs"
 ---
 
 Выбор одного значения из списка. Нативный `<select>` — со всей клавиатурой,

@@ -22,6 +22,8 @@ api:
   - { name: "--gap-inline", kind: "токен" }
   - { name: "--dur-3", kind: "токен" }
   - { name: "--ease-out", kind: "токен" }
+title-en: "Meter"
+group-en: "Charts"
 ---
 
 Одна величина относительно своего потолка: расход бюджета, доля времени,

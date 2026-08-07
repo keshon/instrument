@@ -16,6 +16,8 @@ api:
   - { name: "--text-xs", kind: "токен" }
   - { name: "--weight-medium", kind: "токен" }
   - { name: "--size-marker", kind: "токен" }
+title-en: "Avatar"
+group-en: "Data display"
 ---
 
 Опознавательный знак человека или агента: изображение либо инициалы.

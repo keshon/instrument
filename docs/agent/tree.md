@@ -20,6 +20,8 @@ api:
   - { name: "--surface-hover", kind: "токен" }
   - { name: "--surface-selected", kind: "токен" }
   - { name: "--size-chevron", kind: "токен" }
+title-en: "Tree"
+group-en: "Agent layer"
 ---
 
 Иерархия: файлы проекта, структура сцены, вложенность вызовов.

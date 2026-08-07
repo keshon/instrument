@@ -23,6 +23,8 @@ api:
   - { name: "--warn-text", kind: "токен" }
   - { name: "--err-text", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
+title-en: "Approval request"
+group-en: "Agent layer"
 ---
 
 Определяющее взаимодействие агентных систем: агент останавливается и

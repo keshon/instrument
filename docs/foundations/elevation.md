@@ -23,6 +23,8 @@ api:
   - { name: "--border", kind: "токен" }
   - { name: "--border-subtle", kind: "токен" }
   - { name: "--hairline", kind: "токен" }
+title-en: "Elevation and surfaces"
+group-en: "Foundations"
 ---
 
 Глубина передаётся **порядком светлоты, а не тенью**. Тень в этом ките означает

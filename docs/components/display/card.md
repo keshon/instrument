@@ -13,6 +13,8 @@ api:
   - { name: "--hairline", kind: "токен" }
   - { name: "--radius-lg", kind: "токен" }
   - { name: "--pad-card", kind: "токен" }
+title-en: "Card"
+group-en: "Data display"
 ---
 
 Объект, который можно было бы перетащить. Карточек столько, сколько пришло из

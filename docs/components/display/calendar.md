@@ -25,6 +25,8 @@ api:
   - { name: "--accent-solid", kind: "токен" }
   - { name: "--size-marker", kind: "токен" }
   - { name: "--weight-medium", kind: "токен" }
+title-en: "Calendar"
+group-en: "Data display"
 ---
 
 Статическая сетка дат. Кит отвечает за то, чтобы сетка была сеткой, а

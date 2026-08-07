@@ -16,6 +16,8 @@ api:
   - { name: "--text-sm", kind: "токен" }
   - { name: "--text-secondary", kind: "токен" }
   - { name: "--leading-ui", kind: "токен" }
+title-en: "Note"
+group-en: "Feedback"
 ---
 
 Врезка **в поток**: поясняет то, рядом с чем стоит. Только полоса у ближнего

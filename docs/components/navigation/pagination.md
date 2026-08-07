@@ -20,6 +20,8 @@ api:
   - { name: "--accent-border", kind: "токен" }
   - { name: "--text-secondary", kind: "токен" }
   - { name: "--text-faint", kind: "токен" }
+title-en: "Pagination"
+group-en: "Navigation"
 ---
 
 Переход по страницам длинного списка. Каждая страница — **свой адрес**, поэтому

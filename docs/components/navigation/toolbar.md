@@ -13,6 +13,8 @@ api:
   - { name: "--hairline", kind: "токен" }
   - { name: "--border-subtle", kind: "токен" }
   - { name: "--border", kind: "токен" }
+title-en: "Toolbar"
+group-en: "Navigation"
 ---
 
 Полоса инструментов внутри [панели](../display/panel.md): режимы, фильтры,

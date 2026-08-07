@@ -25,6 +25,8 @@ api:
   - { name: "--radius-lg", kind: "токен" }
   - { name: "--pad-cell-x", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
+title-en: "Diff"
+group-en: "Agent layer"
 ---
 
 Основной артефакт работы агента: что именно он изменил в файле.

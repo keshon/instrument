@@ -4,6 +4,8 @@ group: Основания
 status: stable
 source: src/tokens.css
 api-from: kit
+title-en: "Tokens"
+group-en: "Foundations"
 ---
 
 Полный справочник. Четыре яруса, и разделение между ними — весь смысл файла:

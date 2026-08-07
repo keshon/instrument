@@ -18,6 +18,8 @@ api:
   - { name: "--text-sm", kind: "токен" }
   - { name: "--text-xs", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
+title-en: "Failure block"
+group-en: "Agent layer"
 ---
 
 Агент не смог. Блок отвечает на три вопроса подряд: **что не вышло**, **что

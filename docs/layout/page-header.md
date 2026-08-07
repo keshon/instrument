@@ -16,6 +16,8 @@ api:
   - { name: "--text-xl", kind: "токен" }
   - { name: "--text-sm", kind: "токен" }
   - { name: "--text-secondary", kind: "токен" }
+title-en: "Page header"
+group-en: "Layout"
 ---
 
 Название экрана, его пояснение и главные действия. Одна на экран — ровно как

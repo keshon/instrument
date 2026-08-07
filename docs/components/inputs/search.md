@@ -12,6 +12,8 @@ api:
   - { name: "--space-3", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
   - { name: "--text-primary", kind: "токен" }
+title-en: "Search"
+group-en: "Inputs"
 ---
 
 Текстовое поле с лупой и **нативной кнопкой очистки**. Обёртка вокруг

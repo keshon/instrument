@@ -22,6 +22,8 @@ api:
   - { name: "--text-primary", kind: "токен" }
   - { name: "--text-secondary", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
+title-en: "Wizard steps"
+group-en: "Navigation"
 ---
 
 Последовательность этапов процесса с отметкой, где он сейчас. Состояние несёт

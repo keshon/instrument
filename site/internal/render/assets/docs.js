@@ -121,7 +121,13 @@
 
     const load = async () => {
       if (index) return index;
-      index = await (await fetch('/search.json')).json();
+      /* Индекс свой у каждого языка: искать по русским телам из английской
+         версии значило бы отдавать читателю страницы, которых он не
+         прочтёт. Язык берётся из документа, а не из адреса — он там уже
+         объявлен, и второй источник разошёлся бы. */
+      const lang = document.documentElement.lang || 'ru';
+      const file = lang === 'ru' ? '/search.json' : '/' + lang + '-search.json';
+      index = await (await fetch(file)).json();
       return index;
     };
 
@@ -148,7 +154,7 @@
       if (!items.length) {
         const empty = document.createElement('div');
         empty.className = 'site-result-empty';
-        empty.textContent = 'Ничего не найдено';
+        empty.textContent = RU ? 'Ничего не найдено' : 'Nothing found';
         box.append(empty);
       } else {
         items.forEach((p, i) => {
@@ -258,6 +264,10 @@
 
      aria-live объявлен в разметке заранее: регион, созданный одновременно с
      изменением текста, не озвучивается. */
+  const RU = (document.documentElement.lang || 'ru') === 'ru';
+  const COPY_DONE = RU ? 'скопировано' : 'copied';
+  const COPY_FAIL = RU ? 'не вышло' : 'failed';
+
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-copy]');
     if (!btn) return;
@@ -272,11 +282,11 @@
 
     try {
       await navigator.clipboard.writeText(code.innerText);
-      btn.textContent = 'скопировано';
+      btn.textContent = COPY_DONE;
     } catch (err) {
       /* Незащищённый origin (LAN по http) отклоняет запись молча. Молчать
          в ответ — значит соврать: кнопка выглядела бы сработавшей. */
-      btn.textContent = 'не вышло';
+      btn.textContent = COPY_FAIL;
     }
     btn.dataset.timer = setTimeout(() => {
       btn.textContent = btn.dataset.label;

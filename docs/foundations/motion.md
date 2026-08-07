@@ -9,6 +9,8 @@ api:
   - { name: "--dur-3", kind: "токен" }
   - { name: "--ease-out", kind: "токен" }
   - { name: "--ease-in-out", kind: "токен" }
+title-en: "Motion"
+group-en: "Foundations"
 ---
 
 Три длительности и две функции плавности. Достаточно быстро, чтобы движение

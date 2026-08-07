@@ -30,6 +30,8 @@ api:
   - { name: "--text-xs", kind: "токен" }
   - { name: "--weight-medium", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
+title-en: "Modal"
+group-en: "Overlays"
 ---
 
 Окно, которое забирает фокус и гасит фон, потому что без ответа продолжать

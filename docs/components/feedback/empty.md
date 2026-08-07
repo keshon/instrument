@@ -12,6 +12,8 @@ api:
   - { name: "--gap-inline", kind: "токен" }
   - { name: "--text-sm", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
+title-en: "Empty state"
+group-en: "Feedback"
 ---
 
 Область, в которой пока нечего показать. Пустое состояние — не отсутствие

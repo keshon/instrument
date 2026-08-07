@@ -24,6 +24,8 @@ api:
   - { name: "--surface-selected", kind: "токен" }
   - { name: "--surface-hover", kind: "токен" }
   - { name: "--tone-ink", kind: "токен" }
+title-en: "Queue row"
+group-en: "Agent layer"
 ---
 
 Одна задача в очереди агентов. Строка **плоская**: у неё нет тела, потому что

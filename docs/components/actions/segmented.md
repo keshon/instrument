@@ -17,6 +17,8 @@ api:
   - { name: "--surface-raised", kind: "токен" }
   - { name: "--border", kind: "токен" }
   - { name: "--hairline", kind: "токен" }
+title-en: "Segmented control"
+group-en: "Actions"
 ---
 
 Один выбор среди равных вариантов. У него **всегда ровно одно** выбранное

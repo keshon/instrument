@@ -11,6 +11,8 @@ api:
   - { name: "--surface-sunken", kind: "токен" }
   - { name: "--radius-xs", kind: "токен" }
   - { name: "--ease-in-out", kind: "токен" }
+title-en: "Skeleton"
+group-en: "Feedback"
 ---
 
 Место, где содержимое ещё не пришло. Кит про ожидание обязан иметь примитив

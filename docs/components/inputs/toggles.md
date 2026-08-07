@@ -18,6 +18,8 @@ api:
   - { name: "--radius-xs", kind: "токен" }
   - { name: "--radius-full", kind: "токен" }
   - { name: "--dur-1", kind: "токен" }
+title-en: "Checkbox, radio and switch"
+group-en: "Inputs"
 ---
 
 Чекбокс, радио и свитч. Все три построены на нативном `input`: клавиатура,

@@ -20,6 +20,8 @@ api:
   - { name: "--text-xs", kind: "токен" }
   - { name: "--space-2", kind: "токен" }
   - { name: "--space-3", kind: "токен" }
+title-en: "Inspector number field"
+group-en: "Inputs"
 ---
 
 Число с буквой оси слева — примитив инспектора: три таких поля составляют

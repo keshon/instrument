@@ -10,6 +10,8 @@ api:
   - { name: "inst-container--full", kind: "модификатор", doc: "Потолок снят" }
   - { name: "--container-max", kind: "переменная", value: "76rem" }
   - { name: "--pad-panel", kind: "токен" }
+title-en: "Container"
+group-en: "Layout"
 ---
 
 Потолок ширины и горизонтальный воздух рабочей области. Ограничивает не

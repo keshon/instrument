@@ -7,6 +7,8 @@ api:
   - { name: "inst-btn-group", kind: "класс", doc: "Контейнер. Внутри — только `inst-btn`" }
   - { name: "--radius-md", kind: "токен" }
   - { name: "--hairline", kind: "токен" }
+title-en: "Button group"
+group-en: "Actions"
 ---
 
 Несколько **разных действий**, поставленных вплотную. Группа говорит «эти

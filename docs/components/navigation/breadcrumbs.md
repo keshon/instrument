@@ -11,6 +11,8 @@ api:
   - { name: "--text-muted", kind: "токен" }
   - { name: "--text-faint", kind: "токен" }
   - { name: "--text-primary", kind: "токен" }
+title-en: "Breadcrumbs"
+group-en: "Navigation"
 ---
 
 Путь от корня до текущего экрана. Отвечает на вопрос «где я и как отсюда

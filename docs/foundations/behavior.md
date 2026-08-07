@@ -9,6 +9,8 @@ api:
   - { name: "aria-level", kind: "атрибут", doc: "На `treeitem`. По нему стрелка «назад» находит родителя — вложенность в разметке может быть плоской" }
   - { name: "aria-expanded", kind: "атрибут", value: "true · false", doc: "На раскрываемом `treeitem`. Без него узел считается листом" }
   - { name: "aria-disabled", kind: "атрибут", value: "true", doc: "Пункт выпадает из обхода стрелками" }
+title-en: "Behaviour"
+group-en: "Foundations"
 ---
 
 Кит рисует состояние и объявляет роли. **Роль — это обещание:** `role="listbox"`

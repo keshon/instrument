@@ -72,6 +72,22 @@
 .site-view-row { display: flex; flex-direction: column; gap: var(--space-3); }
 .site-theme { inline-size: 100%; }
 
+/* Переключатель языка — ссылки внутри сегментированного контрола: смена
+   языка это переход, а не состояние, и средний клик обязан работать. */
+.site-lang {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-block-size: calc(var(--control-h-md) - var(--space-2));
+  padding-inline: var(--control-pad-md);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary); font-size: var(--text-sm); text-decoration: none;
+}
+.site-lang:hover { color: var(--text-primary); }
+.site-lang[aria-checked="true"] {
+  background: var(--surface-raised); color: var(--text-primary);
+  font-weight: var(--weight-medium);
+  box-shadow: 0 0 0 var(--hairline) var(--border);
+}
+
 /* ── Раскладка страницы ─────────────────────────────────────────────────── */
 
 .site-layout {

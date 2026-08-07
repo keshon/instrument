@@ -23,6 +23,8 @@ api:
   - { name: "--err-text", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
   - { name: "--z-sticky", kind: "токен" }
+title-en: "Form"
+group-en: "Inputs"
 ---
 
 Раскладка полей и полоса действий. Два варианта раскладки, и выбор между ними

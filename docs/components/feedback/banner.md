@@ -25,6 +25,8 @@ api:
   - { name: "--text-secondary", kind: "токен" }
   - { name: "--weight-medium", kind: "токен" }
   - { name: "--leading-ui", kind: "токен" }
+title-en: "Banner"
+group-en: "Feedback"
 ---
 
 Сообщение **уровня страницы**: оно относится ко всему экрану, а не к тому,

@@ -9,6 +9,8 @@ api:
   - { name: "--size-icon", kind: "токен" }
   - { name: "--size-chevron", kind: "токен" }
   - { name: "--stroke", kind: "токен" }
+title-en: "Icons"
+group-en: "Foundations"
 ---
 
 Inline SVG на сетке 16, обводка `currentColor` толщиной 1.5. Иконка наследует

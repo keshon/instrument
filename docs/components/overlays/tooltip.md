@@ -19,6 +19,8 @@ api:
   - { name: "--leading-ui", kind: "токен" }
   - { name: "--dur-1", kind: "токен" }
   - { name: "--ease-out", kind: "токен" }
+title-en: "Tooltip"
+group-en: "Overlays"
 ---
 
 Короткая подпись, появляющаяся при наведении и при фокусе. Единственный

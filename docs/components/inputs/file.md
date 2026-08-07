@@ -20,6 +20,8 @@ api:
   - { name: "--text-sm", kind: "токен" }
   - { name: "--text-xs", kind: "токен" }
   - { name: "--space-3", kind: "токен" }
+title-en: "File field"
+group-en: "Inputs"
 ---
 
 Выбор файла и зона, в которую его кладут, — **один компонент**, а не два.

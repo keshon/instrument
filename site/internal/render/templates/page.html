@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="{{ .Lang }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,16 +22,16 @@
 <body>
 {{ .Sprite }}
 
-<a class="inst-skip-link" href="#main">Перейти к содержимому</a>
+<a class="inst-skip-link" href="#main">{{ t .Lang "skip" }}</a>
 
 <div class="inst-shell">
   <aside class="inst-shell-aside inst-shell-aside--drawer" id="sidebar">
-    <a class="site-logo" href="/">
+    <a class="site-logo" href="{{ .Lang.Prefix }}/">
       <svg class="site-logo-mark" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-grid"/></svg>
       <span class="site-logo-name">instrument</span>
     </a>
 
-    <nav class="inst-nav" aria-label="Разделы документации">
+    <nav class="inst-nav" aria-label="{{ t .Lang "nav.aria" }}">
       {{ range .Nav }}
       <div class="inst-nav-group">
         <span class="inst-nav-label">{{ .Label }}</span>
@@ -72,47 +72,57 @@
          inst-shell-nav-toggle. Сайту остаётся одна строка — переключить
          aria-expanded. -->
     <button class="inst-btn inst-btn--sm inst-btn--icon inst-shell-nav-toggle" type="button"
-            aria-label="Разделы" aria-expanded="false" aria-controls="sidebar" data-burger>
+            aria-label="{{ t .Lang "sections" }}" aria-expanded="false" aria-controls="sidebar" data-burger>
       <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>
     </button>
 
     <div class="site-search">
-      <input class="inst-input inst-input--sm" type="search" placeholder="Поиск  /"
+      <input class="inst-input inst-input--sm" type="search" placeholder="{{ t .Lang "search" }}"
              role="combobox" aria-expanded="false" aria-controls="site-results"
-             aria-autocomplete="list" aria-label="Поиск по документации"
+             aria-autocomplete="list" aria-label="{{ t .Lang "search.aria" }}"
              autocomplete="off" data-search>
       <div class="site-results inst-panel" id="site-results" role="listbox"
-           aria-label="Результаты" hidden data-results></div>
+           aria-label="{{ t .Lang "search.result" }}" hidden data-results></div>
     </div>
 
     <span class="inst-cluster-spacer"></span>
 
     <!-- Тема и плотность — в поповере. Он даёт им общее имя «Вид» и
          освобождает шапку: на 390px эти два контрола забирали 411px. -->
-    <button class="inst-btn inst-btn--sm" type="button" popovertarget="site-view">Вид</button>
+    <button class="inst-btn inst-btn--sm" type="button" popovertarget="site-view">{{ t .Lang "view" }}</button>
 
     <div class="inst-popover inst-popover--anchored" id="site-view" popover>
       <div class="site-view-body">
         <div class="site-view-row">
-          <span class="inst-nav-label">Плотность</span>
-          <div class="inst-segmented" role="radiogroup" aria-label="Плотность" data-density-picker>
-            <button type="button" role="radio" data-v="compact" aria-checked="false">Плотно</button>
-            <button type="button" role="radio" data-v="default" aria-checked="true">Обычно</button>
-            <button type="button" role="radio" data-v="comfortable" aria-checked="false">Свободно</button>
+          <span class="inst-nav-label">{{ t .Lang "density" }}</span>
+          <div class="inst-segmented" role="radiogroup" aria-label="{{ t .Lang "density" }}" data-density-picker>
+            <button type="button" role="radio" data-v="compact" aria-checked="false">{{ t .Lang "density.sm" }}</button>
+            <button type="button" role="radio" data-v="default" aria-checked="true">{{ t .Lang "density.md" }}</button>
+            <button type="button" role="radio" data-v="comfortable" aria-checked="false">{{ t .Lang "density.lg" }}</button>
           </div>
         </div>
 
         <div class="site-view-row">
-          <span class="inst-nav-label">Тема</span>
+          <span class="inst-nav-label">{{ t .Lang "lang" }}</span>
+          <div class="inst-segmented" role="radiogroup" aria-label="{{ t .Lang "lang" }}">
+            {{ range .Langs }}
+            <a class="site-lang" role="radio" aria-checked="{{ if .Current }}true{{ else }}false{{ end }}"
+               href="{{ .Route }}"{{ if .Current }} tabindex="0"{{ else }} tabindex="-1"{{ end }}>{{ .Label }}</a>
+            {{ end }}
+          </div>
+        </div>
+
+        <div class="site-view-row">
+          <span class="inst-nav-label">{{ t .Lang "theme" }}</span>
           <span class="inst-select-wrap site-theme">
-            <select class="inst-select inst-select--sm" aria-label="Тема оформления" data-theme-picker>
-              <option value="">По системе</option>
-              <option value="light-neutral">Светлая нейтральная</option>
-              <option value="light">Светлая тёплая</option>
-              <option value="light-cool">Светлая холодная</option>
-              <option value="dark-light">Тёмная светло-серая</option>
-              <option value="dark-soft">Тёмная серая</option>
-              <option value="dark">Тёмная чёрная</option>
+            <select class="inst-select inst-select--sm" aria-label="{{ t .Lang "theme.aria" }}" data-theme-picker>
+              <option value="">{{ t .Lang "theme.system" }}</option>
+              <option value="light-neutral">{{ t .Lang "theme.ln" }}</option>
+              <option value="light">{{ t .Lang "theme.l" }}</option>
+              <option value="light-cool">{{ t .Lang "theme.lc" }}</option>
+              <option value="dark-light">{{ t .Lang "theme.dl" }}</option>
+              <option value="dark-soft">{{ t .Lang "theme.ds" }}</option>
+              <option value="dark">{{ t .Lang "theme.d" }}</option>
             </select>
           </span>
         </div>
@@ -130,10 +140,19 @@
           </div>
           {{ if .Page.NeedsJS }}
           <div class="inst-page-actions">
-            <span class="inst-badge" data-tone="warn" title="{{ .Page.NeedsJS }}">нужен JS</span>
+            <span class="inst-badge" data-tone="warn" title="{{ .Page.NeedsJS }}">{{ t .Lang "needs-js" }}</span>
           </div>
           {{ end }}
         </div>
+
+        {{ if not .Page.Translated }}
+        <!-- Страница без своего перевода не исчезает и не отдаёт 404: она
+             показывает исходный текст с пометкой. Иначе перевод семидесяти
+             пяти страниц был бы «всё или ничего». -->
+        <div class="inst-banner" data-tone="warn">
+          <div class="inst-banner-body">{{ t .Lang "untranslated" }}</div>
+        </div>
+        {{ end }}
 
         {{ .Body }}
 
@@ -142,14 +161,14 @@
              Пока её писали руками, она стояла на странице дважды — рядом с
              той, что печатает шаблон, — и в семидесяти копиях успела разойтись
              по глубине относительной ссылки на конституцию. -->
-        <p class="site-source">Исходник: <code>{{ .Page.Source }}</code>{{ if not .Page.Splash }} ·
-          Почему кит устроен именно так — <a href="/about/design-principles/">конституция</a>{{ end }}</p>
+        <p class="site-source">{{ t .Lang "source" }}: <code>{{ .Page.Source }}</code>{{ if not .Page.Splash }} ·
+          {{ t .Lang "why" }} — <a href="{{ .Lang.Prefix }}/about/design-principles/">{{ t .Lang "constitution" }}</a>{{ end }}</p>
         {{ end }}
       </article>
 
       {{ if .Page.TOC }}
-      <nav class="site-toc" aria-label="На этой странице">
-        <span class="inst-nav-label">На этой странице</span>
+      <nav class="site-toc" aria-label="{{ t .Lang "toc" }}">
+        <span class="inst-nav-label">{{ t .Lang "toc" }}</span>
         {{ range .Page.TOC }}
         <a class="site-toc-item" data-level="{{ .Level }}" href="#{{ .ID }}">{{ .Text }}</a>
         {{ end }}

@@ -6,6 +6,8 @@ source: src/base.css
 api:
   - { name: "--text-secondary", kind: "токен" }
   - { name: "--font-mono", kind: "токен" }
+title-en: "Utilities"
+group-en: "Foundations"
 ---
 
 Пять утилит, и это **потолок**, а не текущее состояние. Правило кита: если

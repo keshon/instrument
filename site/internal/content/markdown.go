@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strings"
 
+	"instrument/site/internal/i18n"
+
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
@@ -23,7 +25,7 @@ func renderMarkdown(p *Page, body []byte) error {
 		goldmark.WithExtensions(extension.GFM),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
-			parser.WithASTTransformers(util.Prioritized(&linkRewriter{dir: p.Dir}, 100)),
+			parser.WithASTTransformers(util.Prioritized(&linkRewriter{dir: p.Dir, prefix: p.Lang.Prefix()}, 100)),
 		),
 		goldmark.WithRendererOptions(
 			html.WithUnsafe(), // примеры — это HTML, в том и смысл
@@ -49,7 +51,9 @@ func renderMarkdown(p *Page, body []byte) error {
 // поэтому ссылка переписывается в маршрут. Точка отсчёта — каталог ФАЙЛА,
 // а не текущий URL: относительный путь в markdown отсчитывается от файла.
 
-type linkRewriter struct{ dir string }
+// prefix — префикс языка. Без него ссылка со страницы /en/ уводила бы
+// читателя обратно в русскую версию, и перевод превращался бы в остров.
+type linkRewriter struct{ dir, prefix string }
 
 func (l *linkRewriter) Transform(doc *ast.Document, r text.Reader, pc parser.Context) {
 	ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
@@ -74,7 +78,7 @@ func (l *linkRewriter) Transform(doc *ast.Document, r text.Reader, pc parser.Con
 		target := path.Clean(path.Join(l.dir, dest))
 		target = strings.TrimSuffix(target, ".md")
 		target = strings.TrimSuffix(target, "/index")
-		link.Destination = []byte("/" + strings.Trim(target, "/") + "/" + hash)
+		link.Destination = []byte(l.prefix + "/" + strings.Trim(target, "/") + "/" + hash)
 		return ast.WalkContinue, nil
 	})
 }
@@ -125,40 +129,51 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 
 	if lang == "html" && previewRe.MatchString(info) {
 		r.n++
-		id := strings.Trim(strings.ReplaceAll(r.page.Route, "/", "-"), "-")
-		if id == "" {
+		// ID берётся из ПУТИ ФАЙЛА, а не из маршрута: маршрут несёт префикс
+		// языка, и столы размножились бы по числу языков — 288 документов
+		// вместо 144, причём с одинаковым содержимым.
+		id := strings.TrimSuffix(r.page.Rel, ".md")
+		id = strings.Trim(strings.ReplaceAll(id, "/", "-"), "-")
+		if id == "" || id == "index" {
 			id = "index"
 		}
 		id = fmt.Sprintf("%s-%d", id, r.n)
 		ctx := contextRe.MatchString(info)
 		r.page.Demos = append(r.page.Demos, Demo{ID: id, Markup: raw, Context: ctx})
 
-		label := "Пример"
+		lg := r.page.Lang
+		label := i18n.T(lg, "demo")
 		if ctx {
-			label = "В контексте"
+			label = i18n.T(lg, "demo.context")
 		}
 
 		// Заголовок сцены — это её адрес, а не украшение: пример живёт
 		// отдельным документом, и его можно открыть в новой вкладке.
+		//
+		// Сам стол на все языки ОДИН: разметка примера языка не имеет, а
+		// второй комплект из 144 документов пришлось бы держать в синхроне.
 		fmt.Fprintf(w, `<figure class="demo" data-demo>`+
 			`<figcaption class="demo-bar">`+
 			`<span class="demo-chrome" aria-hidden="true"></span>`+
-			`<span class="demo-label">`+label+`</span>`+
+			`<span class="demo-label">%s</span>`+
 			`<span class="demo-tools">`+
-			`<span class="inst-select-wrap demo-theme"><select class="inst-select inst-select--sm" aria-label="Тема примера" data-demo-theme>`+
-			`<option value="">как у сайта</option>`+
-			`<option value="light-neutral">светлая нейтральная</option><option value="light">светлая тёплая</option><option value="light-cool">светлая холодная</option>`+
-			`<option value="dark-light">тёмная светло-серая</option><option value="dark-soft">тёмная серая</option><option value="dark">тёмная чёрная</option></select></span>`+
-			`<a class="demo-open" href="/demo/%s.html" target="_blank" rel="noopener" title="Открыть пример отдельно">↗</a>`+
+			`<span class="inst-select-wrap demo-theme"><select class="inst-select inst-select--sm" aria-label="%s" data-demo-theme>`+
+			`<option value="">%s</option>`+
+			`<option value="light-neutral">%s</option><option value="light">%s</option><option value="light-cool">%s</option>`+
+			`<option value="dark-light">%s</option><option value="dark-soft">%s</option><option value="dark">%s</option></select></span>`+
+			`<a class="demo-open" href="/demo/%s.html" target="_blank" rel="noopener" title="%s">↗</a>`+
 			`</span></figcaption>`+
-			`<iframe class="demo-frame" src="/demo/%s.html" title="Живой пример" loading="lazy"></iframe>`,
-			id, id)
-		writeCode(w, raw, lang, true)
+			`<iframe class="demo-frame" src="/demo/%s.html" title="%s" loading="lazy"></iframe>`,
+			label, i18n.T(lg, "demo.theme"), i18n.T(lg, "demo.same"),
+			i18n.T(lg, "theme.ln"), i18n.T(lg, "theme.l"), i18n.T(lg, "theme.lc"),
+			i18n.T(lg, "theme.dl"), i18n.T(lg, "theme.ds"), i18n.T(lg, "theme.d"),
+			id, i18n.T(lg, "demo.open"), id, i18n.T(lg, "demo.title"))
+		writeCode(w, raw, lang, true, lg)
 		w.WriteString(`</figure>`)
 		return ast.WalkSkipChildren, nil
 	}
 
-	writeCode(w, raw, lang, false)
+	writeCode(w, raw, lang, false, r.page.Lang)
 	return ast.WalkSkipChildren, nil
 }
 
@@ -171,16 +186,16 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 //
 // Носитель — <details>, поэтому раскрытие, клавиатура и роль достаются от
 // платформы, и без JS блок остаётся доступен.
-func writeCode(w util.BufWriter, raw, lang string, inDemo bool) {
+func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
 	if inDemo {
-		w.WriteString(`<details class="demo-code"><summary class="demo-code-head">Разметка</summary>`)
+		fmt.Fprintf(w, `<details class="demo-code"><summary class="demo-code-head">%s</summary>`, i18n.T(lg, "demo.markup"))
 	}
 	cls := "code-block"
 	if inDemo {
 		cls += " code-block--demo"
 	}
-	fmt.Fprintf(w, `<div class="%s"><button class="code-copy inst-btn inst-btn--sm" type="button" data-copy>копировать</button><pre><code class="lang-%s">%s</code></pre></div>`,
-		cls, escape(lang), highlight(raw, lang))
+	fmt.Fprintf(w, `<div class="%s"><button class="code-copy inst-btn inst-btn--sm" type="button" data-copy>%s</button><pre><code class="lang-%s">%s</code></pre></div>`,
+		cls, i18n.T(lg, "copy"), escape(lang), highlight(raw, lang))
 	if inDemo {
 		w.WriteString(`</details>`)
 	}
@@ -201,15 +216,16 @@ func writeAPI(w util.BufWriter, p *Page) {
 	// трудночитаемость, ради устранения которой таблицу и объединяли.
 	// Строка-заголовок даёт то же знание один раз и заодно делит длинный
 	// список на куски, по которым можно прыгать глазом.
-	w.WriteString(`<div class="api"><table class="api-table"><thead><tr>` +
-		`<th>Имя</th><th>Значение</th><th>Что делает</th>` +
-		`</tr></thead><tbody>`)
+	fmt.Fprintf(w, `<div class="api"><table class="api-table"><thead><tr>`+
+		`<th>%s</th><th>%s</th><th>%s</th>`+
+		`</tr></thead><tbody>`,
+		i18n.T(p.Lang, "api.name"), i18n.T(p.Lang, "api.value"), i18n.T(p.Lang, "api.doc"))
 	kind := ""
 	for _, r := range p.API {
 		if r.Kind != kind {
 			kind = r.Kind
 			fmt.Fprintf(w, `<tr class="api-group"><th colspan="3" scope="colgroup">%s</th></tr>`,
-				escape(kind))
+				escape(i18n.Kind(p.Lang, kind)))
 		}
 		val := escape(r.Value)
 		if val == "" {

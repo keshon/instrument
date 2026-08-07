@@ -16,6 +16,8 @@ api:
   - { name: "--pad-panel", kind: "токен" }
   - { name: "--text-xs", kind: "токен" }
   - { name: "--font-mono", kind: "токен" }
+title-en: "Code and copyable value"
+group-en: "Data display"
 ---
 
 Блок кода и однострочное значение, которое хочется скопировать: путь, хеш,

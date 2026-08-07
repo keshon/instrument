@@ -20,6 +20,8 @@ api:
   - { name: "--text-xs", kind: "токен" }
   - { name: "--leading-ui", kind: "токен" }
   - { name: "--dur-1", kind: "токен" }
+title-en: "Choice card"
+group-en: "Inputs"
 ---
 
 Радиокнопка или чекбокс, у которых есть заголовок **и объяснение

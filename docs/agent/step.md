@@ -27,6 +27,8 @@ api:
   - { name: "--text-muted", kind: "токен" }
   - { name: "--tone-ink", kind: "токен" }
   - { name: "--dur-1", kind: "токен" }
+title-en: "Step — a tool call"
+group-en: "Agent layer"
 ---
 
 Один вызов инструмента агентом: что вызвали, с чем и что вернулось. У шага

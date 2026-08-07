@@ -32,6 +32,8 @@ api:
   - { name: "--weight-medium",  kind: "токен", value: "500",  doc: "Начертание подписи" }
   - { name: "--size-spinner",   kind: "токен", value: "13px", doc: "Кольцо занятости" }
   - { name: "--dur-1",          kind: "токен", value: "80ms", doc: "Длительность перехода заливки" }
+title-en: "Button"
+group-en: "Actions"
 ---
 
 Действие, которое пользователь запускает сам. По умолчанию кнопка **тихая**:

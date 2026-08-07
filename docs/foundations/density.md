@@ -21,6 +21,8 @@ api:
   - { name: "--size-gutter", kind: "токен" }
   - { name: "--size-indent", kind: "токен" }
   - { name: "--label-col", kind: "токен" }
+title-en: "Density"
+group-en: "Foundations"
 ---
 
 Плотность — **атрибут контейнера**, а не вариант на каждом компоненте. Один

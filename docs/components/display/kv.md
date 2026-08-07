@@ -19,6 +19,8 @@ api:
   - { name: "--text-muted", kind: "токен" }
   - { name: "--surface-hover", kind: "токен" }
   - { name: "--control-h-sm", kind: "токен" }
+title-en: "Key–value list"
+group-en: "Data display"
 ---
 
 Пары «имя — значение» одного объекта. Настоящий `<dl>`: связь имени со

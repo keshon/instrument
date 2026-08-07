@@ -13,6 +13,7 @@ hero:
     - text: Агентный слой
       link: /agent/task/
       variant: minimal
+title-en: "instrument"
 ---
 
 ## Для кого

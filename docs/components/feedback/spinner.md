@@ -10,6 +10,8 @@ api:
   - { name: "--size-spinner", kind: "токен" }
   - { name: "--border-control", kind: "токен" }
   - { name: "--accent-mark", kind: "токен" }
+title-en: "Spinner"
+group-en: "Feedback"
 ---
 
 Кольцо, показывающее, что машина занята, когда долю выполненного назвать

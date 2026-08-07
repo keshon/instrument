@@ -17,6 +17,8 @@ api:
   - { name: "--radius-lg", kind: "токен" }
   - { name: "--pad-panel", kind: "токен" }
   - { name: "--text-sm", kind: "токен" }
+title-en: "Panel"
+group-en: "Data display"
 ---
 
 Область приложения: она стоит на экране постоянно и имеет своё имя. Панель —

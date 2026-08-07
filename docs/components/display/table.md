@@ -28,6 +28,8 @@ api:
   - { name: "--surface-hover", kind: "токен" }
   - { name: "--control-h-md", kind: "токен" }
   - { name: "--z-sticky", kind: "токен" }
+title-en: "Table"
+group-en: "Data display"
 ---
 
 Сравнимые записи в колонках. Настоящая `<table>` — с семантикой заголовков,

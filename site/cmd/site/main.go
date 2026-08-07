@@ -20,6 +20,7 @@ import (
 
 	"instrument/site/internal/check"
 	"instrument/site/internal/content"
+	"instrument/site/internal/i18n"
 	"instrument/site/internal/nav"
 	"instrument/site/internal/render"
 )
@@ -34,10 +35,11 @@ func main() {
 	)
 	flag.Parse()
 
-	pages, err := content.Collect(*docs)
+	byLang, err := content.Collect(*docs)
 	if err != nil {
 		log.Fatalf("сбор страниц: %v", err)
 	}
+	pages := content.Flat(byLang)
 	if len(pages) == 0 {
 		log.Fatalf("в %s не найдено ни одной страницы", *docs)
 	}
@@ -78,19 +80,32 @@ func main() {
 		log.Fatalf("сборка остановлена: %d проблем", len(problems))
 	}
 
-	sections := nav.Build(pages)
-	if err := render.Site(pages, sections, render.Options{
+	sections := map[i18n.Lang][]nav.Section{}
+	for lang, ps := range byLang {
+		sections[lang] = nav.Build(lang, ps)
+	}
+	if err := render.Site(byLang, sections, render.Options{
 		Out: *out, Kit: *kit, Assets: *assets,
 	}); err != nil {
 		log.Fatalf("сборка: %v", err)
 	}
 
-	demos := 0
+	demos := map[string]bool{}
 	for _, p := range pages {
-		demos += len(p.Demos)
+		for _, d := range p.Demos {
+			demos[d.ID] = true
+		}
 	}
-	fmt.Printf("страниц: %d  ·  живых примеров: %d  ·  разделов навигации: %d\n",
-		len(pages), demos, len(sections))
+	translated := 0
+	for _, p := range byLang[i18n.EN] {
+		if p.Translated {
+			translated++
+		}
+	}
+	fmt.Printf("страниц: %d на язык  ·  живых примеров: %d  ·  разделов навигации: %d\n",
+		len(byLang[i18n.RU]), len(demos), len(sections[i18n.RU]))
+	fmt.Printf("языков: %d  ·  переведено на английский: %d из %d\n",
+		len(i18n.All), translated, len(byLang[i18n.EN]))
 
 	if *serve != "" {
 		fmt.Printf("сервер: http://localhost%s\n", *serve)

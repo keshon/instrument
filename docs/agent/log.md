@@ -20,6 +20,8 @@ api:
   - { name: "--gap-inline", kind: "токен" }
   - { name: "--warn-text", kind: "токен" }
   - { name: "--err-text", kind: "токен" }
+title-en: "Log"
+group-en: "Agent layer"
 ---
 
 Поток строк от машины: время, уровень, сообщение. Моноширинный набор и

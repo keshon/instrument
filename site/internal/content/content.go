@@ -13,6 +13,8 @@ import (
 	"strings"
 
 	"gopkg.in/yaml.v3"
+
+	"instrument/site/internal/i18n"
 )
 
 // Page — одна страница документации.
@@ -27,6 +29,14 @@ type Page struct {
 	NeedsJS string
 	Status  string
 	Splash  bool
+
+	// Lang — язык страницы, а Translated — есть ли у неё СВОЙ перевод.
+	//
+	// Страница без своего button.en.md не исчезает: она попадает в /en/ с
+	// русским телом и пометкой. Иначе перевод семидесяти пяти страниц был бы
+	// «всё или ничего», то есть не начался бы никогда.
+	Lang       i18n.Lang
+	Translated bool
 
 	// APIFrom == "kit" — справочник перечисляется генератором из файла,
 	// указанного в source. Заводится для страницы «Токены»: рукописный
@@ -251,16 +261,34 @@ type frontmatter struct {
 	Template string   `yaml:"template"`
 	API      []APIRow `yaml:"api"`
 	APIFrom  string   `yaml:"api-from"`
+
+	// Заголовок и раздел на другом языке — дешёвый первый шаг перевода.
+	// Семьдесят пять коротких строк делают /en/ проходимым задолго до того,
+	// как будут переведены тела страниц.
+	TitleEN string `yaml:"title-en"`
+	GroupEN string `yaml:"group-en"`
 }
 
 var fmRe = regexp.MustCompile(`(?s)\A---\r?\n(.*?)\r?\n---\r?\n`)
 
-// Collect обходит каталог документации.
+// Collect обходит каталог документации и собирает страницы НА ВСЕХ языках.
+//
+// Исходник один: docs/components/actions/button.md. Перевод лежит рядом —
+// button.en.md, — а не в параллельном дереве: дерево пришлось бы держать в
+// синхроне руками, и оно бы разъехалось на первой же переименованной странице.
+//
+// Страницы без своего перевода НЕ ПРОПАДАЮТ. Они попадают в /en/ с русским
+// телом и пометкой, потому что иначе перевод семидесяти пяти страниц был бы
+// «всё или ничего» — и не начался бы никогда. Читатель при этом не остаётся
+// ни с чем: справочник API на любом языке одинаков, имена классов и токенов
+// английские с самого начала.
 //
 // internal/ пропускается намеренно: это процессные документы, а не
 // документация, и они прямо говорят об этом у себя в шапке.
-func Collect(root string) ([]*Page, error) {
-	var pages []*Page
+func Collect(root string) (map[i18n.Lang][]*Page, error) {
+	// Сначала — исходные файлы. Переводы находятся по ним, а не обходом:
+	// висячий foo.en.md без foo.md должен быть замечен, а не показан.
+	var sources []string
 	err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -271,29 +299,61 @@ func Collect(root string) ([]*Page, error) {
 			}
 			return nil
 		}
-		if !strings.HasSuffix(p, ".md") {
-			return nil
-		}
 		rel, _ := filepath.Rel(root, p)
 		rel = filepath.ToSlash(rel)
-		if rel == "README.md" {
+		if !strings.HasSuffix(rel, ".md") || rel == "README.md" {
 			return nil
 		}
-		page, err := parse(p, rel)
-		if err != nil {
-			return fmt.Errorf("%s: %w", rel, err)
+		// Перевод — не исходник.
+		base := strings.TrimSuffix(rel, ".md")
+		for _, l := range i18n.All {
+			if l != i18n.RU && strings.HasSuffix(base, l.Suffix()) {
+				return nil
+			}
 		}
-		pages = append(pages, page)
+		sources = append(sources, rel)
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	sort.Slice(pages, func(i, j int) bool { return pages[i].Rel < pages[j].Rel })
-	return pages, nil
+	sort.Strings(sources)
+
+	out := map[i18n.Lang][]*Page{}
+	for _, lang := range i18n.All {
+		for _, rel := range sources {
+			file := filepath.Join(root, filepath.FromSlash(rel))
+			translated := false
+			if lang != i18n.RU {
+				alt := filepath.Join(root, filepath.FromSlash(
+					strings.TrimSuffix(rel, ".md")+lang.Suffix()+".md"))
+				if _, err := os.Stat(alt); err == nil {
+					file, translated = alt, true
+				}
+			} else {
+				translated = true
+			}
+			page, err := parse(file, rel, lang, translated)
+			if err != nil {
+				return nil, fmt.Errorf("%s [%s]: %w", rel, lang, err)
+			}
+			out[lang] = append(out[lang], page)
+		}
+	}
+	return out, nil
 }
 
-func parse(fsPath, rel string) (*Page, error) {
+// Flat — все страницы всех языков одним списком. Нужен там, где язык не
+// важен: проверка ссылок, значения токенов, рендер.
+func Flat(byLang map[i18n.Lang][]*Page) []*Page {
+	var all []*Page
+	for _, l := range i18n.All {
+		all = append(all, byLang[l]...)
+	}
+	return all
+}
+
+func parse(fsPath, rel string, lang i18n.Lang, translated bool) (*Page, error) {
 	raw, err := os.ReadFile(fsPath)
 	if err != nil {
 		return nil, err
@@ -313,20 +373,34 @@ func parse(fsPath, rel string) (*Page, error) {
 	if dir == "." {
 		dir = ""
 	}
-	route := "/"
+	route := lang.Prefix() + "/"
 	if slug != "index" {
-		route = "/" + path.Join(dir, slug) + "/"
+		route = lang.Prefix() + "/" + path.Join(dir, slug) + "/"
 	} else if dir != "" {
-		route = "/" + dir + "/"
+		route = lang.Prefix() + "/" + dir + "/"
 	}
 
 	p := &Page{
 		Route: route, Rel: rel, Dir: dir, Slug: slug,
 		Title: meta.Title, Group: meta.Group, Source: meta.Source,
 		NeedsJS: meta.NeedsJS, Status: meta.Status,
-		Splash:  meta.Template == "splash",
-		API:     meta.API,
-		APIFrom: meta.APIFrom,
+		Splash:     meta.Template == "splash",
+		API:        meta.API,
+		APIFrom:    meta.APIFrom,
+		Lang:       lang,
+		Translated: translated,
+	}
+
+	// Дешёвый первый шаг перевода: заголовок и раздел из исходного файла.
+	// Семьдесят пять коротких строк делают /en/ проходимым задолго до того,
+	// как будут переведены тела.
+	if !translated && lang == i18n.EN {
+		if meta.TitleEN != "" {
+			p.Title = meta.TitleEN
+		}
+		if meta.GroupEN != "" {
+			p.Group = meta.GroupEN
+		}
 	}
 
 	// Вид проверяется здесь, а не глазами при вычитке. Опечатка «класс »

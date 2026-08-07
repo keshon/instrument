@@ -23,6 +23,8 @@ api:
   - { name: "--radius-md", kind: "токен" }
   - { name: "--text-sm", kind: "токен" }
   - { name: "--z-modal", kind: "токен" }
+title-en: "Application shell"
+group-en: "Layout"
 ---
 
 Каркас экрана: боковая колонка, шапка, рабочая область. Каждая часть

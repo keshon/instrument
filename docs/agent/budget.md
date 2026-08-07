@@ -16,6 +16,8 @@ api:
   - { name: "--weight-medium", kind: "токен" }
   - { name: "--weight-normal", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
+title-en: "Budget"
+group-en: "Agent layer"
 ---
 
 Расход против лимита: токены, время, деньги. Компонент агентных систем,

@@ -13,6 +13,8 @@ api:
   - { name: "--text-sm", kind: "токен" }
   - { name: "--weight-medium", kind: "токен" }
   - { name: "--text-secondary", kind: "токен" }
+title-en: "Section"
+group-en: "Layout"
 ---
 
 Именованный блок внутри экрана: подпись, необязательные действия и содержимое.

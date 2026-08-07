@@ -13,6 +13,8 @@ api:
   - { name: "--text-faint", kind: "токен" }
   - { name: "--accent-mark", kind: "токен" }
   - { name: "--ease-in-out", kind: "токен" }
+title-en: "Dot and caret"
+group-en: "Feedback"
 ---
 
 Две мельчайшие метки кита. Точка называет состояние объекта, каретка

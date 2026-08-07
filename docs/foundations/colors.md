@@ -3,6 +3,8 @@ title: Цвет
 group: Основания
 status: stable
 source: src/tokens.css
+title-en: "Colour"
+group-en: "Foundations"
 ---
 
 Два яруса. Внизу **рампы** — сырые шаги, они не меняются никогда. Сверху

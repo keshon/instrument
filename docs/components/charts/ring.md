@@ -16,6 +16,8 @@ api:
   - { name: "--accent-mark", kind: "токен" }
   - { name: "--text-2xs", kind: "токен" }
   - { name: "--radius-full", kind: "токен" }
+title-en: "Ring"
+group-en: "Charts"
 ---
 
 Та же доля, что у [меры](./meter.md), но в габарите контрола: кольцо встаёт

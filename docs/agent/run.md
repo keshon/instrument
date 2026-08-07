@@ -12,6 +12,8 @@ api:
   - { name: "data-tone", kind: "атрибут", value: "neutral · running · ok · warn · error", doc: "На каждой точке: `ok` — сделано, `running` — идёт, без атрибута — ещё не начиналось" }
   - { name: "--space-1", kind: "токен", doc: "Зазор между точками" }
   - { name: "--size-dot", kind: "токен", doc: "Сторона точки — от `inst-dot`" }
+title-en: "Run"
+group-en: "Agent layer"
 ---
 
 Экран прогона — это не компонент, а **сборка**: шапка с именем и счётчиками,

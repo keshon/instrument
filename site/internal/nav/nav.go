@@ -4,6 +4,7 @@ import (
 	"sort"
 
 	"instrument/site/internal/content"
+	"instrument/site/internal/i18n"
 )
 
 type Section struct {
@@ -15,46 +16,48 @@ type Section struct {
 // собран кит, потом чем собирают экран, потом компоненты по работе, и
 // агентный слой отдельным разделом, потому что он и есть причина брать
 // именно этот кит.
+// Метка раздела берётся из i18n по каталогу: язык живёт в одном месте, а не
+// растекается по трём файлам.
 var sections = []struct {
-	dir, label string
-	order      []string // явный порядок внутри; остальное по заголовку
+	dir   string
+	order []string // явный порядок внутри; остальное по заголовку
 }{
-	{"foundations", "Основания", []string{
+	{"foundations", []string{
 		"colors", "typography", "spacing", "elevation", "motion",
 		"density", "icons", "behavior", "utilities", "tokens",
 	}},
-	{"layout", "Раскладка", []string{
+	{"layout", []string{
 		"shell", "container", "flow", "split", "page-header", "section",
 	}},
-	{"components/actions", "Действия", nil},
-	{"components/inputs", "Ввод", []string{
+	{"components/actions", nil},
+	{"components/inputs", []string{
 		"input", "select", "toggles", "slider", "num-field", "search",
 		"choice-card", "file", "form",
 	}},
-	{"components/display", "Отображение данных", []string{
+	{"components/display", []string{
 		"panel", "card", "table", "kv", "metric", "badge", "tag",
 		"avatar", "timeline", "calendar", "code",
 	}},
-	{"components/charts", "Графики", []string{
+	{"components/charts", []string{
 		"meter", "ring", "sparkline", "legend", "palette",
 	}},
-	{"components/navigation", "Навигация", []string{
+	{"components/navigation", []string{
 		"nav", "tabs", "breadcrumbs", "pagination", "steps", "toolbar",
 	}},
-	{"components/overlays", "Оверлеи", []string{
+	{"components/overlays", []string{
 		"popover", "menu", "tooltip", "dialog", "sheet",
 	}},
-	{"components/feedback", "Обратная связь", []string{
+	{"components/feedback", []string{
 		"banner", "toast", "note", "empty", "skeleton", "spinner", "states", "accordion",
 	}},
-	{"agent", "Агентный слой", []string{
+	{"agent", []string{
 		"run", "task", "step", "approval", "failure", "diff", "output",
 		"log", "lane", "budget", "tree",
 	}},
-	{"about", "О проекте", nil},
+	{"about", nil},
 }
 
-func Build(pages []*content.Page) []Section {
+func Build(lang i18n.Lang, pages []*content.Page) []Section {
 	byDir := map[string][]*content.Page{}
 	for _, p := range pages {
 		if p.Slug == "index" && p.Dir == "" {
@@ -87,7 +90,7 @@ func Build(pages []*content.Page) []Section {
 				return items[i].Title < items[j].Title
 			}
 		})
-		out = append(out, Section{Label: s.label, Items: items})
+		out = append(out, Section{Label: i18n.Section(lang, s.dir), Items: items})
 		delete(byDir, s.dir)
 	}
 
@@ -103,7 +106,7 @@ func Build(pages []*content.Page) []Section {
 	for _, dir := range rest {
 		items := byDir[dir]
 		sort.Slice(items, func(i, j int) bool { return items[i].Title < items[j].Title })
-		out = append(out, Section{Label: dir, Items: items})
+		out = append(out, Section{Label: i18n.Section(lang, dir), Items: items})
 	}
 	return out
 }

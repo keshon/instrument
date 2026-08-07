@@ -17,6 +17,8 @@ api:
   - { name: "--leading-tight/ui/prose", kind: "токен" }
   - { name: "--tracking-tight", kind: "токен" }
   - { name: "--tracking-normal", kind: "токен" }
+title-en: "Typography"
+group-en: "Foundations"
 ---
 
 Семь ступеней и два начертания. База документа — **интерфейс, а не проза**:

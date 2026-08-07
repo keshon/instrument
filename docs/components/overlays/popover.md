@@ -16,6 +16,8 @@ api:
   - { name: "--space-8", kind: "токен" }
   - { name: "--dur-2", kind: "токен" }
   - { name: "--ease-out", kind: "токен" }
+title-en: "Popover"
+group-en: "Overlays"
 ---
 
 Небольшой блок, всплывающий над интерфейсом по нажатию на кнопку и

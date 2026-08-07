@@ -18,6 +18,8 @@ api:
   - { name: "popover", kind: "атрибут", value: "manual", doc: "На области. Верхний слой, без лёгкого закрытия" }
   - { name: "--surface-overlay", kind: "токен", doc: "Поверхность уведомления" }
   - { name: "--shadow-popover", kind: "токен", doc: "Третий и последний носитель тени в ките" }
+title-en: "Notification"
+group-en: "Feedback"
 ---
 
 Результат действия, которое запустил человек, — когда результату не место на

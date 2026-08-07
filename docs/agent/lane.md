@@ -19,6 +19,8 @@ api:
   - { name: "--hairline", kind: "токен" }
   - { name: "--text-xs", kind: "токен" }
   - { name: "--tone-mark", kind: "токен" }
+title-en: "Run lanes"
+group-en: "Agent layer"
 ---
 
 Несколько агентов, работающих параллельно, на общей оси времени. Отвечает на

@@ -30,6 +30,8 @@ api:
   - { name: "--border-control", kind: "токен" }
   - { name: "--err-text", kind: "токен" }
   - { name: "--leading-ui", kind: "токен" }
+title-en: "Text field"
+group-en: "Inputs"
 ---
 
 Однострочный и многострочный ввод. Поле стоит во **врезе**

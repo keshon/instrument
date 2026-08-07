@@ -26,6 +26,8 @@ api:
   - { name: "--weight-medium", kind: "токен" }
   - { name: "--dur-1", kind: "токен" }
   - { name: "--ease-out", kind: "токен" }
+title-en: "Accordion"
+group-en: "Feedback"
 ---
 
 Группа сворачиваемых разделов, из которых открыт ровно один. На нативных

@@ -32,6 +32,8 @@ api:
   - { name: "--err-bg", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
   - { name: "--leading-ui", kind: "токен" }
+title-en: "Menu"
+group-en: "Overlays"
 ---
 
 Список действий над объектом. Меню — это **содержимое**

@@ -21,6 +21,8 @@ api:
   - { name: "--text-xs", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
   - { name: "--tone-mark", kind: "токен" }
+title-en: "Timeline"
+group-en: "Data display"
 ---
 
 Хронология: что произошло и когда. Точки соединены линией, поэтому лента

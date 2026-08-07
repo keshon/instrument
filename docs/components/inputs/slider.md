@@ -17,6 +17,8 @@ api:
   - { name: "--radius-full", kind: "токен" }
   - { name: "--dur-1", kind: "токен" }
   - { name: "--ease-out", kind: "токен" }
+title-en: "Slider"
+group-en: "Inputs"
 ---
 
 Нативный `input[type=range]`, приведённый к метрике кита. Значение

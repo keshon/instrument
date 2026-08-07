@@ -18,6 +18,8 @@ api:
   - { name: "--size-chevron", kind: "токен" }
   - { name: "--text-muted", kind: "токен" }
   - { name: "--err-text", kind: "токен" }
+title-en: "Tag"
+group-en: "Data display"
 ---
 
 Произвольная метка, которую завёл **пользователь**. Её можно снять — и это

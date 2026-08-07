@@ -27,6 +27,8 @@ api:
   - { name: "--text-muted", kind: "токен" }
   - { name: "--dur-1", kind: "токен" }
   - { name: "--ease-out", kind: "токен" }
+title-en: "Navigation"
+group-en: "Navigation"
 ---
 
 Список разделов приложения в боковой колонке. Текущий пункт помечен **не только

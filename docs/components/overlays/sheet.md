@@ -16,6 +16,8 @@ api:
   - { name: "--space-5", kind: "токен" }
   - { name: "--gap-inline", kind: "токен" }
   - { name: "--text-md", kind: "токен" }
+title-en: "Sheet"
+group-en: "Overlays"
 ---
 
 Панель во всю высоту у края экрана. Тот же нативный `<dialog>`, что и у

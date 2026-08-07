@@ -17,6 +17,8 @@ api:
   - { name: "--accent-solid", kind: "токен" }
   - { name: "--text-primary", kind: "токен" }
   - { name: "--text-secondary", kind: "токен" }
+title-en: "Tabs"
+group-en: "Navigation"
 ---
 
 Горизонтальный переключатель видов внутри одного раздела. По умолчанию — **на

@@ -21,6 +21,8 @@ api:
   - { name: "--tone-ink", kind: "токен" }
   - { name: "--size-chevron", kind: "токен" }
   - { name: "--space-2", kind: "токен" }
+title-en: "Metric"
+group-en: "Data display"
 ---
 
 Одно число, за которым следят. Единица набирается мельче и тише самого числа:

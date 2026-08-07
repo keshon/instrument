@@ -20,6 +20,8 @@ api:
   - { name: "--gap-inline", kind: "токен" }
   - { name: "--space-2", kind: "токен" }
   - { name: "--space-7", kind: "токен" }
+title-en: "Flow primitives"
+group-en: "Layout"
 ---
 
 Три способа расставить элементы: стопкой, рядом, сеткой. У каждого три шага
