@@ -6,6 +6,8 @@ source: src/agent.css
 needs-js: "Свёртка фаз — на <details>, скрипта не требует. Живые числа и остановка — слой приложения"
 api:
   - { name: "inst-dots", kind: "класс", doc: "Счётная мера: сколько единиц из скольких. Единица — `inst-dot`" }
+  - { name: "inst-card-head", kind: "класс", doc: "Шапка карточки: заголовок и значок перехода у дальнего края" }
+  - { name: "inst-card--link", kind: "модификатор", doc: "Карточка целиком является ссылкой. Без него `base.css` красит её акцентом и подчёркивает" }
   - { name: "role", kind: "атрибут", value: "progressbar", doc: "На `inst-dots`. Вместе с `aria-valuenow/min/max`" }
   - { name: "data-tone", kind: "атрибут", value: "neutral · running · ok · warn · error", doc: "На каждой точке: `ok` — сделано, `running` — идёт, без атрибута — ещё не начиналось" }
   - { name: "--space-1", kind: "токен", doc: "Зазор между точками" }
@@ -119,6 +121,56 @@ api:
 Своей точки компонент не заводит: единица — обычный [`inst-dot`](../components/feedback/states.md).
 Он уже умеет тон, пульсацию «идёт» и режим принудительных цветов, и второй
 кружок в ките был бы вторым именем для того же.
+
+## Свёрнутый вид: список прогонов
+
+Тот же прогон одной строкой — когда их несколько и нужно выбрать. Здесь
+счётная мера работает лучше всего: пятнадцать точек читаются одним взглядом,
+и видно не только «сколько», но и **что одна упала с замечанием**. Полоса на
+20% этого не сообщила бы.
+
+```html preview context
+<div class="inst-stack inst-stack--tight">
+  <a class="inst-card inst-card--interactive inst-card--link" href="#">
+    <span class="inst-card-head">
+      <span class="inst-card-title">audit-worldbox-1</span>
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-chevron"/></svg>
+    </span>
+    <span class="inst-card-sub">Workflow · 15 агентов · 7 мин 58 с</span>
+    <span class="inst-dots" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="15"
+          aria-label="Агентов завершено">
+      <span class="inst-dot" data-tone="ok"></span>
+      <span class="inst-dot" data-tone="ok"></span>
+      <span class="inst-dot" data-tone="warn"></span>
+      <span class="inst-dot" data-tone="ok"></span>
+      <span class="inst-dot" data-tone="running"></span>
+      <span class="inst-dot"></span><span class="inst-dot"></span>
+      <span class="inst-dot"></span><span class="inst-dot"></span>
+      <span class="inst-dot"></span><span class="inst-dot"></span>
+      <span class="inst-dot"></span><span class="inst-dot"></span>
+      <span class="inst-dot"></span><span class="inst-dot"></span>
+    </span>
+  </a>
+
+  <a class="inst-card inst-card--interactive inst-card--link" href="#">
+    <span class="inst-card-head">
+      <span class="inst-card-title">review-terrain-08</span>
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-chevron"/></svg>
+    </span>
+    <span class="inst-card-sub">Workflow · 3 агента · 41 с</span>
+    <span class="inst-dots" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3"
+          aria-label="Агентов завершено">
+      <span class="inst-dot" data-tone="ok"></span>
+      <span class="inst-dot" data-tone="ok"></span>
+      <span class="inst-dot" data-tone="ok"></span>
+    </span>
+  </a>
+</div>
+```
+
+Карточка — **ссылка целиком**, а не карточка с ссылкой внутри: цель нажатия
+получается во всю строку, и её не надо растить отдельно. Шеврон декоративен,
+имя ссылке даёт заголовок.
 
 ## Когда использовать
 
