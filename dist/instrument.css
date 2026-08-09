@@ -1,4 +1,4 @@
-/*! instrument 0.2.0 — https://github.com/keshon/instrument
+/*! instrument 0.3.0 — https://github.com/keshon/instrument
     Собран из src/. Правится ИСХОДНИК, а не этот файл. */
 @layer kit.tokens, kit.base, kit.layout, kit.components, kit.overlay, kit.agent, kit.motion, kit.print;
 
@@ -4529,6 +4529,19 @@ html:has(dialog:modal) { overflow: hidden; }
 
 .inst-copyable:hover > .inst-copy,
 .inst-copyable:focus-within > .inst-copy { opacity: 1; }
+
+/* Ответ на нажатие.
+ *
+ * Буфер обмена ничего не показывает: без ответа кнопка выглядит одинаково
+ * до и после нажатия, и человек жмёт её второй раз. Атрибут ставит kit.js и
+ * снимает через полторы секунды; цвет — единственное, что здесь меняется,
+ * потому что подпись у кнопки иконочная и менять в ней нечего.
+ *
+ * Атрибут держит кнопку видимой: она проявляется по наведению, а после
+ * копирования курсор нередко уже ушёл. */
+.inst-copyable > .inst-copy[data-copied] { opacity: 1; }
+.inst-copy[data-copied='true'] { color: var(--ok-text); }
+.inst-copy[data-copied='false'] { color: var(--err-text); }
 
 /* ==========================================================================
    Принудительные цвета (Windows High Contrast)

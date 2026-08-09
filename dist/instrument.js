@@ -119,12 +119,25 @@ function roving(group, spec, current) {
  * Выбор снимается со ВСЕЙ группы, а не переключается на цели: два выделенных
  * пункта в одиночном списке — состояние, из которого разметка уже не выйдет. */
 function move(group, spec, to) {
-  const items = itemsOf(group, spec);
-  for (const el of items) {
-    el.tabIndex = el === to ? 0 : -1;
-    if (spec.follows) el.setAttribute(spec.follows, String(el === to));
-  }
+  for (const el of itemsOf(group, spec)) el.tabIndex = el === to ? 0 : -1;
+  select(group, spec, to);
   to.focus();
+}
+
+/* Перенести выбор на пункт и сказать об этом.
+ *
+ * Отдельно от move, потому что мышь и клавиатура приходят сюда по-разному:
+ * стрелка двигает фокус и выбор вместе, щелчок — только выбор.
+ *
+ * Отменённое событие оставляет разметку нетронутой, но фокус всё равно уходит
+ * куда шёл: приложение отказалось вести состояние само, а не запретило
+ * человеку перемещаться. */
+function select(group, spec, to) {
+  if (!spec.follows || to.getAttribute(spec.follows) === 'true') return;
+  if (!emit(to, 'select', { value: to.dataset.value ?? to.textContent.trim() })) return;
+  for (const el of itemsOf(group, spec)) {
+    el.setAttribute(spec.follows, String(el === to));
+  }
 }
 
 function step(items, from, delta) {
@@ -396,12 +409,249 @@ export function toast(options = {}) {
   return el;
 }
 
-/** Расставить бегущий tabindex во всех группах внутри root. */
+/* ==========================================================================
+   Нарисованные обещания
+
+   Тот же закон, что у ролей, применённый к оформлению: если кит НАРИСОВАЛ
+   affordance, он обязан её выполнить. Кнопка копирования, крестик снятия,
+   курсор ew-resize на подписи оси — это обещания, данные пользователю
+   картинкой. Невыполненное обещание не «не доделано», оно обманывает.
+
+   Каждое поведение здесь:
+   · ничего не рисует — ставит атрибуты из разметочного контракта;
+   · шлёт отменяемое событие, чтобы приложение могло вмешаться или взять
+     работу на себя;
+   · работает через делегирование, поэтому узлы могут прибывать во время
+     работы.
+   ========================================================================== */
+
+/** Отменяемое событие кита. false — приложение перехватило работу. */
+function emit(el, name, detail) {
+  return el.dispatchEvent(
+    new CustomEvent('inst:' + name, { bubbles: true, cancelable: true, detail }),
+  );
+}
+
+/* ── Живая область для коротких сообщений ────────────────────────────────
+   Отдельная от тостов: «скопировано» — это подтверждение действия, а не
+   уведомление, и вставать в очередь ему незачем. */
+function announce(doc, text) {
+  let live = doc.querySelector('[data-inst-live]');
+  if (!live) {
+    live = doc.createElement('div');
+    live.className = 'inst-u-visually-hidden';
+    live.setAttribute('aria-live', 'polite');
+    live.dataset.instLive = '';
+    doc.body.append(live);
+  }
+  live.textContent = '';
+  // Пустая строка и сразу текст: повтор того же сообщения иначе не
+  // объявляется — регион считает, что ничего не изменилось.
+  //
+  // Таймер, а не requestAnimationFrame: кадров в скрытой вкладке нет, и
+  // объявление не состоялось бы вовсе.
+  setTimeout(() => { live.textContent = text; }, 0);
+}
+
+/* ── Копирование ─────────────────────────────────────────────────────────
+
+   Источник: data-copy у кнопки, иначе текст ближайшего inst-copyable или
+   inst-code без текста самой кнопки.
+
+   textContent, а не innerText: второй зависит от раскладки и у скрытого
+   содержимого возвращает пустую строку — свёрнутый блок кода копировался бы
+   в ничто. */
+function copySource(btn) {
+  if (btn.dataset.copy !== undefined && btn.dataset.copy !== '') return btn.dataset.copy;
+  const host = btn.closest('.inst-copyable, .inst-code, .inst-copy-host');
+  if (!host) return '';
+  const clone = host.cloneNode(true);
+  for (const b of clone.querySelectorAll('.inst-copy')) b.remove();
+  return clone.textContent.trim();
+}
+
+async function onCopy(btn) {
+  const text = copySource(btn);
+  if (!text || !emit(btn, 'copy', { text })) return;
+
+  let ok = true;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    // Незащищённый origin отклоняет запись молча. Молчать в ответ — значит
+    // соврать: кнопка выглядела бы сработавшей.
+    ok = false;
+  }
+
+  btn.dataset.copied = ok ? 'true' : 'false';
+  // Удача и неудача берут РАЗНЫЕ подписи: одна на двоих объявляла бы
+  // «скопировано» там, где запись отклонена, — то есть ровно то враньё,
+  // ради устранения которого неудача вообще отслеживается.
+  const said = ok
+    ? btn.dataset.copiedLabel || 'Скопировано'
+    : btn.dataset.failedLabel || 'Не удалось скопировать';
+  announce(btn.ownerDocument, said);
+  clearTimeout(+btn.dataset.instTimer || 0);
+  btn.dataset.instTimer = setTimeout(() => {
+    delete btn.dataset.copied;
+  }, 1400);
+}
+
+/* ── Снятие тега ─────────────────────────────────────────────────────────
+
+   Фокус обязан уйти на соседа: удалённый элемент уводит его в никуда, и
+   человек с клавиатуры оказывается в начале документа. */
+function onTagRemove(btn) {
+  const tag = btn.closest('.inst-tag');
+  if (!tag) return;
+  const label = tag.textContent.trim();
+  if (!emit(tag, 'remove', { value: tag.dataset.value ?? label })) return;
+
+  const next = tag.nextElementSibling?.querySelector?.('.inst-tag-remove')
+    || tag.previousElementSibling?.querySelector?.('.inst-tag-remove')
+    || tag.parentElement;
+  tag.remove();
+  if (next instanceof HTMLElement) {
+    if (!next.matches('.inst-tag-remove') && next.tabIndex < 0) next.tabIndex = -1;
+    next.focus();
+  }
+  announce(btn.ownerDocument, `Метка ${label} снята`);
+}
+
+/* ── Перетаскивание подписи оси ──────────────────────────────────────────
+
+   Курсор ew-resize на inst-num-axis означает «отсюда тянут». Шаг берётся из
+   самого поля, ускорение — из модификаторов: Shift ×10, Alt ×0.1. Значение
+   уходит событиями input и change, как у нативного ввода, поэтому фреймворки
+   видят его без единой строки клея. */
+function onAxisDown(e, axis) {
+  const field = axis.closest('.inst-num-field');
+  const input = field?.querySelector('input[type="number"]');
+  if (!input || input.disabled || input.readOnly) return;
+
+  const step = Number(input.step) || 1;
+  const startX = e.clientX;
+  const startValue = Number(input.value) || 0;
+  let moved = false;
+
+  axis.setPointerCapture(e.pointerId);
+  e.preventDefault();
+
+  const onMove = (ev) => {
+    const mul = ev.shiftKey ? 10 : ev.altKey ? 0.1 : 1;
+    const delta = Math.round((ev.clientX - startX) / 2) * step * mul;
+    if (!delta && !moved) return;
+    moved = true;
+    let v = startValue + delta;
+    if (input.min !== '') v = Math.max(Number(input.min), v);
+    if (input.max !== '') v = Math.min(Number(input.max), v);
+    // Хвост float съедается шагом: 0.1 + 0.2 иначе даёт 0.30000000000000004.
+    const decimals = (String(step).split('.')[1] || '').length;
+    input.value = decimals ? v.toFixed(decimals) : String(v);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+
+  const onUp = () => {
+    axis.releasePointerCapture?.(e.pointerId);
+    axis.removeEventListener('pointermove', onMove);
+    axis.removeEventListener('pointerup', onUp);
+    axis.removeEventListener('pointercancel', onUp);
+    if (moved) input.dispatchEvent(new Event('change', { bubbles: true }));
+  };
+
+  axis.addEventListener('pointermove', onMove);
+  axis.addEventListener('pointerup', onUp);
+  axis.addEventListener('pointercancel', onUp);
+}
+
+/* ── Значение слайдера в <output> ────────────────────────────────────────
+   Связь уже объявлена атрибутом for. Синхронизировать её вручную — писать
+   одну и ту же строку в каждом приложении. */
+function syncOutputs(input) {
+  if (!input.id) return;
+  for (const out of input.ownerDocument.querySelectorAll(`output[for~="${CSS.escape(input.id)}"]`)) {
+    out.textContent = input.value;
+  }
+}
+
+/* ── «Выбрать всё» в таблице ─────────────────────────────────────────────
+   Чекбокс в шапке колонки выбора. Промежуточное состояние — indeterminate:
+   «часть строк выбрана» невыразимо ни через checked, ни через его отсутствие. */
+function rowBoxes(table) {
+  return [...table.querySelectorAll('tbody .inst-col-select input[type="checkbox"], tbody td:first-child input[type="checkbox"]')];
+}
+
+function syncSelectAll(table) {
+  const head = table.querySelector('thead .inst-col-select input[type="checkbox"]');
+  if (!head) return;
+  const boxes = rowBoxes(table);
+  const on = boxes.filter((b) => b.checked).length;
+  head.checked = on > 0 && on === boxes.length;
+  head.indeterminate = on > 0 && on < boxes.length;
+}
+
+function onTableToggle(box) {
+  const table = box.closest('.inst-table');
+  if (!table) return;
+  const inHead = !!box.closest('thead');
+
+  if (inHead) {
+    if (!emit(table, 'selectall', { checked: box.checked })) return;
+    for (const b of rowBoxes(table)) {
+      if (b.disabled) continue;
+      b.checked = box.checked;
+      b.closest('tr')?.setAttribute('aria-selected', String(box.checked));
+    }
+    box.indeterminate = false;
+  } else {
+    box.closest('tr')?.setAttribute('aria-selected', String(box.checked));
+  }
+  syncSelectAll(table);
+}
+
+function onClick(e) {
+  const copy = e.target.closest?.('.inst-copy');
+  if (copy) { onCopy(copy); return; }
+
+  const tagX = e.target.closest?.('.inst-tag-remove');
+  if (tagX) { onTagRemove(tagX); return; }
+
+  // Щелчок по вкладке или варианту. Без этого кит рисовал выбранную вкладку,
+  // стрелки её переключали, а мышь — нет: focusin переставляет только
+  // бегущий tabindex.
+  const group = e.target.closest?.(GROUP_SELECTOR);
+  if (!group) return;
+  const spec = GROUPS[group.getAttribute('role')];
+  const item = spec && e.target.closest(spec.item);
+  if (item && itemsOf(group, spec).includes(item)) select(group, spec, item);
+}
+
+function onChange(e) {
+  const t = e.target;
+  if (!(t instanceof HTMLElement)) return;
+  if (t.matches?.('.inst-table input[type="checkbox"]')) onTableToggle(t);
+}
+
+function onInput(e) {
+  const t = e.target;
+  if (t instanceof HTMLElement && t.matches?.('.inst-slider')) syncOutputs(t);
+}
+
+function onPointerDown(e) {
+  const axis = e.target.closest?.('.inst-num-axis');
+  if (axis && e.button === 0) onAxisDown(e, axis);
+}
+
+/** Расставить бегущий tabindex и привести к данным то, что от них зависит. */
 export function refresh(root = document) {
   for (const group of root.querySelectorAll?.(GROUP_SELECTOR) || []) {
     const spec = GROUPS[group.getAttribute('role')];
     if (spec) roving(group, spec);
   }
+  // Начальное состояние: <output> и «выбрать всё» обязаны совпадать с
+  // разметкой ДО первого взаимодействия, иначе первый же кадр врёт.
+  for (const s of root.querySelectorAll?.('.inst-slider') || []) syncOutputs(s);
+  for (const t of root.querySelectorAll?.('.inst-table') || []) syncSelectAll(t);
 }
 
 let observer = null;
@@ -410,6 +660,10 @@ let observer = null;
 export function start(root = document) {
   root.addEventListener('keydown', onKeydown);
   root.addEventListener('focusin', onFocusin);
+  root.addEventListener('click', onClick);
+  root.addEventListener('change', onChange);
+  root.addEventListener('input', onInput);
+  root.addEventListener('pointerdown', onPointerDown);
   refresh(root);
 
   // Группы прибывают во время работы — это агентный интерфейс, в нём строки
@@ -434,6 +688,10 @@ export function start(root = document) {
 export function stop(root = document) {
   root.removeEventListener('keydown', onKeydown);
   root.removeEventListener('focusin', onFocusin);
+  root.removeEventListener('click', onClick);
+  root.removeEventListener('change', onChange);
+  root.removeEventListener('input', onInput);
+  root.removeEventListener('pointerdown', onPointerDown);
   observer?.disconnect();
   observer = null;
 }

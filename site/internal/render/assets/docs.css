@@ -572,8 +572,16 @@
 .api-table tbody tr:hover .api-copy,
 .api-copy:focus-visible { opacity: 1; }
 .api-copy:hover { color: var(--text-primary); }
-.api-copy[data-state="done"] { opacity: 1; color: var(--ok-text); }
-.api-copy[data-state="failed"] { opacity: 1; color: var(--err-text); }
+/* Ответ на нажатие. Атрибут ставит кит; цвет объявлен ЗДЕСЬ, потому что цвет
+   покоя объявлен здесь же: стили сайта лежат вне слоёв и выигрывают у кита по
+   его собственному правилу. Кит красит `[data-copied]` для приложения,
+   которое `.inst-copy` не трогает, — этот случай не наш.
+
+   Видимость держится тем же атрибутом: кнопка проявляется по наведению
+   строки, а курсор к моменту ответа нередко уже ушёл. */
+.api-copy[data-copied] { opacity: 1; }
+.api-copy[data-copied="true"] { color: var(--ok-text); }
+.api-copy[data-copied="false"] { color: var(--err-text); }
 
 @media (width < 60rem) {
   .api-copy { opacity: 1; }
@@ -622,8 +630,16 @@
 .code-block:hover .code-copy,
 .code-copy:hover,
 .code-copy:focus-visible { opacity: 1; }
-.code-copy[data-state="done"] { opacity: 1; color: var(--ok-text); }
-.code-copy[data-state="failed"] { opacity: 1; color: var(--err-text); }
+.code-copy[data-copied] { opacity: 1; }
+.code-copy[data-copied="true"] { color: var(--ok-text); }
+.code-copy[data-copied="false"] { color: var(--err-text); }
+
+/* Два значка в разметке, переключение — здесь. Подменить href у <use>
+   стилями нельзя, а менять его скриптом значило бы вернуть сайту
+   обработчик, который только что стал поведением кита. */
+.copy-i-done { display: none; }
+.inst-copy[data-copied="true"] .copy-i { display: none; }
+.inst-copy[data-copied="true"] .copy-i-done { display: block; }
 
 /* Место под кнопку в блоке кода: без него длинная первая строка уходит под
    неё. Полоса прокрутки у <pre> своя, поэтому отступ ставится содержимому. */

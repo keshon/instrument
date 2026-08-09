@@ -264,34 +264,45 @@ func headingID(h *ast.Heading) string {
 // строку. Иконочная кнопка у кита для этого и заведена, вместе с требованием
 // доступного имени.
 //
+// Работу выполняет КИТ: класс `inst-copy` и `data-copy` — это его контракт.
+// Своего обработчика у сайта здесь нет намеренно. Копирование стало
+// поведением кита, и вторая реализация в его же справочнике означала бы, что
+// кит документирует одно, а показывает другое.
+//
 // Результат сообщается ДВАЖДЫ: значок меняется на галку для тех, кто смотрит,
-// и слово уходит в живую область для тех, кто слушает. Смена значка для
-// скринридера — событие без содержания, и это записано на странице «Код».
-func copyButton(lg i18n.Lang) string {
+// и слово уходит в живую область для тех, кто слушает. Оба значка стоят в
+// разметке, а переключает их CSS по `data-copied`: подменить `href` у `use`
+// стилями нельзя.
+func copyIcons(mod string) string {
 	return fmt.Sprintf(
-		`<button class="code-copy inst-btn inst-btn--sm inst-btn--icon" type="button" `+
-			`data-copy aria-label="%s" title="%s">`+
-			`<svg class="inst-icon" aria-hidden="true" data-copy-icon><use href="#i-copy"/></svg>`+
-			`<span class="inst-u-visually-hidden" data-copy-msg aria-live="polite"></span>`+
-			`</button>`,
-		escape(i18n.T(lg, "copy")), escape(i18n.T(lg, "copy")))
+		`<svg class="inst-icon%s copy-i" aria-hidden="true"><use href="#i-copy"/></svg>`+
+			`<svg class="inst-icon%s copy-i-done" aria-hidden="true"><use href="#i-check"/></svg>`,
+		mod, mod)
+}
+
+func copyButton(text string, lg i18n.Lang) string {
+	return fmt.Sprintf(
+		`<button class="code-copy inst-copy inst-btn inst-btn--sm inst-btn--icon" type="button" `+
+			`data-copy="%s" data-copied-label="%s" data-failed-label="%s" `+
+			`aria-label="%s" title="%s">%s</button>`,
+		escape(text), escape(i18n.T(lg, "copy.done")), escape(i18n.T(lg, "copy.fail")),
+		escape(i18n.T(lg, "copy")), escape(i18n.T(lg, "copy")), copyIcons(""))
 }
 
 // copyValue — кнопка копирования одного значения.
 //
-// Тот же обработчик, что у блока кода, но источник берётся из `data-value`, а
-// не из соседнего `<code>`: в строке справочника копируют имя, а не ячейку.
+// Тот же контракт кита, что у блока кода: в строке справочника копируют имя,
+// а не ячейку, и `data-copy` несёт именно его.
 func copyValue(v string, lg i18n.Lang) string {
 	if v == "" {
 		return ""
 	}
 	return fmt.Sprintf(
-		`<button class="api-copy inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" `+
-			`data-copy data-value="%s" aria-label="%s %s" title="%s">`+
-			`<svg class="inst-icon inst-icon--sm" aria-hidden="true" data-copy-icon><use href="#i-copy"/></svg>`+
-			`<span class="inst-u-visually-hidden" data-copy-msg aria-live="polite"></span>`+
-			`</button>`,
-		escape(v), escape(i18n.T(lg, "copy")), escape(v), escape(v))
+		`<button class="api-copy inst-copy inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" `+
+			`data-copy="%s" data-copied-label="%s" data-failed-label="%s" `+
+			`aria-label="%s %s" title="%s">%s</button>`,
+		escape(v), escape(i18n.T(lg, "copy.done")), escape(i18n.T(lg, "copy.fail")),
+		escape(i18n.T(lg, "copy")), escape(v), escape(v), copyIcons(" inst-icon--sm"))
 }
 
 // ctxClass отмечает сцену контекстного примера: у собранного экрана свои
@@ -334,6 +345,10 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 	if lang == "api" {
 		writeAPI(w, r.page)
 		return ast.WalkSkipChildren, nil
+	}
+
+	if lang == "js" || lang == "javascript" {
+		r.page.HasJS = true
 	}
 
 	if lang == "html" && previewRe.MatchString(info) {
@@ -432,7 +447,7 @@ func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
 		cls += " code-block--demo"
 	}
 	fmt.Fprintf(w, `<div class="%s">%s<pre><code class="lang-%s">%s</code></pre></div>`,
-		cls, copyButton(lg), escape(lang), highlight(raw, lang))
+		cls, copyButton(raw, lg), escape(lang), highlight(raw, lang))
 	if inDemo {
 		w.WriteString(`</details>`)
 	}

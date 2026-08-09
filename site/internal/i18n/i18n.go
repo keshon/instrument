@@ -126,6 +126,7 @@ var kinds = map[string]map[Lang]string{
 	"класс":       {RU: "класс", EN: "class"},
 	"модификатор": {RU: "модификатор", EN: "modifier"},
 	"атрибут":     {RU: "атрибут", EN: "attribute"},
+	"событие":     {RU: "событие", EN: "event"},
 	"переменная":  {RU: "переменная", EN: "variable"},
 	"токен":       {RU: "токен", EN: "token"},
 }
@@ -157,6 +158,7 @@ var sectionTitles = map[string]map[Lang]string{
 	"states":        {RU: "Состояния", EN: "States"},
 	"icons":         {RU: "С иконкой", EN: "With icon"},
 	"behavior":      {RU: "Поведение", EN: "Behavior"},
+	"js":            {RU: "JS", EN: "JS"},
 	"composition":   {RU: "Композиции", EN: "Composition"},
 	"patterns":      {RU: "Сценарии", EN: "Patterns"},
 	"rules":         {RU: "Правила", EN: "Rules"},

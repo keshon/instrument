@@ -40,7 +40,27 @@ var (
 	linkRe  = regexp.MustCompile(`\]\((\.[^)#]+\.md)(#[^)]*)?\)`)
 	tokRe   = regexp.MustCompile(`--[a-z][\w-]*(?:/[a-z0-9-]+)*`)
 	dataAtt = regexp.MustCompile(`data-([a-z-]+)="([^"]*)"`)
+
+	// Атрибуты, которые ЧИТАЕТ kit.js. У них нет селектора, потому что
+	// оформления у них нет: data-copy и data-value — источник данных для
+	// поведения, а не состояние. Ищутся в самом модуле, а не в списке
+	// руками: список разошёлся бы с китом на первой же правке.
+	jsDataset = regexp.MustCompile(`dataset\.([a-zA-Z]+)`)
 )
+
+// camelToDash переводит имя из dataset обратно в имя атрибута:
+// copiedLabel -> copied-label.
+func camelToDash(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		if r >= 'A' && r <= 'Z' {
+			b.WriteByte('-')
+			r += 'a' - 'A'
+		}
+		b.WriteRune(r)
+	}
+	return b.String()
+}
 
 // strip убирает то, что не является селектором: комментарии, строки, url().
 //
@@ -141,6 +161,14 @@ func main() {
 		}
 		vocab[m[1]][m[2]] = true
 	}
+	// Атрибуты поведения: значения у них свободные, проверяется только имя.
+	free := map[string]bool{}
+	if b, err := os.ReadFile(filepath.Join(*srcDir, "kit.js")); err == nil {
+		for _, m := range jsDataset.FindAllStringSubmatch(string(b), -1) {
+			free[camelToDash(m[1])] = true
+		}
+	}
+
 	// Базовые значения оформления не имеют, поэтому в селекторах их нет. Они
 	// объявлены в конституции — без них проверка ругалась бы на правильную
 	// разметку.
@@ -245,6 +273,9 @@ func main() {
 			for _, m := range dataAtt.FindAllStringSubmatch(line, -1) {
 				attr, val := m[1], m[2]
 				if skipAttr[attr] {
+					continue
+				}
+				if free[attr] {
 					continue
 				}
 				known, ok := vocab[attr]

@@ -26,36 +26,29 @@
   const density = document.querySelector('[data-density-picker]');
   if (density) {
     const items = [...density.querySelectorAll('[role="radio"]')];
-    const saved = localStorage.getItem('instrument-density') || 'default';
-    let current = saved;
-    const select = (btn) => {
-      current = btn.dataset.v;
-      items.forEach((x) => {
-        const on = x === btn;
-        x.setAttribute('aria-checked', String(on));
-        x.tabIndex = on ? 0 : -1;
-      });
-      const v = btn.dataset.v;
+    const apply = (v) => {
       if (v === 'default') { delete root.dataset.density; localStorage.removeItem('instrument-density'); }
       else { root.dataset.density = v; localStorage.setItem('instrument-density', v); }
     };
-    select(items.find((x) => x.dataset.v === saved) || items[1]);
-    density.addEventListener('click', (e) => {
-      const b = e.target.closest('[role="radio"]');
-      if (b) select(b);
-    });
-    /* Стрелок здесь больше нет: их ставит сам кит по role="radiogroup".
-       Сайт слушает только результат — смену aria-checked. Это и есть
-       проверка поведения: если бы оно не работало, плотность перестала бы
-       переключаться с клавиатуры на глазах.
 
-       Контракт кита — атрибуты, а не события: он ставит aria-checked, а что
-       по этому поводу делать, решает приложение. */
-    density.addEventListener('keyup', (e) => {
-      if (!/^Arrow|^Home$|^End$/.test(e.key)) return;
-      const checked = items.find((x) => x.getAttribute('aria-checked') === 'true');
-      if (checked && checked.dataset.v !== current) select(checked);
-    });
+    /* Начальное состояние ставит сайт: он один знает, что лежит в
+       localStorage. Дальше выбор ведёт кит. */
+    const saved = localStorage.getItem('instrument-density') || 'default';
+    const start = items.find((x) => x.dataset.v === saved) || items[1];
+    for (const x of items) {
+      x.setAttribute('aria-checked', String(x === start));
+      x.tabIndex = x === start ? 0 : -1;
+    }
+    apply(start.dataset.v);
+
+    /* Дальше — событие кита, а не свой обработчик щелчка и не подглядывание
+       за атрибутом после стрелки. Кит переносит aria-checked и по щелчку, и
+       по стрелке; сайту остаётся то, чего кит знать не может, — что делать с
+       выбранным значением.
+
+       Это и есть проверка поведения на живом: перестань кит работать —
+       плотность перестанет переключаться на глазах. */
+    density.addEventListener('inst:select', (e) => apply(e.target.dataset.v));
   }
 
 
@@ -242,62 +235,10 @@
 
   /* ── Копирование ───────────────────────────────────────────────────────── */
 
-  /* Подпись возвращается из dataset, а НЕ из текущего textContent: второе
-     нажатие в пределах 1400мс запоминало «скопировано» как исходную подпись,
-     и кнопка оставалась такой навсегда. Таймер тоже свой на кнопку и
-     сбрасывается — иначе два таймера доигрывали вразнобой.
-
-     aria-live объявлен в разметке заранее: регион, созданный одновременно с
-     изменением текста, не озвучивается. */
-  const RU = (document.documentElement.lang || 'ru') === 'ru';
-  const COPY_DONE = RU ? 'скопировано' : 'copied';
-  const COPY_FAIL = RU ? 'не вышло' : 'failed';
-
-  /* Копируется значение из data-value, если оно есть, иначе текст соседнего
-     <code>. Первое нужно строкам справочника: там копируют одно имя, а не
-     всю ячейку. */
-  /* textContent, а не innerText: второй зависит от раскладки и у скрытого
-     содержимого возвращает пустую строку — блок кода свёрнут в <details>, и
-     копирование молча копировало бы ничто. Для <pre> textContent к тому же
-     точнее: он отдаёт исходный текст, а не то, как браузер его отрисовал. */
-  const copySource = (btn) => {
-    if (btn.dataset.value) return btn.dataset.value;
-    const code = btn.parentElement.querySelector('code');
-    return code ? code.textContent : '';
-  };
-
-  document.addEventListener('click', async (e) => {
-    const btn = e.target.closest('[data-copy]');
-    if (!btn) return;
-    const text = copySource(btn);
-    if (!text) return;
-
-    clearTimeout(+btn.dataset.timer || 0);
-    const icon = btn.querySelector('[data-copy-icon] use');
-    const msg = btn.querySelector('[data-copy-msg]');
-
-    let ok = true;
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (err) {
-      /* Незащищённый origin (LAN по http) отклоняет запись молча. Молчать
-         в ответ — значит соврать: кнопка выглядела бы сработавшей. */
-      ok = false;
-    }
-
-    /* Результат сообщается дважды: значком тем, кто смотрит, и словом в
-       живой области тем, кто слушает. Смена значка сама по себе — событие
-       без содержания. */
-    btn.dataset.state = ok ? 'done' : 'failed';
-    if (icon && ok) icon.setAttribute('href', '#i-check');
-    if (msg) msg.textContent = ok ? COPY_DONE : COPY_FAIL;
-
-    btn.dataset.timer = setTimeout(() => {
-      delete btn.dataset.state;
-      if (icon) icon.setAttribute('href', '#i-copy');
-      if (msg) msg.textContent = '';
-    }, 1400);
-  });
+  /* Копирование делает КИТ: класс inst-copy и data-copy — его контракт.
+     Своего обработчика здесь нет намеренно. Копирование стало поведением
+     кита, и вторая реализация в его же справочнике означала бы, что кит
+     документирует одно, а показывает другое. */
 
   /* ── Бургер ──────────────────────────────────────────────────────────────
      Выезд ящика рисует кит по aria-expanded. Сайту остаётся ровно то, что

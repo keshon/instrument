@@ -3,7 +3,7 @@ title: Сегментированный контрол
 group: Действия
 layout: component
 source: src/components.css
-needs-js: Выбор, стрелки и бегущий tabindex
+needs-js: Выбор, стрелки и бегущий tabindex — делает кит
 api:
   - { name: "inst-segmented", kind: "класс", doc: "Контейнер. Внутри — голые `button`, свой класс им не нужен" }
   - { name: "aria-checked", kind: "атрибут", doc: "`true` · `false`. Ровно один `true` в группе" }
@@ -88,6 +88,48 @@ group-en: "Actions"
 
 Выбранный несёт **три** признака: поверхность, начертание и рамку. Один тон
 различать не требуется.
+
+## JS
+
+Подключите модуль один раз на страницу — инициализировать компоненты по
+отдельности не нужно, кит работает делегированием и видит узлы, пришедшие
+позже.
+
+```html
+<script type="module" src="src/kit.js"></script>
+```
+
+### Что делает кит
+
+Контрол объявлен как `role="radiogroup"`, и кит выполняет обещание: `←` и `→`
+между вариантами, `Home` и `End`, один `Tab` на всю группу. Отметка
+`aria-checked` следует за фокусом и переносится щелчком — сразу на всю группу,
+потому что два отмеченных варианта это состояние, из которого разметка уже не
+выйдет.
+
+### События
+
+`inst:select` всплывает с выбранного варианта.
+
+```js
+group.addEventListener('inst:select', (e) => {
+  document.documentElement.dataset.density = e.detail.value;
+});
+```
+
+### Опции
+
+| Атрибут | Что делает |
+|---|---|
+| `data-value` | Значение в `detail` вместо подписи варианта |
+| `aria-orientation="vertical"` | Стрелки по вертикали |
+
+```html
+<div class="inst-segmented" role="radiogroup" aria-label="Плотность">
+  <button type="button" role="radio" aria-checked="true"  data-value="sm" tabindex="0">Плотно</button>
+  <button type="button" role="radio" aria-checked="false" data-value="md" tabindex="-1">Обычно</button>
+</div>
+```
 
 ## Композиции
 
