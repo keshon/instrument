@@ -17,6 +17,23 @@ import (
 //go:embed templates/*.html assets/*
 var files embed.FS
 
+// Stylesheets отдаёт таблицы стилей сайта на проверку.
+//
+// Они лежат в embed.FS этого пакета, а сверять их с китом должен check — тот
+// же, что сверяет страницы и ссылки. Читать файл с диска ему было бы нечем:
+// после сборки это уже копия, а до сборки путь знает только render.
+func Stylesheets() (map[string]string, error) {
+	out := map[string]string{}
+	for _, name := range []string{"docs.css"} {
+		b, err := files.ReadFile("assets/" + name)
+		if err != nil {
+			return nil, err
+		}
+		out[name] = string(b)
+	}
+	return out, nil
+}
+
 type Options struct {
 	Out    string // куда писать
 	Kit    string // каталог кита (src)
@@ -44,13 +61,6 @@ type langLink struct {
 	Current bool
 }
 
-type demoData struct {
-	Sprite  template.HTML
-	Markup  template.HTML
-	Title   string
-	Context bool
-}
-
 func Site(byLang map[i18n.Lang][]*content.Page, sections map[i18n.Lang][]nav.Section, o Options) error {
 	tpl, err := template.New("").Funcs(template.FuncMap{
 		"same": func(a, b string) bool { return a == b },
@@ -69,11 +79,6 @@ func Site(byLang map[i18n.Lang][]*content.Page, sections map[i18n.Lang][]nav.Sec
 		return err
 	}
 
-	// Столы примеров пишутся ОДИН раз на все языки: разметка примера языка не
-	// имеет, а второй комплект из 144 документов пришлось бы держать в
-	// синхроне руками.
-	seenDemo := map[string]bool{}
-
 	for _, lang := range i18n.All {
 		for _, p := range byLang[lang] {
 			dir := filepath.Join(o.Out, filepath.FromSlash(strings.Trim(p.Route, "/")))
@@ -90,31 +95,10 @@ func Site(byLang map[i18n.Lang][]*content.Page, sections map[i18n.Lang][]nav.Sec
 				return err
 			}
 
-			// Каждый пример — самостоятельный документ. Он подключает кит той
-			// же строкой, что и любое приложение, и ничего не знает ни о
-			// справочнике, ни о его теме.
-			for _, d := range p.Demos {
-				if seenDemo[d.ID] {
-					continue
-				}
-				seenDemo[d.ID] = true
-				f := filepath.Join(o.Out, "demo", d.ID+".html")
-				if err := os.MkdirAll(filepath.Dir(f), 0o755); err != nil {
-					return err
-				}
-				if err := write(f, tpl, "demo.html", demoData{
-					Sprite:  template.HTML(sprite),
-					Markup:  template.HTML(d.Markup),
-					Title:   p.Title,
-					Context: d.Context,
-				}); err != nil {
-					return err
-				}
-			}
 		}
 	}
 
-	for _, name := range []string{"docs.css", "docs.js", "demo.css", "demo.js"} {
+	for _, name := range []string{"docs.css", "docs.js"} {
 		b, err := files.ReadFile("assets/" + name)
 		if err != nil {
 			return err
@@ -189,8 +173,7 @@ type doc struct {
 // страницах это дороже самого индекса: весь текст помещается в несколько
 // сотен килобайт, а поиск по нему — в полсотни строк.
 //
-// Три вещи, которых здесь раньше не было, и без каждой поиск не находил
-// компоненты:
+// Три вещи, без каждой из которых поиск не находит компоненты:
 //
 //	слаг    латинское имя страницы уже существует и никем не использовалось.
 //	        Документация по-русски, API по-английски, и слаг — единственный

@@ -1,7 +1,6 @@
 ---
 title: Конституция
 group: О проекте
-status: stable
 source: docs/about/design-principles.md
 title-en: "Constitution"
 group-en: "About"

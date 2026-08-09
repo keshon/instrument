@@ -1,7 +1,7 @@
 ---
 title: Метрика
 group: Отображение данных
-status: stable
+layout: component
 source: src/components.css
 api:
   - { name: "inst-metric", kind: "класс", doc: "Одна метрика" }
@@ -48,6 +48,23 @@ group-en: "Data display"
 </div>
 ```
 
+## Использование
+
+```html
+<div class="inst-metric">
+  <div class="inst-metric-label">Среднее время</div>
+  <div class="inst-metric-value">4,2<span class="inst-metric-unit">&nbsp;с</span></div>
+  <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% к прошлому</div>
+</div>
+```
+
+| Что | Обязательно | Почему |
+|---|---|---|
+| `inst-metric-label` | да | «128» без ответа на «чего» не является метрикой |
+| Знак изменения словом в дельте | да | Стрелка — второй носитель, а не единственный: «↓ 18%» читается и без тона |
+| Доступное имя из подписи и числа | да, если метрика кликабельна | Иначе прозвучит «128» без ответа на «чего» |
+| `data-dir` и `data-tone` | нет | Без первого дельта идёт без стрелки, без второго — нейтральным цветом |
+
 ## Когда использовать
 
 | Используйте | Возьмите другое |
@@ -56,7 +73,9 @@ group-en: "Data display"
 | Ряд из 2–5 сравнимых чисел | **Много чисел с разбивкой** — [таблица](./table.md) |
 | Число плюс изменение к прошлому периоду | **Ряд значений во времени** — [спарклайн](../charts/sparkline.md) |
 
-## Направление и оценка — разные атрибуты
+## Устройство
+
+### Направление и оценка — разные атрибуты
 
 Это главная ловушка компонента. Стрелка вниз у времени прогона — хорошо,
 стрелка вверх у предупреждений — плохо. Атрибут, названный стрелкой и
@@ -67,22 +86,42 @@ group-en: "Data display"
 | `data-dir` | **Куда** изменилось | `up` · `down` |
 | `data-tone` | **Хорошо это или плохо** | `ok` · `warn` · `error` · `neutral` · `running` |
 
-```html
-<!-- время упало — это хорошо -->
-<div class="inst-metric-delta" data-dir="down" data-tone="ok">18%</div>
-<!-- предупреждений прибавилось — это плохо -->
-<div class="inst-metric-delta" data-dir="up" data-tone="error">5 новых</div>
+```html preview
+<div class="inst-metric-row">
+  <div class="inst-metric">
+    <div class="inst-metric-label">Время прогона</div>
+    <div class="inst-metric-value">42<span class="inst-metric-unit">&nbsp;с</span></div>
+    <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% — упало, и это хорошо</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Предупреждений</div>
+    <div class="inst-metric-value">12</div>
+    <div class="inst-metric-delta" data-dir="up" data-tone="error">5 новых — выросло, и это плохо</div>
+  </div>
+</div>
 ```
 
 Оба атрибута необязательны: дельта без `data-dir` идёт без стрелки, без
 `data-tone` — нейтральным цветом.
 
-## Ряд метрик — без рамок
+## Композиции
 
-```html
+### Ряд метрик — без рамок
+
+```html preview
 <div class="inst-metric-row">
-  <div class="inst-metric">…</div>
-  <div class="inst-metric">…</div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Всего</div>
+    <div class="inst-metric-value">128</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Успешно</div>
+    <div class="inst-metric-value">121</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Упало</div>
+    <div class="inst-metric-value">7</div>
+  </div>
 </div>
 ```
 
@@ -90,10 +129,11 @@ group-en: "Data display"
 четыре объекта, между которыми читатель начинает искать различия, которых нет.
 Поэтому метрика стоит на приглушённой поверхности, а не в карточке.
 
-## Собранный экран
+## Сценарии
 
-Ряд метрик из сводки прогона. Порознь метрика — просто крупное число;
-смысл появляется в ряду.
+### Сводка прогона
+
+Порознь метрика — просто крупное число; смысл появляется в ряду.
 
 Что видно только здесь:
 
@@ -130,10 +170,27 @@ group-en: "Data display"
 </div>
 ```
 
-## Справочник
+## Правила
 
-```api
-```
+:::do Направление и оценка порознь
+`data-dir` говорит «куда», `data-tone` — «хорошо или плохо». Падение времени и
+падение выручки — одна стрелка и разные тона.
+:::
+
+:::dont Один атрибут на оба смысла
+Атрибут, названный стрелкой и означающий оценку, — гарантированная ошибка
+применения на первом же обратном показателе.
+:::
+
+:::do Ряд без рамок
+Сравнимые числа — одна группа. Приглушённая поверхность вместо рамки у
+каждого.
+:::
+
+:::dont --text-2xl у заголовка
+Этот кегль предназначен только для числа-героя. Заголовок такого размера
+кричит громче данных.
+:::
 
 ## Доступность
 
@@ -145,7 +202,12 @@ group-en: "Data display"
 | Кегль числа | `--text-2xl` предназначен **только** для числа-героя. Заголовок этого размера кричит громче данных |
 | Табличные цифры | Включены по умолчанию: число, обновляемое на месте, не дёргает соседей |
 
+## API
+
+```api
+```
+
 ## Связанное
 
-[Мера](../charts/meter.md) · [Спарклайн](../charts/sparkline.md) ·
-[Кольцо](../charts/ring.md) · [Таблица](./table.md) · [Карточка](./card.md)
+[Мера](../charts/meter.md) [Спарклайн](../charts/sparkline.md)
+[Кольцо](../charts/ring.md) [Таблица](./table.md) [Карточка](./card.md)

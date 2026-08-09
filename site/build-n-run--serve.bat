@@ -1,0 +1,1 @@
+go run cmd\site\main.go -serve :4321

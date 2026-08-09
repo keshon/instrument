@@ -1,7 +1,6 @@
 ---
 title: instrument
 template: splash
-status: stable
 ---
 
 A CSS kit for interfaces that show a human what a machine is doing: task

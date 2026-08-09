@@ -27,8 +27,8 @@ var (
 	leftMdRe = regexp.MustCompile(`href="([^"]*\.md(?:#[^"]*)?)"`)
 
 	// Ссылка на символ спрайта. Пустая (`#`) и выдуманная одинаково молчаливы:
-	// <svg> рисует ничего, кнопка выходит пустым квадратом. Три таких стояли в
-	// главном примере таблицы и пережили и сборку, и docs-check, и вычитку.
+	// <svg> рисует ничего, кнопка выходит пустым квадратом — и сборку это
+	// проходит.
 	useRe = regexp.MustCompile(`<use\s[^>]*href="#([^"]*)"`)
 
 	// Верхнеуровневые узлы разметки примера.
@@ -57,15 +57,8 @@ var hidden = map[string]bool{
 // нему, а не по списку в голове.
 func Verify(pages []*content.Page, sprite string) []string {
 	routes := map[string]bool{}
-	demos := map[string]bool{}
 	for _, p := range pages {
 		routes[p.Route] = true
-		// Столы примеров — отдельные документы, а не маршруты страниц.
-		// Проверяются они так же строго: ссылка на несуществующий стол —
-		// это пустой кадр, и увидеть его можно только открыв страницу.
-		for _, d := range p.Demos {
-			demos["/demo/"+d.ID+".html"] = true
-		}
 	}
 
 	var problems []string
@@ -77,13 +70,6 @@ func Verify(pages []*content.Page, sprite string) []string {
 		for _, m := range hrefRe.FindAllStringSubmatch(p.HTML, -1) {
 			t := m[1]
 			if strings.HasPrefix(t, "/kit/") || strings.HasPrefix(t, "/assets/") {
-				continue
-			}
-			if strings.HasPrefix(m[1], "/demo/") {
-				if !demos[m[1]] {
-					problems = append(problems,
-						fmt.Sprintf("%s  стола примера нет: %s", p.Route, m[1]))
-				}
 				continue
 			}
 			if !strings.HasSuffix(t, "/") {
@@ -99,6 +85,8 @@ func Verify(pages []*content.Page, sprite string) []string {
 			problems = append(problems, p.Route+"  ограда preview не развернулась")
 		}
 
+		problems = append(problems, dupIDs(p)...)
+
 		for _, d := range p.Demos {
 			problems = append(problems, verifyDemo(p, d, sprite)...)
 		}
@@ -106,6 +94,40 @@ func Verify(pages []*content.Page, sprite string) []string {
 	sort.Strings(problems)
 	return problems
 }
+
+// dupIDs ловит повторяющийся id в пределах страницы.
+//
+// Проверка появилась вместе с отказом от iframe. Пока каждый пример жил в
+// своём документе, одинаковые `id` в двух примерах были безобидны — документы
+// разные. В общем потоке страницы это уже поломка, и поломка тихая:
+// `aria-labelledby` находит ПЕРВЫЙ узел с таким именем, поэтому второй пример
+// начинает объявляться подписью первого. Ровно так и было у согласования: два
+// блока с `id="ap1"`, и второй представлялся чужим заголовком.
+//
+// Ищутся только id, объявленные в разметке примеров: id самой страницы —
+// `main`, `sidebar`, разделы контракта — генерируются, и повтор среди них уже
+// невозможен по построению.
+func dupIDs(p *content.Page) []string {
+	seen := map[string]bool{}
+	dup := map[string]bool{}
+	for _, d := range p.Demos {
+		for _, m := range idRe.FindAllStringSubmatch(d.Markup, -1) {
+			if seen[m[1]] {
+				dup[m[1]] = true
+			}
+			seen[m[1]] = true
+		}
+	}
+	var out []string
+	for id := range dup {
+		out = append(out, fmt.Sprintf(
+			"%s  id=%q объявлен в двух примерах: на одной странице они теперь рядом", p.Route, id))
+	}
+	sort.Strings(out)
+	return out
+}
+
+var idRe = regexp.MustCompile(`\bid="([^"]+)"`)
 
 // verifyDemo проверяет разметку одного стола примера.
 //

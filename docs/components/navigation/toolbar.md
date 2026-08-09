@@ -1,7 +1,7 @@
 ---
 title: Тулбар
 group: Навигация
-status: stable
+layout: component
 source: src/components.css
 api:
   - { name: "inst-toolbar", kind: "класс", doc: "Полоса. Ряд с зазором `--space-3` и нижней линией" }
@@ -38,11 +38,29 @@ group-en: "Navigation"
 </div>
 ```
 
-## Установка
+## Использование
 
 ```html
-<link rel="stylesheet" href="src/kit.css">
+<div class="inst-toolbar">
+  <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button"
+          aria-label="Переместить" aria-pressed="true">
+    <svg class="inst-icon" aria-hidden="true"><use href="#i-move"/></svg></button>
+  <span class="inst-toolbar-sep"></span>
+  <span class="inst-toolbar-spacer"></span>
+  <span class="inst-badge">terrain_chunk_04</span>
+</div>
 ```
+
+| Что | Обязательно | Почему |
+|---|---|---|
+| `type="button"` у каждой кнопки | да | Иначе внутри формы она её отправит |
+| `aria-label` у иконочной кнопки | да | Кнопка без текста не имеет доступного имени: «Переместить», а не «Инструмент 1» |
+| `aria-hidden="true"` у иконки | да | Иначе скринридер прочитает её дважды или не прочитает вовсе |
+| `aria-pressed` у кнопки-режима | да, если инструмент остаётся включённым | Состояние обязано быть в разметке. Ставит приложение |
+
+Роль `toolbar` кит не назначает: она обещает стрелочную навигацию и бегущий
+`tabindex`, а это поведение — слой приложения. Полоса из обычных кнопок без
+роли доступна и без обещаний.
 
 ## Когда использовать
 
@@ -53,23 +71,7 @@ group-en: "Navigation"
 | Иконочные кнопки и мелкие контролы в один ряд | **Просто ряд кнопок вне панели** — [кластер](../../layout/flow.md): у тулбара есть рамка и место в поверхности |
 | Пара действий у заголовка секции | **Заголовок секции** — `inst-section-actions`, [секция](../../layout/section.md) |
 
-## Место в панели
-
-Тулбар стоит **между шапкой и телом** панели и приносит нижнюю линию сам. Шапка
-при этом свою линию снимает (`:has(+ .inst-toolbar)`) — иначе на тридцати
-пикселях оказалось бы два правила подряд.
-
-```html
-<div class="inst-panel">
-  <div class="inst-panel-header"><span class="inst-panel-title">Инспектор</span></div>
-  <div class="inst-toolbar">…</div>
-  <div class="inst-panel-body inst-panel-body--flush">…</div>
-</div>
-```
-
-Тулбар без шапки тоже законен: панель, у которой нет названия, но есть режимы.
-
-## Разделитель и распорка
+## Устройство
 
 Два служебных элемента, которые легко перепутать:
 
@@ -82,23 +84,56 @@ group-en: "Navigation"
 Группировку он показывает глазу; для скринридера её несёт порядок и подписи
 кнопок.
 
-## Справочник
+## Композиции
 
-```api
+### Место в панели
+
+Тулбар стоит **между шапкой и телом** панели и приносит нижнюю линию сам. Шапка
+при этом свою линию снимает (`:has(+ .inst-toolbar)`) — иначе на тридцати
+пикселях оказалось бы два правила подряд.
+
+```html preview context
+<div class="inst-panel">
+  <div class="inst-panel-header"><span class="inst-panel-title">Модули</span></div>
+  <div class="inst-toolbar">
+    <div class="inst-segmented" role="radiogroup" aria-label="Вид">
+      <button type="button" role="radio" aria-checked="true">Список</button>
+      <button type="button" role="radio" aria-checked="false">Сетка</button>
+    </div>
+    <span class="inst-toolbar-sep"></span>
+    <span class="inst-search">
+      <input class="inst-input inst-input--sm" type="search" placeholder="Фильтр" aria-label="Фильтр по модулям">
+    </span>
+    <span class="inst-toolbar-spacer"></span>
+    <span class="inst-badge">3 из 12</span>
+  </div>
+  <div class="inst-panel-body">Содержимое области.</div>
+</div>
 ```
 
-### Обязательная разметка
+Тулбар без шапки тоже законен: панель, у которой нет названия, но есть режимы.
 
-| Что | Почему |
-|---|---|
-| `type="button"` у каждой кнопки | Иначе внутри формы она её отправит |
-| `aria-label` у иконочной кнопки | Кнопка без текста не имеет доступного имени |
-| `aria-hidden="true"` у иконки | Иначе скринридер прочитает её дважды или не прочитает вовсе |
-| `aria-pressed` у кнопки-режима | Если инструмент остаётся включённым, состояние обязано быть в разметке. Ставит приложение |
+## Правила
 
-Роль `toolbar` кит не назначает: она обещает стрелочную навигацию и бегущий
-`tabindex`, а это поведение — слой приложения. Полоса из обычных кнопок без
-роли доступна и без обещаний.
+:::do Тулбар про содержимое своей панели
+Режимы и фильтры действуют на то, что лежит в этой области, — потому полоса и
+стоит внутри неё.
+:::
+
+:::dont Тулбар для действий над экраном
+Действия уровня экрана живут в [шапке экрана](../../layout/page-header.md), а не
+внутри одной из панелей.
+:::
+
+:::do Одна распорка на полосу
+`inst-toolbar-spacer` отбивает хвост — статус, счётчик, закрытие. Двух точек
+разрыва в одной полосе не бывает.
+:::
+
+:::dont role="toolbar" без бегущего tabindex
+Роль обещает стрелочную навигацию. Полоса из обычных кнопок доступна и без
+обещаний.
+:::
 
 ## Доступность
 
@@ -111,9 +146,14 @@ group-en: "Navigation"
 | Контраст | Линии `--border-subtle` и `--border` — декорация (порог 3:1), а не текст |
 | Печать | Тулбар не печатается: это хром приложения, а не данные |
 
+## API
+
+```api
+```
+
 ## Связанное
 
-[Панель](../display/panel.md) · [Кнопка](../actions/button.md) ·
-[Группа кнопок](../actions/button-group.md) ·
-[Сегментированный контрол](../actions/segmented.md) · [Меню](../overlays/menu.md) ·
+[Панель](../display/panel.md) [Кнопка](../actions/button.md)
+[Группа кнопок](../actions/button-group.md)
+[Сегментированный контрол](../actions/segmented.md) [Меню](../overlays/menu.md)
 [Секция](../../layout/section.md)

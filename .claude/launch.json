@@ -10,9 +10,9 @@
     {
       "name": "docs",
       "runtimeExecutable": "go",
-      "runtimeArgs": ["run", "./cmd/site", "-serve", ":4321"],
+      "runtimeArgs": ["run", "./cmd/site", "-serve", ":4322"],
       "cwd": "site",
-      "port": 4321
+      "port": 4322
     }
   ]
 }

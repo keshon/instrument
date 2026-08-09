@@ -1,7 +1,7 @@
 ---
 title: Лента событий
 group: Отображение данных
-status: stable
+layout: component
 source: src/data.css
 api:
   - { name: "inst-timeline", kind: "класс", doc: "Контейнер" }
@@ -49,6 +49,29 @@ group-en: "Data display"
 </div>
 ```
 
+## Использование
+
+```html
+<ol class="inst-timeline">
+  <li class="inst-timeline-item">
+    <span class="inst-timeline-dot" data-tone="ok"></span>
+    <div class="inst-timeline-body">Прогон завершён
+      <div class="inst-timeline-sub">4 файла изменено</div>
+    </div>
+    <time class="inst-timeline-time" datetime="2026-08-08T14:36">14:36</time>
+  </li>
+</ol>
+```
+
+| Что | Обязательно | Почему |
+|---|---|---|
+| `<ol>` и `<li>` | да | Порядок здесь несёт смысл, и скринридер должен объявить «список из N» |
+| `<time datetime>` | да | «14:36» без даты неоднозначно вне контекста дня |
+| Тон дублируется словом в описании | да | Точка сама по себе ничего не сообщает тому, кто не различает тон |
+| `data-tone` | нет | Без атрибута точка нейтральна |
+
+Линия рисуется псевдоэлементом и в озвучивание не попадает — она декоративна.
+
 ## Когда использовать
 
 | Используйте | Возьмите другое |
@@ -57,10 +80,34 @@ group-en: "Data display"
 | Порядок важен и виден | **Поток строк одного формата** — [лог](../../agent/log.md): там колонки и моноширинный набор |
 | Событий десятки | **Шаги процесса с известным составом** — [шаги мастера](../navigation/steps.md) |
 
-## Тон точки
+## Варианты
 
-Точка берёт тот же `data-tone`, что и весь кит. Он необязателен: без атрибута
-точка нейтральна.
+Точка берёт тот же `data-tone`, что и весь кит.
+
+```html preview
+<div class="inst-timeline">
+  <div class="inst-timeline-item">
+    <span class="inst-timeline-dot"></span>
+    <div class="inst-timeline-body">Рядовое событие</div>
+  </div>
+  <div class="inst-timeline-item">
+    <span class="inst-timeline-dot" data-tone="running"></span>
+    <div class="inst-timeline-body">Происходит сейчас</div>
+  </div>
+  <div class="inst-timeline-item">
+    <span class="inst-timeline-dot" data-tone="ok"></span>
+    <div class="inst-timeline-body">Успешно завершено</div>
+  </div>
+  <div class="inst-timeline-item">
+    <span class="inst-timeline-dot" data-tone="warn"></span>
+    <div class="inst-timeline-body">С замечаниями</div>
+  </div>
+  <div class="inst-timeline-item">
+    <span class="inst-timeline-dot" data-tone="error"></span>
+    <div class="inst-timeline-body">Отказ</div>
+  </div>
+</div>
+```
 
 | Тон | Когда |
 |---|---|
@@ -70,10 +117,25 @@ group-en: "Data display"
 | `data-tone="warn"` | С замечаниями |
 | `data-tone="error"` | Отказ |
 
-## Справочник
+## Правила
 
-```api
-```
+:::do Лента на ol и li
+Порядок несёт смысл. Скринридер объявляет «список из N» и номер позиции.
+:::
+
+:::dont Точка как единственный носитель тона
+Отказ обязан быть назван словом в описании события, а не только красной
+точкой.
+:::
+
+:::do time с машинным значением
+«14:36» без даты неоднозначно вне контекста дня.
+:::
+
+:::dont Лента для однородного потока
+Строки одного формата от процесса — [лог](../../agent/log.md): у него колонки
+и моноширинный набор.
+:::
 
 ## Доступность
 
@@ -85,7 +147,12 @@ group-en: "Data display"
 | Линия | Рисуется псевдоэлементом и в озвучивание не попадает — это правильно, она декоративна |
 | Уменьшенное движение | Пульсация точки `running` замедляется, а не гаснет |
 
+## API
+
+```api
+```
+
 ## Связанное
 
-[Лог](../../agent/log.md) · [Шаги мастера](../navigation/steps.md) ·
-[Таблица](./table.md) · [Бейдж](./badge.md)
+[Лог](../../agent/log.md) [Шаги мастера](../navigation/steps.md)
+[Таблица](./table.md) [Бейдж](./badge.md)

@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
   <symbol id="i-refresh" viewBox="0 0 16 16"><path d="M13.5 8a5.5 5.5 0 1 1-1.7-3.97"/><path d="M13.6 2.6v3.2h-3.2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 16 16"><path d="M3.2 8.6 6.4 11.8 12.8 4.6"/></symbol>
   <symbol id="i-copy" viewBox="0 0 16 16"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5v-1a1.5 1.5 0 0 0-1.5-1.5H4a1.5 1.5 0 0 0-1.5 1.5V9A1.5 1.5 0 0 0 4 10.5h1"/></symbol>
   <symbol id="i-move" viewBox="0 0 16 16"><path d="M8 2.5v11M2.5 8h11"/><path d="M6.2 4.3 8 2.5l1.8 1.8M6.2 11.7 8 13.5l1.8-1.8M4.3 6.2 2.5 8l1.8 1.8M11.7 6.2 13.5 8l-1.8 1.8"/></symbol>
   <symbol id="i-rotate" viewBox="0 0 16 16"><path d="M2.8 8a5.2 5.2 0 1 0 1.6-3.8"/><path d="M2.4 3.2v3.2h3.2"/></symbol>

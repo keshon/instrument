@@ -44,30 +44,47 @@
   max-inline-size: 20rem;
 }
 
+/* Сайту здесь принадлежит только МЕСТО плашки на странице: где она висит и
+   докуда растёт. Поверхность — рамка, радиус, фон, тень, внутренний отступ —
+   приходит от `inst-popover`.
+
+   Панель для этого не годится: у неё другой радиус и другая поверхность, а
+   тени нет вовсе — приписанная ей тень поповера даёт две разные плашки на
+   одном экране. */
 .site-results {
   position: absolute; inset-inline: 0; inset-block-start: calc(100% + var(--space-3));
   z-index: var(--z-popover);
   max-block-size: 60vh; overflow: auto;
-  box-shadow: var(--shadow-popover);
 }
 .site-results[hidden] { display: none; }
 
+/* Ряд результата — двухстрочный, и своего класса в ките у него нет: пара
+   «заголовок + раздел» это содержимое поиска, а не компонент. Метрика взята у
+   `inst-menu-item` целиком — радиус, отступ, поверхность наведения, — потому
+   что ряд внутри плавающей плашки обязан выглядеть как ряд внутри плавающей
+   плашки, где бы он ни стоял.
+
+   Разделительных линий нет: у меню их нет, а линия между пунктами превращает
+   короткий список в таблицу. */
 .site-result {
-  display: block; padding: var(--space-4) var(--space-5);
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
   color: inherit; text-decoration: none;
 }
-.site-result + .site-result { border-block-start: var(--hairline) solid var(--border-subtle); }
 .site-result:hover, .site-result[aria-selected="true"] { background: var(--surface-hover); }
-.site-result-title { font-weight: var(--weight-medium); }
-.site-result-group { font-size: var(--text-xs); color: var(--text-muted); }
-.site-result-empty { padding: var(--space-5); color: var(--text-muted); font-size: var(--text-sm); }
+.site-result-title { font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.site-result-group { font-size: var(--text-2xs); color: var(--text-muted); }
+.site-result-empty {
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-muted); font-size: var(--text-sm);
+}
 
 /* Тема и плотность живут в поповере, а не в ряду шапки.
 
-   Причина не в экономии места на телефоне, хотя и в ней тоже. Пока они
-   стояли голыми контролами, переключатель плотности был безымянным — одна
-   из двух уникальных идей кита существовала как три кнопки без подписи.
-   Кнопка «Вид» даёт им имя, а поповеру — работу на каждой странице. */
+   Причина не в экономии места на телефоне, хотя и в ней тоже. Голыми
+   контролами переключатель плотности безымянен: одна из двух уникальных идей
+   кита выглядела бы как три кнопки без подписи. Кнопка «Вид» даёт им имя. */
 .site-view-body { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-3); }
 .site-view-row { display: flex; flex-direction: column; gap: var(--space-3); }
 .site-theme { inline-size: 100%; }
@@ -117,15 +134,174 @@
   line-height: var(--leading-prose);
 }
 /* 68ch — мера читаемости, и она нужна только тексту. Живой пример и
-   таблица справочника меряются содержимым и выходят на всю колонку. */
-.site-body > :is(p, ul, ol, blockquote, h2, h3, h4) { max-inline-size: 68ch; }
-
-/* Группа страницы уже стоит в боковой колонке и в заголовке была бы
-   повтором. Здесь она тише подзаголовка: подпись, а не описание. */
-.site-body .inst-page-desc {
-  font-size: var(--text-xs); color: var(--text-muted);
-  text-transform: none; letter-spacing: var(--tracking-normal);
+   таблица справочника меряются содержимым и выходят на всю колонку.
+   Считается от прямого родителя-раздела, а не от тела: с появлением
+   <section> проза перестала быть прямым потомком .site-body, и мера
+   молча отвалилась бы на всех страницах разом. */
+.site-body :is(.doc-hero, .doc-s) > :is(p, ul, ol, blockquote, h3, h4) {
+  max-inline-size: 68ch;
 }
+
+/* ── Опознание страницы ─────────────────────────────────────────────────── */
+
+/* Первый экран отвечает на четыре вопроса, и все четыре — до прокрутки:
+   что это (раздел и имя), можно ли этому верить (зрелость), где это лежит
+   (исходник), как это выглядит (главный пример).
+
+   Зрелость и исходник — не украшение: без первого непонятно, можно ли верить
+   написанному ниже, без второго — где это лежит. */
+.doc-id { margin-block-end: var(--space-6); }
+
+/* Подпись раздела — китовая идиома тихой метки: --text-2xs, --text-muted,
+   --leading-ui. Ровно та же, что у .inst-nav-label, где эта работа уже
+   делается.
+
+   Капса с трекингом здесь нет: третий принцип конституции называет его
+   дословно — «заголовок капсом с трекингом кричит громче числа, которое он
+   подписывает». Во всём ките text-transform не встречается ни разу, и сайту
+   заводить его нечем оправдать. */
+.doc-id-group {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-2xs); color: var(--text-muted);
+  line-height: var(--leading-ui);
+}
+
+.doc-id-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);
+  margin-block-start: var(--space-4);
+  font-size: var(--text-xs);
+}
+.doc-id-source { color: var(--text-muted); }
+
+/* ── Шапка страницы: определение и главный пример ───────────────────────── */
+
+/* Первый абзац — определение компонента, а не первый абзац прозы. Он крупнее
+   тела и стоит в один-два ряда: тот, кто пришёл со страницы другого кита,
+   должен за секунду понять, на что смотрит, и только потом начать читать. */
+/* Мера остаётся 68ch — та же, что у всей прозы и у .inst-page-desc в ките.
+   Своей меры здесь нет: две меры читаемости на одну страницу — это параметр
+   в двух экземплярах. */
+.doc-hero > p:first-of-type {
+  margin-block-start: 0;
+  font-size: var(--text-md);
+  line-height: var(--leading-prose);
+  color: var(--text-secondary);
+}
+
+/* Главный пример — вход в компонент, а не иллюстрация к абзацу. Сцена выше
+   обычной и стоит вплотную к определению: между ними нет ни заголовка, ни
+   пояснения, потому что показывать надо сразу. */
+.demo--hero { margin-block: var(--space-6) 0; }
+.demo--hero .demo-root { padding-block: var(--space-8); }
+
+/* ── Разделы ────────────────────────────────────────────────────────────── */
+
+/* Раздел — отсек, а не абзац с подзаголовком.
+
+   Волосок под заголовком делает ровно одно: сообщает, где раздел начинается.
+   Пока разделы отличались только кеглем, страница из четырнадцати разделов
+   читалась сплошным потоком, и «Доступность» ничем не отличалась от
+   «Почему SVG, а не рамка» — хотя первое это раздел контракта, а второе
+   пояснение внутри него. */
+.doc-s { scroll-margin-block-start: var(--space-6); }
+.doc-s + .doc-s { margin-block-start: var(--space-10); }
+
+.doc-s-title {
+  margin: 0 0 var(--space-5);
+  padding-block-end: var(--space-3);
+  border-block-end: var(--hairline) solid var(--border);
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  max-inline-size: none;
+}
+.doc-s > :first-child + * { margin-block-start: 0; }
+
+/* «Связанное» — не абзац со ссылками через точку, а ряд переходов. Пока это
+   был поток текста, пять ссылок подряд читались как одно предложение, и
+   выбрать из них было нельзя. */
+.doc-s[data-section="related"] p {
+  display: flex; flex-wrap: wrap; gap: var(--space-3);
+  max-inline-size: none;
+}
+.doc-s[data-section="related"] a {
+  display: inline-flex; align-items: center;
+  min-block-size: var(--control-h-sm);
+  padding-inline: var(--control-pad-sm);
+  border: var(--hairline) solid var(--border-control);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary); text-decoration: none;
+  font-size: var(--text-sm);
+}
+.doc-s[data-section="related"] a:hover {
+  background: var(--surface-hover); color: var(--text-primary);
+}
+/* Разделители «·» между ссылками в разметке больше не нужны — их работу
+   делает промежуток. Прячутся, а не вычищаются из семидесяти страниц. */
+.doc-s[data-section="related"] p { font-size: 0; }
+.doc-s[data-section="related"] a { font-size: var(--text-sm); }
+
+/* ── Правила: так и не так ──────────────────────────────────────────────── */
+
+/* Правило дизайн-системы — данные, а не проза: у него есть знак и его читают
+   сравнением. Обычным Markdown это выразить нечем — «**Не используйте**
+   кнопку для навигации» ничем не отличается от соседнего абзаца. */
+/* Ровно две колонки, а не auto-fit.
+   Пары «так / не так» идут в разметке подряд, и на трёх колонках ряд поехал бы
+   так: do · dont · do / dont · do · dont — то есть сравнение, ради которого
+   правила и стоят рядом, сломалось бы именно на широком экране. */
+.rule-row {
+  display: grid; gap: var(--space-5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-block: var(--space-6);
+}
+/* Порог — 60rem, тот же, на котором боковая колонка становится ящиком.
+   Своего порога здесь нет: третий breakpoint, отличающийся от существующих
+   на 32 пикселя, — дубликат, а дубликат это будущее расхождение. */
+@media (width < 60rem) {
+  .rule-row { grid-template-columns: minmax(0, 1fr); }
+}
+
+.rule {
+  padding: var(--space-5) var(--pad-panel);
+  border: var(--hairline) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  border-block-start: var(--size-marker) solid var(--border-strong);
+  background: var(--surface-raised);
+  font-size: var(--text-sm); line-height: var(--leading-ui);
+}
+.rule > * { max-inline-size: none; }
+.rule > * + * { margin-block-start: var(--space-4); }
+.rule[data-rule="do"] { border-block-start-color: var(--ok-text); }
+.rule[data-rule="dont"] { border-block-start-color: var(--err-text); }
+
+/* Знак несёт СЛОВО, а не только цвет: закон кита распространяется на
+   документацию о ките.
+
+   Метрика — та же китовая идиома тихой метки, что у .doc-id-group. Капс с
+   трекингом отсюда снят по той же причине: он делал подпись «ТАК» громче
+   правила, которое она подписывает. Различают знак тон и начертание — этого
+   достаточно, и это те же два канала, которыми кит различает всё остальное. */
+.rule-tag {
+  margin: 0;
+  font-size: var(--text-2xs); font-weight: var(--weight-medium);
+  line-height: var(--leading-ui);
+}
+.rule[data-rule="do"] .rule-tag { color: var(--ok-text); }
+.rule[data-rule="dont"] .rule-tag { color: var(--err-text); }
+.rule-head {
+  display: block;
+  margin-block-start: var(--space-2);
+  color: var(--text-primary); font-weight: var(--weight-normal);
+  font-size: var(--text-sm);
+}
+
+/* Тело заметки кита. inst-note — флексбокс со значком в первой позиции, и без
+   собственного потока абзацы вставали бы в строку рядом со значком. */
+.note-body { min-inline-size: 0; }
+.note-body > * { max-inline-size: none; margin-block: 0; }
+.note-body > * + * { margin-block-start: var(--space-4); }
+.site-body .inst-note { margin-block: var(--space-6); }
 
 /* Разделы боковой колонки разделены воздухом, а не линиями: одиннадцать
    линеек в одной колонке читаются как решётка и спорят с содержимым. */
@@ -200,14 +376,107 @@
 .demo-label { flex: 1 1 auto; }
 .demo-tools { display: flex; align-items: center; gap: var(--space-4); }
 .demo-theme { inline-size: 10rem; }
-.demo-open { color: var(--text-muted); text-decoration: none; font-size: var(--text-sm); }
-.demo-open:hover { color: var(--accent-text); }
 
-.demo-frame {
-  display: block; inline-size: 100%; border: 0;
-  block-size: 8rem;   /* до первого сообщения о высоте */
-  background: var(--surface-page);
+/* ── Сцена ────────────────────────────────────────────────────────────────
+
+   Пример живёт в потоке страницы. Своя тема достаётся ему от `.inst-theme` с
+   атрибутом `data-theme`: тема кита объявлена атрибутом и работает на любом
+   поддереве.
+
+   Сцена ведёт себя как `.inst-cluster` — китовый примитив ряда, а не как
+   собственная выдумка. Выравнивание по ЦЕНТРУ: в ряду из элементов разной
+   высоты — аватары трёх размеров, кнопка рядом с полем — верхняя кромка
+   выстраивает их лесенкой, и ряд перестаёт читаться рядом. */
+
+.demo-stage { display: block; }
+
+.demo-root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-7);
 }
+
+/* Блочное занимает всю ширину сцены, а не жмётся в ряд. */
+.demo-root > :is(.inst-panel, .inst-card, .inst-table, .inst-form, .inst-log,
+                 .inst-diff, .inst-approval, .inst-failure, .inst-calendar,
+                 .inst-timeline, .inst-lanes, .inst-budget, .inst-tree,
+                 .inst-empty, .inst-banner, .inst-note, .inst-metric-row,
+                 .inst-stack, .inst-field, .inst-props, .inst-kv, .inst-shell,
+                 .inst-stepper, .inst-section, .inst-page-header, .inst-split,
+                 .inst-grid, .inst-container, .inst-accordion, .inst-toasts,
+                 .inst-fieldset, .inst-crumbs, .inst-pager, .inst-toolbar,
+                 [role="listbox"], [role="grid"], [role="tree"], [role="log"],
+                 [role="group"], [role="radiogroup"], [role="tablist"]) {
+  flex: 1 1 100%;
+}
+
+/* Оболочка приложения занимает сцену целиком — она и есть экран, и высоту
+   берёт `100dvh`. В потоке страницы это означает пример во весь экран, поэтому
+   сцена задаёт ей свой потолок. Поле снимается ТОЛЬКО ради оболочки: без
+   :has() правило било бы по всем примерам подряд, и ряд метрик прилипал к
+   краям. */
+.demo-root:has(> .inst-shell) { padding: 0; gap: 0; }
+.demo-root > .inst-shell { block-size: 30rem; border: 0; border-radius: 0; }
+
+/* Календарь — сетка на семь колонок без собственной ширины: растянутый на
+   всю сцену месяц читается лентой, а не месяцем. */
+.demo-root > .inst-calendar { flex: 0 1 24rem; }
+
+/* Мера, слайдер и спарклайн меряют горизонталь: без явной основы флекс
+   сжимает их в ноль, и сцена выглядит пустой. */
+.demo-root > :is(.inst-meter, .inst-slider, .inst-sparkline, .inst-meter-row) {
+  flex: 1 1 100%;
+}
+
+/* Тултип раскрывается ВВЕРХ и позиционирован абсолютно: без запаса сверху он
+   уходит под полосу сцены. Отрицательную координату подгонкой высоты не
+   вылечить. */
+.demo-root:has(.inst-tooltip) { padding-block-start: 4.5rem; }
+
+/* ── Показ материала ──────────────────────────────────────────────────────
+
+   Рампа, образец поверхности и строка шкалы — НЕ компоненты кита, и классов
+   в ките у них не будет: это не части интерфейса, а способ посмотреть на сам
+   материал.
+
+   Цвет и размер приходят инлайном через --c и --v. Это канал ДАННЫХ, а не
+   оформления: показываемое значение и есть содержание примера — тот же
+   случай, что ширина заливки меры. */
+
+.ramp { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; inline-size: 100%; }
+.ramp-step {
+  block-size: 34px; border-radius: var(--radius-xs); background: var(--c);
+  box-shadow: inset 0 0 0 var(--hairline) var(--border-subtle);
+}
+.ramp-scale { margin-block-start: var(--space-2); }
+.ramp-scale > span {
+  font-family: var(--font-mono); font-size: var(--text-2xs);
+  color: var(--text-muted); text-align: center;
+}
+
+.swatches {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--space-4); inline-size: 100%;
+}
+.sw { border: var(--hairline) solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.sw-chip { block-size: 42px; background: var(--c); }
+.sw-cap {
+  padding: var(--space-3) var(--space-4); font-size: var(--text-2xs);
+  color: var(--text-muted); font-family: var(--font-mono);
+}
+
+.scale-row {
+  display: flex; align-items: baseline; gap: var(--space-6);
+  padding-block: var(--space-3); inline-size: 100%;
+  border-block-end: var(--hairline) solid var(--border-subtle);
+}
+.scale-cap {
+  flex: none; inline-size: 5rem; font-family: var(--font-mono);
+  font-size: var(--text-2xs); color: var(--text-muted);
+}
+.scale-sample { font-size: var(--v); }
 
 /* ── Разметка примера: свёрнута ─────────────────────────────────────────── */
 
@@ -258,7 +527,11 @@
   vertical-align: baseline;
 }
 .api-table tbody tr:hover td { background: var(--surface-hover); }
+.api-table { min-inline-size: 34rem; }
 .api-table th:nth-child(1), .api-table td:nth-child(1) { inline-size: 1%; white-space: nowrap; }
+/* Колонка «Что делает» держит свою ширину, а не отдаёт её значению: за
+   справочником приходят читать именно её. */
+.api-table th:nth-child(3), .api-table td:nth-child(3) { min-inline-size: 18rem; }
 
 /* Значение не переносится, пока короткое, и переносится, когда длинное:
    у --font-mono оно в девяносто знаков, и nowrap распирал им таблицу так,
@@ -272,6 +545,38 @@
 
 .api-name { color: var(--text-primary); }
 .api-none { color: var(--text-faint); }
+
+/* Кнопка копирования в строке справочника.
+
+   Стоит ПЕРЕД значением, а не после: имена в колонке выровнены по левому
+   краю, и кнопка после них плясала бы по горизонтали вслед за длиной имени.
+
+   Видна по наведению на строку и по фокусу — но не спрятана от тачскрина:
+   ниже 60rem она видна всегда, потому что наведения там нет. */
+/* Кнопка и значение — одна строка, и рвать её нельзя: перенос оставляет
+   значок копирования висеть отдельно от того, что он копирует. Длинному
+   значению разрешено переноситься внутри самого `<code>` — там разрыв
+   безобиден, а ячейке от него не тесно. */
+.api-cell { white-space: nowrap; }
+/* Длинному значению перенос внутри `<code>` возвращается: у --font-mono оно
+   бывает в девяносто знаков, и nowrap распирал бы им таблицу. Разрыв внутри
+   значения безобиден — в отличие от разрыва между значком и значением. */
+.api-cell > code { white-space: normal; overflow-wrap: anywhere; }
+.api-copy {
+  margin-inline-end: var(--space-2);
+  vertical-align: baseline;
+  color: var(--text-faint);
+  opacity: 0; transition: opacity var(--dur-1) var(--ease-out);
+}
+.api-table tbody tr:hover .api-copy,
+.api-copy:focus-visible { opacity: 1; }
+.api-copy:hover { color: var(--text-primary); }
+.api-copy[data-state="done"] { opacity: 1; color: var(--ok-text); }
+.api-copy[data-state="failed"] { opacity: 1; color: var(--err-text); }
+
+@media (width < 60rem) {
+  .api-copy { opacity: 1; }
+}
 
 /* Строка-заголовок вида. Утопленная поверхность, а не жирное начертание:
    она делит список, но не спорит с именами, которые здесь главные.
@@ -299,11 +604,29 @@
 .code-block--demo pre { border-radius: 0; border-block-start: var(--hairline) solid var(--border-subtle); }
 .code-block code { font-size: inherit; }
 
+/* Кнопка копирования ВИДНА ВСЕГДА, просто тихая.
+
+   Она была прозрачной до наведения — то есть не существовала для тачскрина и
+   для того, кто не знает, что она там есть. Наведение может усиливать
+   элемент, но не вводить его в бытие.
+
+   Иконочная, а не со словом: подпись «копировать» на узком экране наезжала на
+   первую строку кода. */
 .code-copy {
-  position: absolute; inset-block-start: var(--space-4); inset-inline-end: var(--space-4);
-  opacity: 0; transition: opacity var(--dur-1) var(--ease-out);
+  position: absolute;
+  inset-block-start: var(--space-3); inset-inline-end: var(--space-3);
+  color: var(--text-muted);
+  opacity: 0.6; transition: opacity var(--dur-1) var(--ease-out);
 }
-.code-block:hover .code-copy, .code-copy:focus-visible { opacity: 1; }
+.code-block:hover .code-copy,
+.code-copy:hover,
+.code-copy:focus-visible { opacity: 1; }
+.code-copy[data-state="done"] { opacity: 1; color: var(--ok-text); }
+.code-copy[data-state="failed"] { opacity: 1; color: var(--err-text); }
+
+/* Место под кнопку в блоке кода: без него длинная первая строка уходит под
+   неё. Полоса прокрутки у <pre> своя, поэтому отступ ставится содержимому. */
+.code-block pre { padding-inline-end: calc(var(--control-h-sm) + var(--space-5)); }
 
 /* Подсветка на три цвета из палитры кита. Шестьдесят цветов на макете из
    хайрлайнов кричали бы громче кода, который подсвечивают. */
@@ -312,24 +635,56 @@
 .t-val  { color: var(--text-primary); font-weight: var(--weight-normal); }
 .t-com  { color: var(--text-faint);  font-style: normal; }
 
-/* ── Таблицы справочника ────────────────────────────────────────────────── */
+/* ── Таблицы в прозе ────────────────────────────────────────────────────── */
+
+/* Жалоба «колонки не вмещают большой объём текста» — про этот блок, и у неё
+   было три причины, каждая из которых чинится отдельно.
+
+   Первая: таблица распирала ДОКУМЕНТ. Четыре колонки с предложением в каждой
+   не помещаются в колонку прозы никак, и горизонтальная прокрутка доставалась
+   всей странице — вместе с шапкой, оглавлением и навигацией. Теперь скролл
+   свой у каждой таблицы (.table-wrap), а страница остаётся на месте.
+
+   Вторая: `white-space: nowrap` у шапки. С ним колонка резервирует ширину по
+   самому длинному заголовку, и содержимому остаётся то, что уцелело.
+
+   Третья: имена классов. `inst-dialog-foot--end` — двадцать один знак без
+   пробела; браузер рвал его посреди слова или распирал колонку. Теперь имя не
+   рвётся, а на узком экране таблица уезжает в свой скролл. */
+.table-wrap {
+  overflow-x: auto;
+  scrollbar-gutter: stable;
+  margin-block: var(--space-6);
+}
 
 .site-body table {
   inline-size: 100%; border-collapse: collapse;
+  /* Минимум — точка, с которой таблица уходит в скролл вместо того, чтобы
+     сжимать колонки до одного слова в строке. */
+  min-inline-size: 32rem;
   font-size: var(--text-sm); line-height: var(--leading-ui);
-  margin-block: var(--space-6);
 }
 .site-body th {
   text-align: start; font-weight: var(--weight-normal); color: var(--text-muted);
   padding: var(--space-3) var(--pad-cell-x);
   border-block-end: var(--hairline) solid var(--border);
-  white-space: nowrap;
 }
 .site-body td {
   padding: var(--row-pad-y) var(--pad-cell-x);
   border-block-end: var(--hairline) solid var(--border-subtle);
   vertical-align: baseline;
+  overflow-wrap: break-word;
 }
+/* Имя класса или токена не рвётся посреди слова: разорванный
+   `inst-dialog-foot--end` перестаёт быть именем, которое можно скопировать. */
+.site-body :is(td, th) > code { white-space: nowrap; }
+
+/* Шапка из пустых ячеек прячется целиком.
+
+   Таблицы «Доступность» и «Свойства» пишутся как `| | |` — у них нет
+   заголовков колонок, потому что колонки здесь это «что» и «как», и называть
+   их незачем. Пустая полоса над ними выглядела ошибкой вёрстки. */
+.site-body thead:not(:has(th:not(:empty))) { display: none; }
 
 .site-body blockquote {
   margin-block: var(--space-6);
@@ -362,7 +717,6 @@
 }
 
 .site-body :is(h2, h3, h4) { scroll-margin-block-start: var(--space-6); }
-.site-body h2 { margin-block-start: var(--space-9); }
 
 /* Шаг h3 → проза всего 2px, и разницы в кегле не хватает. Подраздел
    отделяется воздухом сверху: расстояние читается быстрее двух пикселей. */
@@ -381,10 +735,8 @@
 
 /* Ниже 60rem колонка становится выезжающим ящиком — это делает САМ КИТ по
    классу inst-shell-aside--drawer. Здесь не осталось ни одного правила про
-   неё, и это правильный признак: раньше сайт прятал колонку своим
-   display: none и открывал своим display: block, из-за чего внутри
-   вертикальной панели навигация оставалась выложенной в строку от кита. Два
-   механизма на одну работу расходятся всегда. */
+   неё, и это правильный признак: два механизма на одну работу расходятся
+   всегда. */
 @media (width < 60rem) {
   .site-layout { padding-inline: var(--space-6); }
 }

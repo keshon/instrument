@@ -88,8 +88,10 @@ var strings = map[string]map[Lang]string{
 	"demo.markup":   {RU: "Разметка", EN: "Markup"},
 	"demo.theme":    {RU: "Тема примера", EN: "Example theme"},
 	"demo.same":     {RU: "как у сайта", EN: "same as site"},
-	"demo.open":     {RU: "Открыть пример отдельно", EN: "Open example separately"},
-	"demo.title":    {RU: "Живой пример", EN: "Live example"},
+	"demo.hero":     {RU: "Компонент", EN: "The component"},
+	"rule.do":       {RU: "Так", EN: "Do"},
+	"rule.dont":     {RU: "Не так", EN: "Don't"},
+	"contents":      {RU: "Разделы страницы", EN: "Page sections"},
 	"copy":          {RU: "копировать", EN: "copy"},
 	"copy.done":     {RU: "скопировано", EN: "copied"},
 	"copy.fail":     {RU: "не вышло", EN: "failed"},
@@ -135,6 +137,45 @@ func Kind(l Lang, kind string) string {
 		}
 	}
 	return kind
+}
+
+// Заголовок канонического раздела страницы. Словарь закрыт и совпадает с тем,
+// что перечисляет content.sectionDefs: неизвестный идентификатор — ошибка
+// программиста, и она обязана быть громкой.
+//
+// Заголовок печатается ОТСЮДА, а не со страницы. Из-за этого «Справочник» на
+// одной странице и «API» на другой перестают быть разными разделами на вид:
+// узнан один и тот же раздел — напечатано одно и то же слово.
+var sectionTitles = map[string]map[Lang]string{
+	"install":       {RU: "Установка", EN: "Installation"},
+	"usage":         {RU: "Использование", EN: "Usage"},
+	"when":          {RU: "Когда использовать", EN: "When to use"},
+	"anatomy":       {RU: "Устройство", EN: "Anatomy"},
+	"scale":         {RU: "Шкала", EN: "Scale"},
+	"variants":      {RU: "Варианты", EN: "Variants"},
+	"sizes":         {RU: "Размеры", EN: "Sizes"},
+	"states":        {RU: "Состояния", EN: "States"},
+	"icons":         {RU: "С иконкой", EN: "With icon"},
+	"behavior":      {RU: "Поведение", EN: "Behavior"},
+	"composition":   {RU: "Композиции", EN: "Composition"},
+	"patterns":      {RU: "Сценарии", EN: "Patterns"},
+	"rules":         {RU: "Правила", EN: "Rules"},
+	"a11y":          {RU: "Доступность", EN: "Accessibility"},
+	"customization": {RU: "Настройка", EN: "Customization"},
+	"api":           {RU: "API", EN: "API"},
+	"related":       {RU: "Связанное", EN: "Related"},
+}
+
+func SectionTitle(l Lang, id string) string {
+	m, ok := sectionTitles[id]
+	if !ok {
+		panic("i18n: нет заголовка раздела " + id)
+	}
+	s, ok := m[l]
+	if !ok {
+		panic("i18n: нет перевода раздела " + id + " на " + string(l))
+	}
+	return s
 }
 
 // Раздел навигации. Метки живут здесь, а не в nav.go, чтобы у языка был один

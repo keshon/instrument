@@ -20,7 +20,6 @@
         delete root.dataset.theme;
         localStorage.removeItem('instrument-theme');
       }
-      syncDemos();
     });
   }
 
@@ -39,7 +38,6 @@
       const v = btn.dataset.v;
       if (v === 'default') { delete root.dataset.density; localStorage.removeItem('instrument-density'); }
       else { root.dataset.density = v; localStorage.setItem('instrument-density', v); }
-      syncDemos();
     };
     select(items.find((x) => x.dataset.v === saved) || items[1]);
     density.addEventListener('click', (e) => {
@@ -61,53 +59,40 @@
   }
 
 
-  /* ── Столы примеров ────────────────────────────────────────────────────
-     Каждый пример — отдельный документ в iframe. Родитель делает две вещи:
-     подгоняет высоту под содержимое (иначе кадр либо пустует, либо
-     заводит собственную полосу прокрутки — и то и другое читается как
-     поломка) и передаёт выбранную тему стола. */
+  /* ── Сцены примеров ────────────────────────────────────────────────────
 
-  const frames = new Map();
-  document.querySelectorAll('[data-demo]').forEach((fig) => {
-    const frame = fig.querySelector('.demo-frame');
-    if (frame) frames.set(new URL(frame.src, location).pathname, frame);
-  });
+     Пример живёт в потоке страницы, и своя тема ему достаётся атрибутом на
+     сцене: тема кита объявлена как [data-theme] и работает на любом
+     поддереве. Высоту подгонять не нужно — сцена и есть содержимое.
 
-  addEventListener('message', (e) => {
-    if (e.origin !== location.origin || !e.data || !e.data.demoHeight) return;
-    const f = frames.get(e.data.id);
-    if (f) f.style.blockSize = e.data.demoHeight + 'px';
-  });
+     Выбор запоминается на весь справочник, а не на один пример: человек,
+     сравнивающий компонент в тёмной теме, идёт по страницам и не хочет
+     переключать её на каждом примере заново. */
+
+  const DEMO_THEME = 'instrument-demo-theme';
+  let demoTheme = '';
+  try { demoTheme = localStorage.getItem(DEMO_THEME) || ''; } catch (e) {}
+
+  /* Пустое значение — «как у сайта»: сцена снимает свой атрибут и наследует
+     тему справочника. Плотность у сцены собственной не бывает — она глобальна,
+     и пример обязан показывать ту, которую выбрал читатель. */
+  const paintDemos = (theme) => {
+    document.querySelectorAll('[data-demo-stage]').forEach((stage) => {
+      if (theme) stage.dataset.theme = theme;
+      else delete stage.dataset.theme;
+    });
+    document.querySelectorAll('[data-demo-theme]').forEach((sel) => { sel.value = theme; });
+  };
 
   document.querySelectorAll('[data-demo-theme]').forEach((sel) => {
     sel.addEventListener('change', () => {
-      const frame = sel.closest('[data-demo]').querySelector('.demo-frame');
-      /* Пустое значение — «как у сайта»: стол берёт тему справочника, но
-         остаётся в своём документе. */
-      const t = sel.value || root.dataset.theme || '';
-      frame.contentWindow.postMessage(
-        { demoTheme: t, demoDensity: root.dataset.density || '' }, location.origin);
+      demoTheme = sel.value;
+      try { localStorage.setItem(DEMO_THEME, demoTheme); } catch (e) {}
+      paintDemos(demoTheme);
     });
   });
 
-  /* Смена темы или плотности справочника догоняет те столы, которые сами
-     ничего не выбрали.
-
-     Объявление функцией, а не const-стрелкой, намеренно: syncDemos
-     вызывается из обработчика плотности, который отрабатывает при
-     инициализации — то есть ВЫШЕ по файлу. Стрелка в const попадала бы во
-     временную мёртвую зону и роняла весь скрипт целиком, вместе с темой,
-     поиском и копированием. */
-  function syncDemos() {
-    document.querySelectorAll('[data-demo]').forEach((fig) => {
-      const sel = fig.querySelector('[data-demo-theme]');
-      if (sel && sel.value) return;
-      const w = fig.querySelector('.demo-frame').contentWindow;
-      if (w) w.postMessage(
-        { demoTheme: root.dataset.theme || '', demoDensity: root.dataset.density || '' },
-        location.origin);
-    });
-  }
+  paintDemos(demoTheme);
 
   /* ── Поиск ──────────────────────────────────────────────────────────────
      Индекс — один JSON на весь сайт, грузится по первому обращению.
@@ -268,36 +253,57 @@
   const COPY_DONE = RU ? 'скопировано' : 'copied';
   const COPY_FAIL = RU ? 'не вышло' : 'failed';
 
+  /* Копируется значение из data-value, если оно есть, иначе текст соседнего
+     <code>. Первое нужно строкам справочника: там копируют одно имя, а не
+     всю ячейку. */
+  /* textContent, а не innerText: второй зависит от раскладки и у скрытого
+     содержимого возвращает пустую строку — блок кода свёрнут в <details>, и
+     копирование молча копировало бы ничто. Для <pre> textContent к тому же
+     точнее: он отдаёт исходный текст, а не то, как браузер его отрисовал. */
+  const copySource = (btn) => {
+    if (btn.dataset.value) return btn.dataset.value;
+    const code = btn.parentElement.querySelector('code');
+    return code ? code.textContent : '';
+  };
+
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-copy]');
     if (!btn) return;
-    const code = btn.parentElement.querySelector('code');
-    if (!code) return;
+    const text = copySource(btn);
+    if (!text) return;
 
-    if (!btn.dataset.label) {
-      btn.dataset.label = btn.textContent;
-      btn.setAttribute('aria-live', 'polite');
-    }
     clearTimeout(+btn.dataset.timer || 0);
+    const icon = btn.querySelector('[data-copy-icon] use');
+    const msg = btn.querySelector('[data-copy-msg]');
 
+    let ok = true;
     try {
-      await navigator.clipboard.writeText(code.innerText);
-      btn.textContent = COPY_DONE;
+      await navigator.clipboard.writeText(text);
     } catch (err) {
       /* Незащищённый origin (LAN по http) отклоняет запись молча. Молчать
          в ответ — значит соврать: кнопка выглядела бы сработавшей. */
-      btn.textContent = COPY_FAIL;
+      ok = false;
     }
+
+    /* Результат сообщается дважды: значком тем, кто смотрит, и словом в
+       живой области тем, кто слушает. Смена значка сама по себе — событие
+       без содержания. */
+    btn.dataset.state = ok ? 'done' : 'failed';
+    if (icon && ok) icon.setAttribute('href', '#i-check');
+    if (msg) msg.textContent = ok ? COPY_DONE : COPY_FAIL;
+
     btn.dataset.timer = setTimeout(() => {
-      btn.textContent = btn.dataset.label;
+      delete btn.dataset.state;
+      if (icon) icon.setAttribute('href', '#i-copy');
+      if (msg) msg.textContent = '';
     }, 1400);
   });
 
   /* ── Бургер ──────────────────────────────────────────────────────────────
      Выезд ящика рисует кит по aria-expanded. Сайту остаётся ровно то, что
      кит объявил слоем приложения: переключение атрибута, Escape, клик мимо
-     и возврат фокуса. Раньше здесь было только первое — ящик открывался и
-     не закрывался ничем, кроме повторного нажатия. */
+     и возврат фокуса. Без последних трёх ящик открывается и не закрывается
+     ничем, кроме повторного нажатия. */
 
   const burger = document.querySelector('[data-burger]');
   const drawer = document.getElementById('sidebar');

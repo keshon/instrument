@@ -19,15 +19,24 @@ import (
 
 // Page — одна страница документации.
 type Page struct {
-	Route   string // /components/actions/button/
-	Rel     string // components/actions/button.md
-	Dir     string // components/actions
-	Slug    string // button
-	Title   string
-	Group   string
-	Source  string
+	Route string // /components/actions/button/
+	Rel   string // components/actions/button.md
+	Dir   string // components/actions
+	Slug  string // button
+	Title string
+	Group string
+
+	// Source — файл кита, который описывает страница. НЕ отображается и
+	// снимать его нельзя: по нему считается ВЛАДЕНИЕ токеном.
+	//
+	// Токен `--space-4` перечислен в справочниках полутора десятков страниц —
+	// там он используется. Владеет им та единственная, которая документирует
+	// файл с его объявлением, и это решает, что выйдет первым на запрос
+	// «--space-4»: страница про пространство или случайный компонент. Он же
+	// перечисляет токены на странице «Токены» через `api-from: kit`.
+	Source string
+
 	NeedsJS string
-	Status  string
 	Splash  bool
 
 	// Lang — язык страницы, а Translated — есть ли у неё СВОЙ перевод.
@@ -52,16 +61,25 @@ type Page struct {
 	// без иконки иначе потерялась бы молча.
 	Icon string
 
-	HTML  string // готовое тело страницы
-	TOC   []Heading
-	Demos []Demo // живые примеры, каждый уедет в свой документ
-	Text  string // очищенная проза для поиска
-	Names string // все идентификаторы, встреченные на странице
-	Own   string // идентификаторы, которые страница ОПИСЫВАЕТ (из api:)
+	// Layout == "component" — страница объявила канонический контракт.
+	//
+	// Опт-ин, а не «все страницы сразу». Контракт вводится волнами, и страница
+	// вне волны обязана продолжать собираться: иначе перенос был бы «всё или
+	// ничего», то есть не начался бы.
+	Layout string
+
+	HTML     string // готовое тело страницы
+	TOC      []Heading
+	Sections []Section // разделы страницы в порядке документа
+	Hero     bool      // в шапке стоит живой пример, а не только определение
+	Demos    []Demo    // живые примеры страницы
+	Text     string    // очищенная проза для поиска
+	Names    string    // все идентификаторы, встреченные на странице
+	Own      string    // идентификаторы, которые страница ОПИСЫВАЕТ (из api:)
 
 	// API — справочник страницы ДАННЫМИ, а не прозой.
 	//
-	// Раньше он был четырьмя-шестью markdown-таблицами с разными колонками:
+	// Прозой это четыре-шесть markdown-таблиц с разными колонками:
 	// «Класс | Работа», «Атрибут | Значения | Где», «Переменная | По
 	// умолчанию», а токены — вообще списком через точку, без значений. Глаз
 	// учился читать каждую страницу заново, и это ровно то, на что жалуются
@@ -73,9 +91,9 @@ type Page struct {
 	API []APIRow
 
 	// body хранится до второго прохода: разметка рендерится ПОСЛЕ того, как
-	// справочник достроен. Пока рендер шёл прямо в parse, таблица собиралась
-	// из ещё пустых данных — значения токенов и перечисление по api-from
-	// приходят позже и в HTML не попадали.
+	// справочник достроен. Значения токенов и перечисление по api-from
+	// приходят из кита между чтением и рендером, и таблица, собранная прямо в
+	// parse, печатала бы пустоту.
 	body []byte
 }
 
@@ -102,7 +120,19 @@ var apiKinds = []string{"класс", "модификатор", "атрибут"
 // Значение берётся СЫРЫМ, без разрешения var(): `--pad-panel: var(--space-5)`
 // полезнее, чем `12px`, — оно показывает, откуда отступ берётся, а это и есть
 // то, что нужно знать при настройке.
-var declRe = regexp.MustCompile(`(?m)^\s*(--[a-z][\w-]*)\s*:\s*([^;]+);`)
+
+// Объявление ищется не только с начала строки.
+//
+// Образец с якорем `^\s*` не видит токенов, объявленных в одну строку:
+// `:root { --hairline: 1px; --stroke: 1px; }`. Оба стоят в tokens.css и
+// перечислены в справочниках страниц, а печатались бы прочерком — то есть
+// выглядели бы решением автора «значения по умолчанию нет».
+//
+// Отсюда два требования к образцу. Перед именем — начало строки, пробел,
+// `{` или `;`, но НЕ `(`: иначе `var(--hairline)` читался бы как объявление.
+// Значение кончается на `;` или на `}` — у последнего в строке точки с запятой
+// может не быть.
+var declRe = regexp.MustCompile(`(?m)(?:^|[\s{;])(--[a-z][\w-]*)\s*:\s*([^;{}]+)[;}]`)
 
 // Token — объявление токена в ките: значение и файл, где оно стоит.
 type Token struct{ Value, File string }
@@ -115,11 +145,10 @@ func TokenValues(kitDir string) (map[string]Token, error) {
 	}
 	// tokens.css читается ПЕРВЫМ, а слои переопределений не читаются вовсе.
 	//
-	// Порядок здесь не косметика. os.ReadDir отдаёт файлы по алфавиту, и
-	// print.css оказывался раньше tokens.css: печатное переопределение
-	// `--surface-sunken: var(--n-2)` становилось «значением по умолчанию»
-	// и попадало в справочник вместо настоящего light-dark(). Первое
-	// объявление считается базовым — значит, первым обязан идти базовый файл.
+	// Порядок здесь не косметика. Первое объявление считается базовым, а
+	// os.ReadDir отдаёт файлы по алфавиту: по нему print.css идёт до
+	// tokens.css, и печатное переопределение `--surface-sunken: var(--n-2)`
+	// попало бы в справочник вместо настоящего light-dark().
 	names := []string{"tokens.css"}
 	for _, e := range entries {
 		n := e.Name()
@@ -256,9 +285,9 @@ type frontmatter struct {
 	Title    string   `yaml:"title"`
 	Group    string   `yaml:"group"`
 	Source   string   `yaml:"source"`
-	Status   string   `yaml:"status"`
 	NeedsJS  string   `yaml:"needs-js"`
 	Template string   `yaml:"template"`
+	Layout   string   `yaml:"layout"`
 	API      []APIRow `yaml:"api"`
 	APIFrom  string   `yaml:"api-from"`
 
@@ -383,8 +412,9 @@ func parse(fsPath, rel string, lang i18n.Lang, translated bool) (*Page, error) {
 	p := &Page{
 		Route: route, Rel: rel, Dir: dir, Slug: slug,
 		Title: meta.Title, Group: meta.Group, Source: meta.Source,
-		NeedsJS: meta.NeedsJS, Status: meta.Status,
+		NeedsJS:    meta.NeedsJS,
 		Splash:     meta.Template == "splash",
+		Layout:     meta.Layout,
 		API:        meta.API,
 		APIFrom:    meta.APIFrom,
 		Lang:       lang,

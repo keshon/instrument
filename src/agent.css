@@ -195,10 +195,9 @@
 
 .inst-diff-path { font-family: var(--font-mono); min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .inst-diff-stat { margin-inline-start: auto; color: var(--text-muted); white-space: nowrap; }
-/* Тот же data-kind, что и у строк дифа ниже, а не собственные классы.
-   Раньше здесь стояли .is-add / .is-del — одна смысловая ось, записанная
-   двумя способами в сорока строках друг от друга. Расхождение таких пар
-   наступает не «если», а «когда».                                         */
+/* Тот же data-kind, что и у строк дифа ниже, а не собственные классы: одна
+   смысловая ось, записанная двумя способами, расходится не «если», а
+   «когда».                                                                */
 .inst-diff-stat > [data-kind="add"] { color: var(--ok-text); }
 .inst-diff-stat > [data-kind="del"] { color: var(--err-text); }
 

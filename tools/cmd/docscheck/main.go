@@ -58,7 +58,7 @@ func main() {
 	var (
 		srcDir  = flag.String("kit", "../src", "каталог кита")
 		docsDir = flag.String("docs", "../docs", "каталог документации")
-		stage   = flag.String("stage", "../site/internal/render/assets/demo.css", "стили стола примера")
+		stage   = flag.String("stage", "../site/internal/render/assets/docs.css", "стили сцены примера")
 		verbose = flag.Bool("v", false, "показать список классов без страницы")
 	)
 	flag.Parse()

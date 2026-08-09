@@ -1,7 +1,7 @@
 ---
 title: Аватар
 group: Отображение данных
-status: stable
+layout: component
 source: src/data.css
 api:
   - { name: "inst-avatar", kind: "класс", doc: "Один аватар. Размер `--control-h-md`" }
@@ -24,9 +24,21 @@ group-en: "Data display"
 
 ```html preview
 <span class="inst-avatar">ИС</span>
-<span class="inst-avatar inst-avatar--sm">W1</span>
-<span class="inst-avatar inst-avatar--lg">B4</span>
+<span class="inst-avatar">АП</span>
+<span class="inst-avatar">МК</span>
 ```
+
+## Использование
+
+```html
+<span class="inst-avatar" aria-hidden="true">ИС</span>
+```
+
+| Что | Обязательно | Почему |
+|---|---|---|
+| `aria-hidden="true"`, если имя есть рядом текстом | да | Иначе аватар озвучится как «И С» рядом с уже прочитанным именем |
+| `alt` или `aria-label`, если имени рядом нет | да | Инициалы доступным именем не являются: скринридер читает их по буквам |
+| `aria-label` на группе | да, у `inst-avatars` | Иначе прозвучит череда инициалов вместо «7 участников» |
 
 ## Когда использовать
 
@@ -37,10 +49,24 @@ group-en: "Data display"
 | Имя уже есть текстом рядом | **Имя отсутствует, а аватар единственный опознавательный знак** — тогда он несёт `alt` или `aria-label`, см. ниже |
 | — | **Иконка типа объекта, а не личности** — [иконка](../../foundations/icons.md) |
 
-## Группа с наложением
+## Размеры
 
 ```html preview
-<span class="inst-avatars">
+<span class="inst-avatar inst-avatar--sm">W1</span>
+<span class="inst-avatar">ИС</span>
+<span class="inst-avatar inst-avatar--lg">B4</span>
+```
+
+Размеры берутся из яруса ролей (`--control-h-*`), поэтому аватар и стоящая
+рядом [кнопка](../actions/button.md) того же размера физически не могут
+разойтись по высоте.
+
+## Композиции
+
+### Группа с наложением
+
+```html preview
+<span class="inst-avatars" aria-label="7 участников">
   <span class="inst-avatar">ИС</span>
   <span class="inst-avatar">АП</span>
   <span class="inst-avatar">МК</span>
@@ -52,10 +78,25 @@ group-en: "Data display"
 под ним**: оно отделяет соседей друг от друга. На другой поверхности группа
 потребует переопределить это кольцо, иначе появится ореол.
 
-## Справочник
+## Правила
 
-```api
-```
+:::do Аватар рядом с именем — декоративен
+Имя уже прочитано текстом; `aria-hidden="true"` избавляет от повторного «И С».
+:::
+
+:::dont Инициалы как доступное имя
+«ИС» скринридер читает по буквам. Если имени рядом нет, нужен `alt` или
+`aria-label` с полным именем.
+:::
+
+:::do Группе — имя составом или числом
+`aria-label="7 участников"` вместо череды инициалов.
+:::
+
+:::dont Аватар вместо статуса
+«Кто» и «как дела» — разные вопросы. Состояние объекта носит
+[бейдж](./badge.md).
+:::
 
 ## Доступность
 
@@ -68,7 +109,12 @@ group-en: "Data display"
 | Счётчик | `inst-avatars-more` содержит «+4» текстом — это данные, а не декорация |
 | Контраст | Инициалы берут `--text-secondary` на `--surface-sunken` и держат 4.5:1 в шести темах |
 
+## API
+
+```api
+```
+
 ## Связанное
 
-[Тег](./tag.md) · [Бейдж](./badge.md) · [Таблица](./table.md) ·
+[Тег](./tag.md) [Бейдж](./badge.md) [Таблица](./table.md)
 [Лента событий](./timeline.md)

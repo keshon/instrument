@@ -81,7 +81,11 @@
              role="combobox" aria-expanded="false" aria-controls="site-results"
              aria-autocomplete="list" aria-label="{{ t .Lang "search.aria" }}"
              autocomplete="off" data-search>
-      <div class="site-results inst-panel" id="site-results" role="listbox"
+      <!-- Плавающая поверхность — от кита (inst-popover), а не панель с
+           приписанной тенью: плашка поиска и плашка «Вид» обязаны быть одной
+           и той же поверхностью. Атрибута popover здесь нет намеренно —
+           список комбобокса управляется скриптом и не забирает фокус. -->
+      <div class="site-results inst-popover inst-popover--fill" id="site-results" role="listbox"
            aria-label="{{ t .Lang "search.result" }}" hidden data-results></div>
     </div>
 
@@ -133,15 +137,17 @@
   <main class="inst-shell-main" id="main">
     <div class="site-layout{{ if .Page.Splash }} site-layout--splash{{ end }}">
       <article class="inst-prose site-body">
-        <div class="inst-page-header">
-          <div class="inst-page-header-main">
-            <h1 class="inst-page-title">{{ .Page.Title }}</h1>
-            {{ if .Page.Group }}<p class="inst-page-desc">{{ .Page.Group }}</p>{{ end }}
-          </div>
+        <!-- Опознание страницы: раздел, имя, зрелость, исходник.
+             Раньше зрелость не показывалась нигде, а исходник стоял хвостом
+             внизу — то есть два факта, которые нужны В ПЕРВУЮ секунду, лежали
+             там, куда доходит один читатель из десяти. -->
+        <div class="doc-id">
+          {{ if .Page.Group }}<p class="doc-id-group">{{ .Page.Group }}</p>{{ end }}
+          <h1 class="inst-page-title">{{ .Page.Title }}</h1>
           {{ if .Page.NeedsJS }}
-          <div class="inst-page-actions">
+          <p class="doc-id-meta">
             <span class="inst-badge" data-tone="warn" title="{{ .Page.NeedsJS }}">{{ t .Lang "needs-js" }}</span>
-          </div>
+          </p>
           {{ end }}
         </div>
 
@@ -156,18 +162,21 @@
 
         {{ .Body }}
 
-        {{ if .Page.Source }}
-        <!-- Подпись собирается ЗДЕСЬ, а не пишется хвостом в каждой странице.
-             Пока её писали руками, она стояла на странице дважды — рядом с
-             той, что печатает шаблон, — и в семидесяти копиях успела разойтись
-             по глубине относительной ссылки на конституцию. -->
-        <p class="site-source">{{ t .Lang "source" }}: <code>{{ .Page.Source }}</code>{{ if not .Page.Splash }} ·
-          {{ t .Lang "why" }} — <a href="{{ .Lang.Prefix }}/about/design-principles/">{{ t .Lang "constitution" }}</a>{{ end }}</p>
+        {{ if not .Page.Splash }}
+        <!-- Отсылка к конституции внизу: она и правда читается последней.
+             Условие — только тип страницы. Прежде здесь стояло наличие
+             `source`, и ссылка исчезала на странице без него, хотя одно с
+             другим не связано ничем. -->
+        <p class="site-source">{{ t .Lang "why" }} —
+          <a href="{{ .Lang.Prefix }}/about/design-principles/">{{ t .Lang "constitution" }}</a></p>
         {{ end }}
       </article>
 
       {{ if .Page.TOC }}
-      <nav class="site-toc" aria-label="{{ t .Lang "toc" }}">
+      <!-- Оглавление перечисляет РАЗДЕЛЫ, а не заголовки. Разница видна на
+           странице таблицы: заголовков там было двенадцать, из них узнаваемых
+           два, — и колонка справа работала шумом, а не навигацией. -->
+      <nav class="site-toc" aria-label="{{ t .Lang "contents" }}">
         <span class="inst-nav-label">{{ t .Lang "toc" }}</span>
         {{ range .Page.TOC }}
         <a class="site-toc-item" data-level="{{ .Level }}" href="#{{ .ID }}">{{ .Text }}</a>
