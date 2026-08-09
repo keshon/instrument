@@ -191,6 +191,7 @@ var sections = map[string]map[Lang]string{
 	"components/overlays":   {RU: "Оверлеи", EN: "Overlays"},
 	"components/feedback":   {RU: "Обратная связь", EN: "Feedback"},
 	"agent":                 {RU: "Агентный слой", EN: "Agent layer"},
+	"blocks":                {RU: "Сборки", EN: "Blocks"},
 	"about":                 {RU: "О проекте", EN: "About"},
 }
 
