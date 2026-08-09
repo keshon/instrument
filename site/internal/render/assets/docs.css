@@ -407,6 +407,7 @@
                  .inst-stepper, .inst-section, .inst-page-header, .inst-split,
                  .inst-grid, .inst-container, .inst-accordion, .inst-toasts,
                  .inst-fieldset, .inst-crumbs, .inst-pager, .inst-toolbar,
+                 .inst-theme,
                  [role="listbox"], [role="grid"], [role="tree"], [role="log"],
                  [role="group"], [role="radiogroup"], [role="tablist"]) {
   flex: 1 1 100%;
