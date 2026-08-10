@@ -3,7 +3,7 @@ title: Тег
 group: Отображение данных
 layout: component
 source: src/data.css
-needs-js: Снятие тега — делает кит
+js: Снятие тега — делает кит
 api:
   - { name: "inst-tag", kind: "класс", doc: "Метка" }
   - { name: "inst-tag-remove", kind: "класс", doc: "Кнопка снятия. Настоящая `<button>`; снятие выполняет [kit.js](../../foundations/behavior.md)" }

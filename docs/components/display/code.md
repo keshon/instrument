@@ -3,7 +3,7 @@ title: Код и копируемое значение
 group: Отображение данных
 layout: component
 source: src/components.css
-needs-js: Копирование в буфер — делает кит
+js: Копирование в буфер — делает кит
 api:
   - { name: "inst-code", kind: "класс", doc: "Блок кода. Прокручивается по горизонтали" }
   - { name: "inst-copyable", kind: "класс", doc: "Однострочное значение с кнопкой" }

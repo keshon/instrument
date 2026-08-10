@@ -1,4 +1,4 @@
-/*! instrument 0.3.0 — https://github.com/keshon/instrument
+/*! instrument 0.3.1 — https://github.com/keshon/instrument
     Собран из src/. Правится ИСХОДНИК, а не этот файл. */
 @layer kit.tokens, kit.base, kit.layout, kit.components, kit.overlay, kit.agent, kit.motion, kit.print;
 
@@ -2592,6 +2592,11 @@ hr {
   background: var(--surface-field);
   color: var(--text-primary);
   font-size: var(--text-sm);
+  /* Поле — это поверхность, а не тег: `.inst-select` носит и <button>,
+     когда нативного списка мало. Кнопка центрует подпись по умолчанию, и
+     без этой строки собранный список стоял бы текстом посередине, а
+     нативный рядом — по краю. */
+  text-align: start;
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 
   &::placeholder { color: var(--text-muted); }
@@ -3674,9 +3679,17 @@ hr {
    читается как чужой элемент, случайно оказавшийся рядом. Это второй законный
    способ мерить плавающую поверхность, и третьего нет.                     */
 .inst-popover--fill {
-  inline-size: 100%;
   min-inline-size: 0;
   max-inline-size: none;
+}
+
+/* Ширина берётся у ЯКОРЯ, а не в процентах.
+   Поповер живёт в верхнем слое, и содержащий блок у него — вьюпорт: сотня
+   процентов там означает ширину экрана, а не ширину поля. Размер якоря
+   умеет считать только anchor-size(); где его нет, плашка остаётся
+   max-content и просто не совпадает с полем по ширине. */
+@supports (inline-size: anchor-size(width)) {
+  .inst-popover--fill { inline-size: anchor-size(width); }
 }
 
 /* У поповера подложки нет: он не блокирует страницу. */

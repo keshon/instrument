@@ -3,7 +3,7 @@ title: Дерево
 group: Агентный слой
 layout: component
 source: src/components.css
-needs-js: Ленивая подгрузка детей — слой приложения. Стрелки, раскрытие и бегущий tabindex делает кит
+js: Ленивая подгрузка детей — слой приложения. Стрелки, раскрытие и бегущий tabindex делает кит
 api:
   - { name: "inst-tree", kind: "класс", doc: "Контейнер" }
   - { name: "inst-tree-item", kind: "класс", doc: "Узел" }

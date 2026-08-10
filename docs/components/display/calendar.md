@@ -3,7 +3,7 @@ title: Календарь
 group: Отображение данных
 layout: component
 source: src/data.css
-needs-js: Выбор даты и переключение месяцев — слой приложения
+js: Выбор даты и переключение месяцев — слой приложения
 api:
   - { name: "inst-calendar", kind: "класс", doc: "Сетка на семь колонок" }
   - { name: "inst-calendar-dow", kind: "класс", doc: "Шапка: сокращение дня недели" }

@@ -3,7 +3,7 @@ title: Меню
 group: Оверлеи
 layout: component
 source: src/overlay.css
-needs-js: Стрелки и бегущий tabindex делает кит. Открытие и закрытие берёт на себя Popover API
+js: Стрелки и бегущий tabindex делает кит. Открытие и закрытие берёт на себя Popover API
 api:
   - { name: "inst-menu", kind: "класс", doc: "Контейнер. Колонка пунктов с зазором `--space-1`" }
   - { name: "inst-menu-item", kind: "класс", doc: "Пункт: `<button>` или `<a>`" }

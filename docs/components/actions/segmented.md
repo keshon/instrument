@@ -3,7 +3,7 @@ title: Сегментированный контрол
 group: Действия
 layout: component
 source: src/components.css
-needs-js: Выбор, стрелки и бегущий tabindex — делает кит
+js: Выбор, стрелки и бегущий tabindex — делает кит
 api:
   - { name: "inst-segmented", kind: "класс", doc: "Контейнер. Внутри — голые `button`, свой класс им не нужен" }
   - { name: "aria-checked", kind: "атрибут", doc: "`true` · `false`. Ровно один `true` в группе" }

@@ -3,7 +3,7 @@ title: Запрос подтверждения
 group: Агентный слой
 layout: component
 source: src/agent.css
-needs-js: Отправка решения и перевод блока в решённое состояние — слой приложения
+js: Отправка решения и перевод блока в решённое состояние — слой приложения
 api:
   - { name: "inst-approval", kind: "класс", doc: "Блок" }
   - { name: "inst-approval-head", kind: "класс", doc: "Заголовок со значком" }

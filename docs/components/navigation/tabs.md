@@ -3,7 +3,7 @@ title: Вкладки
 group: Навигация
 layout: component
 source: src/layout.css
-needs-js: Переключение панели. Стрелки и бегущий tabindex делает кит
+js: Переключение панели. Стрелки и бегущий tabindex делает кит
 api:
   - { name: "inst-tabs", kind: "класс", doc: "Полоса вкладок. Нижняя линия и горизонтальная прокрутка без видимого скроллбара" }
   - { name: "inst-tab", kind: "класс", doc: "Вкладка. Ссылка или кнопка с `role=\"tab\"`" }

@@ -3,7 +3,7 @@ title: Слайдер
 group: Ввод
 layout: component
 source: src/forms.css
-needs-js: Вывод значения в output — делает кит
+js-optional: Число рядом с бегунком. Без скрипта слайдер работает целиком
 api:
   - { name: "inst-slider", kind: "класс", doc: "Единственный класс. Ставится на `input[type=range]`" }
   - { name: "--size-track", kind: "токен" }

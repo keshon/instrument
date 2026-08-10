@@ -25,7 +25,8 @@ type Page struct {
 	Title      string
 	Group      string
 	Source     string
-	NeedsJS    string
+	JS         string
+	JSOpt      string
 	Splash     bool
 	Lang       i18n.Lang
 	Translated bool
@@ -161,7 +162,8 @@ type frontmatter struct {
 	Title    string   `yaml:"title"`
 	Group    string   `yaml:"group"`
 	Source   string   `yaml:"source"`
-	NeedsJS  string   `yaml:"needs-js"`
+	JS       string   `yaml:"js"`
+	JSOpt    string   `yaml:"js-optional"`
 	Template string   `yaml:"template"`
 	Layout   string   `yaml:"layout"`
 	API      []APIRow `yaml:"api"`
@@ -266,7 +268,8 @@ func parse(fsPath, rel string, lang i18n.Lang, translated bool) (*Page, error) {
 	p := &Page{
 		Route: route, Rel: rel, Dir: dir, Slug: slug,
 		Title: meta.Title, Group: meta.Group, Source: meta.Source,
-		NeedsJS:    meta.NeedsJS,
+		JS:         meta.JS,
+		JSOpt:      meta.JSOpt,
 		Splash:     meta.Template == "splash",
 		Layout:     meta.Layout,
 		API:        meta.API,

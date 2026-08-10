@@ -3,7 +3,7 @@ title: Таблица
 group: Отображение данных
 layout: component
 source: src/components.css
-needs-js: Сортировка и действия строки. «Выбрать всё» делает кит
+js: Сортировка и действия строки. «Выбрать всё» делает кит
 api:
   - { name: "inst-table", kind: "класс", doc: "Базовый, на `<table>`" }
   - { name: "inst-num", kind: "класс", doc: "Числовая ячейка: выравнивание по концу" }

@@ -3,7 +3,7 @@ title: Числовое поле инспектора
 group: Ввод
 layout: component
 source: src/components.css
-needs-js: Перетаскивание подписи оси — делает кит
+js: Перетаскивание подписи оси — делает кит
 api:
   - { name: "inst-num-field", kind: "класс", doc: "Обёртка: рамка, врез, фокус. Высота — `--control-h-sm`" }
   - { name: "inst-num-axis", kind: "класс", doc: "Буква оси. Ручка перетаскивания, **не подпись**" }

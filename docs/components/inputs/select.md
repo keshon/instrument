@@ -3,6 +3,7 @@ title: Селект
 group: Ввод
 layout: component
 source: src/forms.css
+js-optional: Свой список вместо нативного. Нативный работает без скрипта
 api:
   - { name: "inst-select-wrap", kind: "класс", doc: "Обёртка. **Обязательна** — в ней шеврон" }
   - { name: "inst-select", kind: "класс", doc: "Сам `<select>`" }
@@ -95,6 +96,63 @@ group-en: "Inputs"
 Врез, рамка, фокус, ошибка, `disabled` и `readonly` — те же, что у
 [текстового поля](./input.md): все три контрола объявлены одним правилом,
 поэтому разойтись не могут.
+
+## JS
+
+Нативный `<select>` не требует ни строки: клавиатура, набор по первым буквам,
+список на весь экран телефона — всё от платформы. Скрипт нужен только там, где
+нативного мало: поиск по списку, две строки в пункте, иконка ряда.
+
+### Когда стоит уходить от нативного
+
+| | |
+|---|---|
+| Больше двух-трёх десятков вариантов | Нужен поиск, а в `<select>` его нет |
+| В пункте не только текст | Нативный список рисует одну строку без разметки |
+| Выбор нескольких | `<select multiple>` выглядит как окно списка и на телефоне неудобен |
+
+Во всех остальных случаях нативный выигрывает, и заменять его — работа без
+выигрыша.
+
+### Свой список
+
+Поверхность и клавиатуру даёт кит. Приложению остаются данные: открыть,
+отфильтровать, записать выбор в скрытое поле.
+
+```html preview
+<div class="inst-field" style="max-inline-size:16rem">
+  <label class="inst-label" for="pick">Прогон</label>
+  <span class="inst-select-wrap">
+    <button class="inst-select" type="button" id="pick"
+            popovertarget="pick-list" aria-haspopup="listbox">worldgen-01</button>
+  </span>
+  <div class="inst-popover inst-popover--fill inst-popover--anchored" id="pick-list" popover>
+    <input class="inst-input inst-input--sm" type="search" aria-label="Поиск по прогонам" placeholder="Поиск">
+    <div role="listbox" aria-label="Прогоны">
+      <div class="inst-menu-item" role="option" aria-selected="true" tabindex="0">worldgen-01</div>
+      <div class="inst-menu-item" role="option" aria-selected="false" tabindex="-1">biomes-04</div>
+      <div class="inst-menu-item" role="option" aria-selected="false" tabindex="-1">rivers-12</div>
+    </div>
+  </div>
+</div>
+```
+
+Стрелки, `Home`, `End` и перенос выбора внутри списка выполняет
+[`kit.js`](../../foundations/behavior.md) — это `role="listbox"`. Открытие и
+закрытие берёт Popover API.
+
+### События
+
+```js
+list.addEventListener('inst:select', (e) => {
+  trigger.textContent = e.detail.value;
+  hidden.value = e.detail.value;      // значение уходит с формой
+  list.hidePopover();
+});
+```
+
+Скрытое поле обязательно: свой список — это разметка, а форма отправляет
+поля. Без него выбор виден человеку и не виден серверу.
 
 ## Правила
 

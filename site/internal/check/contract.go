@@ -68,8 +68,13 @@ func Contract(pages []*content.Page) (errs, warns []string) {
 			out = append(out, p.Route+"  нет главного примера: живой пример обязан стоять в шапке, до первого раздела")
 		}
 
-		if p.NeedsJS != "" && !p.HasJS {
-			out = append(out, p.Route+"  объявлен needs-js, но нет ни одного примера на JS")
+		if p.JS != "" || p.JSOpt != "" {
+			if !p.HasJS {
+				out = append(out, p.Route+"  объявлен js, но нет ни одного примера на JS")
+			}
+			if !seen["js"] {
+				out = append(out, p.Route+"  объявлен js, но нет раздела «JS»")
+			}
 		}
 
 		if strict {
