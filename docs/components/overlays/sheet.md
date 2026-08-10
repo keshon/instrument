@@ -90,7 +90,7 @@ document.getElementById('dlg').showModal();
 `inst-dialog-title`, `inst-dialog-close`, `inst-dialog-body`,
 `inst-dialog-foot`, `inst-dialog-foot--end`, `inst-dialog-foot-note`.
 
-Модификатор меняет ровно раскладку:
+Модификатор меняет раскладку:
 
 | Свойство | Модалка | Шторка |
 |---|---|---|

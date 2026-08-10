@@ -12,16 +12,11 @@ type Section struct {
 	Items []*content.Page
 }
 
-// Порядок разделов — по пути читателя, а не по алфавиту: сначала из чего
-// собран кит, потом чем собирают экран, потом компоненты по работе, и
-// агентный слой отдельным разделом, потому что он и есть причина брать
-// именно этот кит.
-// Метка раздела берётся из i18n по каталогу: язык живёт в одном месте, а не
-// растекается по трём файлам.
 var sections = []struct {
 	dir   string
-	order []string // явный порядок внутри; остальное по заголовку
+	order []string
 }{
+	{"start", []string{"install"}},
 	{"foundations", []string{
 		"colors", "typography", "spacing", "elevation", "motion",
 		"density", "icons", "behavior", "utilities", "tokens",
@@ -55,9 +50,6 @@ var sections = []struct {
 		"log", "lane", "budget", "tree",
 	}},
 
-	// Сборки идут ПОСЛЕ компонентов: чтобы прочитать собранный экран, надо
-	// знать, из чего он собран. Обратный порядок превратил бы их в витрину,
-	// за которой не видно кита.
 	{"blocks", []string{"dashboard", "inspector", "settings-screen"}},
 
 	{"about", nil},
@@ -100,8 +92,6 @@ func Build(lang i18n.Lang, pages []*content.Page) []Section {
 		delete(byDir, s.dir)
 	}
 
-	// Каталог, не попавший в список выше, всё равно показывается: молча
-	// потерянная страница хуже некрасивого раздела.
 	var rest []string
 	for dir := range byDir {
 		if dir != "" {

@@ -17,11 +17,6 @@ import (
 //go:embed templates/*.html assets/*
 var files embed.FS
 
-// Stylesheets отдаёт таблицы стилей сайта на проверку.
-//
-// Они лежат в embed.FS этого пакета, а сверять их с китом должен check — тот
-// же, что сверяет страницы и ссылки. Читать файл с диска ему было бы нечем:
-// после сборки это уже копия, а до сборки путь знает только render.
 func Stylesheets() (map[string]string, error) {
 	out := map[string]string{}
 	for _, name := range []string{"docs.css"} {
@@ -35,9 +30,9 @@ func Stylesheets() (map[string]string, error) {
 }
 
 type Options struct {
-	Out    string // куда писать
-	Kit    string // каталог кита (src)
-	Assets string // каталог ресурсов кита
+	Out    string
+	Kit    string
+	Assets string
 }
 
 type pageData struct {
@@ -46,14 +41,10 @@ type pageData struct {
 	Sprite template.HTML
 	Body   template.HTML
 
-	// Lang и Langs — для шапки: атрибут документа и переключатель.
 	Lang  i18n.Lang
 	Langs []langLink
 }
 
-// langLink — та же страница на другом языке. Адрес считается здесь, потому
-// что переключатель обязан вести НА ЭТУ ЖЕ страницу, а не на главную: увести
-// читателя на главную при смене языка — потерять место, где он был.
 type langLink struct {
 	Lang    i18n.Lang
 	Label   string
@@ -131,9 +122,6 @@ func write(path string, tpl *template.Template, name string, data any) error {
 	return tpl.ExecuteTemplate(f, name, data)
 }
 
-// copyDir кладёт кит рядом с сайтом КАК ЕСТЬ, без обработки: сайт обязан
-// показывать ровно тот CSS, который получит потребитель, — пропущенный
-// через сборщик это уже другой файл.
 func copyDir(src, dst string) error {
 	if err := os.MkdirAll(dst, 0o755); err != nil {
 		return err
@@ -160,30 +148,13 @@ func copyDir(src, dst string) error {
 type doc struct {
 	R string `json:"r"`
 	T string `json:"t"`
-	S string `json:"s"` // слаг: латинское имя страницы
+	S string `json:"s"`
 	G string `json:"g"`
-	O string `json:"o"` // имена, которые страница ОПИСЫВАЕТ
-	N string `json:"n"` // имена, которые на ней просто встречаются
+	O string `json:"o"`
+	N string `json:"n"`
 	B string `json:"b"`
 }
 
-// searchIndex пишет один JSON на весь сайт.
-//
-// Готовый поисковик тянет бинарник и WASM на каждую страницу. На семидесяти
-// страницах это дороже самого индекса: весь текст помещается в несколько
-// сотен килобайт, а поиск по нему — в полсотни строк.
-//
-// Три вещи, без каждой из которых поиск не находит компоненты:
-//
-//	слаг    латинское имя страницы уже существует и никем не использовалось.
-//	        Документация по-русски, API по-английски, и слаг — единственный
-//	        мост между ними: «dialog» находит «Модалку» без словаря синонимов;
-//	имена   классы и токены живут в блоках кода, а прозаический индекс их
-//	        вырезает — запрос «inst-btn» давал ноль результатов;
-//	тело    целиком. Обрезка в 1200 БАЙТ оставляла от страницы два абзаца и
-//	        вдобавок рвала кириллицу посередине руны.
-//
-// langLinks — адреса этой же страницы на всех языках.
 func langLinks(p *content.Page) []langLink {
 	var out []langLink
 	for _, l := range i18n.All {
@@ -198,8 +169,6 @@ func langLinks(p *content.Page) []langLink {
 	return out
 }
 
-// Индекс СВОЙ у каждого языка: искать по русским телам из английской версии
-// значило бы отдавать читателю страницы, которых он не прочтёт.
 func searchIndex(out string, lang i18n.Lang, pages []*content.Page) error {
 	docs := make([]doc, 0, len(pages))
 	for _, p := range pages {

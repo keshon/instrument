@@ -2,12 +2,6 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "agentic-ui",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8321"],
-      "port": 8321
-    },
-    {
       "name": "docs",
       "runtimeExecutable": "go",
       "runtimeArgs": ["run", "./cmd/site", "-serve", ":4322"],

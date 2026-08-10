@@ -5,12 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ .Page.Title }} — instrument</title>
 <link rel="icon" type="image/svg+xml" href="/assets/mark.svg">
-<!-- Кит подключается ровно так же, как у потребителя: одной строкой. -->
 <link rel="stylesheet" href="/kit/kit.css">
 <link rel="stylesheet" href="/docs.css">
 <script>
-  /* Тема ставится до первой отрисовки, иначе страница успевает мигнуть
-     светлым. Три строки в head дешевле любого решения после загрузки. */
   try {
     var t = localStorage.getItem('instrument-theme');
     if (t) document.documentElement.dataset.theme = t;
@@ -44,13 +41,6 @@
     </nav>
   </aside>
   <script>
-    /* Прокрутка боковой колонки восстанавливается ЗДЕСЬ, а не в docs.js.
-
-       Каждый переход — полная загрузка документа, и колонка отматывается
-       в начало: на семидесяти пунктах это значит скроллить заново после
-       каждого клика. Восстановление отложенным скриптом дало бы прыжок —
-       колонка успела бы отрисоваться сверху. Здесь она уже в DOM, но ещё
-       не показана, поэтому переход незаметен. */
     (() => {
       const el = document.getElementById('sidebar');
       try {
@@ -68,9 +58,6 @@
   </script>
 
   <header class="inst-shell-header">
-    <!-- Класс кита, а не свой: показом кнопки и выездом ящика управляет
-         inst-shell-nav-toggle. Сайту остаётся одна строка — переключить
-         aria-expanded. -->
     <button class="inst-btn inst-btn--sm inst-btn--icon inst-shell-nav-toggle" type="button"
             aria-label="{{ t .Lang "sections" }}" aria-expanded="false" aria-controls="sidebar" data-burger>
       <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>
@@ -81,18 +68,12 @@
              role="combobox" aria-expanded="false" aria-controls="site-results"
              aria-autocomplete="list" aria-label="{{ t .Lang "search.aria" }}"
              autocomplete="off" data-search>
-      <!-- Плавающая поверхность — от кита (inst-popover), а не панель с
-           приписанной тенью: плашка поиска и плашка «Вид» обязаны быть одной
-           и той же поверхностью. Атрибута popover здесь нет намеренно —
-           список комбобокса управляется скриптом и не забирает фокус. -->
       <div class="site-results inst-popover inst-popover--fill" id="site-results" role="listbox"
            aria-label="{{ t .Lang "search.result" }}" hidden data-results></div>
     </div>
 
     <span class="inst-cluster-spacer"></span>
 
-    <!-- Тема и плотность — в поповере. Он даёт им общее имя «Вид» и
-         освобождает шапку: на 390px эти два контрола забирали 411px. -->
     <button class="inst-btn inst-btn--sm" type="button" popovertarget="site-view">{{ t .Lang "view" }}</button>
 
     <div class="inst-popover inst-popover--anchored" id="site-view" popover>
@@ -106,6 +87,7 @@
           </div>
         </div>
 
+        {{ if gt (len .Langs) 1 }}
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "lang" }}</span>
           <div class="inst-segmented" role="radiogroup" aria-label="{{ t .Lang "lang" }}">
@@ -115,6 +97,7 @@
             {{ end }}
           </div>
         </div>
+        {{ end }}
 
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "theme" }}</span>
@@ -137,10 +120,6 @@
   <main class="inst-shell-main" id="main">
     <div class="site-layout{{ if .Page.Splash }} site-layout--splash{{ end }}">
       <article class="inst-prose site-body">
-        <!-- Опознание страницы: раздел, имя, зрелость, исходник.
-             Раньше зрелость не показывалась нигде, а исходник стоял хвостом
-             внизу — то есть два факта, которые нужны В ПЕРВУЮ секунду, лежали
-             там, куда доходит один читатель из десяти. -->
         <div class="doc-id">
           {{ if .Page.Group }}<p class="doc-id-group">{{ .Page.Group }}</p>{{ end }}
           <h1 class="inst-page-title">{{ .Page.Title }}</h1>
@@ -152,9 +131,6 @@
         </div>
 
         {{ if not .Page.Translated }}
-        <!-- Страница без своего перевода не исчезает и не отдаёт 404: она
-             показывает исходный текст с пометкой. Иначе перевод семидесяти
-             пяти страниц был бы «всё или ничего». -->
         <div class="inst-banner" data-tone="warn">
           <div class="inst-banner-body">{{ t .Lang "untranslated" }}</div>
         </div>
@@ -163,19 +139,12 @@
         {{ .Body }}
 
         {{ if not .Page.Splash }}
-        <!-- Отсылка к конституции внизу: она и правда читается последней.
-             Условие — только тип страницы. Прежде здесь стояло наличие
-             `source`, и ссылка исчезала на странице без него, хотя одно с
-             другим не связано ничем. -->
         <p class="site-source">{{ t .Lang "why" }} —
           <a href="{{ .Lang.Prefix }}/about/design-principles/">{{ t .Lang "constitution" }}</a></p>
         {{ end }}
       </article>
 
       {{ if .Page.TOC }}
-      <!-- Оглавление перечисляет РАЗДЕЛЫ, а не заголовки. Разница видна на
-           странице таблицы: заголовков там было двенадцать, из них узнаваемых
-           два, — и колонка справа работала шумом, а не навигацией. -->
       <nav class="site-toc" aria-label="{{ t .Lang "contents" }}">
         <span class="inst-nav-label">{{ t .Lang "toc" }}</span>
         {{ range .Page.TOC }}
@@ -187,7 +156,6 @@
   </main>
 </div>
 
-<!-- Поведение кита. Ровно та же строка, что получит потребитель. -->
 <script type="module" src="/kit/kit.js"></script>
 <script src="/docs.js" defer></script>
 </body>

@@ -41,10 +41,6 @@ func renderMarkdown(p *Page, body []byte) error {
 	doc := md.Parser().Parse(text.NewReader(body))
 
 	var buf bytes.Buffer
-	// Шапка страницы — всё до первого раздела: определение в одну-две фразы и
-	// живой пример, показывающий характер компонента. Она открывается здесь, а
-	// закрывается первым же H2: иначе пришлось бы искать её конец обходом
-	// дерева ради того, что и так известно.
 	buf.WriteString(`<div class="doc-hero">`)
 	cr.heroOpen = true
 
@@ -56,32 +52,10 @@ func renderMarkdown(p *Page, body []byte) error {
 	p.HTML = wrapTables(buf.String())
 	return nil
 }
-
-// wrapTables даёт каждой таблице свой горизонтальный скролл.
-//
-// Жалоба «колонки не вмещают текст» — про это. Таблица из четырёх колонок, в
-// каждой из которых предложение, на колонке в 68 знаков не помещается никак;
-// без обёртки она распирала документ и заводила горизонтальную прокрутку
-// ВСЕЙ странице — то есть уезжала не только таблица, а шапка, оглавление и
-// навигация вместе с ней.
-//
-// Подстановкой по строке, а не своим рендерером узла: таблиц внутри таблиц в
-// документации нет и не будет, а рендерер GFM-таблицы пришлось бы переписать
-// целиком ради двух тегов вокруг.
-//
-// Обёртка ставится ТОЛЬКО таблице прозы. Справочник печатает свою
-// (`<table class="api-table">`) и уже лежит в `.api` со своим скроллом.
-// Отсюда сканер вместо замены по двум строкам: закрывающий тег у обеих таблиц
-// одинаков, и подстановка добавила бы справочнику лишний `</div>`. Он закрыл
-// бы раздел раньше времени, следующий `</section>` закрыл бы `<article>`, и
-// оглавление ушло бы из своей колонки сетки в конец документа.
 func wrapTables(s string) string {
 	var b strings.Builder
 	b.Grow(len(s) + 256)
 
-	// wrapped хранит по одному флагу на каждую открытую таблицу: обёрнута она
-	// или нет. Стек, а не булево, — на случай таблицы в ячейке; сегодня такой
-	// нет, но молчаливо сломаться на ней эта функция уже не сможет.
 	var wrapped []bool
 	for {
 		i := strings.Index(s, "<table")
@@ -113,15 +87,6 @@ func wrapTables(s string) string {
 	}
 }
 
-// ── Ссылки ────────────────────────────────────────────────────────────────
-//
-// Страницы ссылаются друг на друга относительными путями к .md — так они
-// читаются и в репозитории на GitHub. На сайте у страницы другой адрес,
-// поэтому ссылка переписывается в маршрут. Точка отсчёта — каталог ФАЙЛА,
-// а не текущий URL: относительный путь в markdown отсчитывается от файла.
-
-// prefix — префикс языка. Без него ссылка со страницы /en/ уводила бы
-// читателя обратно в русскую версию, и перевод превращался бы в остров.
 type linkRewriter struct{ dir, prefix string }
 
 func (l *linkRewriter) Transform(doc *ast.Document, r text.Reader, pc parser.Context) {
@@ -152,18 +117,27 @@ func (l *linkRewriter) Transform(doc *ast.Document, r text.Reader, pc parser.Con
 	})
 }
 
-// ── Блоки кода ────────────────────────────────────────────────────────────
-
 type codeRenderer struct {
-	page *Page
-	n    int
-
-	// Состояние каркаса страницы: открыта шапка, открыт раздел, показан ли уже
-	// главный пример. Один рендерер на документ, поэтому состояние здесь, а не
-	// в обходе дерева.
+	page       *Page
+	n          int
 	heroOpen   bool
 	sectionOn  bool
 	heroDemoOn bool
+	ids        map[string]int
+}
+
+func (r *codeRenderer) uniq(id string) string {
+	if id == "" {
+		id = "s"
+	}
+	if r.ids == nil {
+		r.ids = map[string]int{}
+	}
+	r.ids[id]++
+	if n := r.ids[id]; n > 1 {
+		return fmt.Sprintf("%s-%d", id, n)
+	}
+	return id
 }
 
 func (r *codeRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
@@ -171,24 +145,12 @@ func (r *codeRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindHeading, r.heading)
 }
 
-// ── Разделы ───────────────────────────────────────────────────────────────
-//
-// Каждый H2 открывает <section> с устойчивым идентификатором из словаря.
-// Идентификатор больше не выводится из текста заголовка, и это чинит две
-// вещи разом: якорь `#variants` одинаков в русской и английской версии, а
-// оглавление получает не «список заголовков», а список РАЗДЕЛОВ — то есть
-// узнаваемую с первого взгляда поверхность компонента.
-//
-// Заголовок незнакомого вида остаётся как есть, с автоидентификатором: на
-// странице вне контракта он не ошибка, а обычная проза. Ошибкой он становится
-// только там, где контракт объявлен, — это проверяет check.
-
 func (r *codeRenderer) heading(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
 	h := n.(*ast.Heading)
 
 	if h.Level != 2 {
 		if entering {
-			id := headingID(h)
+			id := r.uniq(headingID(h, source))
 			if h.Level == 3 {
 				r.page.TOC = append(r.page.TOC, Heading{Level: 3, ID: id, Text: nodeText(h, source)})
 			}
@@ -208,9 +170,11 @@ func (r *codeRenderer) heading(w util.BufWriter, source []byte, n ast.Node, ente
 
 	raw := nodeText(h, source)
 	def, known := LookupSection(raw)
-	id, title, order := headingID(h), "", 0
+	id, title, order := "", "", 0
 	if known {
 		id, title, order = def.ID, i18n.SectionTitle(r.page.Lang, def.ID), def.Order
+	} else {
+		id = r.uniq(headingID(h, source))
 	}
 
 	if title == "" {
@@ -224,10 +188,6 @@ func (r *codeRenderer) heading(w util.BufWriter, source []byte, n ast.Node, ente
 	fmt.Fprintf(w, `<section class="doc-s" id="%s" data-section="%s"><h2 class="doc-s-title">`,
 		escape(id), escape(id))
 	r.sectionOn = true
-
-	// У знакомого раздела заголовок берётся из словаря, а не из страницы:
-	// иначе «Справочник» на одной странице и «API» на другой остались бы
-	// разными разделами на вид, хотя это один и тот же раздел.
 	if known {
 		w.WriteString(escape(title))
 		return ast.WalkSkipChildren, nil
@@ -235,7 +195,6 @@ func (r *codeRenderer) heading(w util.BufWriter, source []byte, n ast.Node, ente
 	return ast.WalkContinue, nil
 }
 
-// closeOpen закрывает то, что открыто: шапку или предыдущий раздел.
 func (r *codeRenderer) closeOpen() string {
 	switch {
 	case r.heroOpen:
@@ -248,31 +207,42 @@ func (r *codeRenderer) closeOpen() string {
 	return ""
 }
 
-// tail закрывает каркас после обхода дерева.
 func (r *codeRenderer) tail() string { return r.closeOpen() }
 
-func headingID(h *ast.Heading) string {
-	id, _ := h.AttributeString("id")
-	b, _ := id.([]byte)
-	return string(b)
+func headingID(h *ast.Heading, source []byte) string {
+	return slug(nodeText(h, source))
 }
 
-// copyButton — иконочная кнопка копирования.
-//
-// Иконка, а не слово: кнопка стоит в углу блока кода, и подпись «копировать»
-// занимает там место, которого нет, — на узком экране она наезжает на первую
-// строку. Иконочная кнопка у кита для этого и заведена, вместе с требованием
-// доступного имени.
-//
-// Работу выполняет КИТ: класс `inst-copy` и `data-copy` — это его контракт.
-// Своего обработчика у сайта здесь нет намеренно. Копирование стало
-// поведением кита, и вторая реализация в его же справочнике означала бы, что
-// кит документирует одно, а показывает другое.
-//
-// Результат сообщается ДВАЖДЫ: значок меняется на галку для тех, кто смотрит,
-// и слово уходит в живую область для тех, кто слушает. Оба значка стоят в
-// разметке, а переключает их CSS по `data-copied`: подменить `href` у `use`
-// стилями нельзя.
+var translit = map[rune]string{
+	'а': "a", 'б': "b", 'в': "v", 'г': "g", 'д': "d", 'е': "e", 'ё': "e",
+	'ж': "zh", 'з': "z", 'и': "i", 'й': "y", 'к': "k", 'л': "l", 'м': "m",
+	'н': "n", 'о': "o", 'п': "p", 'р': "r", 'с': "s", 'т': "t", 'у': "u",
+	'ф': "f", 'х': "h", 'ц': "c", 'ч': "ch", 'ш': "sh", 'щ': "sch",
+	'ъ': "", 'ы': "y", 'ь': "", 'э': "e", 'ю': "yu", 'я': "ya",
+}
+
+func slug(s string) string {
+	var b strings.Builder
+	dash := false
+	for _, r := range strings.ToLower(s) {
+		switch {
+		case r >= 'a' && r <= 'z', r >= '0' && r <= '9':
+			b.WriteRune(r)
+			dash = false
+		case translit[r] != "":
+			b.WriteString(translit[r])
+			dash = false
+		case r == 'ъ' || r == 'ь':
+		default:
+			if !dash && b.Len() > 0 {
+				b.WriteByte('-')
+				dash = true
+			}
+		}
+	}
+	return strings.Trim(b.String(), "-")
+}
+
 func copyIcons(mod string) string {
 	return fmt.Sprintf(
 		`<svg class="inst-icon%s copy-i" aria-hidden="true"><use href="#i-copy"/></svg>`+
@@ -289,10 +259,6 @@ func copyButton(text string, lg i18n.Lang) string {
 		escape(i18n.T(lg, "copy")), escape(i18n.T(lg, "copy")), copyIcons(""))
 }
 
-// copyValue — кнопка копирования одного значения.
-//
-// Тот же контракт кита, что у блока кода: в строке справочника копируют имя,
-// а не ячейку, и `data-copy` несёт именно его.
 func copyValue(v string, lg i18n.Lang) string {
 	if v == "" {
 		return ""
@@ -305,8 +271,6 @@ func copyValue(v string, lg i18n.Lang) string {
 		escape(i18n.T(lg, "copy")), escape(v), escape(v), copyIcons(" inst-icon--sm"))
 }
 
-// ctxClass отмечает сцену контекстного примера: у собранного экрана свои
-// правила поля — оболочка занимает сцену целиком, а не лежит в ней с отступом.
 func ctxClass(ctx bool) string {
 	if ctx {
 		return " demo-root--context"
@@ -339,9 +303,6 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 		info = string(node.Info.Segment.Value(source))
 	}
 
-	// Ограда ```api разворачивается в справочник из frontmatter. Место в
-	// потоке задаёт автор — оно разное на разных страницах, — а колонки и
-	// порядок задаёт шаблон, и разойтись они не могут.
 	if lang == "api" {
 		writeAPI(w, r.page)
 		return ast.WalkSkipChildren, nil
@@ -353,9 +314,6 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 
 	if lang == "html" && previewRe.MatchString(info) {
 		r.n++
-		// ID берётся из ПУТИ ФАЙЛА, а не из маршрута: маршрут несёт префикс
-		// языка, и столы размножились бы по числу языков — 288 документов
-		// вместо 144, причём с одинаковым содержимым.
 		id := strings.TrimSuffix(r.page.Rel, ".md")
 		id = strings.Trim(strings.ReplaceAll(id, "/", "-"), "-")
 		if id == "" || id == "index" {
@@ -371,11 +329,6 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 			label = i18n.T(lg, "demo.context")
 		}
 
-		// Главный пример — тот, что стоит в шапке, до первого раздела. Он не
-		// документирует, он показывает характер компонента: человек, пришедший
-		// со страницы daisyUI, должен за одну секунду понять, на что смотрит,
-		// и только потом начать читать. Отличается он не подписью, а размером
-		// сцены и тем, что стоит вплотную к определению.
 		hero := ""
 		if r.heroOpen && !r.heroDemoOn {
 			r.heroDemoOn = true
@@ -384,23 +337,6 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 			label = i18n.T(lg, "demo.hero")
 		}
 
-		// Пример рисуется В ПОТОКЕ СТРАНИЦЫ, а не в отдельном документе внутри
-		// iframe.
-		//
-		// Кадр появился ради одного: у примера своя тема, и переключение темы
-		// справочника не должно перекрашивать демонстрируемый кит. Оказалось,
-		// что кадр для этого не нужен — тема в ките объявлена атрибутом
-		// (`[data-theme]`), а не селектором корня, и работает на любом
-		// поддереве. Не хватало только `.inst-theme`, восстанавливающей базовый
-		// цвет и фон; она заведена в самом ките, потому что тёмная панель в
-		// светлом приложении нужна не только справочнику.
-		//
-		// Кадр стоил дорого: 184 отдельных документа и три мегабайта, девять
-		// загрузок на странице кнопки, синхронизация высоты через postMessage,
-		// разметка примеров вне поиска и вне печати.
-		//
-		// data-density на сцене намеренно НЕ ставится по умолчанию: плотность
-		// глобальна, и пример обязан показывать ту, которую выбрал читатель.
 		fmt.Fprintf(w, `<figure class="demo%s" data-demo>`+
 			`<figcaption class="demo-bar">`+
 			`<span class="demo-chrome" aria-hidden="true"></span>`+
@@ -426,17 +362,6 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 	return ast.WalkSkipChildren, nil
 }
 
-// writeCode печатает блок кода. У примера он СВЁРНУТ.
-//
-// Разметка примера — это подтверждение, а не содержание: сначала смотрят, что
-// компонент делает, и только потом, из чего он собран. Развёрнутым кодом
-// страница получала в среднем 31 лишнюю строку вертикального шума между
-// читателем и справочником, ради которого сюда чаще всего и приходят.
-//
-// Носитель — <details>, поэтому раскрытие, клавиатура и роль достаются от
-// платформы, и без JS блок остаётся доступен. Поиск по странице находит текст
-// внутри закрытого блока и раскрывает его сам — то же соображение, по которому
-// на <details> построен аккордеон.
 func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
 	if inDemo {
 		fmt.Fprintf(w, `<details class="demo-code"><summary class="demo-code-head">%s</summary>`,
@@ -453,21 +378,10 @@ func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
 	}
 }
 
-// writeAPI печатает справочник одной таблицей с постоянными колонками.
-//
-// Колонок ровно четыре, и они не меняются от страницы к странице: имя, вид,
-// значение, работа. Именно постоянство колонок делает таблицу
-// просматриваемой — глаз учится читать её один раз, а не заново на каждом
-// компоненте.
 func writeAPI(w util.BufWriter, p *Page) {
 	if len(p.API) == 0 {
 		return
 	}
-	// Вид вынесен в строку-заголовок, а не повторяется колонкой. Колонка
-	// «Вид» печатала одно и то же слово по семь раз подряд — это ровно та
-	// трудночитаемость, ради устранения которой таблицу и объединяли.
-	// Строка-заголовок даёт то же знание один раз и заодно делит длинный
-	// список на куски, по которым можно прыгать глазом.
 	fmt.Fprintf(w, `<div class="api"><table class="api-table"><thead><tr>`+
 		`<th>%s</th><th>%s</th><th>%s</th>`+
 		`</tr></thead><tbody>`,
@@ -481,21 +395,10 @@ func writeAPI(w util.BufWriter, p *Page) {
 		}
 		val := escape(r.Value)
 		if val == "" {
-			// Прочерк, а не пустота: пустая ячейка читается как «забыли».
 			val = `<span class="api-none">—</span>`
 		} else {
 			val = copyValue(r.Value, p.Lang) + `<code>` + val + `</code>`
 		}
-		// Имя копируется по кнопке, а не выделением мышью.
-		//
-		// За справочником приходят за именем, и оно почти всегда уезжает в
-		// разметку или в CSS. `inst-dialog-foot--end` и `--control-h-sm`
-		// набирают по памяти с ошибкой, а выделяют мышью — вместе с пробелом
-		// или половиной соседней ячейки.
-		//
-		// Значение копируется отдельной кнопкой, потому что копируют его тоже
-		// отдельно: `min(34rem, 100vw - var(--space-8))` руками не наберёт
-		// никто.
 		fmt.Fprintf(w,
 			`<tr data-kind="%s"><td class="api-cell">%s<code class="api-name">%s</code></td>`+
 				`<td class="api-cell">%s</td><td>%s</td></tr>`,
@@ -504,9 +407,6 @@ func writeAPI(w util.BufWriter, p *Page) {
 	w.WriteString(`</tbody></table></div>`)
 }
 
-// inlineCode — минимальный markdown внутри ячейки: `код` и **важное**.
-// Полный парсер здесь был бы избыточен, а совсем без него в описании нельзя
-// назвать ни класс, ни значение.
 var (
 	tickRe = regexp.MustCompile("`([^`]+)`")
 	boldRe = regexp.MustCompile(`\*\*([^*]+)\*\*`)
@@ -518,17 +418,7 @@ func inlineCode(s string) string {
 	return boldRe.ReplaceAllString(out, "<b>$1</b>")
 }
 
-// ── Подсветка ─────────────────────────────────────────────────────────────
-//
-// Своя, на три цвета из палитры кита, а не библиотека: подсветка в шестьдесят
-// цветов на макете из хайрлайнов и воздуха кричит громче кода, который
-// подсвечивает. Различать надо ровно три вещи: имя тега, имя атрибута и
-// значение.
-
 var (
-	// Открывающая часть и имя тега захватываются ОТДЕЛЬНО. Иначе поиск имени
-	// «по первой букве» попадает внутрь мнемоники: в «&lt;button» первая
-	// буква — это «l» из «lt», и подсветка разрывала саму мнемонику.
 	tagRe     = regexp.MustCompile(`(&lt;/?)([a-zA-Z][\w-]*)`)
 	attrRe    = regexp.MustCompile(`([a-zA-Z-]+)=(&#34;[^&]*&#34;)`)
 	commentRe = regexp.MustCompile(`(?s)&lt;!--.*?--&gt;|/\*.*?\*/`)
@@ -567,12 +457,6 @@ func escape(s string) string {
 	}
 	return b.String()
 }
-
-// ── Оглавление ────────────────────────────────────────────────────────────
-//
-// Собирается прямо во время разметки, а не отдельным обходом: у знакомого
-// раздела заголовок берётся из словаря, и второй обход всё равно не знал бы,
-// что напечатано на странице.
 
 func nodeText(n ast.Node, src []byte) string {
 	var b strings.Builder

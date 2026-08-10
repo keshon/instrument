@@ -1,13 +1,11 @@
 # Документация
 
-Страницы пишутся здесь, а не в `index.html`. Живая спецификация остаётся как
-есть до этапа 3 роадмапа, когда её место займёт сгенерированный сайт: писать
-контент дважды дороже, чем один раз отложить его показ.
+Одна страница на компонент. Сборка сайта — `go -C site run ./cmd/site`.
 
 ## Структура
 
 ```
-docs/                                                    71 страница
+docs/                                                    79 страниц
   components/
     actions/     button · button-group · segmented
     charts/      legend · meter · palette · ring · sparkline
@@ -24,17 +22,19 @@ docs/                                                    71 страница
   foundations/   colors · density · elevation · icons · motion ·
                  spacing · tokens · typography · utilities
   layout/        container · flow · page-header · section · shell · split
+  start/         install
+  blocks/        dashboard · inspector · settings-screen
   internal/      процессные документы, не документация
 ```
 
-Категории названы **работой компонента**, а не файлом кита, в котором он лежит.
-`.inst-metric` и `.inst-sparkline` живут в разных `.css` и на соседних
-страницах, потому что читатель ищет «показать число», а не «components.css».
+Категории названы **работой компонента**. `.inst-metric` и `.inst-sparkline`
+лежат в разных `.css`, но стоят на соседних страницах: ищут «показать число»,
+а не «components.css».
 
 ## Шаблон страницы
 
-Порядок отражает **частоту обращения**, а не полноту: большинство визитов
-заканчивается на первом экране.
+Порядок отражает **частоту обращения**. Большинство визитов заканчивается на
+первом экране.
 
 ```
 frontmatter        title · group · status · source
