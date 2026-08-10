@@ -16,6 +16,11 @@ var (
 
 var ruleKinds = map[string]bool{"do": true, "dont": true}
 
+// Тон сноски: «так» — это подтверждение, «не так» — ошибка. Оба значка уже
+// есть у кита, и заводить для документации свои значило бы рисовать второй
+// набор для той же пары смыслов.
+var ruleTones = map[string]string{"do": "ok", "dont": "error"}
+
 var noteTones = map[string]string{
 	"note":   "info",
 	"warn":   "warn",
@@ -64,11 +69,12 @@ func expandDirectives(body []byte, lang i18n.Lang) ([]byte, error) {
 				}
 				label := i18n.T(lang, "rule."+kind)
 				out = append(out,
-					fmt.Sprintf(`<div class="rule" data-rule="%s">`, kind),
+					fmt.Sprintf(`<div class="inst-note rule" data-tone="%s">`, ruleTones[kind]),
+					`<div class="note-body">`,
 					"",
 					fmt.Sprintf(`<p class="rule-tag">%s%s</p>`, escape(label), ruleHead(head)),
 					"")
-				closes = "</div>"
+				closes = "</div></div>"
 			case noteTones[kind] != "":
 				closeRow()
 				out = append(out, "",

@@ -162,8 +162,7 @@ group-en: "Layout"
 
 Как только пунктов больше восьми, лента перестаёт работать: семьдесят один
 пункт — это лента шириной почти **восемь тысяч пикселей** без заголовков
-групп. Это не «неудобно», это отсутствие навигации, и найдено оно было на
-собственном справочнике этого кита.
+групп. Это уже не «неудобно», это отсутствие навигации.
 
 Ящик сохраняет вертикаль и подписи групп, выезжает из-за начального края и
 гасит фон той же подложкой `--scrim`, что и модалка.
@@ -178,93 +177,18 @@ group-en: "Layout"
 `showModal()`. Ловушка фокуса, `Escape` и клик по подложке — тоже слой
 приложения: кит рисует состояние, но не выдумывает его.
 
-> Внутренние правила ленты намеренно исключают ящик
-> (`:not(.inst-shell-aside--drawer)`). Пока они применялись ко всякой узкой
-> колонке, приложение, показавшее её иначе, получало вертикальную панель с
-> навигацией, выложенной **в строку**, и без подписей групп: два механизма
-> на одну работу расходятся всегда.
 
 ## Сценарии
 
-Оболочка сама по себе — три пустые области. Работу видно только когда в них
-что-то стоит: боковая навигация с активным пунктом, крошки и действия в
-шапке, а в рабочей области — шапка экрана, вкладки и секции.
+Оболочка сама по себе — три пустые области. Работу видно, когда в них
+что-то стоит, и главное в ней не видно на картинке вовсе: **каждая область
+прокручивается сама**. Прокрутите таблицу — колонка и шапка останутся на
+месте.
 
-Главное в этом примере не видно на картинке, но проверяется руками:
-**каждая область прокручивается сама**. Прокрутите таблицу — боковая
-колонка и шапка останутся на месте.
-
-```html preview context
-<div class="inst-shell">
-  <aside class="inst-shell-aside">
-    <nav class="inst-nav" aria-label="Разделы">
-      <div class="inst-nav-group">
-        <span class="inst-nav-label">Работа</span>
-        <a class="inst-nav-item" href="#" aria-current="page">
-          <svg class="inst-icon" aria-hidden="true"><use href="#i-grid"/></svg>Прогоны
-          <span class="inst-badge inst-nav-count">7</span></a>
-        <a class="inst-nav-item" href="#">
-          <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>Очередь</a>
-        <a class="inst-nav-item" href="#">
-          <svg class="inst-icon" aria-hidden="true"><use href="#i-chart"/></svg>Отчёты</a>
-      </div>
-      <div class="inst-nav-group">
-        <span class="inst-nav-label">Настройка</span>
-        <a class="inst-nav-item" href="#">
-          <svg class="inst-icon" aria-hidden="true"><use href="#i-users"/></svg>Доступы</a>
-        <a class="inst-nav-item" href="#">
-          <svg class="inst-icon" aria-hidden="true"><use href="#i-settings"/></svg>Параметры</a>
-      </div>
-    </nav>
-  </aside>
-
-  <header class="inst-shell-header">
-    <nav aria-label="Хлебные крошки">
-      <ol class="inst-crumbs">
-        <li><a href="#">Проекты</a></li>
-        <li><a href="#">worldgen</a></li>
-        <li><span aria-current="page">Прогон #4127</span></li>
-      </ol>
-    </nav>
-    <span class="inst-cluster-spacer"></span>
-    <button class="inst-btn inst-btn--sm" type="button">Экспорт</button>
-    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Запустить</button>
-  </header>
-
-  <main class="inst-shell-main">
-    <div class="inst-container inst-container--full inst-stack">
-      <div class="inst-page-header">
-        <div class="inst-page-header-main">
-          <h3 class="inst-page-title">Прогоны</h3>
-          <p class="inst-page-desc">Каждая область прокручивается сама: боковая навигация
-            не уезжает, пока читают таблицу.</p>
-        </div>
-        <div class="inst-page-actions">
-          <button class="inst-btn inst-btn--sm" type="button">Фильтры</button>
-        </div>
-      </div>
-
-      <nav class="inst-tabs" aria-label="Разделы прогонов">
-        <a class="inst-tab" href="#" aria-current="page">Активные</a>
-        <a class="inst-tab" href="#">История</a>
-        <a class="inst-tab" href="#">Расписание</a>
-      </nav>
-
-      <div class="inst-section">
-        <div class="inst-section-head">
-          <h4 class="inst-section-title">Сводка за сутки</h4>
-          <span class="inst-section-actions"><button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Период</button></span>
-        </div>
-        <div class="inst-grid inst-grid--tight">
-          <div class="inst-metric"><div class="inst-metric-label">В работе</div><div class="inst-metric-value">7</div></div>
-          <div class="inst-metric"><div class="inst-metric-label">В очереди</div><div class="inst-metric-value">5</div></div>
-          <div class="inst-metric"><div class="inst-metric-label">Упало</div><div class="inst-metric-value">1</div></div>
-        </div>
-      </div>
-    </div>
-  </main>
-</div>
-```
+Собранные экраны на этой оболочке лежат в «Сборках»:
+[дашборд](../blocks/dashboard.md), [инспектор](../blocks/inspector.md),
+[экран настроек](../blocks/settings-screen.md). Там же видно, как в неё
+садятся навигация, шапка экрана и секции.
 
 ## Правила
 

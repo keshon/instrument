@@ -64,6 +64,13 @@ h4, h5, h6 { font-size: var(--text-md); }
 
   & p { text-wrap: pretty; }
   & > * + * { margin-block-start: var(--space-5); }
+
+  /* Заголовку нужен воздух сверху и почти не нужен снизу: он принадлежит
+     тому, что под ним. Пока весь ритм был одним шагом, заголовок висел
+     ровно посередине между своим текстом и чужим — и разделял их поровну,
+     то есть не разделял вовсе. */
+  & > * + :is(h2, h3, h4, h5, h6) { margin-block-start: var(--space-8); }
+  & > :is(h2, h3, h4, h5, h6) + * { margin-block-start: var(--space-4); }
   & ul, & ol { padding-inline-start: var(--space-7); }
   & li + li { margin-block-start: var(--space-2); }
 }

@@ -211,18 +211,18 @@
 
 /* Раздел — отсек, а не абзац с подзаголовком.
 
-   Волосок под заголовком делает ровно одно: сообщает, где раздел начинается.
-   Пока разделы отличались только кеглем, страница из четырнадцати разделов
-   читалась сплошным потоком, и «Доступность» ничем не отличалась от
-   «Почему SVG, а не рамка» — хотя первое это раздел контракта, а второе
-   пояснение внутри него. */
+   Отличает его воздух, а не линейка: четырнадцать волосков на странице
+   читаются решёткой и спорят с содержимым, ради которого страница написана.
+   Тот же довод, по которому у кита нет разделительных линий в меню и в
+   боковой колонке. */
 .doc-s { scroll-margin-block-start: var(--space-6); }
-.doc-s + .doc-s { margin-block-start: var(--space-10); }
+/* Тот же воздух и перед первым разделом: он идёт за главным примером, и
+   шов между шапкой и содержанием ничем не отличается от шва между
+   разделами. */
+:is(.doc-hero, .doc-s) + .doc-s { margin-block-start: var(--space-10); }
 
 .doc-s-title {
   margin: 0 0 var(--space-5);
-  padding-block-end: var(--space-3);
-  border-block-end: var(--hairline) solid var(--border);
   font-size: var(--text-xl);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
@@ -275,33 +275,25 @@
   .rule-row { grid-template-columns: minmax(0, 1fr); }
 }
 
+/* Сайту здесь принадлежит место на странице, а не вид: поверхность, значок
+   тона, метрика и цвет приходят от `.inst-note`. Своё — только то, чего у
+   сноски нет: она рассчитана на строку в потоке, а пара правил стоит в
+   колонке и должна тянуться до её низа. */
 .rule {
-  padding: var(--space-5) var(--pad-panel);
-  border: var(--hairline) solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  border-block-start: var(--size-marker) solid var(--border-strong);
-  background: var(--surface-raised);
-  font-size: var(--text-sm); line-height: var(--leading-ui);
+  align-items: stretch;
+  padding-block: var(--space-4);
 }
 .rule > * { max-inline-size: none; }
-.rule > * + * { margin-block-start: var(--space-4); }
-.rule[data-rule="do"] { border-block-start-color: var(--ok-text); }
-.rule[data-rule="dont"] { border-block-start-color: var(--err-text); }
 
-/* Знак несёт СЛОВО, а не только цвет: закон кита распространяется на
-   документацию о ките.
-
-   Метрика — та же китовая идиома тихой метки, что у .doc-id-group. Капс с
-   трекингом отсюда снят по той же причине: он делал подпись «ТАК» громче
-   правила, которое она подписывает. Различают знак тон и начертание — этого
-   достаточно, и это те же два канала, которыми кит различает всё остальное. */
+/* Знак несёт СЛОВО, а не только цвет: закон кита распространяется и на
+   документацию о ките. Значок сноски уже сказал то же самое картинкой —
+   слово повторяет это для тех, кто картинку не видит. */
 .rule-tag {
   margin: 0;
   font-size: var(--text-2xs); font-weight: var(--weight-medium);
   line-height: var(--leading-ui);
+  color: var(--tone-ink);
 }
-.rule[data-rule="do"] .rule-tag { color: var(--ok-text); }
-.rule[data-rule="dont"] .rule-tag { color: var(--err-text); }
 .rule-head {
   display: block;
   margin-block-start: var(--space-2);
