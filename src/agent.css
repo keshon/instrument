@@ -355,7 +355,14 @@
 
 /* «из 250 000» — часть числа, а не сосед: мельче и тише, ровно как единица
    измерения у метрики.                                                    */
-.inst-budget-of { font-size: var(--text-xs); font-weight: var(--weight-normal); color: var(--text-muted); }
+.inst-budget-of {
+  /* Просвет даёт кит, а не пробел в разметке: пробел между тегами шаблон
+     съедает молча, и «184 200из 250 000» выглядит опечаткой. */
+  margin-inline-start: 0.35em;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-normal);
+  color: var(--text-muted);
+}
 
 .inst-budget-note { font-size: var(--text-xs); color: var(--text-muted); }
 
@@ -370,7 +377,12 @@
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-skeleton {
-  background: var(--surface-sunken);
+  /* Дорожка, а не утопленная поверхность. Перепад между соседними
+     поверхностями на концах рампы почти пропадает: на светлой теме полоса
+     отличалась от фона на две сотых светлоты и читалась как дефект печати.
+     `--track` — альфа, поэтому виден на любой поверхности и в любой теме,
+     и это та же роль, которой меряются мера, бегунок и кольцо. */
+  background: var(--track);
   border-radius: var(--radius-xs);
   block-size: 1lh;
   animation: inst-fade 1.6s var(--ease-in-out) infinite;

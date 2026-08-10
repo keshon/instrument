@@ -129,6 +129,23 @@ group-en: "Feedback"
 
 ## JS
 
+Тост не пишут разметкой — его зовут. Поэтому пример здесь один и он живой:
+нажмите, и уведомление придёт в правый нижний угол экрана.
+
+```html preview
+<button class="inst-btn inst-btn--primary" type="button"
+        data-demo-toast='{"tone":"ok","title":"Прогон поставлен в очередь","text":"worldbox-1 · седьмой в очереди"}'>Успех</button>
+<button class="inst-btn" type="button"
+        data-demo-toast='{"tone":"error","title":"Не удалось отправить","duration":0}'>Ошибка, которая не уходит</button>
+<button class="inst-btn" type="button"
+        data-demo-toast='{"tone":"running","title":"Идёт сборка","text":"Осталось два шага"}'>Идёт</button>
+```
+
+:::note
+`data-demo-toast` — атрибут **этого сайта**, а не кита: он нужен, чтобы
+страница осталась разметкой. В приложении вы вызываете `toast()` из кода.
+:::
+
 ```js
 import { toast } from './src/kit.js';
 

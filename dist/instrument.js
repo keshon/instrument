@@ -89,13 +89,13 @@ function axisOf(group, spec) {
  * группа внутри дерева), и без него стрелка в родителе прыгала бы по чужим
  * пунктам. Отключённые и невидимые выбрасываются — фокус на них не ставится
  * ни платформой, ни нами. */
-function itemsOf(group, spec) {
+function itemsOf(group, spec, withHidden) {
   return [...group.querySelectorAll(spec.item)].filter(
     (el) =>
       el.closest(GROUP_SELECTOR) === group &&
       el.getAttribute('aria-disabled') !== 'true' &&
       !el.disabled &&
-      el.offsetParent !== null,
+      (withHidden || el.offsetParent !== null),
   );
 }
 
@@ -135,8 +135,28 @@ function move(group, spec, to) {
 function select(group, spec, to) {
   if (!spec.follows || to.getAttribute(spec.follows) === 'true') return;
   if (!emit(to, 'select', { value: to.dataset.value ?? to.textContent.trim() })) return;
-  for (const el of itemsOf(group, spec)) {
+  const items = itemsOf(group, spec);
+  for (const el of items) {
     el.setAttribute(spec.follows, String(el === to));
+  }
+  panels(group, spec, items, to);
+}
+
+/* Панель выбранной вкладки.
+ *
+ * Показывается та, на которую указывает aria-controls, остальные прячутся.
+ * Гадать не о чем: связь названа в разметке, и без этой строки вкладка
+ * переключалась на вид, а содержимое оставалось прежним.
+ *
+ * Только для вкладок: у строки списка и пункта меню панели нет. */
+function panels(group, spec, items, to) {
+  if (spec.item !== '[role="tab"]') return;
+  const doc = group.ownerDocument;
+  for (const el of items) {
+    const id = el.getAttribute('aria-controls');
+    if (!id) continue;
+    const panel = doc.getElementById(id);
+    if (panel) panel.hidden = el !== to;
   }
 }
 
@@ -154,13 +174,58 @@ function step(items, from, delta) {
  * Стрелка «вперёд» на свёрнутом узле раскрывает его, на раскрытом — уходит к
  * первому потомку. «Назад» симметрично. Это контракт роли treeitem, и без
  * него aria-expanded в разметке — украшение. */
+/* Потомки узла в плоском дереве: всё, что идёт следом с бо́льшим уровнем,
+ * до первой строки того же или меньшего. Вложенность здесь живёт в
+ * aria-level, а не в разметке: дерево на десять тысяч узлов иначе не
+ * построить. */
+function descendants(group, spec, item) {
+  const items = itemsOf(group, spec, true);
+  const level = Number(item.getAttribute('aria-level') || 1);
+  const out = [];
+  for (let i = items.indexOf(item) + 1; i < items.length; i++) {
+    if (Number(items[i].getAttribute('aria-level') || 1) <= level) break;
+    out.push(items[i]);
+  }
+  return out;
+}
+
+/* Свернуть или раскрыть узел.
+ *
+ * Кит не рисует — он ставит hidden, то есть состояние, которое и так есть в
+ * платформе. Событие отменяемо: приложение, которое рисует дерево из данных,
+ * снимет строки само, и вторая рука ему не нужна. */
+function setExpanded(group, spec, item, open) {
+  if (!emit(item, 'expand', { open })) return;
+  item.setAttribute('aria-expanded', String(open));
+  for (const d of descendants(group, spec, item)) {
+    if (open) {
+      const level = Number(d.getAttribute('aria-level') || 1);
+      const parent = closestParent(group, spec, d, level);
+      d.hidden = parent ? parent.getAttribute('aria-expanded') === 'false' : false;
+    } else {
+      d.hidden = true;
+    }
+  }
+}
+
+/* Ближайший предок строки по уровню — нужен, чтобы при раскрытии не показать
+ * потомков узла, свёрнутого глубже. */
+function closestParent(group, spec, item, level) {
+  const items = itemsOf(group, spec, true);
+  for (let i = items.indexOf(item) - 1; i >= 0; i--) {
+    const l = Number(items[i].getAttribute('aria-level') || 1);
+    if (l < level) return items[i];
+  }
+  return null;
+}
+
 function treeArrow(group, spec, item, forward) {
   const expandable = item.hasAttribute('aria-expanded');
   const open = item.getAttribute('aria-expanded') === 'true';
 
   if (forward) {
     if (expandable && !open) {
-      item.setAttribute('aria-expanded', 'true');
+      setExpanded(group, spec, item, true);
       return true;
     }
     if (expandable && open) {
@@ -173,7 +238,7 @@ function treeArrow(group, spec, item, forward) {
   }
 
   if (expandable && open) {
-    item.setAttribute('aria-expanded', 'false');
+    setExpanded(group, spec, item, false);
     return true;
   }
   // Свёрнутый узел уводит фокус к родителю: уровень берётся из aria-level,
@@ -275,7 +340,10 @@ const TOAST_LIMIT = 4;
 const TOAST_DURATION = 5000;
 
 function toastRegion(doc) {
-  let region = doc.querySelector('.inst-toasts');
+  // Своя область — та, что живёт в верхнем слое. Без [popover] под руку
+  // попадала любая разметка с этим классом: страница, ПОКАЗЫВАЮЩАЯ область
+  // примером, получала в неё настоящие уведомления.
+  let region = doc.querySelector('.inst-toasts[popover]');
   if (region) {
     ensureOpen(region);
     return region;

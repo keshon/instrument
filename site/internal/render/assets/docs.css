@@ -709,12 +709,13 @@
    их незачем. Пустая полоса над ними выглядела ошибкой вёрстки. */
 .site-body thead:not(:has(th:not(:empty))) { display: none; }
 
+/* Цитата — тихая врезка, а не второе предупреждение: жёлтая заливка тут
+   означала бы тон, а тон в ките носит сноска. Метрика взята у неё же. */
 .site-body blockquote {
   margin-block: var(--space-6);
-  padding: var(--space-5) var(--pad-panel);
-  border-inline-start: var(--size-marker) solid var(--warn-text);
-  background: var(--warn-bg);
-  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--pad-panel);
+  border-inline-start: var(--size-marker) solid var(--border-strong);
+  color: var(--text-secondary);
   font-size: var(--text-sm); line-height: var(--leading-ui);
 }
 .site-body blockquote > * + * { margin-block-start: var(--space-4); }
