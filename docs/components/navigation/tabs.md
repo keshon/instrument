@@ -3,6 +3,7 @@ title: Вкладки
 group: Навигация
 layout: component
 source: src/layout.css
+needs-js: Переключение панели. Стрелки и бегущий tabindex делает кит
 api:
   - { name: "inst-tabs", kind: "класс", doc: "Полоса вкладок. Нижняя линия и горизонтальная прокрутка без видимого скроллбара" }
   - { name: "inst-tab", kind: "класс", doc: "Вкладка. Ссылка или кнопка с `role=\"tab\"`" }
@@ -78,19 +79,26 @@ group-en: "Navigation"
 скринридеру стрелочную навигацию и связь с панелью; необеспеченное обещание
 хуже отсутствующего.
 
-```html
+```html preview
 <div class="inst-tabs" role="tablist" aria-label="Свойства объекта">
   <button class="inst-tab" type="button" role="tab" id="t-geom"
           aria-selected="true" aria-controls="p-geom" tabindex="0">Геометрия</button>
   <button class="inst-tab" type="button" role="tab" id="t-mat"
           aria-selected="false" aria-controls="p-mat" tabindex="-1">Материал</button>
+  <button class="inst-tab" type="button" role="tab" id="t-phys"
+          aria-selected="false" aria-controls="p-phys" tabindex="-1">Физика</button>
 </div>
-<div id="p-geom" role="tabpanel" aria-labelledby="t-geom" tabindex="0">…</div>
-<div id="p-mat" role="tabpanel" aria-labelledby="t-mat" tabindex="0" hidden>…</div>
+<div id="p-geom" role="tabpanel" aria-labelledby="t-geom" tabindex="0">Вершин 12 480, полигонов 6 240.</div>
+<div id="p-mat" role="tabpanel" aria-labelledby="t-mat" tabindex="0" hidden>Стандартный PBR, две текстуры.</div>
+<div id="p-phys" role="tabpanel" aria-labelledby="t-phys" tabindex="0" hidden>Выпуклая оболочка, масса 4,2 кг.</div>
 ```
 
-Стрелки и бегущий `tabindex` — слой приложения. Кит даёт стили и роли,
-поведение не даёт: это часть контракта, а не умолчание.
+Пример живой: войдите `Tab` и нажмите `←` или `→`. Отметка переносится вместе
+с фокусом, `Home` и `End` работают, перебор идёт по кругу.
+
+Стрелки, `Home`, `End` и бегущий `tabindex` выполняет
+[`kit.js`](../../foundations/behavior.md). Показать нужную панель — приложение:
+какая панель за какой вкладкой, кит не знает.
 
 ## Состояния
 
@@ -111,6 +119,38 @@ group-en: "Navigation"
 Полоса вкладки перекрывает линию контейнера отрицательным полем в `--hairline`,
 а не сдвигом на полпикселя: браузер не рисует рамку тоньше физического
 пикселя, и остаток был бы виден на каждом стыке.
+
+## JS
+
+Подключите модуль один раз на страницу.
+
+```html
+<script type="module" src="src/kit.js"></script>
+```
+
+### Что делает кит
+
+Полосу объявляет `role="tablist"`, и кит выполняет контракт этой роли: `←` и
+`→` между вкладками, `Home`, `End`, перебор по кругу, один `Tab` на всю
+полосу. `aria-selected` переносится и стрелкой, и щелчком.
+
+### События
+
+`inst:select` всплывает с выбранной вкладки, `detail` — `{ value }`:
+`data-value`, если он есть, иначе подпись.
+
+```js
+tabs.addEventListener('inst:select', (e) => {
+  for (const panel of panels) {
+    panel.hidden = panel.id !== e.detail.value;
+  }
+});
+```
+
+### Что остаётся приложению
+
+Показать нужную панель и спрятать остальные. Какая панель за какой вкладкой,
+знает только приложение — кит видит разметку, а не смысл.
 
 ## Композиции
 
