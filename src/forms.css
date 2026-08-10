@@ -179,14 +179,14 @@
 
    Подписи это не касается: <label> оборачивает и флажок, и текст, поэтому
    там цель и так велика. Область нужна для случая без подписи — колонки
-   выбора в таблице, где стоит голый флажок.                                */
+   выбора в таблице, где стоит голый флажок.
 
    Размер задан ЯВНО, а не отрицательным inset. inset отсчитывается от
    padding-box, поэтому рамка контрола съедала по пикселю с каждой стороны и
    область выходила 22×22 вместо 24×24 — промах, который видно только
    замером.                                                                */
 
-:is(.inst-checkbox, .inst-radio) > input::before,
+:is(.inst-checkbox, .inst-radio, .inst-choice-card) > input::before,
 .inst-switch > input::before {
   content: "";
   position: absolute;
@@ -196,7 +196,7 @@
   block-size: var(--tap-min);
 }
 
-:is(.inst-checkbox, .inst-radio) > input::before {
+:is(.inst-checkbox, .inst-radio, .inst-choice-card) > input::before {
   inline-size: var(--tap-min);
 }
 
@@ -205,7 +205,7 @@
   inline-size: max(var(--size-switch-w), var(--tap-min));
 }
 
-.inst-checkbox > input, .inst-radio > input {
+.inst-checkbox > input, .inst-radio > input, .inst-choice-card > input {
   appearance: none;
   position: relative;
   flex: none;
@@ -233,7 +233,8 @@
   &:checked::after, &:indeterminate::after { opacity: 1; }
 }
 
-.inst-checkbox > input {
+.inst-checkbox > input,
+.inst-choice-card > input[type="checkbox"] {
   border-radius: var(--radius-xs);
 
   &::after {
@@ -244,7 +245,8 @@
   }
 }
 
-.inst-radio > input {
+.inst-radio > input,
+.inst-choice-card > input[type="radio"] {
   border-radius: var(--radius-full);
   &::after {
     background: radial-gradient(circle, var(--accent-on) 0 32%, transparent 33%);
@@ -640,6 +642,11 @@
   align-items: start;
   gap: var(--gap-inline);
   padding: var(--pad-card);
+
+  /* Контрол центрируется по ПЕРВОЙ СТРОКЕ заголовка, а не по верху блока:
+     1lh — реальная высота строки, поэтому формула сама подстраивается под
+     кегль и плотность. Та же, что у значка сноски. */
+  & > input { margin-block-start: calc((1lh - var(--size-check)) / 2); }
   border: var(--hairline) solid var(--border-control);
   border-radius: var(--radius-md);
   background: var(--surface-raised);

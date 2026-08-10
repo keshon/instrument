@@ -1,4 +1,4 @@
-/*! instrument 0.3.1 — https://github.com/keshon/instrument
+/*! instrument 0.3.2 — https://github.com/keshon/instrument
     Собран из src/. Правится ИСХОДНИК, а не этот файл. */
 @layer kit.tokens, kit.base, kit.layout, kit.components, kit.overlay, kit.agent, kit.motion, kit.print;
 
@@ -686,8 +686,12 @@ h4, h5, h6 { font-size: var(--text-md); }
      то есть не разделял вовсе. */
   & > * + :is(h2, h3, h4, h5, h6) { margin-block-start: var(--space-8); }
   & > :is(h2, h3, h4, h5, h6) + * { margin-block-start: var(--space-4); }
-  & ul, & ol { padding-inline-start: var(--space-7); }
-  & li + li { margin-block-start: var(--space-2); }
+  /* Списки прозы — только СВОИ. Компонент, построенный на <ul> или <ol>,
+     несёт класс, и правило его не трогает: без этого ритм прозы доставал до
+     шагов мастера и сдвигал каждый, кроме первого, на четыре пикселя вниз —
+     полоса состояния переставала стоять на одной линии. */
+  & :is(ul, ol):not([class]) { padding-inline-start: var(--space-7); }
+  & :is(ul, ol):not([class]) > li + li { margin-block-start: var(--space-2); }
 }
 
 a {
@@ -1366,7 +1370,7 @@ hr {
    Правила, которым подчиняется каждый компонент в этом файле:
    · только семантические токены и роли, никогда — сырой шаг рампы
    · ни одного числа: высота из --control-h-*, размер из --size-*,
-     отступ из --pad-*/--gap-*. Число в компоненте ломает плотность
+     отступ из --pad-* и --gap-*. Число в компоненте ломает плотность
    · состояние выражается поверхностью и рамкой, никогда — сдвигом layout
    · цвет — это смысл; если он украшает, он удаляется
    · форма рисуется маской, цвет берётся токеном. Цвет никогда не живёт
@@ -2088,6 +2092,16 @@ hr {
   &:hover { border-color: var(--text-muted); }
   &:focus-within { border-color: var(--accent-border); }
 
+  /* Кольцо обводит ВЕСЬ контрол, а не поле внутри него.
+     Буква оси, ручка перетаскивания и ввод — один контрол на вид и на
+     ощупь; кольцо вокруг одного только <input> обрезало ось и читалось как
+     подсветка чужого элемента. Тот же приём, что у выбираемой карточки. */
+  &:has(> input:focus-visible) {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 1px;
+  }
+  & > input:focus-visible { outline: none; }
+
   & > .inst-num-axis {
     flex: none;
     padding-inline: var(--space-3);
@@ -2747,14 +2761,14 @@ hr {
 
    Подписи это не касается: <label> оборачивает и флажок, и текст, поэтому
    там цель и так велика. Область нужна для случая без подписи — колонки
-   выбора в таблице, где стоит голый флажок.                                */
+   выбора в таблице, где стоит голый флажок.
 
    Размер задан ЯВНО, а не отрицательным inset. inset отсчитывается от
    padding-box, поэтому рамка контрола съедала по пикселю с каждой стороны и
    область выходила 22×22 вместо 24×24 — промах, который видно только
    замером.                                                                */
 
-:is(.inst-checkbox, .inst-radio) > input::before,
+:is(.inst-checkbox, .inst-radio, .inst-choice-card) > input::before,
 .inst-switch > input::before {
   content: "";
   position: absolute;
@@ -2764,7 +2778,7 @@ hr {
   block-size: var(--tap-min);
 }
 
-:is(.inst-checkbox, .inst-radio) > input::before {
+:is(.inst-checkbox, .inst-radio, .inst-choice-card) > input::before {
   inline-size: var(--tap-min);
 }
 
@@ -2773,7 +2787,7 @@ hr {
   inline-size: max(var(--size-switch-w), var(--tap-min));
 }
 
-.inst-checkbox > input, .inst-radio > input {
+.inst-checkbox > input, .inst-radio > input, .inst-choice-card > input {
   appearance: none;
   position: relative;
   flex: none;
@@ -2801,7 +2815,8 @@ hr {
   &:checked::after, &:indeterminate::after { opacity: 1; }
 }
 
-.inst-checkbox > input {
+.inst-checkbox > input,
+.inst-choice-card > input[type="checkbox"] {
   border-radius: var(--radius-xs);
 
   &::after {
@@ -2812,7 +2827,8 @@ hr {
   }
 }
 
-.inst-radio > input {
+.inst-radio > input,
+.inst-choice-card > input[type="radio"] {
   border-radius: var(--radius-full);
   &::after {
     background: radial-gradient(circle, var(--accent-on) 0 32%, transparent 33%);
@@ -3208,6 +3224,11 @@ hr {
   align-items: start;
   gap: var(--gap-inline);
   padding: var(--pad-card);
+
+  /* Контрол центрируется по ПЕРВОЙ СТРОКЕ заголовка, а не по верху блока:
+     1lh — реальная высота строки, поэтому формула сама подстраивается под
+     кегль и плотность. Та же, что у значка сноски. */
+  & > input { margin-block-start: calc((1lh - var(--size-check)) / 2); }
   border: var(--hairline) solid var(--border-control);
   border-radius: var(--radius-md);
   background: var(--surface-raised);

@@ -79,6 +79,7 @@ func main() {
 		}
 	}
 	assetErrs = append(assetErrs, check.Comments(sources)...)
+	assetErrs = append(assetErrs, check.StrayCommentEnd(sources)...)
 
 	problems := check.Verify(pages, string(sprite))
 	problems = append(problems, missing...)

@@ -71,8 +71,12 @@ h4, h5, h6 { font-size: var(--text-md); }
      то есть не разделял вовсе. */
   & > * + :is(h2, h3, h4, h5, h6) { margin-block-start: var(--space-8); }
   & > :is(h2, h3, h4, h5, h6) + * { margin-block-start: var(--space-4); }
-  & ul, & ol { padding-inline-start: var(--space-7); }
-  & li + li { margin-block-start: var(--space-2); }
+  /* Списки прозы — только СВОИ. Компонент, построенный на <ul> или <ol>,
+     несёт класс, и правило его не трогает: без этого ритм прозы доставал до
+     шагов мастера и сдвигал каждый, кроме первого, на четыре пикселя вниз —
+     полоса состояния переставала стоять на одной линии. */
+  & :is(ul, ol):not([class]) { padding-inline-start: var(--space-7); }
+  & :is(ul, ol):not([class]) > li + li { margin-block-start: var(--space-2); }
 }
 
 a {

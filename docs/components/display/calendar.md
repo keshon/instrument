@@ -41,13 +41,48 @@ group-en: "Data display"
   <span class="inst-calendar-dow" aria-hidden="true">пт</span>
   <span class="inst-calendar-dow" aria-hidden="true">сб</span>
   <span class="inst-calendar-dow" aria-hidden="true">вс</span>
-  <span class="inst-calendar-day" data-outside="true">28</span>
-  <span class="inst-calendar-day" data-outside="true">29</span>
-  <span class="inst-calendar-day">30</span>
-  <span class="inst-calendar-day">31</span>
-  <span class="inst-calendar-day" data-today="true">1</span>
-  <span class="inst-calendar-day" aria-selected="true">2</span>
-  <span class="inst-calendar-day" aria-disabled="true">3</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">27</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">28</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">29</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">30</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">31</span>
+  <span class="inst-calendar-day" role="gridcell">1</span>
+  <span class="inst-calendar-day" role="gridcell">2</span>
+  <span class="inst-calendar-day" role="gridcell">3</span>
+  <span class="inst-calendar-day" role="gridcell">4</span>
+  <span class="inst-calendar-day" role="gridcell">5</span>
+  <span class="inst-calendar-day" role="gridcell">6</span>
+  <span class="inst-calendar-day" role="gridcell">7</span>
+  <span class="inst-calendar-day" role="gridcell">8</span>
+  <span class="inst-calendar-day" role="gridcell">9</span>
+  <span class="inst-calendar-day" role="gridcell">10</span>
+  <span class="inst-calendar-day" role="gridcell">11</span>
+  <span class="inst-calendar-day" role="gridcell" data-today="true">12</span>
+  <span class="inst-calendar-day" role="gridcell">13</span>
+  <span class="inst-calendar-day" role="gridcell">14</span>
+  <span class="inst-calendar-day" role="gridcell">15</span>
+  <span class="inst-calendar-day" role="gridcell">16</span>
+  <span class="inst-calendar-day" role="gridcell">17</span>
+  <span class="inst-calendar-day" role="gridcell" aria-selected="true">18</span>
+  <span class="inst-calendar-day" role="gridcell">19</span>
+  <span class="inst-calendar-day" role="gridcell">20</span>
+  <span class="inst-calendar-day" role="gridcell">21</span>
+  <span class="inst-calendar-day" role="gridcell" aria-disabled="true">22</span>
+  <span class="inst-calendar-day" role="gridcell" aria-disabled="true">23</span>
+  <span class="inst-calendar-day" role="gridcell">24</span>
+  <span class="inst-calendar-day" role="gridcell">25</span>
+  <span class="inst-calendar-day" role="gridcell">26</span>
+  <span class="inst-calendar-day" role="gridcell">27</span>
+  <span class="inst-calendar-day" role="gridcell">28</span>
+  <span class="inst-calendar-day" role="gridcell" aria-disabled="true">29</span>
+  <span class="inst-calendar-day" role="gridcell" aria-disabled="true">30</span>
+  <span class="inst-calendar-day" role="gridcell">31</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">1</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">2</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">3</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">4</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">5</span>
+  <span class="inst-calendar-day" role="gridcell" data-outside="true">6</span>
 </div>
 ```
 

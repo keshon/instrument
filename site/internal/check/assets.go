@@ -57,6 +57,49 @@ func Assets(files map[string]string, tokens map[string]content.Token) []string {
 	return problems
 }
 
+// StrayCommentEnd ищет `*/`, который закрыл комментарий раньше времени.
+//
+// Комментарии в CSS не вкладываются. Строка `--pad-*/--gap-*` внутри
+// пояснения закрывает его на месте: остаток текста становится мусором, а
+// парсер, восстанавливаясь, доедает СЛЕДУЮЩЕЕ правило целиком. Ошибка
+// молчаливая — файл грузится, стили частично работают, и найти её можно
+// только по отсутствующему поведению.
+//
+// Так из кита пропали тон `neutral` (сноска без значка и без заливки) и
+// область нажатия у чекбокса, радио и свитча — то есть требование WCAG
+// 2.2 AA, ради которого правило и написано.
+func StrayCommentEnd(files map[string]string) []string {
+	var problems []string
+	for name, src := range files {
+		if !strings.HasSuffix(name, ".css") {
+			continue
+		}
+		var code strings.Builder
+		rest := src
+		for {
+			i := strings.Index(rest, "/*")
+			if i < 0 {
+				code.WriteString(rest)
+				break
+			}
+			code.WriteString(rest[:i])
+			j := strings.Index(rest[i+2:], "*/")
+			if j < 0 {
+				break
+			}
+			rest = rest[i+2+j+2:]
+		}
+		if k := strings.Index(code.String(), "*/"); k >= 0 {
+			line := strings.Count(code.String()[:k], "\n") + 1
+			problems = append(problems, fmt.Sprintf(
+				"%s:%d  комментарий закрылся раньше времени: `*/` внутри пояснения съедает следующее правило",
+				name, line))
+		}
+	}
+	sort.Strings(problems)
+	return problems
+}
+
 func Comments(files map[string]string) []string {
 	var problems []string
 	for name, src := range files {

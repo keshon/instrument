@@ -29,10 +29,20 @@ group-en: "Overlays"
 
 ```html preview
 <span class="inst-tooltip">
+  <button class="inst-btn inst-btn--icon inst-btn--ghost" type="button" aria-label="Обновить" aria-describedby="tt-refresh">
+    <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+  </button>
+  <span class="inst-tooltip-text" role="tooltip" id="tt-refresh">Обновить</span>
+</span>
+<span class="inst-tooltip">
   <button class="inst-btn inst-btn--ghost" type="button" aria-describedby="tt-pass">Что такое проход?</button>
   <span class="inst-tooltip-text" role="tooltip" id="tt-pass">Один полный обход карты агентом</span>
 </span>
 ```
+
+Подпись центрируется по триггеру и **не переворачивается**: у обычного
+позиционирования нет запасных мест. У края узкой области её обрежет ближайший
+`overflow: hidden` — там нужен [поповер](./popover.md).
 
 ## Использование
 
@@ -66,7 +76,7 @@ group-en: "Overlays"
   <button class="inst-btn inst-btn--sm" type="button" aria-describedby="tt-short">Коротко</button>
   <span class="inst-tooltip-text" role="tooltip" id="tt-short">19:38:04</span>
 </span>
-<span class="inst-tooltip">
+<span class="inst-tooltip" style="margin-inline-start:9rem">
   <button class="inst-btn inst-btn--sm" type="button" aria-describedby="tt-wide">Подробно</button>
   <span class="inst-tooltip-text inst-tooltip-text--wide" role="tooltip" id="tt-wide">Открытие модалки — единственная строка скрипта во всём разделе оверлеев; закрытие, подложка и блокировка прокрутки обходятся без него.</span>
 </span>
