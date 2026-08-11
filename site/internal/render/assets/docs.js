@@ -52,64 +52,6 @@
     density.addEventListener('inst:select', (e) => apply(e.target.dataset.v));
   }
 
-
-  /* ── Сцены примеров ────────────────────────────────────────────────────
-
-     Пример живёт в потоке страницы, и своя тема ему достаётся атрибутом на
-     сцене: тема кита объявлена как [data-theme] и работает на любом
-     поддереве. Высоту подгонять не нужно — сцена и есть содержимое.
-
-     Выбор запоминается на весь справочник, а не на один пример: человек,
-     сравнивающий компонент в тёмной теме, идёт по страницам и не хочет
-     переключать её на каждом примере заново. */
-
-  const DEMO_THEME = 'instrument-demo-theme';
-  let demoTheme = '';
-  try { demoTheme = localStorage.getItem(DEMO_THEME) || ''; } catch (e) {}
-
-  /* Отдельного пункта «как у сайта» в списке нет: он повторял бы одну из
-     шести тем, а в справочнике из семи строк лишняя строка — шум.
-
-     Состояние «наследует справочник» осталось, просто выражено иначе: пустое
-     значение в памяти означает «сцена без своего атрибута», а селект при этом
-     показывает тему САМОГО САЙТА. Выбрать её же значит вернуться к
-     наследованию — тогда пример снова поедет за темой справочника.
-
-     Тема сайта считается точно: «по системе» — это отсутствие атрибута, а
-     базовый :root совпадает с data-theme="light" на светлой системе и с
-     data-theme="dark" на тёмной (у чёрной темы нет переопределений, она стоит
-     на дне рампы). Поэтому подпись в селекте не врёт.
-
-     Плотность у сцены собственной не бывает — она глобальна, и пример обязан
-     показывать ту, которую выбрал читатель. */
-  const siteTheme = () => root.dataset.theme ||
-    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-
-  const paintDemos = (theme) => {
-    document.querySelectorAll('[data-demo-stage]').forEach((stage) => {
-      if (theme) stage.dataset.theme = theme;
-      else delete stage.dataset.theme;
-    });
-    const shown = theme || siteTheme();
-    document.querySelectorAll('[data-demo-theme]').forEach((sel) => { sel.value = shown; });
-  };
-
-  document.querySelectorAll('[data-demo-theme]').forEach((sel) => {
-    sel.addEventListener('change', () => {
-      demoTheme = sel.value === siteTheme() ? '' : sel.value;
-      try { localStorage.setItem(DEMO_THEME, demoTheme); } catch (e) {}
-      paintDemos(demoTheme);
-    });
-  });
-
-  paintDemos(demoTheme);
-
-  /* Не выбравший тему пример едет за справочником — значит, обязан поехать и
-     тогда, когда тему меняют на самом сайте или в системе. */
-  if (theme) theme.addEventListener('change', () => paintDemos(demoTheme));
-  matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', () => paintDemos(demoTheme));
-
   /* ── Поиск ──────────────────────────────────────────────────────────────
      Индекс — один JSON на весь сайт, грузится по первому обращению.
      Готовый поисковик тянул бы бинарник и WASM на каждую страницу; здесь

@@ -343,21 +343,19 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 			label = i18n.T(lg, "demo.hero")
 		}
 
+		// Своего переключателя темы у примера нет. Тема справочника — одна
+		// ручка в шапке, и пример её наследует: .inst-theme берёт цвет и фон
+		// из токенов, а тема кита работает на любом поддереве. Второй
+		// переключатель у каждого из двухсот примеров был лишней дорогой к
+		// тому же результату.
 		fmt.Fprintf(w, `<figure class="demo%s" data-demo>`+
 			`<figcaption class="demo-bar">`+
 			`<span class="demo-chrome" aria-hidden="true"></span>`+
 			`<span class="demo-label">%s</span>`+
-			`<span class="demo-tools">`+
-			`<span class="inst-select-wrap demo-theme"><select class="inst-select inst-select--sm" aria-label="%s" data-demo-theme>`+
-			`<option value="light-neutral">%s</option><option value="light">%s</option><option value="light-cool">%s</option>`+
-			`<option value="dark-light">%s</option><option value="dark-soft">%s</option><option value="dark">%s</option></select></span>`+
-			`</span></figcaption>`+
-			`<div class="demo-stage inst-theme" data-demo-stage>`+
+			`</figcaption>`+
+			`<div class="demo-stage inst-theme">`+
 			`<div class="demo-root%s">%s</div></div>`,
-			hero, label, i18n.T(lg, "demo.theme"),
-			i18n.T(lg, "theme.ln"), i18n.T(lg, "theme.l"), i18n.T(lg, "theme.lc"),
-			i18n.T(lg, "theme.dl"), i18n.T(lg, "theme.ds"), i18n.T(lg, "theme.d"),
-			ctxClass(ctx), raw)
+			hero, label, ctxClass(ctx), raw)
 		writeCode(w, raw, lang, true, lg)
 		w.WriteString(`</figure>`)
 		return ast.WalkSkipChildren, nil
