@@ -2223,6 +2223,41 @@ hr {
 .inst-task-sub { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: 1px; }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   Вставки
+
+   Ряд подстановок для поля рядом: имена переменных шаблона, ключи события,
+   поля записи. Нажатие кладёт значение в поле — это КНОПКА, а не метка.
+
+   Тише действий намеренно. Их бывает по десятку и больше на одно поле, и в
+   полный голос палитра кричала бы громче того, ради чего страница открыта.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-inserts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.inst-insert {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-h-sm);
+  padding-inline: var(--space-3);
+  border: var(--hairline) solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+
+  &:hover { background: var(--surface-hover); color: var(--text-primary); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    Лог и код
    ────────────────────────────────────────────────────────────────────────── */
 

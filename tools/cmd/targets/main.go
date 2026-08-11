@@ -87,6 +87,11 @@ var targets = []target{
 	{label: "день календаря", where: "data.css .inst-calendar-day", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-1"},
 	{label: "сегмент контрола", where: "components.css .inst-segmented > button", w: "--control-h-md", h: "calc(var(--control-h-md) - var(--space-2))", gap: "--space-1"},
 
+	// Подстановка. Ширина у неё по тексту, поэтому по ширине считается
+	// высота: даже у самой короткой подписи есть боковые отступы, и уже
+	// высоты она быть не может.
+	{label: "подстановка", where: "components.css .inst-insert", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-2"},
+
 	// Крестик тега. Самая маленькая цель кита: подписи рядом нет, а соседний
 	// тег стоит вплотную — исключение по расстоянию неприменимо.
 	{label: "крестик тега", where: "data.css .inst-tag-remove", w: "--size-chevron", h: "--size-chevron", hit: "--tap-min", alone: true},

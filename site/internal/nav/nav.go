@@ -27,7 +27,7 @@ var sections = []struct {
 	{"components/actions", nil},
 	{"components/inputs", []string{
 		"input", "select", "toggles", "slider", "num-field", "search",
-		"choice-card", "file", "form",
+		"choice-card", "file", "inserts", "form",
 	}},
 	{"components/display", []string{
 		"panel", "card", "table", "kv", "metric", "badge", "tag",
