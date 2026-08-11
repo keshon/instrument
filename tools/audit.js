@@ -134,7 +134,12 @@ window.kitAudit = (function () {
       var cs = getComputedStyle(e);
       if (cs.display === 'none' || cs.visibility === 'hidden') return false;
       var r = e.getBoundingClientRect();
-      return r.width > 0 && r.height > 0;
+      // Приём «видимо скрыто» (ссылка на содержимое, подпись для скринридера)
+      // оставляет коробку 1×1 с clip-path: реальной целью она становится только
+      // в фокусе. Без этого отсева она и сама шла в нарушения, и обнуляла зазор
+      // соседу: бургер в 22px ложно падал, потому что вплотную к нему стояла
+      // невидимая единица.
+      return r.width >= 2 && r.height >= 2;
     });
     var boxes = els.map(function (e) { return { e: e, r: e.getBoundingClientRect() }; });
     var bad = [];

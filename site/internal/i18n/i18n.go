@@ -68,7 +68,6 @@ var strings = map[string]map[Lang]string{
 	"demo.context":  {RU: "В контексте", EN: "In context"},
 	"demo.markup":   {RU: "Разметка", EN: "Markup"},
 	"demo.theme":    {RU: "Тема примера", EN: "Example theme"},
-	"demo.same":     {RU: "как у сайта", EN: "same as site"},
 	"demo.hero":     {RU: "Компонент", EN: "The component"},
 	"rule.do":       {RU: "Так", EN: "Do"},
 	"rule.dont":     {RU: "Не так", EN: "Don't"},

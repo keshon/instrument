@@ -67,26 +67,48 @@
   let demoTheme = '';
   try { demoTheme = localStorage.getItem(DEMO_THEME) || ''; } catch (e) {}
 
-  /* Пустое значение — «как у сайта»: сцена снимает свой атрибут и наследует
-     тему справочника. Плотность у сцены собственной не бывает — она глобальна,
-     и пример обязан показывать ту, которую выбрал читатель. */
+  /* Отдельного пункта «как у сайта» в списке нет: он повторял бы одну из
+     шести тем, а в справочнике из семи строк лишняя строка — шум.
+
+     Состояние «наследует справочник» осталось, просто выражено иначе: пустое
+     значение в памяти означает «сцена без своего атрибута», а селект при этом
+     показывает тему САМОГО САЙТА. Выбрать её же значит вернуться к
+     наследованию — тогда пример снова поедет за темой справочника.
+
+     Тема сайта считается точно: «по системе» — это отсутствие атрибута, а
+     базовый :root совпадает с data-theme="light" на светлой системе и с
+     data-theme="dark" на тёмной (у чёрной темы нет переопределений, она стоит
+     на дне рампы). Поэтому подпись в селекте не врёт.
+
+     Плотность у сцены собственной не бывает — она глобальна, и пример обязан
+     показывать ту, которую выбрал читатель. */
+  const siteTheme = () => root.dataset.theme ||
+    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
   const paintDemos = (theme) => {
     document.querySelectorAll('[data-demo-stage]').forEach((stage) => {
       if (theme) stage.dataset.theme = theme;
       else delete stage.dataset.theme;
     });
-    document.querySelectorAll('[data-demo-theme]').forEach((sel) => { sel.value = theme; });
+    const shown = theme || siteTheme();
+    document.querySelectorAll('[data-demo-theme]').forEach((sel) => { sel.value = shown; });
   };
 
   document.querySelectorAll('[data-demo-theme]').forEach((sel) => {
     sel.addEventListener('change', () => {
-      demoTheme = sel.value;
+      demoTheme = sel.value === siteTheme() ? '' : sel.value;
       try { localStorage.setItem(DEMO_THEME, demoTheme); } catch (e) {}
       paintDemos(demoTheme);
     });
   });
 
   paintDemos(demoTheme);
+
+  /* Не выбравший тему пример едет за справочником — значит, обязан поехать и
+     тогда, когда тему меняют на самом сайте или в системе. */
+  if (theme) theme.addEventListener('change', () => paintDemos(demoTheme));
+  matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', () => paintDemos(demoTheme));
 
   /* ── Поиск ──────────────────────────────────────────────────────────────
      Индекс — один JSON на весь сайт, грузится по первому обращению.

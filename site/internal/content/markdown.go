@@ -349,13 +349,12 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 			`<span class="demo-label">%s</span>`+
 			`<span class="demo-tools">`+
 			`<span class="inst-select-wrap demo-theme"><select class="inst-select inst-select--sm" aria-label="%s" data-demo-theme>`+
-			`<option value="">%s</option>`+
 			`<option value="light-neutral">%s</option><option value="light">%s</option><option value="light-cool">%s</option>`+
 			`<option value="dark-light">%s</option><option value="dark-soft">%s</option><option value="dark">%s</option></select></span>`+
 			`</span></figcaption>`+
 			`<div class="demo-stage inst-theme" data-demo-stage>`+
 			`<div class="demo-root%s">%s</div></div>`,
-			hero, label, i18n.T(lg, "demo.theme"), i18n.T(lg, "demo.same"),
+			hero, label, i18n.T(lg, "demo.theme"),
 			i18n.T(lg, "theme.ln"), i18n.T(lg, "theme.l"), i18n.T(lg, "theme.lc"),
 			i18n.T(lg, "theme.dl"), i18n.T(lg, "theme.ds"), i18n.T(lg, "theme.d"),
 			ctxClass(ctx), raw)
