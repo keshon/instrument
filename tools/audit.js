@@ -130,6 +130,26 @@ window.kitAudit = (function () {
      given a tap area without pushing the line apart, which is why the criterion
      lets it go. Detected structurally — inline-level box whose parent carries
      text of its own — not by guessing from the class name. */
+  /* The area a target really offers to a finger.
+     A kit keeps small controls SMALL on purpose — a checkbox glyph is 13px —
+     and grows an invisible ::before to the tap minimum instead. Measuring the
+     element's own box reports the glyph and fails a control that is perfectly
+     compliant. Only absolutely positioned pseudo-elements count: an inline one
+     decorates, it does not extend the hit area. */
+  function hitBox(el) {
+    var r = el.getBoundingClientRect();
+    var w = r.width, h = r.height;
+    ['::before', '::after'].forEach(function (which) {
+      var cs = getComputedStyle(el, which);
+      if (!cs || cs.content === 'none') return;
+      if (cs.position !== 'absolute' && cs.position !== 'fixed') return;
+      var pw = parseFloat(cs.width), ph = parseFloat(cs.height);
+      if (pw > w) w = pw;
+      if (ph > h) h = ph;
+    });
+    return { w: w, h: h, rect: r };
+  }
+
   function inlineInText(el) {
     var cs = getComputedStyle(el);
     if (cs.display !== 'inline') return false;
@@ -155,11 +175,14 @@ window.kitAudit = (function () {
       if (r.width < 2 || r.height < 2) return false;
       return !inlineInText(e);
     });
-    var boxes = els.map(function (e) { return { e: e, r: e.getBoundingClientRect() }; });
+    var boxes = els.map(function (e) {
+      var hb = hitBox(e);
+      return { e: e, r: hb.rect, w: hb.w, h: hb.h };
+    });
     var bad = [];
     for (var i = 0; i < boxes.length; i++) {
       var e = boxes[i].e, r = boxes[i].r;
-      if (r.width >= 24 && r.height >= 24) continue;
+      if (boxes[i].w >= 24 && boxes[i].h >= 24) continue;
       var gap = Infinity;
       for (var j = 0; j < boxes.length; j++) {
         var o = boxes[j];
@@ -172,14 +195,14 @@ window.kitAudit = (function () {
         if (dx === 0 && dy === 0) continue;
         gap = Math.min(gap, Math.sqrt(dx * dx + dy * dy));
       }
-      var s = Math.min(r.width, r.height);
+      var s = Math.min(boxes[i].w, boxes[i].h);
       // Допуск на субпиксель: у дробных ширин зазор выходит 1.9999 вместо 2,
       // и ровно проходящая норма 22+2 ложно падала бы каждый раз.
       if (gap !== Infinity && s + gap < 23.9) {
         bad.push({
           где: e.className || e.tagName,
           текст: (e.textContent || e.getAttribute('aria-label') || '').trim().slice(0, 32),
-          размер: Math.round(r.width) + '×' + Math.round(r.height),
+          размер: Math.round(boxes[i].w) + '×' + Math.round(boxes[i].h),
           зазор: Math.round(gap * 10) / 10,
           сумма: Math.round((s + gap) * 10) / 10
         });
