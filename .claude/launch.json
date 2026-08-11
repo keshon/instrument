@@ -4,9 +4,24 @@
     {
       "name": "docs",
       "runtimeExecutable": "go",
-      "runtimeArgs": ["run", "./cmd/site", "-serve", ":4322"],
+      "runtimeArgs": [
+        "run",
+        "./cmd/site",
+        "-serve",
+        ":4322"
+      ],
       "cwd": "site",
       "port": 4322
+    },
+    {
+      "name": "beacon",
+      "runtimeExecutable": "go",
+      "runtimeArgs": [
+        "run",
+        "./cmd/beacon"
+      ],
+      "cwd": "../beacon",
+      "port": 8080
     }
   ]
 }

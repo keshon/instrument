@@ -57,6 +57,7 @@ func main() {
 	}
 	content.ResolveTokens(pages, tokens)
 
+	content.SetSprite(string(sprite))
 	if err := content.Render(pages); err != nil {
 		log.Fatalf("разметка: %v", err)
 	}

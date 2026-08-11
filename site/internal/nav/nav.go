@@ -47,7 +47,7 @@ var sections = []struct {
 	}},
 	{"agent", []string{
 		"run", "task", "step", "approval", "failure", "diff", "output",
-		"log", "lane", "budget", "tree",
+		"log", "lane", "history", "budget", "tree",
 	}},
 
 	{"blocks", []string{"dashboard", "inspector", "settings-screen"}},

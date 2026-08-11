@@ -34,7 +34,7 @@ group-en: "Start"
 
 ```html
 <body>
-  <svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <svg class="inst-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <!-- сюда содержимое assets/sprite.svg -->
   </svg>
 ```

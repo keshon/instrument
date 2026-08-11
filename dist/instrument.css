@@ -1,4 +1,4 @@
-/*! instrument 0.3.3 — https://github.com/keshon/instrument
+/*! instrument 0.4.0 — https://github.com/keshon/instrument
     Собран из src/. Правится ИСХОДНИК, а не этот файл. */
 @layer kit.tokens, kit.base, kit.layout, kit.components, kit.overlay, kit.agent, kit.motion, kit.print;
 
@@ -203,6 +203,14 @@
      светлее» роняло контраст подписи до 2.61.                              */
   --accent-hover:  var(--a-5);
   --accent-border: light-dark(var(--a-4), var(--a-3));
+
+  /* У метки своя ступень, как у акцента: шаг 5 рассчитан на ТЕКСТ (4.5:1) и
+     на заливке во всю строку читается темнее и глуше, чем акцентная метка
+     рядом. Метке довольно 3:1, и на шаге 4 все метки кита — синяя, зелёная,
+     жёлтая, красная — оказываются в одном регистре. */
+  --ok-mark:   light-dark(var(--ok-4),   var(--ok-3));
+  --warn-mark: light-dark(var(--warn-4), var(--warn-3));
+  --err-mark:  light-dark(var(--err-4),  var(--err-3));
 
   --ok-text:   light-dark(var(--ok-5),   var(--ok-3));
   --ok-bg:     light-dark(var(--ok-1),   color-mix(in oklab, var(--ok-4) 16%, transparent));
@@ -530,6 +538,10 @@
      от доступности не толстеет.                                            */
   --tap-min:       24px;
 
+  --size-tick:     3px;    /* штрих в полосе истории: одна проверка, один
+                              прогон, один запуск. Уже — рябит, шире —
+                              полоса перестаёт читаться как ряд */
+
   --size-marker:   2px;    /* несущая метка: полоса вкладки, край сноски,
                               край текущего пункта навигации. Тоньше её не
                               видно, толще — она спорит с текстом */
@@ -799,6 +811,20 @@ hr {
 
    Так и получается вторая полоса прокрутки рядом с областью, у которой она
    своя, — дефект, который ищется часами, потому что искать нечего.          */
+/* Спрайт иконок.
+ *
+ * <use href="#i-..."> ищет символ в ТОМ ЖЕ документе, поэтому спрайт стоит в
+ * теле страницы. Без этого правила он остаётся видимым блоком в 150 пикселей
+ * — умолчание SVG без размеров — и толкает вниз всю раскладку.
+ *
+ * Правило принадлежит киту, а не приложению: спрайт требует кит. */
+.inst-sprite {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+}
+
 .inst-u-visually-hidden {
   position: absolute;
   inset-block-start: 0;
@@ -888,6 +914,15 @@ hr {
   grid-template-columns: var(--aside-w) minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
   block-size: 100dvh;
+}
+
+/* Оболочка без боковой колонки: шапка и рабочая область во всю ширину.
+   Разделы есть не у каждого инструмента — у монитора аптайма их два, и они
+   помещаются в шапку. Без этого правила колонка забирала свои 232 пикселя
+   и оставляла пустой жёлоб. */
+.inst-shell:not(:has(> .inst-shell-aside)) {
+  grid-template-areas: "header" "main";
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .inst-shell-aside {
@@ -1405,9 +1440,9 @@ hr {
 
 [data-tone="neutral"] { --tone-ink: var(--text-secondary); --tone-mark: var(--text-secondary); --tone-bg: var(--surface-sunken); }
 [data-tone="running"] { --tone-ink: var(--accent-text);    --tone-mark: var(--accent-mark);    --tone-bg: var(--accent-bg); }
-[data-tone="ok"]      { --tone-ink: var(--ok-text);        --tone-mark: var(--ok-text);        --tone-bg: var(--ok-bg); }
-[data-tone="warn"]    { --tone-ink: var(--warn-text);      --tone-mark: var(--warn-text);      --tone-bg: var(--warn-bg); }
-[data-tone="error"]   { --tone-ink: var(--err-text);       --tone-mark: var(--err-text);       --tone-bg: var(--err-bg); }
+[data-tone="ok"]      { --tone-ink: var(--ok-text);        --tone-mark: var(--ok-mark);        --tone-bg: var(--ok-bg); }
+[data-tone="warn"]    { --tone-ink: var(--warn-text);      --tone-mark: var(--warn-mark);      --tone-bg: var(--warn-bg); }
+[data-tone="error"]   { --tone-ink: var(--err-text);       --tone-mark: var(--err-mark);       --tone-bg: var(--err-bg); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Иконка
@@ -4448,6 +4483,44 @@ html:has(dialog:modal) { overflow: hidden; }
 }
 
 .inst-budget-note { font-size: var(--text-xs); color: var(--text-muted); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   История проверок
+
+   Ряд дискретных исходов: одна проверка — один штрих, свежие справа. Аптайм
+   монитора, прогоны ночной сборки, попытки повтора.
+
+   Это НЕ дорожка (`inst-lane`) и НЕ спарклайн: у дорожки ось времени и
+   отрезки разной длины, у спарклайна величина. Здесь событий поровну и у
+   каждого один из перечислимых исходов.
+
+   Ширина штриха фиксирована, а не доля: при доле полоса из двадцати проверок
+   и полоса из двухсот выглядят одинаково, хотя означают разное. Лишнее
+   обрезается началом — старое уходит первым.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-history {
+  display: flex;
+  /* Прижата к концу, поэтому лишнее уходит за НАЧАЛО и обрезается там:
+     старое исчезает первым, последняя проверка видна всегда. Разметка при
+     этом обычная, хронологическая — от старых к свежим. */
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: var(--space-1);
+  /* Ростом с глиф, а не со строку: полоса стоит в одном ряду с подписью и
+     бейджем и обязана читаться отметкой рядом с ними. На полную высоту
+     строки она превращается в блок и перетягивает на себя весь ряд. */
+  block-size: var(--size-icon);
+  overflow: hidden;
+}
+
+.inst-history-tick {
+  flex: none;
+  inline-size: var(--size-tick);
+  border-radius: var(--radius-xs);
+  /* Без тона штрих — дорожка: проверка была, исход неизвестен. */
+  background: var(--tone-mark, var(--track));
+}
 
 /* ──────────────────────────────────────────────────────────────────────────
    Скелетон

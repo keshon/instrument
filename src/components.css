@@ -39,9 +39,9 @@
 
 [data-tone="neutral"] { --tone-ink: var(--text-secondary); --tone-mark: var(--text-secondary); --tone-bg: var(--surface-sunken); }
 [data-tone="running"] { --tone-ink: var(--accent-text);    --tone-mark: var(--accent-mark);    --tone-bg: var(--accent-bg); }
-[data-tone="ok"]      { --tone-ink: var(--ok-text);        --tone-mark: var(--ok-text);        --tone-bg: var(--ok-bg); }
-[data-tone="warn"]    { --tone-ink: var(--warn-text);      --tone-mark: var(--warn-text);      --tone-bg: var(--warn-bg); }
-[data-tone="error"]   { --tone-ink: var(--err-text);       --tone-mark: var(--err-text);       --tone-bg: var(--err-bg); }
+[data-tone="ok"]      { --tone-ink: var(--ok-text);        --tone-mark: var(--ok-mark);        --tone-bg: var(--ok-bg); }
+[data-tone="warn"]    { --tone-ink: var(--warn-text);      --tone-mark: var(--warn-mark);      --tone-bg: var(--warn-bg); }
+[data-tone="error"]   { --tone-ink: var(--err-text);       --tone-mark: var(--err-mark);       --tone-bg: var(--err-bg); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Иконка

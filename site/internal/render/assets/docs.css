@@ -7,11 +7,6 @@
    Раскладку, навигацию, прозу, поля, кнопки и панель даёт кит. Здесь —
    логотип, поиск, оглавление, сцена примера и подсветка кода. */
 
-/* Спрайт иконок стоит в теле страницы, потому что <use href="#i-..."> ищет
-   символ в том же документе. Без этого правила он остаётся видимым блоком
-   в 150px — дефолтной высоте SVG без атрибутов — и толкает вниз всю
-   оболочку. */
-.sprite { position: absolute; inline-size: 0; block-size: 0; overflow: hidden; }
 
 /* ── Шапка и логотип ────────────────────────────────────────────────────── */
 
@@ -764,3 +759,22 @@
 @media (width < 60rem) {
   .site-layout { padding-inline: var(--space-6); }
 }
+
+/* ── Галерея иконок ───────────────────────────────────────────────────────
+   Список печатается из спрайта, поэтому растёт вместе с китом. Сетка
+   интринсик: ячеек столько, сколько поместится. */
+.icon-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--space-3);
+  margin-block: var(--space-5);
+  max-inline-size: none;
+}
+.icon-cell {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  font-size: var(--text-xs);
+}
+.icon-note { color: var(--text-muted); }

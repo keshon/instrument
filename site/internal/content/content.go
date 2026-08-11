@@ -128,6 +128,12 @@ func ResolveTokens(pages []*Page, tokens map[string]Token) {
 	}
 }
 
+// sprite — содержимое спрайта кита. Нужен галерее иконок: она печатает
+// список символов из него, а не из таблицы, набранной руками.
+var sprite string
+
+func SetSprite(s string) { sprite = s }
+
 func Render(pages []*Page) error {
 	for _, p := range pages {
 		if err := renderMarkdown(p, p.body); err != nil {

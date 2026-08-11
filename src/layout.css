@@ -63,6 +63,15 @@
   block-size: 100dvh;
 }
 
+/* Оболочка без боковой колонки: шапка и рабочая область во всю ширину.
+   Разделы есть не у каждого инструмента — у монитора аптайма их два, и они
+   помещаются в шапку. Без этого правила колонка забирала свои 232 пикселя
+   и оставляла пустой жёлоб. */
+.inst-shell:not(:has(> .inst-shell-aside)) {
+  grid-template-areas: "header" "main";
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .inst-shell-aside {
   grid-area: aside;
   display: flex;

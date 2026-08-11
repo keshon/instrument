@@ -78,13 +78,17 @@ var cases = []kase{
 	{"кнопка: подпись на accent-hover", "--accent-on", []string{"--accent-hover"}, text},
 	{"ссылка: accent-text на странице", "--accent-text", []string{"--surface-page"}, text},
 
-	// Индикаторы состояния — нетекстовые, но несущие: 3:1.
-	{"точка: ok на панели", "--ok-text", []string{"--surface-raised"}, large},
-	{"точка: ok во врезе", "--ok-text", []string{"--surface-sunken"}, large},
-	{"точка: warn на панели", "--warn-text", []string{"--surface-raised"}, large},
-	{"точка: warn во врезе", "--warn-text", []string{"--surface-sunken"}, large},
-	{"точка: err на панели", "--err-text", []string{"--surface-raised"}, large},
-	{"точка: err во врезе", "--err-text", []string{"--surface-sunken"}, large},
+	// Индикаторы состояния — нетекстовые, но несущие: 3:1. Меряются тем же
+	// токеном, которым красятся: точка, заливка меры и штрих истории берут
+	// --*-mark, а не текстовую ступень.
+	{"метка: ok на панели", "--ok-mark", []string{"--surface-raised"}, large},
+	{"метка: ok во врезе", "--ok-mark", []string{"--surface-sunken"}, large},
+	{"метка: ok на дорожке", "--ok-mark", []string{"--surface-raised", "--track"}, large},
+	{"метка: warn на панели", "--warn-mark", []string{"--surface-raised"}, large},
+	{"метка: warn во врезе", "--warn-mark", []string{"--surface-sunken"}, large},
+	{"метка: err на панели", "--err-mark", []string{"--surface-raised"}, large},
+	{"метка: err во врезе", "--err-mark", []string{"--surface-sunken"}, large},
+	{"метка: err на дорожке", "--err-mark", []string{"--surface-raised", "--track"}, large},
 	{"точка: running на панели", "--accent-mark", []string{"--surface-raised"}, large},
 	{"точка: running во врезе", "--accent-mark", []string{"--surface-sunken"}, large},
 	{"каретка на панели", "--accent-mark", []string{"--surface-raised"}, large},

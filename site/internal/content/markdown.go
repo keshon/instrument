@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path"
 	"regexp"
+	"sort"
 	"strings"
 
 	"instrument/site/internal/i18n"
@@ -303,6 +304,11 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 		info = string(node.Info.Segment.Value(source))
 	}
 
+	if lang == "icons" {
+		writeIcons(w)
+		return ast.WalkSkipChildren, nil
+	}
+
 	if lang == "api" {
 		writeAPI(w, r.page)
 		return ast.WalkSkipChildren, nil
@@ -469,4 +475,32 @@ func nodeText(n ast.Node, src []byte) string {
 		return ast.WalkContinue, nil
 	})
 	return strings.TrimSpace(b.String())
+}
+
+// Символы спрайта — регуляркой по источнику: второй список имён разошёлся бы
+// с первым, а он уже разошёлся.
+var symbolRe = regexp.MustCompile(`<symbol id="(i-[a-z0-9-]+)"`)
+
+func writeIcons(w util.BufWriter) {
+	var ui, pages []string
+	for _, m := range symbolRe.FindAllStringSubmatch(sprite, -1) {
+		if strings.HasPrefix(m[1], "i-p-") {
+			pages = append(pages, m[1])
+		} else {
+			ui = append(ui, m[1])
+		}
+	}
+	sort.Strings(ui)
+	sort.Strings(pages)
+
+	w.WriteString(`<div class="icon-gallery">`)
+	for _, id := range ui {
+		fmt.Fprintf(w,
+			`<span class="icon-cell"><svg class="inst-icon" aria-hidden="true"><use href="#%s"/></svg>`+
+				`<code>%s</code></span>`, escape(id), escape(id))
+	}
+	w.WriteString(`</div>`)
+
+	fmt.Fprintf(w, `<p class="icon-note">Плюс %d символов страниц справочника `+
+		`(<code>i-p-*</code>) — они принадлежат сайту, а не киту.</p>`, len(pages))
 }
