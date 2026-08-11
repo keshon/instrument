@@ -125,6 +125,20 @@ window.kitAudit = (function () {
             '[role="option"], [role="radio"], [role="menuitem"], [role="tab"],' +
             '[tabindex]:not([tabindex="-1"])';
 
+  /* The inline exception, and the only one of the four that applies to a kit:
+     a target inside a line of text is exempt. A link in a sentence cannot be
+     given a tap area without pushing the line apart, which is why the criterion
+     lets it go. Detected structurally — inline-level box whose parent carries
+     text of its own — not by guessing from the class name. */
+  function inlineInText(el) {
+    var cs = getComputedStyle(el);
+    if (cs.display !== 'inline') return false;
+    var parent = el.parentElement;
+    if (!parent) return false;
+    var own = parent.textContent.replace(el.textContent, '').trim();
+    return own.length > 0;
+  }
+
   /* Цели нажатия, WCAG 2.2 AA (2.5.8), норма 24×24.
      У критерия есть исключение по РАССТОЯНИЮ: цель меньше нормы засчитывается,
      если круг диаметром 24 в её центре не пересекает круг соседа, то есть при
@@ -134,12 +148,12 @@ window.kitAudit = (function () {
       var cs = getComputedStyle(e);
       if (cs.display === 'none' || cs.visibility === 'hidden') return false;
       var r = e.getBoundingClientRect();
-      // Приём «видимо скрыто» (ссылка на содержимое, подпись для скринридера)
-      // оставляет коробку 1×1 с clip-path: реальной целью она становится только
-      // в фокусе. Без этого отсева она и сама шла в нарушения, и обнуляла зазор
-      // соседу: бургер в 22px ложно падал, потому что вплотную к нему стояла
-      // невидимая единица.
-      return r.width >= 2 && r.height >= 2;
+      // The "visually hidden" trick (a skip link, a screen-reader label) leaves
+      // a 1×1 box with clip-path: it only becomes a real target on focus.
+      // Without this filter it both failed on its own and zeroed a neighbour's
+      // gap — a 22px burger failed because an invisible pixel sat against it.
+      if (r.width < 2 || r.height < 2) return false;
+      return !inlineInText(e);
     });
     var boxes = els.map(function (e) { return { e: e, r: e.getBoundingClientRect() }; });
     var bad = [];
@@ -152,6 +166,10 @@ window.kitAudit = (function () {
         if (o.e === e || e.contains(o.e) || o.e.contains(e)) continue;
         var dx = Math.max(0, Math.max(r.left - o.r.right, o.r.left - r.right));
         var dy = Math.max(0, Math.max(r.top - o.r.bottom, o.r.top - r.bottom));
+        // Boxes that overlap are not neighbours, they are layers: a sticky
+        // header scrolling over a card reads as distance zero and fails
+        // everything under it. Spacing is a question about the plane.
+        if (dx === 0 && dy === 0) continue;
         gap = Math.min(gap, Math.sqrt(dx * dx + dy * dy));
       }
       var s = Math.min(r.width, r.height);
