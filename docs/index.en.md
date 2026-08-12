@@ -22,7 +22,7 @@ weights. An all-caps heading is forbidden by a rule, not missing by oversight.
 
 ## Three things that are usually not done
 
-**Contrast is checked by machine.** 492 colour pairs against WCAG thresholds
+**Contrast is checked by machine.** 504 colour pairs against WCAG thresholds
 across six themes. The tool reads the real `tokens.css` and resolves `var()`,
 `light-dark()` and `color-mix()` the way a browser does, so it cannot drift
 from the kit.

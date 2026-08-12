@@ -159,12 +159,13 @@
         {{ .Body }}
 
         {{ if not .Page.Splash }}
+        {{/* Одна строка, а не две. Значка в шапке мало — он говорит «есть
+             репозиторий», а не «этим можно пользоваться», — но и повод
+             прочитать конституцию, и условия лицензии живут в одном месте:
+             это подпись под страницей, а у подписи один абзац. */}}
         <p class="site-source">{{ t .Lang "why" }} —
-          <a href="{{ .Lang.Prefix }}/about/design-principles/">{{ t .Lang "constitution" }}</a></p>
-        {{/* Значка в шапке мало: он говорит «есть репозиторий», а не «этим
-             можно пользоваться». Условия — словами и в конце страницы, где
-             их ищут. */}}
-        <p class="site-source">{{ t .Lang "license" }} ·
+          <a href="{{ .Lang.Prefix }}/about/design-principles/">{{ t .Lang "constitution" }}</a> ·
+          {{ t .Lang "license" }},
           <a href="https://github.com/keshon/instrument" target="_blank" rel="noopener">github.com/keshon/instrument</a></p>
         {{ end }}
       </article>
