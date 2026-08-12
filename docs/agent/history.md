@@ -8,9 +8,12 @@ api:
   - { name: "inst-history-tick", kind: "класс", doc: "Один исход: одна проверка, один прогон" }
   - { name: "data-tone", kind: "атрибут", value: "ok · warn · error · running · neutral", doc: "Исход штриха. Без атрибута штрих серый: проверка была, результат неизвестен" }
   - { name: "data-empty", kind: "атрибут", doc: "Проверки не было. Место остаётся, метки нет" }
+  - { name: "inst-history-group", kind: "класс", doc: "Пачка штрихов с общим именем: час, день, прогон" }
+  - { name: "--n", kind: "токен", doc: "Число штрихов в группе. Задаёт её долю от полосы" }
   - { name: "role", kind: "атрибут", value: "img", doc: "Полоса — картинка данных, и у неё обязано быть имя" }
   - { name: "--size-tick", kind: "токен" }
   - { name: "--space-1", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
   - { name: "--radius-xs", kind: "токен" }
   - { name: "--track", kind: "токен" }
   - { name: "--size-icon", kind: "токен" }
@@ -133,6 +136,62 @@ group-en: "Agent layer"
 
 Если пропуск заслуживает тревоги, её место — **в строке рядом**: «проверок нет
 с 07:14». Одно утверждение — одно место.
+
+## Группы
+
+Час, день, прогон: пачка проверок, у которой есть общее имя.
+
+Полоса без групп отвечает на «что было». С группами она отвечает ещё и на
+«сколько за этим стоит»: час с одной проверкой — один кирпич, час с семью —
+семь.
+
+```html preview
+<div class="inst-history" role="img" aria-label="Шесть часов: 19 проверок, две с ошибкой">
+  <span class="inst-history-group" style="--n:1"><span class="inst-history-tick" data-tone="ok"></span></span>
+  <span class="inst-history-group" style="--n:7"
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="error"></span
+    ><span class="inst-history-tick" data-tone="error"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+  ></span>
+  <span class="inst-history-group" style="--n:1"><span class="inst-history-tick" data-empty></span></span>
+  <span class="inst-history-group" style="--n:4"
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+  ></span>
+  <span class="inst-history-group" style="--n:6"
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+    ><span class="inst-history-tick" data-tone="ok"></span
+  ></span>
+</div>
+```
+
+Ширина группы **пропорциональна** числу штрихов в ней — `--n` в разметке.
+
+Равные слоты не годятся, и это меряется: полоса в 520px, разбитая на 24 часа,
+даёт 14px на час, а в 14px помещается три штриха. Пропорция, наоборот, всегда
+занимает ровно ширину полосы, сколько бы проверок ни было — густой монитор
+выглядит густым, редкий редким.
+
+Полоса с группами **не обрезает** содержимое: обрезка ради «старое уходит
+первым» здесь не нужна, всё уместилось по построению. Заодно это и позволяет
+повесить на штрих [тултип](../components/overlays/tooltip.md) — под
+`overflow: hidden` его срезало бы.
+
+| Без групп | С группами |
+|---|---|
+| Ширина штриха фиксирована — длина полосы говорит, сколько было проверок | Ширина полосы фиксирована — длина группы говорит, сколько проверок в этом часе |
+| Лишнее обрезается началом | Не обрезается: доли считаются от того, что есть |
+| Одна строка списка рядом с другой | Один объект крупно, на своём экране |
 
 ## Композиции
 
