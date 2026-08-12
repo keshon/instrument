@@ -168,11 +168,19 @@ window.kitAudit = (function () {
       var cs = getComputedStyle(e);
       if (cs.display === 'none' || cs.visibility === 'hidden') return false;
       var r = e.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) return false;
       // The "visually hidden" trick (a skip link, a screen-reader label) leaves
-      // a 1×1 box with clip-path: it only becomes a real target on focus.
-      // Without this filter it both failed on its own and zeroed a neighbour's
-      // gap — a 22px burger failed because an invisible pixel sat against it.
-      if (r.width < 2 || r.height < 2) return false;
+      // a tiny box that is clipped away entirely: it only becomes a real target
+      // on focus. Without this filter it both failed on its own and zeroed a
+      // neighbour's gap — a 22px burger failed because an invisible pixel sat
+      // against it.
+      //
+      // The test is the CLIP, not the size. A size threshold was the first
+      // attempt and it was wrong twice over: `< 2px` let the kit's own skip
+      // link through (declared 1px, rendered 2px, because a border-box element
+      // cannot be thinner than its borders), and any threshold big enough to
+      // catch it would start excusing genuinely too-small controls.
+      if (cs.clipPath.indexOf('inset(50%') === 0) return false;
       return !inlineInText(e);
     });
     var boxes = els.map(function (e) {
