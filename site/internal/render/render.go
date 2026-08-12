@@ -33,6 +33,13 @@ type Options struct {
 	Out    string
 	Kit    string
 	Assets string
+	// Public — каталог, содержимое которого кладётся в КОРЕНЬ вывода как есть.
+	//
+	// Здесь живёт то, что не страница и не ресурс кита, но обязано оказаться
+	// рядом с ними: CNAME для домена, robots.txt. Могло бы дописываться в CI —
+	// и тогда собранное локально отличалось бы от опубликованного ровно теми
+	// файлами, которые решают, где сайт вообще открывается.
+	Public string
 }
 
 type pageData struct {
@@ -104,6 +111,16 @@ func Site(byLang map[i18n.Lang][]*content.Page, sections map[i18n.Lang][]nav.Sec
 	}
 	if err := copyDir(o.Assets, filepath.Join(o.Out, "assets")); err != nil {
 		return err
+	}
+	// Каталога может не быть: сайт собирается и без него.
+	if o.Public != "" {
+		if _, err := os.Stat(o.Public); err == nil {
+			if err := copyDir(o.Public, o.Out); err != nil {
+				return err
+			}
+		} else if !os.IsNotExist(err) {
+			return err
+		}
 	}
 	for _, lang := range i18n.All {
 		if err := searchIndex(o.Out, lang, byLang[lang]); err != nil {

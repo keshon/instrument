@@ -25,6 +25,7 @@ func main() {
 		out    = flag.String("out", "dist", "каталог вывода")
 		kit    = flag.String("kit", "../src", "каталог кита")
 		assets = flag.String("assets", "../assets", "каталог ресурсов кита")
+		public = flag.String("public", "public", "каталог, копируемый в корень вывода как есть")
 		serve  = flag.String("serve", "", "поднять сервер после сборки, например :4321")
 
 		verbose = flag.Bool("contract", false, "печатать замечания контракта по непереносенным страницам")
@@ -98,7 +99,7 @@ func main() {
 		sections[lang] = nav.Build(lang, ps)
 	}
 	if err := render.Site(byLang, sections, render.Options{
-		Out: *out, Kit: *kit, Assets: *assets,
+		Out: *out, Kit: *kit, Assets: *assets, Public: *public,
 	}); err != nil {
 		log.Fatalf("сборка: %v", err)
 	}

@@ -14,6 +14,19 @@ on:
   push:
   pull_request:
 
+# Публикация требует прав; проверкам они не нужны, поэтому объявлены здесь, а
+# работа `pages` берёт только их.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Два деплоя одновременно затирают друг друга. Отменять начатый нельзя:
+# отменённая публикация оставляет сайт в промежуточном состоянии.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -67,3 +80,40 @@ jobs:
             echo "$out"
             exit 1
           fi
+
+  # Публикация сайта.
+  #
+  # Отдельная работа, а не шаг: она обязана ЗАВИСЕТЬ от проверок. Сборка сайта
+  # уже стоит среди них и роняет себя на битой ссылке, отсутствующем символе
+  # спрайта и пустом кадре примера — но публиковать нельзя и при красном
+  # контрасте, и при разошедшемся dist. `needs` это и означает.
+  #
+  # Только с ветки по умолчанию: справочник описывает то, что лежит в dist, и
+  # ветка с наполовину переписанным компонентом не должна становиться сайтом.
+  pages:
+    needs: check
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: site/go.mod
+          cache-dependency-path: site/go.sum
+
+      # Тот же вызов, что и локально: домен приезжает из site/public/CNAME,
+      # а не дописывается здесь. Собранное локально и опубликованное — один
+      # и тот же каталог.
+      - name: сборка сайта
+        run: go -C site run ./cmd/site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
