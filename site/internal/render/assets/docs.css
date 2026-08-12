@@ -780,3 +780,19 @@
   font-size: var(--text-xs);
 }
 .icon-note { color: var(--text-muted); }
+
+/* Марка GitHub.
+
+   Не `.inst-icon`: тот ставит `fill: none; stroke: currentColor` — язык
+   штриховых значков кита, и залитая форма под ним пропадает целиком. Свои
+   presentation-атрибуты на <svg> классу проигрывают, поэтому размер и
+   заливка объявлены здесь.
+
+   Цвет — currentColor: марка живёт внутри кнопки и обязана гаснуть и
+   загораться вместе с ней. */
+.site-github {
+  inline-size: var(--size-icon);
+  block-size: var(--size-icon);
+  fill: currentColor;
+  stroke: none;
+}

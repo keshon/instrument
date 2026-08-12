@@ -60,6 +60,8 @@ var strings = map[string]map[Lang]string{
 	"lang":          {RU: "Язык", EN: "Language"},
 	"toc":           {RU: "На этой странице", EN: "On this page"},
 	"source":        {RU: "Исходник", EN: "Source"},
+	"github":        {RU: "Исходный код на GitHub", EN: "Source code on GitHub"},
+	"license":       {RU: "Открытый код под MIT", EN: "Open source under MIT"},
 	"why":           {RU: "Почему кит устроен именно так", EN: "Why the kit works this way"},
 	"constitution":  {RU: "конституция", EN: "the constitution"},
 	"js":            {RU: "JS", EN: "JS"},

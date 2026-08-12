@@ -61,3 +61,16 @@ CSS работает сам по себе. Отдельный модуль вы�
 Chrome 123+ · Safari 17.5+ · Firefox 120+ — по `light-dark()`, `oklch()`,
 каскадным слоям, вложенности, `:has()` и единице `lh`. Полифилов нет и не
 будет.
+
+## Лицензия
+
+MIT © Innokentiy Sokolov. Исходники, справочник и все проверки — в одном
+репозитории: [github.com/keshon/instrument](https://github.com/keshon/instrument).
+
+Кит поставляется собранным: `dist/instrument.min.css` лежит в репозитории и
+сверяется с исходником на каждом push, поэтому подключить его можно прямо
+ссылкой, без сборки.
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/keshon/instrument@0.5.0/dist/instrument.min.css">
+```
