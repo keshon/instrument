@@ -6,8 +6,10 @@ source: src/layout.css
 api:
   - { name: "inst-shell", kind: "класс", doc: "Грид на всю высоту окна (`100dvh`)" }
   - { name: "inst-shell-aside", kind: "класс", doc: "Боковая колонка" }
+  - { name: "inst-shell-brand", kind: "класс", doc: "Имя приложения над разделами. Первым ребёнком колонки" }
   - { name: "inst-shell-header", kind: "класс", doc: "Шапка" }
   - { name: "inst-shell-main", kind: "класс", doc: "Рабочая область. Контейнер `app`" }
+  - { name: "--scroll-pad-end", kind: "токен", doc: "Нижний отступ области прокрутки. Объявляет оболочка, вычитает липкая полоса действий" }
   - { name: "inst-skip-link", kind: "класс", doc: "Пропуск к содержимому. Виден только по `:focus-visible`" }
   - { name: "--aside-w", kind: "токен" }
   - { name: "--pad-panel", kind: "токен" }
@@ -22,6 +24,10 @@ api:
   - { name: "--surface-raised", kind: "токен" }
   - { name: "--radius-md", kind: "токен" }
   - { name: "--text-sm", kind: "токен" }
+  - { name: "--text-lg", kind: "токен" }
+  - { name: "--control-h-md", kind: "токен" }
+  - { name: "--tracking-tight", kind: "токен" }
+  - { name: "--text-primary", kind: "токен" }
   - { name: "--z-modal", kind: "токен" }
 title-en: "Application shell"
 group-en: "Layout"
@@ -33,6 +39,7 @@ group-en: "Layout"
 ```html preview
 <div class="inst-shell">
   <aside class="inst-shell-aside">
+    <a class="inst-shell-brand" href="#"><span class="inst-dot" data-tone="ok"></span>instrument</a>
     <nav class="inst-nav" aria-label="Разделы">
       <div class="inst-nav-group">
         <span class="inst-nav-label">Работа</span>
@@ -67,13 +74,41 @@ group-en: "Layout"
 </div>
 ```
 
+## Заголовок колонки
+
+Имя приложения — первый ребёнок колонки, до навигации.
+
+Класс живёт в ките из-за одной строки — отбивки снизу. В **колонке** она
+обязательна: без неё имя встаёт в ряд с пунктами и делается первым из них.
+В **ряду** (узкий экран) она же смещает имя вверх на половину себя, и логотип
+с пунктами перестают стоять на одной линии. Расхождение в шесть пикселей,
+которое видно сразу и не находится никогда — потому что искать его идут в
+выравнивании, а лежит оно в отбивке.
+
+## Липкая полоса действий
+
+Рабочая область объявляет свой нижний отступ переменной `--scroll-pad-end`.
+
+`position: sticky` закрепляется относительно поля **паддинга** области
+прокрутки, а не её границы. Полоса действий, закреплённая по `inset-block-end:
+0`, останавливается на высоту отступа выше видимого низа — и под ней остаётся
+живая щель, сквозь которую видно, как едет содержимое. Полоса перестаёт быть
+дном.
+
+Знает про этот отступ только тот, кто его поставил. Отсюда переменная:
+[полоса действий](../components/inputs/form.md) вычитает её сама. Своя область
+прокрутки — объявите `--scroll-pad-end` на ней.
+
 ## Использование
 
 ```html
 <a class="inst-skip-link" href="#main">К содержанию</a>
 
 <div class="inst-shell">
-  <aside class="inst-shell-aside">…</aside>
+  <aside class="inst-shell-aside">
+    <a class="inst-shell-brand" href="/">Приложение</a>
+    …
+  </aside>
   <header class="inst-shell-header">…</header>
   <main class="inst-shell-main" id="main">…</main>
 </div>
