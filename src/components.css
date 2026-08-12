@@ -245,18 +245,31 @@
   background: var(--surface-sunken);
   border-radius: var(--radius-md);
 
-  & > button {
+  /* Ссылка наравне с кнопкой.
+     Значение, у которого есть адрес, не перестаёт быть значением: окно
+     истории переживает перезагрузку и передаётся другому человеку целиком,
+     ссылкой. Пока контрол принимал только `button`, приложение подставляло
+     на его место ряд кнопок — и макет расходился с экраном молча.
+     Носитель состояния у ссылки свой: `aria-current="page"`.              */
+  & > :is(button, a) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-block-size: calc(var(--control-h-md) - var(--space-2));
     padding-inline: var(--control-pad-md);
     border-radius: var(--radius-sm);
     font-size: var(--text-sm);
     color: var(--text-secondary);
+    /* base.css красит любую ссылку акцентом и подчёркивает: внутри контрола
+       это делало выбранный вариант синим и с полосой.                     */
+    text-decoration: none;
     cursor: pointer;
     transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 
     &:hover { color: var(--text-primary); }
 
-    &[aria-checked="true"] {
+    &[aria-checked="true"],
+    &[aria-current]:not([aria-current="false"]) {
       background: var(--surface-raised);
       color: var(--text-primary);
       font-weight: var(--weight-medium);
@@ -327,6 +340,15 @@
 .inst-panel-body--list  { --panel-body-pad: var(--gap-row); }
 
 .inst-card {
+  /* Колонка с просветом, а не блок. У варианта-ссылки ритм был, у обычной
+     карточки — нет: шапка вплотную упиралась в содержимое, и заголовок
+     читался частью первой строки данных. Одна и та же шапка не может
+     получать воздух в одном варианте и не получать в другом.
+     `align-items` здесь НЕ ставится (в отличие от `--link`): дети карточки
+     обычно обязаны занимать всю ширину — таблица свойств, сетка, поле.   */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-row);
   background: var(--surface-raised);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-lg);
@@ -347,14 +369,11 @@
    нажатия сжимается до строки заголовка, хотя нажимают по всей карточке.
    Ссылкой должна быть сама карточка, и тогда цель равна ей.                */
 .inst-card--link {
-  display: flex;
-  flex-direction: column;
   /* align-items обязателен — тот же капкан, что у .inst-stack: колоночный
      флекс по умолчанию тянет детей на всю ширину, и ряд точек в 120px
      становился боксом в 768. Видно это только замером: точки сами не
      растягиваются и остаются у начала.                                    */
   align-items: start;
-  gap: var(--gap-row);
   color: inherit;
   text-decoration: none;
 }
@@ -680,6 +699,13 @@
   & > dt { color: var(--text-muted); }
   & > dd { margin: 0; min-inline-size: 0; }
 }
+
+/* Узкий контейнер: колонка подписей по содержимому, а не общая.
+   Общая колонка — обещание, что строки выровнены МЕЖДУ вложениями, и она
+   стоит своей ширины: в карточке на 235px фиксированные 92px съедали
+   четыре десятых, и значение «1» оказывалось посреди пустоты. Внутри
+   карточки такого обещания нет и не нужно — сравнивают строки внутри неё. */
+.inst-kv--tight { grid-template-columns: max-content 1fr; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Строка свойства — примитив инспектора

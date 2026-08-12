@@ -16,6 +16,9 @@ api:
   - { name: "inst-output-more", kind: "класс", doc: "Кнопка разворота с числом" }
   - { name: "data-state", kind: "атрибут", value: "running · ok · failed", doc: "на `inst-step`" }
   - { name: "open", kind: "атрибут", value: "нативный", doc: "на `<details>`" }
+  - { name: "data-details-all", kind: "атрибут", value: "селектор области · пусто", doc: "Кнопка «раскрыть все». Пусто — ближайшая панель" }
+  - { name: "data-label-expand", kind: "атрибут", doc: "Подпись кнопки в свёрнутом состоянии" }
+  - { name: "data-label-collapse", kind: "атрибут", doc: "Подпись в раскрытом" }
   - { name: "data-truncated", kind: "атрибут", value: "true · false", doc: "на `inst-output`" }
   - { name: "--space-1", kind: "токен" }
   - { name: "--space-3", kind: "токен" }
@@ -123,6 +126,56 @@ group-en: "Agent layer"
 
 Открытость — атрибут `open`, а не класс и не `data-state`. Это второй канал,
 которого здесь нет намеренно.
+
+### Раскрыть все
+
+Шесть шагов — это шесть нажатий, чтобы прочитать прогон целиком, и ещё шесть,
+чтобы вернуть как было. Кнопка ставится в шапку области:
+
+```html preview
+<div class="inst-panel">
+  <div class="inst-panel-header">
+    <span class="inst-panel-title">Последняя проверка</span>
+    <span class="inst-panel-actions">
+      <button class="inst-btn inst-btn--sm" type="button" aria-expanded="false"
+              data-details-all data-label-expand="Раскрыть все"
+              data-label-collapse="Свернуть все">Раскрыть все</button>
+    </span>
+  </div>
+  <div class="inst-panel-body inst-panel-body--list">
+    <details class="inst-step" data-state="ok">
+      <summary class="inst-step-head">
+        <span class="inst-step-twist"></span>
+        <span class="inst-step-name">TCP</span>
+        <span class="inst-step-sub inst-u-truncate">сокет открыт</span>
+        <span class="inst-step-meta">38 мс</span>
+      </summary>
+      <div class="inst-step-body"><div class="inst-code">93.184.216.34:443</div></div>
+    </details>
+    <details class="inst-step" data-state="ok">
+      <summary class="inst-step-head">
+        <span class="inst-step-twist"></span>
+        <span class="inst-step-name">TLS</span>
+        <span class="inst-step-sub inst-u-truncate">рукопожатие завершено</span>
+        <span class="inst-step-meta">64 мс</span>
+      </summary>
+      <div class="inst-step-body"><div class="inst-code">TLS 1.3</div></div>
+    </details>
+  </div>
+</div>
+```
+
+Состояние кнопка определяет по содержимому, а не помнит: пока хоть один шаг
+закрыт, нажатие раскрывает всё. Кнопка со своей памятью рано или поздно
+расходится с тем, что человек открыл руками.
+
+| Что | Зачем |
+|---|---|
+| `data-details-all` пустой | Область — ближайшая `inst-panel`. Со значением — селектор нужного узла |
+| `aria-expanded` | Кит переставляет его сам; в разметке нужно начальное значение |
+| `data-label-expand` / `data-label-collapse` | Подписи. Без них кнопка молча меняет смысл, не меняя надписи |
+
+Событие `inst:details-all` всплывает с кнопки, `detail` — `{ expand, count }`.
 
 ## Сценарии
 
