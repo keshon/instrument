@@ -7,6 +7,8 @@ js: Стрелки и бегущий tabindex делает кит. Открыт�
 api:
   - { name: "inst-menu", kind: "класс", doc: "Контейнер. Колонка пунктов с зазором `--space-1`" }
   - { name: "inst-menu-item", kind: "класс", doc: "Пункт: `<button>` или `<a>`" }
+  - { name: "inst-menu-item-main", kind: "класс", doc: "Обёртка названия и пояснения. Её наличие делает пункт двухстрочным — модификатора для этого нет" }
+  - { name: "inst-menu-item-sub", kind: "класс", doc: "Пояснение под названием. Для меню выбора, где одно название ни о чём не говорит" }
   - { name: "inst-menu-label", kind: "класс", doc: "Подпись группы. Не интерактивна" }
   - { name: "inst-menu-sep", kind: "класс", doc: "Разделитель толщиной в волосок" }
   - { name: "inst-menu-shortcut", kind: "класс", doc: "Горячая клавиша у дальнего края пункта" }
@@ -137,6 +139,28 @@ group-en: "Overlays"
   </div>
 </div>
 <button class="inst-btn" type="button" popovertarget="menu-kinds">Виды пунктов</button>
+```
+
+Пункт с пояснением. Обёртка `.inst-menu-item-main` делает пункт двухстрочным
+сама — модификатора для этого нет, потому что это не выбор автора разметки, а
+следствие того, что внутри. Меню выбора без пояснения превращается в список
+кодовых слов.
+
+```html preview
+<div class="inst-popover" popover id="menu-model">
+  <div class="inst-menu" role="menu">
+    <button class="inst-menu-item" type="button" role="menuitem">
+      <span class="inst-menu-item-main">Быстрый
+        <span class="inst-menu-item-sub">Для коротких прогонов</span></span></button>
+    <button class="inst-menu-item" type="button" role="menuitem" aria-checked="true">
+      <span class="inst-menu-item-main">Полный
+        <span class="inst-menu-item-sub">Для сложных задач</span></span></button>
+    <button class="inst-menu-item" type="button" role="menuitem">
+      <span class="inst-menu-item-main">Экономный
+        <span class="inst-menu-item-sub">Дешевле всего на повседневном</span></span></button>
+  </div>
+</div>
+<button class="inst-btn" type="button" popovertarget="menu-model">Режим прогона</button>
 ```
 
 | Состояние пункта | Как ставится | Что происходит |

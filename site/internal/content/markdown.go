@@ -253,7 +253,7 @@ func copyIcons(mod string) string {
 
 func copyButton(text string, lg i18n.Lang) string {
 	return fmt.Sprintf(
-		`<button class="code-copy inst-copy inst-btn inst-btn--sm inst-btn--icon" type="button" `+
+		`<button class="code-copy inst-copy inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" `+
 			`data-copy="%s" data-copied-label="%s" data-failed-label="%s" `+
 			`aria-label="%s" title="%s">%s</button>`,
 		escape(text), escape(i18n.T(lg, "copy.done")), escape(i18n.T(lg, "copy.fail")),
@@ -350,7 +350,6 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 		// тому же результату.
 		fmt.Fprintf(w, `<figure class="demo%s" data-demo>`+
 			`<figcaption class="demo-bar">`+
-			`<span class="demo-chrome" aria-hidden="true"></span>`+
 			`<span class="demo-label">%s</span>`+
 			`</figcaption>`+
 			`<div class="demo-stage inst-theme">`+

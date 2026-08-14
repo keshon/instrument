@@ -144,15 +144,69 @@
 
   &:hover { background: var(--surface-hover); }
 
-  &[aria-checked="true"], &[aria-current]:not([aria-current="false"]) {
-    color: var(--accent-text);
-    font-weight: var(--weight-medium);
+  /* Выбор несёт ГАЛОЧКА, а не только цвет.
+
+     Стояло: акцентный цвет плюс вес 500. Два изъяна сразу. Первый — цвет
+     оказывался единственным носителем состояния, что запрещено собственным
+     законом кита («статус ходит с точкой и словом»). Второй — смена веса
+     меняет ШИРИНУ подписи, и пункт дёргался в момент выбора, ровно тогда,
+     когда на него смотрят.
+
+     Теперь метка стоит у дальнего края и не двигает текст, а подпись остаётся
+     обычной. Цвет метки — --accent-mark: это метка без подписи поверх, ей
+     довольно 3:1, и она в одном регистре с остальными метками кита.       */
+  &[aria-checked="true"]::after, &[aria-current]:not([aria-current="false"])::after {
+    content: "";
+    flex: none;
+    margin-inline-start: auto;
+    inline-size: var(--size-icon);
+    block-size: var(--size-icon);
+    background: var(--accent-mark);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 5' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   }
+  /* Горячая клавиша уже прижата к дальнему краю своим margin: когда она есть,
+     авто-отступ метки съел бы её. Отдаём край клавише, метка встаёт за ней. */
+  &:has(> .inst-menu-shortcut)::after { margin-inline-start: var(--gap-inline); }
 
   &[data-tone="error"] { color: var(--err-text); }
   &[data-tone="error"]:hover { background: var(--err-bg); }
 
   &:disabled, &[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
+}
+
+/* Пункт с пояснением: название и строка под ним.
+
+   Однострочный пункт объяснить себя не может, а меню выбора — модели, режима,
+   профиля — без пояснения превращается в список кодовых слов. Пока второй
+   строки не было, приложение писало пояснение в title и теряло его на
+   клавиатуре и в скринридере.
+
+   Многострочность включается наличием подписи, а не модификатором: два
+   состояния одного пункта — это не два варианта, которые выбирает автор
+   разметки, а следствие того, что внутри.                                  */
+.inst-menu-item:has(> .inst-menu-item-main) {
+  align-items: start;
+  padding-block: var(--row-pad-y);
+  white-space: normal;
+}
+
+.inst-menu-item-main { min-inline-size: 0; }
+
+.inst-menu-item-sub {
+  display: block;
+  margin-block-start: 1px;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--leading-ui);
+}
+
+/* Метка выбора у многострочного пункта встаёт по ПЕРВОЙ строке, а не по
+   середине блока: она относится к названию, а не к паре «название плюс
+   пояснение». Формула та же, что у значка сноски, и по той же причине —
+   1lh подстраивается под кегль и плотность сам.                           */
+.inst-menu-item:has(> .inst-menu-item-main)::after {
+  align-self: start;
+  margin-block-start: calc((1lh - var(--size-icon)) / 2);
 }
 
 /* Горячая клавиша прижимается к дальнему краю и тише подписи: она
@@ -188,12 +242,22 @@
   inset-block-end: calc(100% + var(--space-3));
   inset-inline-start: 50%;
   translate: -50% 0;
-  padding: var(--space-2) var(--space-3);
-  border: var(--hairline) solid var(--border);
+  /* Плашка АННОТАЦИИ, а не маленькая панель.
+
+     Стояло: --surface-overlay, рамка, тень поповера и обычный цвет текста —
+     то есть ровно тот же набор признаков, что у любого куска интерфейса. Глаз
+     читал тултип как ещё одно содержимое, а подсказка обязана опознаваться
+     раньше, чем прочитана.
+
+     Инверсная поверхность делает это одним признаком: такого цвета на экране
+     больше нет ни у чего. Рамка снимается — на инверсии она не разделяет, а
+     сдваивает край. Тень остаётся: тултип действительно плавает и действительно
+     сейчас исчезнет, то есть это первый смысл тени, а не второй.           */
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
-  background: var(--surface-overlay);
+  background: var(--surface-inverse);
   box-shadow: var(--shadow-popover);
-  color: var(--text-primary);
+  color: var(--text-on-inverse);
   font-size: var(--text-xs);
   line-height: var(--leading-ui);
   white-space: nowrap;
@@ -280,7 +344,7 @@ html:has(dialog:modal) { overflow: hidden; }
   align-items: center;
   gap: var(--gap-inline);
   flex: none;
-  padding: var(--space-5) var(--pad-card);
+  padding: var(--pad-panel) var(--pad-card);
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 
@@ -300,7 +364,7 @@ html:has(dialog:modal) { overflow: hidden; }
   align-items: center;
   gap: var(--space-3);
   flex: none;
-  padding: var(--space-5) var(--pad-card);
+  padding: var(--pad-panel) var(--pad-card);
   border-block-start: var(--hairline) solid var(--border-subtle);
 }
 
@@ -387,7 +451,7 @@ html:has(dialog:modal) { overflow: hidden; }
   align-items: flex-start;
   gap: var(--gap-inline);
   inline-size: 100%;
-  padding: var(--space-4) var(--pad-panel);
+  padding: var(--pad-block-y) var(--pad-panel);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-md);
   background: var(--surface-overlay);

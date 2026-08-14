@@ -75,19 +75,58 @@
    три несовместимых механизма вместо обещанных «двух строк на вариант».
    ────────────────────────────────────────────────────────────────────────── */
 
+/* ЧЕТЫРЕ ВЕСА, и это система, а не набор вариантов.
+
+   Вес отвечает на вопрос «насколько громко кнопка просит нажать себя», и
+   каждый занят ровно одним ответом:
+
+     сплошная  (--primary)  заливка акцентом      одно действие на экране
+     ПРИПОДНЯТАЯ  (умолчание) заливка + волосяная рамка + тень в один пиксель
+                             обычное действие, стоящее само по себе
+     МЯГКАЯ    (--soft)     приглушённая заливка, рамки нет вовсе
+                             контрол внутри группы: тулбар, ряд значков, чип
+     призрачная (--ghost)   ничего до наведения    действие, которое ищут глазами
+
+   Раньше весов было три, и умолчанием стоял ОБВЕДЁННЫЙ — единственный, которого
+   нет ни в одном интерфейсе, на который кит равняется. Рамка в 3.46:1 делала
+   контур кнопки самой громкой линией экрана: втрое громче панели, которая её
+   содержит. Опустив контур, мы получили кнопку, которую почти не видно, потому
+   что перепад поверхностей в светлых темах всего 1.05. Работу забирает тень —
+   один пиксель, без смещения: не «плавает сверху», а «имеет толщину». Второй
+   смысл тени назван в tokens.css рядом с --shadow-control.
+
+   Мягкий вес отвечает на другой вопрос. В группе — ряд значков, переключатель
+   режима, плашка выбора модели — контур каждого элемента складывается в решётку,
+   и группа читается как таблица. Заливка без контура собирает группу в один
+   объект, а выбранный элемент внутри отличается плотностью заливки, а не рамкой. */
+
 .inst-btn {
   --btn-fg: var(--text-primary);
-  --btn-bg: transparent;
+  /* Заливка, а не прозрачность: у приподнятой кнопки должна быть собственная
+     поверхность, иначе тень висит вокруг дырки.                            */
+  --btn-bg: var(--surface-raised);
   --btn-bg-hover: var(--surface-hover);
   --btn-bg-active: var(--surface-active);
-  --btn-border: var(--border-control);
+  /* Волосяная, как у панели. Несущая (--border-control, 3.46:1) положена тому,
+     у чего граница И ЕСТЬ контрол: флажку, полю, дорожке свитча — внутри пусто
+     и опознать их больше нечем. У кнопки внутри подпись, и опознаёт подпись;
+     токен она держала по инерции.                                          */
+  --btn-border: var(--border);
+  --btn-shadow: var(--shadow-control);
+  /* Отступ переменной, а не значением: оптическая поправка на значок ниже
+     обязана знать размер кнопки, а размеров три. */
+  --btn-pad: var(--control-pad-md);
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-3);
+  /* Роль, а не сырой шаг: просвет между значком и подписью обязан ехать за
+     плотностью вместе со всем остальным. В обычном режиме это 8px — на зуме
+     скриншотов просвет читается примерно так же.                           */
+  gap: var(--gap-inline);
   min-block-size: var(--control-h-md);
-  padding-inline: var(--control-pad-md);
+  padding-inline: var(--btn-pad);
+  box-shadow: var(--btn-shadow);
   border: var(--hairline) solid var(--btn-border);
   border-radius: var(--radius-md);
   background: var(--btn-bg);
@@ -95,10 +134,10 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   /* Кнопка бывает ссылкой, и на этой же странице написано, что переход по
-     адресу обязан быть <a>. Без этой строки кит велел брать ссылку и сам же
-     подчёркивал её как прозаическую: правило из base.css — про ссылку В
-     ТЕКСТЕ, а у кнопки текста вокруг нет. У пункта меню и карточки-ссылки
-     это уже было; здесь просто забыли. */
+     адресу обязан быть <a>. Постоянного подчёркивания base.css ссылке больше
+     не даёт, но ПОД КУРСОРОМ подчёркивает — и правильно делает: так ссылку
+     опознают. Кнопке это не нужно ни в каком состоянии, поэтому отмена
+     остаётся. */
   text-decoration: none;
   line-height: 1;
   white-space: nowrap;
@@ -109,8 +148,11 @@
               transform var(--dur-1) var(--ease-out);
 
   &:hover:not(:disabled)  { --btn-bg: var(--btn-bg-hover); }
-  /* 0.985, а не 0.95. Нажатие надо почувствовать, а не разглядывать. */
-  &:active:not(:disabled) { --btn-bg: var(--btn-bg-active); transform: scale(0.985); }
+  /* 0.985, а не 0.95. Нажатие надо почувствовать, а не разглядывать.
+     Тень при нажатии снимается: у предмета, который вдавили, толщины больше
+     нет. Это тот же самый приём, что и масштаб, — просто вторая его половина,
+     и без неё кнопка вдавливается, продолжая висеть над плоскостью.        */
+  &:active:not(:disabled) { --btn-bg: var(--btn-bg-active); --btn-shadow: none; transform: scale(0.985); }
 
   /* Прозрачность, а не серая заливка: кнопка сохраняет идентичность, и
      видно, какое именно действие недоступно.                              */
@@ -171,7 +213,22 @@
   --btn-border: transparent;
 }
 
-.inst-btn--ghost { --btn-border: transparent; }
+/* Мягкая: контрол ВНУТРИ группы. Рамки нет вовсе — в ряду из пяти значков
+   контуры складываются в решётку, и группа читается как таблица. Тени тоже
+   нет: приподнятой она не является, она лежит в общей плашке.             */
+.inst-btn--soft {
+  --btn-bg: var(--surface-sunken);
+  --btn-border: transparent;
+  --btn-shadow: none;
+}
+
+/* Призрачная: до наведения нет ничего. Тень снимается вместе с рамкой —
+   иначе «ничего» отбрасывает тень.                                        */
+.inst-btn--ghost {
+  --btn-bg: transparent;
+  --btn-border: transparent;
+  --btn-shadow: none;
+}
 
 .inst-btn--danger {
   --btn-fg: var(--err-text);
@@ -180,8 +237,49 @@
   --btn-bg-active: var(--err-bg);
 }
 
-.inst-btn--sm { min-block-size: var(--control-h-sm); padding-inline: var(--control-pad-sm); font-size: var(--text-xs); }
-.inst-btn--lg { min-block-size: var(--control-h-lg); padding-inline: var(--control-pad-lg); font-size: var(--text-md); }
+/* ЗНАЧОК ТИШЕ ПОДПИСИ.
+
+   Третий закон называет иконки поимённо: «подписи, рамки, шапки и иконки
+   обслуживают данные и обязаны быть тише». .inst-icon наследует currentColor,
+   поэтому значок в кнопке выходил ровно того же цвета, что подпись, — закон
+   требовал, а код не исполнял. На зуме это первое, что отличает нашу кнопку
+   от чужой: там карандаш серый, а слово почти чёрное.
+
+   На сплошной заливке гасить нечего: подпись там белая, и приглушённый значок
+   ушёл бы под порог. Иконочная кнопка тоже не гасится — там значок И ЕСТЬ
+   подпись, тише ему быть некого.                                          */
+.inst-btn:not(.inst-btn--primary):not(.inst-btn--icon) > .inst-icon {
+  color: var(--text-muted);
+}
+
+.inst-btn--sm { --btn-pad: var(--control-pad-sm); min-block-size: var(--control-h-sm); font-size: var(--text-xs); }
+.inst-btn--lg { --btn-pad: var(--control-pad-lg); min-block-size: var(--control-h-lg); font-size: var(--text-md); }
+
+/* ОПТИЧЕСКАЯ поправка на значок у края.
+
+   Замер: коробка значка начинается ровно на границе содержимого, но ЧЕРНИЛА —
+   на 2.5px глубже, потому что глиф нарисован с полем внутри своей коробки 16×16.
+   По 98 значкам спрайта поле стабильно: слева в среднем 2.44, справа 2.45,
+   медиана 2.2 — то есть набор нарисован ровно, и зазор системный, а не кривой.
+
+   Считает же браузер по коробке, и у кнопки со значком слева выходило 12px до
+   края коробки плюс 2.5px пустоты = 14.5px оптического отступа против честных
+   12px справа, где стоит текст. Кнопка читалась левотяжёлой, подпись — сдвинутой.
+
+   Поправка --space-1 (2px) — ближайшая ступень шкалы к измеренной медиане.
+   Иконочная кнопка исключена: у неё отступа нет вовсе, значок в ней центрируется
+   сам, и вычитать не из чего.
+
+   КОНТРАКТ РАЗМЕТКИ: в подписанной кнопке значок стоит ПЕРВЫМ. Так во всех
+   примерах справочника, и иначе быть не может — подпись здесь текстовый узел,
+   а текстовые узлы для CSS не существуют. При <svg>Обновить</svg> селектор
+   `svg:first-child` и `svg:last-child` истинны ОБА (элемент-потомок один), и
+   поправить хвостовой значок отдельным правилом нельзя: оно било бы и по
+   ведущему. Значок в конце подписи — это не кнопка, а раскрывающий контрол,
+   и у него свой компонент.                                                */
+.inst-btn:not(.inst-btn--icon):has(> svg:first-child) {
+  padding-inline-start: calc(var(--btn-pad) - var(--space-1));
+}
 
 /* ──────────────────────────────────────────────────────────────────────────
    Кнопка вызова боковой колонки
@@ -215,8 +313,13 @@
    браузер никогда не рисует рамку тоньше физического пикселя.             */
 .inst-btn-group {
   display: inline-flex;
+  /* Тень у ГРУППЫ, а не у каждой кнопки: соседние тени накладываются на шве и
+     рисуют вертикальную полосу там, где кнопки как раз обязаны читаться одним
+     предметом. Группа — один предмет, значит и толщина у неё одна.         */
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-control);
 
-  & > .inst-btn { border-radius: 0; }
+  & > .inst-btn { border-radius: 0; --btn-shadow: none; }
   & > .inst-btn + .inst-btn { border-inline-start: none; }
   & > .inst-btn:first-child {
     border-start-start-radius: var(--radius-md);
@@ -260,13 +363,20 @@
     border-radius: var(--radius-sm);
     font-size: var(--text-sm);
     color: var(--text-secondary);
-    /* base.css красит любую ссылку акцентом и подчёркивает: внутри контрола
-       это делало выбранный вариант синим и с полосой.                     */
+    /* Подчёркивание контролу не нужно никогда, поэтому отмена остаётся и
+       после того, как base.css перестал подчёркивать ссылки по умолчанию:
+       под курсором он подчёркивает их до сих пор, и это правильно для
+       ссылки, но не для сегмента.                                         */
     text-decoration: none;
     cursor: pointer;
     transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 
-    &:hover { color: var(--text-primary); }
+    /* Поверхность, а не только цвет: правило кита — «состояния только
+       поверхностью и рамкой». У сегмента есть свой горизонтальный отступ,
+       значит заливке есть куда лечь. Слой полупрозрачный и потому ложится и
+       на дорожку под невыбранным сегментом, и на приподнятую заливку
+       выбранного: состояния складываются, как у строки задачи.            */
+    &:hover { background: var(--surface-hover); color: var(--text-primary); }
 
     &[aria-checked="true"],
     &[aria-current]:not([aria-current="false"]) {
@@ -311,7 +421,7 @@
   align-items: center;
   gap: var(--gap-inline);
   flex: none;
-  padding: var(--space-4) var(--pad-panel);
+  padding: var(--pad-block-y) var(--pad-panel);
   border-block-end: var(--hairline) solid var(--border-subtle);
 
   /* Тулбар сразу под шапкой сам приносит нижнюю линию — вторая была бы
@@ -320,9 +430,29 @@
 }
 
 .inst-panel-title {
-  font-size: var(--text-sm);
+  /* 15px, а не 13. Замер по четырём живым экранам: 98.2% интерфейсного текста
+     лежало в полосе 11–13px, а отношения соседних ступеней внизу шкалы — 1.083
+     и 1.091, то есть ниже порога, на котором разница кеглей вообще читается.
+     Иерархию несли вес и цвет; размер не участвовал, и экран звучал одним
+     голосом. --text-md при этом простаивал: семь применений на весь кит.
+
+     15/13 = 1.154 — это уже ступень, которую видно.
+
+     Третьему закону это не противоречит. Он запрещает подписи КРИЧАТЬ громче
+     данных — капсом, трекингом, весом 700, акцентом; одна ступень кегля не
+     крик, а ориентир: имя панели ищут глазами среди шести панелей дашборда.
+     Цвет и вес у него прежние.                                            */
+  font-size: var(--text-md);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-normal);
+  /* Интерлиньяж СВОЙ, а не унаследованный, и от этого зависит высота шапки.
+     Без него заголовок панели имел три разные высоты: 16.25px как <h3>
+     (1.25 от base.css), 18.2px в приложении (1.4 от body) и 21.45px внутри
+     прозы (1.65) — то есть шапка панели в справочнике была на три пикселя
+     выше, чем она же в любом приложении. Правило кита «компонент не имеет
+     права зависеть от раскладки родителя» записано для точки состояния; к
+     интерлиньяжу оно применяется ровно так же.                           */
+  line-height: var(--leading-ui);
   /* Обычное предложение, никогда не капс. Заголовок панели — подпись, а
      капс делает подпись громче данных, которые она подписывает.          */
 }
@@ -363,11 +493,14 @@
 
 /* Карточка, которая ЦЕЛИКОМ является ссылкой.
 
-   Без этого варианта её не собрать: base.css красит любую <a> акцентом и
-   подчёркивает, поэтому карточка-ссылка выходила синей и с полосой под всем
-   содержимым. Обёртывать содержимое в ссылку внутри карточки — хуже: цель
-   нажатия сжимается до строки заголовка, хотя нажимают по всей карточке.
-   Ссылкой должна быть сама карточка, и тогда цель равна ей.                */
+   Цвет ссылка теперь наследует сама, поэтому от `color` вариант избавлен; а
+   вот подчёркивание под курсором ему пришлось бы протянуть через всё
+   содержимое карточки, и это не то, что показывает нажимаемость объекта
+   размером с карточку, — её показывает рамка и поверхность.
+
+   Обёртывать содержимое в ссылку ВНУТРИ карточки — хуже: цель нажатия
+   сжимается до строки заголовка, хотя нажимают по всей карточке. Ссылкой
+   должна быть сама карточка, и тогда цель равна ей.                        */
 .inst-card--link {
   /* align-items обязателен — тот же капкан, что у .inst-stack: колоночный
      флекс по умолчанию тянет детей на всю ширину, и ряд точек в 120px
@@ -402,7 +535,7 @@
   align-items: center;
   gap: var(--space-3);
   flex: none;
-  padding: var(--space-3) var(--pad-cell-x);
+  padding: var(--row-pad-y) var(--pad-cell-x);
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 
@@ -462,6 +595,7 @@
 .inst-metric-delta {
   margin-block-start: var(--space-2);
   font-size: var(--text-xs);
+  line-height: var(--leading-ui);
   color: var(--tone-ink, var(--text-muted));
   display: flex;
   align-items: center;
@@ -650,7 +784,7 @@
     text-align: start;
     font-weight: var(--weight-normal);
     color: var(--text-muted);
-    padding: var(--space-3) var(--pad-cell-x);
+    padding: var(--row-pad-y) var(--pad-cell-x);
     border-block-end: var(--hairline) solid var(--border);
     white-space: nowrap;
   }
@@ -854,7 +988,7 @@
 
 .inst-task-gutter { display: flex; justify-content: center; }
 .inst-task-main { min-inline-size: 0; }
-.inst-task-meta { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
+.inst-task-meta { font-size: var(--text-xs); line-height: var(--leading-ui); color: var(--text-muted); white-space: nowrap; }
 .inst-task-title { line-height: var(--leading-ui); }
 .inst-task-sub { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: 1px; }
 
@@ -900,7 +1034,7 @@
 .inst-log {
   background: var(--surface-sunken);
   border-radius: var(--radius-md);
-  padding: var(--space-4) var(--pad-panel);
+  padding: var(--pad-block-y) var(--pad-panel);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   line-height: 1.55;
@@ -934,7 +1068,7 @@
   background: var(--surface-sunken);
   border: var(--hairline) solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: var(--space-4) var(--pad-panel);
+  padding: var(--pad-block-y) var(--pad-panel);
   font-size: var(--text-xs);
   line-height: 1.6;
   overflow: auto;
@@ -1009,7 +1143,7 @@
   gap: var(--gap-inline);
   border-inline-start: var(--size-marker) solid var(--tone-ink, var(--border-strong));
   border-radius: 0;
-  padding: var(--space-3) var(--pad-panel);
+  padding: var(--row-pad-y) var(--pad-panel);
   font-size: var(--text-sm);
   line-height: var(--leading-ui);
   color: var(--text-secondary);
@@ -1061,7 +1195,7 @@
 }
 
 .inst-empty-title { color: var(--text-secondary); }
-.inst-empty-desc  { font-size: var(--text-xs); max-inline-size: 44ch; }
+.inst-empty-desc  { font-size: var(--text-xs); line-height: var(--leading-ui); max-inline-size: 44ch; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Баннер — сообщение уровня страницы
@@ -1079,7 +1213,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--gap-inline);
-  padding: var(--space-4) var(--pad-panel);
+  padding: var(--pad-block-y) var(--pad-panel);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-md);
   background: var(--tone-bg, var(--surface-sunken));
@@ -1131,7 +1265,7 @@
   align-items: center;
   gap: var(--gap-inline);
   min-block-size: var(--control-h-lg);
-  padding: var(--space-3) var(--pad-cell-x);
+  padding: var(--row-pad-y) var(--pad-cell-x);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   cursor: pointer;
@@ -1170,6 +1304,11 @@
 /* Заголовок-сортировка — настоящая кнопка внутри th: её надо нажимать с
    клавиатуры. Направление несёт ЗНАЧОК, а не только позиция: aria-sort
    озвучивает то же самое.                                                */
+/* Поверхность наведения лежит на ЯЧЕЙКЕ, а не на кнопке внутри неё: кнопка
+   растянута по ширине, но не на отступы ячейки, и заливка на ней оставила бы
+   поля непрокрашенными — подсветка не совпала бы с тем, что нажимается.   */
+.inst-table th:has(> .inst-sort):hover { background: var(--surface-hover); }
+
 .inst-table th > .inst-sort {
   display: inline-flex;
   align-items: center;

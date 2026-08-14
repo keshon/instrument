@@ -9,7 +9,14 @@ import (
 	"instrument/site/internal/content"
 )
 
-var ownVars = map[string]bool{"--c": true, "--v": true}
+// Собственные переменные сайта: те, которым в ките места нет и не будет.
+// --c и --v — канал данных у образца цвета и у строки API.
+// --code-* — подсветка синтаксиса: кит кода не подсвечивает, это забота
+// справочника о своём содержимом.
+var ownVars = map[string]bool{
+	"--c": true, "--v": true,
+	"--code-tag": true, "--code-attr": true, "--code-val": true,
+}
 
 var (
 	cssVarUse = regexp.MustCompile(`var\((--[a-z0-9-]+)`)

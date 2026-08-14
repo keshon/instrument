@@ -208,6 +208,57 @@ func main() {
 	var problems []string
 	pending := map[string]int{}
 
+	// ── Справочник не имеет права ПЕРЕОФОРМЛЯТЬ кит ───────────────────────
+	//
+	// Живая спецификация обещает, что примеры на её страницах — работающая
+	// разметка, а не картинки. Разметка и была работающей; врала отрисовка.
+	// `docs.css` держал правило `.site-body .inst-page-title { font-size:
+	// --text-2xl }`, и заголовок экрана ВНУТРИ живого примера рисовался в
+	// 27px вместо китового 21px. Кто копировал увиденное, получал другое.
+	//
+	// Покрытие классов эту дыру не видит по устройству: класс задокументирован,
+	// страница есть, галочка стоит. Поэтому проверка отдельная и смотрит на
+	// СВОЙСТВА: сайту можно ставить китовому классу отступ (это раскладка его
+	// собственной статьи), но нельзя трогать то, из чего состоит рисунок
+	// компонента, — кегль, интерлиньяж, цвет, заливку, рамку, радиус.
+	//
+	// Правила сцены примера (`.demo-root`, `.demo-stage`) исключены: это рама
+	// вокруг компонента, а не он сам.
+	if b, err := os.ReadFile(*stage); err == nil {
+		lines := strings.Split(strip(string(b)), "\n")
+		banned := []string{"font-size", "line-height", "font-weight", "color:",
+			"background", "border", "border-radius", "letter-spacing"}
+		rel := rootRel(*stage)
+		for i, line := range lines {
+			br := strings.Index(line, "{")
+			if br < 0 {
+				continue
+			}
+			sel := line[:br]
+			if !strings.Contains(sel, ".inst-") {
+				continue
+			}
+			if strings.Contains(sel, ".demo-root") || strings.Contains(sel, ".demo-stage") {
+				continue
+			}
+			body := line[br:]
+			// Однострочное правило несёт тело здесь же; блочное — ниже, до «}».
+			if !strings.Contains(body, "}") {
+				for j := i + 1; j < len(lines) && !strings.Contains(lines[j], "}"); j++ {
+					body += lines[j]
+				}
+			}
+			for _, prop := range banned {
+				if strings.Contains(body, prop) {
+					problems = append(problems, fmt.Sprintf(
+						"%s:%d  справочник переоформляет кит: %q задаёт %s",
+						rel, i+1, strings.TrimSpace(sel), strings.TrimSuffix(prop, ":")))
+					break
+				}
+			}
+		}
+	}
+
 	skipAttr := map[string]bool{"theme": true, "density": true, "dir": true}
 
 	for _, p := range pages {

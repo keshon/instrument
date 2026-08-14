@@ -366,3 +366,86 @@ func Ratio(fg, bg RGBA) float64 {
 	}
 	return (hi + 0.05) / (lo + 0.05)
 }
+
+// ── Геометрия ───────────────────────────────────────────────────────────────
+
+var (
+	varUseRe = regexp.MustCompile(`var\(\s*(--[a-z][\w-]*)\s*\)`)
+	pxNumRe  = regexp.MustCompile(`([\d.]+)px`)
+	remNumRe = regexp.MustCompile(`([\d.]+)rem`)
+)
+
+// RootPx — корень, относительно которого считается rem.
+//
+// В rem кит держит ровно один ярус — кегли, — и делает это затем, чтобы
+// уважать увеличенный размер шрифта в браузере. Проверке нужен конкретный
+// корень, иначе кегль не с чем сравнить: геометрия объявлена в px. 16 —
+// умолчание всех браузеров, и к нему же привязаны комментарии в tokens.css
+// («0.875rem × 16 = 14px»).
+const RootPx = 16.0
+
+// ResolvePx разворачивает var() и считает calc(), возвращая число пикселей.
+//
+// Живёт здесь, а не в команде, потому что таких потребителей стало двое:
+// cmd/targets меряет цели нажатия, cmd/proportion — пропорции. Копия резолвера
+// в каждой из них была бы ровно тем «будущим расхождением», о котором говорит
+// конституция: одна поправила бы разбор calc, вторая нет.
+//
+// Значения здесь всегда геометрические, то есть в px: цвета и проценты сюда
+// не приходят, и поэтому разбор умещается в тридцать строк вместо резолвера
+// цветов выше.
+func ResolvePx(vals map[string]string, expr string) (float64, error) {
+	if strings.HasPrefix(expr, "--") {
+		v, ok := vals[expr]
+		if !ok {
+			return 0, fmt.Errorf("нет токена %s", expr)
+		}
+		expr = v
+	}
+	for i := 0; i < 12 && strings.Contains(expr, "var("); i++ {
+		var missing string
+		expr = varUseRe.ReplaceAllStringFunc(expr, func(m string) string {
+			name := varUseRe.FindStringSubmatch(m)[1]
+			v, ok := vals[name]
+			if !ok {
+				missing = name
+				return m
+			}
+			return strings.TrimSpace(v)
+		})
+		if missing != "" {
+			return 0, fmt.Errorf("нет токена %s", missing)
+		}
+	}
+	for strings.Contains(expr, "calc(") {
+		before := expr
+		expr = calcRe.ReplaceAllStringFunc(expr, func(m string) string {
+			v, ok := evalCalc(stripPx(calcRe.FindStringSubmatch(m)[1]))
+			if !ok {
+				return m
+			}
+			return fmt.Sprintf("%gpx", v)
+		})
+		if expr == before {
+			return 0, fmt.Errorf("не разобрать calc в %q", expr)
+		}
+	}
+	if v, ok := evalCalc(stripPx(expr)); ok {
+		return v, nil
+	}
+	return 0, fmt.Errorf("не разобрать %q", expr)
+}
+
+// stripPx приводит длину к безразмерному числу пикселей: px теряет суффикс,
+// rem домножается на корень. Поэтому смешанное выражение вроде
+// calc(1rem + 2px) считается верно, а не «как повезёт».
+func stripPx(s string) string {
+	s = remNumRe.ReplaceAllStringFunc(strings.TrimSpace(s), func(m string) string {
+		v, err := strconv.ParseFloat(remNumRe.FindStringSubmatch(m)[1], 64)
+		if err != nil {
+			return m
+		}
+		return strconv.FormatFloat(v*RootPx, 'g', -1, 64)
+	})
+	return pxNumRe.ReplaceAllString(s, "$1")
+}

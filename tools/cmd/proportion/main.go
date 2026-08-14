@@ -1,0 +1,260 @@
+// proportion — проверка ПРОПОРЦИЙ яруса ролей против шкалы кеглей.
+//
+// Зачем отдельная команда. contrast сторожит цвет, targets — цели нажатия,
+// docscheck — сходимость справочника, dist — поставку. Ни одна из них не
+// видела отношения между размерами, и это вскрылось дорого: когда база кегля
+// выросла с 13 на 14, ярус глифов и жёлобов остался на месте. Все четыре
+// проверки при этом остались зелёными, а на экране значок отстал от прописной
+// на 9.8%, а колонка подписей переполнилась и порвала выравнивание формы.
+//
+// Проверяются ОТНОШЕНИЯ, а не значения: конкретное число можно поменять
+// осознанно, а вот соотношение, вылезшее из полосы, — почти всегда недосмотр.
+//
+// Полосы взяты из нынешнего состояния кита, а не из головы: каждая подписана
+// тем, что случится при выходе за неё.
+package main
+
+import (
+	"flag"
+	"fmt"
+	"os"
+	"regexp"
+	"sort"
+	"strings"
+	"unicode/utf8"
+
+	"instrument/tools/internal/css"
+)
+
+// Порог различимости кеглей. Ниже него соседние ступени читаются как одна,
+// и шкала теряет ступень, продолжая её декларировать. 1.12 — нижняя граница
+// полосы, в которой держатся рабочие ступени кита.
+const stepMin = 1.12
+
+type rule struct {
+	label    string
+	a, b     string  // что делим на что
+	min, max float64 // допустимая полоса отношения
+	why      string  // что случится при выходе
+	perDens  bool    // проверять в каждой плотности
+}
+
+var rules = []rule{
+	// ── Лестница кеглей ────────────────────────────────────────────────────
+	// Каждая ступень обязана отличаться от соседней настолько, чтобы разницу
+	// было видно. Верх шкалы расходится шире — там разница между заголовками.
+	{label: "кегль: 2xs → xs", a: "--text-xs", b: "--text-2xs", min: stepMin, max: 1.30,
+		why: "ступени сливаются: шкала объявляет размер, которого не видно"},
+	{label: "кегль: xs → sm", a: "--text-sm", b: "--text-xs", min: stepMin, max: 1.30,
+		why: "метаданные перестают отличаться от базы размером"},
+	{label: "кегль: sm → md", a: "--text-md", b: "--text-sm", min: stepMin, max: 1.30,
+		why: "имя панели сливается с данными под ним"},
+	{label: "кегль: md → lg", a: "--text-lg", b: "--text-md", min: stepMin, max: 1.30,
+		why: "заголовок блока сливается с прозой"},
+	{label: "кегль: lg → xl", a: "--text-xl", b: "--text-lg", min: stepMin, max: 1.40,
+		why: "заголовок раздела сливается с заголовком блока"},
+	{label: "кегль: xl → 2xl", a: "--text-2xl", b: "--text-xl", min: stepMin, max: 1.40,
+		why: "число-герой сливается с заголовком"},
+
+	// ── Глиф против текста ─────────────────────────────────────────────────
+	// Значок и спиннер стоят рядом с подписью и меряются НЕ коробкой, а тем,
+	// как их чернила смотрятся против прописной. Прописная примерно 0.71 от
+	// кегля, чернила значка — 9.02 от коробки 16, то есть 0.564. Отсюда
+	// полоса: коробка значка к базе кегля.
+	{label: "значок к базе кегля", a: "--size-icon", b: "--text-sm", min: 1.20, max: 1.34, perDens: true,
+		why: "значок рядом с подписью читается мелким или наоборот забивает её"},
+	{label: "спиннер к базе кегля", a: "--size-spinner", b: "--text-sm", min: 0.92, max: 1.20, perDens: true,
+		why: "кольцо занятости встаёт на место подписи и обязано быть с неё ростом"},
+	{label: "шеврон к базе кегля", a: "--size-chevron", b: "--text-sm", min: 0.62, max: 0.86, perDens: true,
+		why: "раскрывающая стрелка спорит с подписью или теряется рядом с ней"},
+
+	// ── Контрол против текста ──────────────────────────────────────────────
+	// Полоса широкая намеренно: высота контрола перенастраивается плотностью,
+	// а кегль — нет, поэтому отношение обязано гулять. Границы взяты по краям
+	// самой лестницы (26/14 в плотной и 36/14 в свободной) с запасом в шаг.
+	// Правило ловит не дрейф внутри лестницы, а выпадение из неё: контрол,
+	// которому объявили высоту мимо ряда.
+	{label: "высота контрола к базе", a: "--control-h-md", b: "--text-sm", min: 1.8, max: 2.8, perDens: true,
+		why: "подпись упирается в потолок кнопки или тонет в ней"},
+	{label: "бейдж к своему кеглю", a: "--control-h-xs", b: "--text-2xs", min: 1.5, max: 2.2, perDens: true,
+		why: "бейдж обжимает подпись или раздувается вокруг неё"},
+
+	// ── Форма контрола ─────────────────────────────────────────────────────
+	// Отступ выводится из высоты через --control-ratio-*, и эти три правила
+	// сторожат сам вывод: если кто-то снова объявит отступ значением, форма
+	// поедет вместе с плотностью, как было до вывода.
+	{label: "форма кнопки sm", a: "--control-pad-sm", b: "--control-h-sm", min: 0.30, max: 0.32, perDens: true,
+		why: "отступ перестал выводиться из высоты — кнопка меняет ФОРМУ вместе с плотностью"},
+	{label: "форма кнопки md", a: "--control-pad-md", b: "--control-h-md", min: 0.365, max: 0.385, perDens: true,
+		why: "отступ перестал выводиться из высоты — кнопка меняет ФОРМУ вместе с плотностью"},
+	{label: "форма кнопки lg", a: "--control-pad-lg", b: "--control-h-lg", min: 0.41, max: 0.43, perDens: true,
+		why: "отступ перестал выводиться из высоты — кнопка меняет ФОРМУ вместе с плотностью"},
+
+	// ── Колонка подписей ───────────────────────────────────────────────────
+	// Она держит ТЕКСТ, поэтому обязана расти вместе с кеглем. Именно её
+	// переполнило ростом базы: «Лимит токенов» требовал 99.9px при ширине 92.
+	// Та же оговорка: колонка растёт с плотностью, кегль нет. Полоса широкая и
+	// ловит только грубое выпадение.
+	//
+	// ПЕРЕПОЛНЕНИЕ КОЛОНКИ ЭТИМ ПРАВИЛОМ НЕ ЛОВИТСЯ, и это честная граница
+	// текстового гейта: влезет ли «Лимит токенов» в свои пиксели, зависит от
+	// шрифта, а не от токенов. Такое меряет tools/audit.js на отрисованном.
+	{label: "колонка подписей к базе", a: "--label-col", b: "--text-sm", min: 6.0, max: 9.0, perDens: true,
+		why: "колонка выпала из своей лестницы"},
+
+	// ── Вертикальный ритм ──────────────────────────────────────────────────
+	{label: "вертикаль блока к строке", a: "--pad-block-y", b: "--row-pad-y", min: 0.9, max: 1.7, perDens: true,
+		why: "шапка панели становится выше строки, которую подписывает"},
+}
+
+// Радиусы проверяются иначе: не отношением, а двумя свойствами сразу.
+type radiusCheck struct {
+	label string
+	fn    func(v func(string) float64) (bool, string)
+}
+
+var radii = []radiusCheck{
+	{"радиусы чётные", func(v func(string) float64) (bool, string) {
+		for _, n := range []string{"--radius-xs", "--radius-sm", "--radius-md", "--radius-lg"} {
+			r := v(n)
+			if int(r)%2 != 0 || r != float64(int(r)) {
+				return false, fmt.Sprintf("%s = %g: нечётный радиус даёт половину устройственного пикселя при плотности 1.5, и дуга стыкуется с гранью мимо сетки", n, r)
+			}
+		}
+		return true, "4 · 6 · 8 · 12"
+	}},
+	{"лестница радиусов растёт", func(v func(string) float64) (bool, string) {
+		xs, sm, md, lg := v("--radius-xs"), v("--radius-sm"), v("--radius-md"), v("--radius-lg")
+		if !(xs < sm && sm < md && md < lg) {
+			return false, fmt.Sprintf("%g · %g · %g · %g — вложенный радиус обязан быть меньше внешнего", xs, sm, md, lg)
+		}
+		return true, fmt.Sprintf("%g < %g < %g < %g", xs, sm, md, lg)
+	}},
+	{"вложенность сегмента концентрична", func(v func(string) float64) (bool, string) {
+		md, sm, gap := v("--radius-md"), v("--radius-sm"), v("--space-1")
+		if md-gap != sm {
+			return false, fmt.Sprintf("%g − %g = %g, а внутренний радиус %g: внутренний элемент выглядит выпирающим", md, gap, md-gap, sm)
+		}
+		return true, fmt.Sprintf("%g − %g = %g", md, gap, sm)
+	}},
+}
+
+var densities = []struct{ id, label string }{
+	{"", "обычная"},
+	{"compact", "плотная"},
+	{"comfortable", "свободная"},
+}
+
+func main() {
+	tokens := flag.String("tokens", "../src/tokens.css", "путь к tokens.css")
+	verbose := flag.Bool("v", false, "показать пройденные")
+	flag.Parse()
+
+	src, err := css.Load(*tokens)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "не прочитать токены:", err)
+		os.Exit(1)
+	}
+
+	base := src.Decls(regexp.MustCompile(`(?m)^:root \{`))
+	for k, v := range src.Decls(regexp.MustCompile(`:where\(:root\)\s*\{`)) {
+		base[k] = v
+	}
+	// Отступ контрола выводится ниже блоков плотности, общим правилом.
+	for k, v := range src.Decls(regexp.MustCompile(`:where\(:root\), \[data-density\]\s*\{`)) {
+		base[k] = v
+	}
+	if len(base) == 0 {
+		fmt.Fprintln(os.Stderr, "не найден ярус ролей — :where(:root)")
+		os.Exit(1)
+	}
+
+	width := 0
+	for _, r := range rules {
+		if n := utf8.RuneCountInString(r.label); n > width {
+			width = n
+		}
+	}
+	for _, r := range radii {
+		if n := utf8.RuneCountInString(r.label); n > width {
+			width = n
+		}
+	}
+
+	var problems []string
+	total := 0
+
+	// Радиусы от плотности не зависят — проверяются один раз.
+	valOf := func(vals map[string]string) func(string) float64 {
+		return func(n string) float64 {
+			v, err := css.ResolvePx(vals, n)
+			if err != nil {
+				problems = append(problems, fmt.Sprintf("  %s: %v", n, err))
+				return 0
+			}
+			return v
+		}
+	}
+	for _, rc := range radii {
+		total++
+		ok, note := rc.fn(valOf(base))
+		if !ok {
+			problems = append(problems, fmt.Sprintf("  · %-*s  %s", width, rc.label, note))
+		} else if *verbose {
+			fmt.Printf("  · %-*s  %s\n", width, rc.label, note)
+		}
+	}
+
+	for _, d := range densities {
+		vals := map[string]string{}
+		for k, v := range base {
+			vals[k] = v
+		}
+		if d.id != "" {
+			for k, v := range src.Decls(regexp.MustCompile(`\[data-density="` + d.id + `"\]\s*\{`)) {
+				vals[k] = v
+			}
+		}
+		if *verbose {
+			fmt.Printf("\n── %s ──\n", d.label)
+		}
+		for _, r := range rules {
+			if d.id != "" && !r.perDens {
+				continue
+			}
+			total++
+			a, err1 := css.ResolvePx(vals, r.a)
+			b, err2 := css.ResolvePx(vals, r.b)
+			if err1 != nil || err2 != nil {
+				problems = append(problems, fmt.Sprintf("  · %-*s  не разобрать: %v %v", width, r.label, err1, err2))
+				continue
+			}
+			if b == 0 {
+				problems = append(problems, fmt.Sprintf("  · %-*s  делитель ноль", width, r.label))
+				continue
+			}
+			got := a / b
+			if got < r.min || got > r.max {
+				problems = append(problems, fmt.Sprintf(
+					"  · %-*s  %.3f  (полоса %.2f–%.2f, %s)\n      %s",
+					width, r.label, got, r.min, r.max, d.label, r.why))
+			} else if *verbose {
+				fmt.Printf("  · %-*s  %.3f  (полоса %.2f–%.2f)\n", width, r.label, got, r.min, r.max)
+			}
+		}
+	}
+
+	fmt.Println()
+	if len(problems) > 0 {
+		sort.Strings(problems)
+		fmt.Printf("── пропорции вышли из полосы (%d) ──\n", len(problems))
+		for _, p := range problems {
+			fmt.Println(p)
+		}
+		fmt.Println()
+		fmt.Printf("· %d проверок, провалено %d\n", total, len(problems))
+		os.Exit(1)
+	}
+	fmt.Printf("· все %d проверок пройдены в %d плотностях\n", total, len(densities))
+	_ = strings.TrimSpace
+}

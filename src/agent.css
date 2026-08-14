@@ -154,7 +154,7 @@
 
 /* Имя инструмента — моноширинное: это идентификатор, а не слово. */
 .inst-step-name { font-family: var(--font-mono); font-size: var(--text-xs); }
-.inst-step-sub  { color: var(--text-muted); font-size: var(--text-xs); min-inline-size: 0; }
+.inst-step-sub  { color: var(--text-muted); font-size: var(--text-xs); line-height: var(--leading-ui); min-inline-size: 0; }
 .inst-step-meta { color: var(--text-muted); font-size: var(--text-xs); white-space: nowrap; }
 
 .inst-step-body {
@@ -188,7 +188,7 @@
   display: flex;
   align-items: center;
   gap: var(--gap-inline);
-  padding: var(--space-3) var(--pad-cell-x);
+  padding: var(--row-pad-y) var(--pad-cell-x);
   border-block-end: var(--hairline) solid var(--border-subtle);
   font-size: var(--text-xs);
 }
@@ -364,7 +364,7 @@
   color: var(--text-muted);
 }
 
-.inst-budget-note { font-size: var(--text-xs); color: var(--text-muted); }
+.inst-budget-note { font-size: var(--text-xs); line-height: var(--leading-ui); color: var(--text-muted); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    История проверок

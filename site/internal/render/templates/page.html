@@ -136,11 +136,11 @@
       <article class="inst-prose site-body">
         <div class="doc-id">
           {{ if .Page.Group }}<p class="doc-id-group">{{ .Page.Group }}</p>{{ end }}
-          <h1 class="inst-page-title">{{ .Page.Title }}</h1>
+          <h1 class="doc-title">{{ .Page.Title }}</h1>
           {{ if or .Page.JS .Page.JSOpt }}
           <p class="doc-id-meta">
             {{ if .Page.JS }}
-            <a class="site-js inst-badge" data-tone="info" href="#js">{{ t .Lang "js" }}</a>
+            <a class="site-js inst-badge" data-tone="neutral" href="#js">{{ t .Lang "js" }}</a>
             <span class="doc-id-note">{{ .Page.JS }}</span>
             {{ else }}
             <a class="site-js inst-badge" href="#js">{{ t .Lang "js.optional" }}</a>

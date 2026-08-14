@@ -8,7 +8,8 @@ api:
   - { name: "inst-btn-group",    kind: "класс",       doc: "Контейнер группы: снимает рамку у соседа и скругляет только торцы" }
 
   - { name: "inst-btn--primary", kind: "модификатор", doc: "Сплошная заливка акцентом. **Одно** главное действие на экран" }
-  - { name: "inst-btn--ghost",   kind: "модификатор", doc: "Без рамки. Для второстепенных действий в плотном ряду" }
+  - { name: "inst-btn--soft",    kind: "модификатор", doc: "Приглушённая заливка, рамки нет. Контрол **внутри группы**: тулбар, ряд значков, чип выбора" }
+  - { name: "inst-btn--ghost",   kind: "модификатор", doc: "Без рамки и без заливки. Для второстепенных действий в плотном ряду" }
   - { name: "inst-btn--danger",  kind: "модификатор", doc: "Разрушительное действие: тон ошибки в подписи и рамке" }
   - { name: "inst-btn--sm",      kind: "модификатор", value: "26px", doc: "Высота из `--control-h-sm`, кегль `--text-xs`" }
   - { name: "inst-btn--lg",      kind: "модификатор", value: "38px", doc: "Высота из `--control-h-lg`, кегль `--text-md`" }
@@ -20,15 +21,19 @@ api:
   - { name: "disabled",   kind: "атрибут",                           doc: "Недоступно. Для занятости **не применяется** — выбрасывает кнопку из обхода с клавиатуры" }
 
   - { name: "--btn-fg",       kind: "переменная", value: "--text-primary",   doc: "Цвет подписи" }
-  - { name: "--btn-bg",       kind: "переменная", value: "transparent",      doc: "Заливка. Наведение меняет **только** её" }
+  - { name: "--btn-bg",       kind: "переменная", value: "--surface-raised", doc: "Заливка. Наведение меняет **только** её" }
   - { name: "--btn-bg-hover", kind: "переменная", value: "--surface-hover",  doc: "Заливка под курсором" }
   - { name: "--btn-bg-active",kind: "переменная", value: "--surface-active", doc: "Заливка при нажатии" }
-  - { name: "--btn-border",   kind: "переменная", value: "--border-control", doc: "Рамка" }
+  - { name: "--btn-border",   kind: "переменная", value: "--border",         doc: "Рамка. Волосяная: опознаёт кнопку подпись, а не контур" }
+  - { name: "--btn-shadow",   kind: "переменная", value: "--shadow-control", doc: "Толщина приподнятой кнопки. У `--soft` и `--ghost` снимается" }
 
   - { name: "--control-h-md",   kind: "токен", value: "32px", doc: "Высота. Перенастраивается плотностью" }
-  - { name: "--control-pad-md", kind: "токен", value: "12px", doc: "Горизонтальный отступ" }
-  - { name: "--radius-md",      kind: "токен", value: "7px",  doc: "Скругление отдельно стоящего контрола" }
-  - { name: "--text-sm",        kind: "токен", value: "13px", doc: "Кегль подписи" }
+  - { name: "--control-pad-md", kind: "токен", value: "12px", doc: "Горизонтальный отступ. Выводится из высоты через `--control-ratio-md`" }
+  - { name: "--radius-md",      kind: "токен", value: "8px",  doc: "Скругление отдельно стоящего контрола" }
+  - { name: "--shadow-control", kind: "токен", doc: "Тень в один пиксель. Не «плавает сверху», а «имеет толщину»" }
+  - { name: "--gap-inline",     kind: "токен", value: "8px",  doc: "Просвет между значком и подписью" }
+  - { name: "--text-muted",     kind: "токен", doc: "Цвет значка: он тише подписи, которую сопровождает" }
+  - { name: "--text-sm",        kind: "токен", value: "14px", doc: "Кегль подписи" }
   - { name: "--weight-medium",  kind: "токен", value: "500",  doc: "Начертание подписи" }
   - { name: "--size-spinner",   kind: "токен", value: "13px", doc: "Кольцо занятости" }
   - { name: "--dur-1",          kind: "токен", value: "80ms", doc: "Длительность перехода заливки" }
@@ -42,6 +47,7 @@ group-en: "Actions"
 ```html preview
 <button class="inst-btn inst-btn--primary" type="button">Запустить</button>
 <button class="inst-btn" type="button">Отмена</button>
+<button class="inst-btn inst-btn--soft" type="button">Фильтр</button>
 <button class="inst-btn inst-btn--ghost" type="button">Подробнее</button>
 <button class="inst-btn inst-btn--danger" type="button">Удалить</button>
 ```
@@ -87,15 +93,17 @@ group-en: "Actions"
 ```html preview
 <button class="inst-btn" type="button">По умолчанию</button>
 <button class="inst-btn inst-btn--primary" type="button">Primary</button>
+<button class="inst-btn inst-btn--soft" type="button">Soft</button>
 <button class="inst-btn inst-btn--ghost" type="button">Ghost</button>
 <button class="inst-btn inst-btn--danger" type="button">Danger</button>
 ```
 
 | Вариант | Когда |
 |---|---|
-| без модификатора | Умолчание. Рамка `--border-control`, прозрачная заливка |
+| без модификатора | Умолчание — **приподнятая**: заливка, волосяная рамка, тень в пиксель |
 | `inst-btn--primary` | Главное действие экрана. **Одно на экран** |
-| `inst-btn--ghost` | Третьестепенное: рамка снята, остался только текст |
+| `inst-btn--soft` | Контрол внутри группы: приглушённая заливка, рамки нет |
+| `inst-btn--ghost` | Третьестепенное: ни рамки, ни заливки — только текст |
 | `inst-btn--danger` | Необратимое или разрушительное действие |
 
 ## Размеры

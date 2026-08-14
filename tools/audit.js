@@ -99,6 +99,17 @@ window.kitAudit = (function () {
       var r = el.getBoundingClientRect();
       if (!r.width || !r.height) continue;
 
+      // ПРОЗРАЧНАЯ подпись — не нарушение, а приём, и он описан в конституции.
+      // Занятая кнопка гасит текст цветом, а не убирает его из потока: подпись
+      // держит ширину, чтобы полоса действий не дёргалась под курсором, и
+      // остаётся скринридеру. Меряя её, проверка честно получала 1.00 и валила
+      // кнопку за то, что та сделана правильно.
+      //
+      // Отличать по alpha, а не по «color: transparent»: браузер возвращает
+      // вычисленное значение, и rgba(0,0,0,0) от прозрачного акцента не
+      // отличается — оба означают «этих пикселей на экране нет».
+      if (rgba(cs.color)[3] === 0) continue;
+
       var size = parseFloat(cs.fontSize);
       var weight = parseInt(cs.fontWeight, 10) || 400;
       // Порог 3:1 — только для КРУПНОГО текста по определению WCAG.
@@ -151,11 +162,18 @@ window.kitAudit = (function () {
   }
 
   function inlineInText(el) {
-    var cs = getComputedStyle(el);
-    if (cs.display !== 'inline') return false;
-    var parent = el.parentElement;
-    if (!parent) return false;
-    var own = parent.textContent.replace(el.textContent, '').trim();
+    if (getComputedStyle(el).display !== 'inline') return false;
+
+    /* Текст ищется у ближайшего БЛОЧНОГО предка, а не у непосредственного.
+       Инлайновые обёртки для этого правила прозрачны: <strong><a>…</a></strong>
+       внутри абзаца — это ссылка в строке текста, хотя у самой обёртки, кроме
+       ссылки, внутри ничего нет. Пока смотрели на непосредственного родителя,
+       такая ссылка теряла освобождение и падала как самостоятельная цель —
+       ложное срабатывание на титульной странице справочника. */
+    var host = el.parentElement;
+    while (host && getComputedStyle(host).display === 'inline') host = host.parentElement;
+    if (!host) return false;
+    var own = host.textContent.replace(el.textContent, '').trim();
     return own.length > 0;
   }
 
@@ -222,6 +240,126 @@ window.kitAudit = (function () {
   var THEMES = ['', 'light-neutral', 'light-cool', 'dark', 'dark-soft', 'dark-light'];
   var DENSITIES = ['', 'compact', 'comfortable'];
 
+
+  /* ── Пропорции: влезает ли текст в свою коробку ─────────────────────────
+   *
+   * Границу между этой проверкой и текстовым гейтом стоит назвать прямо.
+   * cmd/proportion сторожит ОТНОШЕНИЯ токенов — лестницу кеглей, форму
+   * контрола, чётность радиусов; всё это считается из tokens.css и не зависит
+   * от шрифта. А влезет ли «Лимит токенов» в свои 92 пикселя, зависит от
+   * гарнитуры, начертания и языка — то есть измеримо только на отрисованном.
+   *
+   * Ровно этого не увидел ни один из четырёх гейтов, когда база кегля выросла
+   * с 13 на 14: колонка подписей переполнилась, подпись легла в две строки и
+   * порвала выравнивание формы, а проверки остались зелёными.
+   */
+
+  var LABELS = '.inst-label,.inst-prop-label,.inst-kv > dt,.inst-metric-label,' +
+               '.inst-section-title,.inst-panel-title,.inst-task-meta,.inst-nav-label';
+
+  function proportion(sel) {
+    var bad = [], checked = 0;
+    var root0 = root(sel);
+
+    /* Подпись, которой не хватило места.
+       Мерить канвой нельзя: measureText и раскладка расходятся на пиксель-полтора
+       из-за хинтинга и субпиксельных долей, и на коротких строках это давало
+       ложные срабатывания там, где колонка меряется содержимым и переполниться
+       не может в принципе. Спрашиваем вердикт у самого браузера.
+
+       Случая два, и они разные.
+       ОБРЕЗКА: подписи запрещено переноситься (nowrap или многоточие), и она
+       вылезла за свою коробку — scrollWidth больше clientWidth.
+       ПЕРЕНОС: подпись стоит в колонке ФИКСИРОВАННОЙ ширины, переноситься ей
+       не запрещено, и она легла в две строки, сдвинув соседей по сетке. */
+    var labels = root0.querySelectorAll(LABELS);
+    for (var i = 0; i < labels.length; i++) {
+      var el = labels[i];
+      var txt = (el.textContent || '').trim();
+      if (!txt) continue;
+      var cs = getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+      var r = el.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      checked++;
+
+      var single = cs.whiteSpace === 'nowrap' || cs.textOverflow === 'ellipsis';
+      if (single) {
+        var cut = el.scrollWidth > el.clientWidth + 1;
+        /* Строке свойства обрезка РАЗРЕШЕНА: имя свойства бывает длиннее любой
+           разумной колонки, и конституция это принимает — но требует за это
+           `title`, иначе полное имя прочитать нечем. Значит, здесь проверяется
+           не сама обрезка, а уплаченная за неё цена. */
+        if (el.matches('.inst-prop-label')) {
+          if (cut && !el.getAttribute('title')) {
+            bad.push({ вид: 'обрезано без title', где: el.className || el.tagName,
+                       текст: txt.slice(0, 40) });
+          }
+          continue;
+        }
+        if (cut) {
+          bad.push({ вид: 'обрезано', где: el.className || el.tagName,
+                     текст: txt.slice(0, 40),
+                     нужно: el.scrollWidth, есть: el.clientWidth });
+        }
+        continue;
+      }
+
+      /* Фиксированной считаем ту колонку, чью ширину задаёт сетка, а не
+         содержимое: у строки свойства и у списка пар это --label-col. */
+      var fixed = el.matches('.inst-label, .inst-prop-label') ||
+                  (el.tagName === 'DT' && el.parentElement &&
+                   el.parentElement.classList.contains('inst-kv') &&
+                   !el.parentElement.classList.contains('inst-kv--tight'));
+      if (!fixed) continue;
+
+      var lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.4;
+      var lines = Math.round(r.height / lh);
+      if (lines > 1) {
+        bad.push({ вид: 'перенос', где: el.className || el.tagName,
+                   текст: txt.slice(0, 40), строк: lines,
+                   колонка: Math.round(el.clientWidth) });
+      }
+    }
+
+    /* Значок против прописной подписи, рядом с которой он стоит. Значок
+       меряется не коробкой, а чернилами: по спрайту кита они занимают 9.02
+       из 16, то есть 0.564 коробки. Прописная — около 0.71 кегля. */
+    var icons = root0.querySelectorAll('.inst-icon');
+    for (var j = 0; j < icons.length; j++) {
+      var ic = icons[j];
+      var host = ic.parentElement;
+      if (!host) continue;
+      var hostText = '';
+      for (var n = host.firstChild; n; n = n.nextSibling) {
+        if (n.nodeType === 3) hostText += n.textContent.trim();
+      }
+      if (!hostText) continue;           /* значок один — сравнивать не с чем */
+      var ics = getComputedStyle(ic), hcs = getComputedStyle(host);
+      var box = parseFloat(ics.width);
+      if (!box) continue;
+      ctx.font = hcs.fontWeight + ' ' + hcs.fontSize + ' ' + hcs.fontFamily;
+      var m = ctx.measureText('H');
+      var cap = m.actualBoundingBoxAscent;
+      if (!cap) continue;
+      checked++;
+      var ink = box * 0.564;
+      var d = ink / cap;
+      if (d < 0.88 || d > 1.16) {
+        bad.push({
+          где: host.className || host.tagName,
+          текст: hostText.slice(0, 24),
+          коробка: box,
+          чернила: Math.round(ink * 10) / 10,
+          прописная: Math.round(cap * 10) / 10,
+          отношение: Math.round(d * 100) / 100
+        });
+      }
+    }
+
+    return { проверено: checked, нарушений: bad.length, список: bad };
+  }
+
   function run(sel) {
     var html = document.documentElement;
     var theme0 = html.getAttribute('data-theme');
@@ -235,7 +373,7 @@ window.kitAudit = (function () {
     document.head.appendChild(kill);
     function flush() { return document.body.offsetHeight; }
 
-    var res = { контраст: {}, цели: {}, всего: 0 };
+    var res = { контраст: {}, цели: {}, пропорции: {}, всего: 0 };
     THEMES.forEach(function (t) {
       t ? html.setAttribute('data-theme', t) : html.removeAttribute('data-theme');
       flush();
@@ -249,6 +387,13 @@ window.kitAudit = (function () {
       d ? html.setAttribute('data-density', d) : html.removeAttribute('data-density');
       flush();
       res.цели[d || 'обычная'] = targets(sel);
+    });
+    DENSITIES.forEach(function (d) {
+      d ? html.setAttribute('data-density', d) : html.removeAttribute('data-density');
+      flush();
+      var p = proportion(sel);
+      res.пропорции[d || 'обычная'] = p;
+      res.всего += p.проверено;
     });
     dens0 ? html.setAttribute('data-density', dens0) : html.removeAttribute('data-density');
     flush();
@@ -269,6 +414,11 @@ window.kitAudit = (function () {
       var v = res.цели[k];
       падений += v.нарушений;
       свод['цели ' + k] = v.нарушений + ' из ' + v.проверено;
+    });
+    Object.keys(res.пропорции || {}).forEach(function (k) {
+      var v = res.пропорции[k];
+      падений += v.нарушений;
+      свод['пропорции ' + k] = v.нарушений + ' из ' + v.проверено;
     });
     console.log('%cinstrument · проверка по пикселям', 'font-weight:bold');
     console.table(свод);
@@ -291,7 +441,14 @@ window.kitAudit = (function () {
         console.groupEnd();
       }
     });
+    Object.keys(res.пропорции || {}).forEach(function (k) {
+      if (res.пропорции[k].нарушений) {
+        console.group('пропорции, плотность ' + k);
+        console.table(res.пропорции[k].список);
+        console.groupEnd();
+      }
+    });
   }
 
-  return { run: run, contrast: contrast, targets: targets, rgba: rgba, ratio: ratio };
+  return { run: run, contrast: contrast, targets: targets, proportion: proportion, rgba: rgba, ratio: ratio };
 })();
