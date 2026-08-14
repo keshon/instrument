@@ -36,6 +36,25 @@ var (
 	varUse  = regexp.MustCompile(`var\(\s*(--[a-z][\w-]*)`)
 	dataSel = regexp.MustCompile(`\[data-([a-z-]+)="([^"]+)"\]`)
 
+	// Вычеркнуть из селектора всё, что НЕ является голым именем элемента:
+	// классы, идентификаторы, атрибуты, псевдоклассы вместе со скобками.
+	selStrip = regexp.MustCompile(`::?[a-z-]+(\([^)]*\))?|\.[\w-]+|#[\w-]+|\[[^\]]*\]|[>+~,*]`)
+	selBare  = regexp.MustCompile(`[a-z][a-z0-9]*`)
+
+	// Элементы, которые встречаются в прозе справочника и внутри примеров
+	// одновременно. Список закрытый: правило про <html> или <svg> сюда не
+	// относится, а расширять его наугад значит ловить ложные срабатывания.
+	htmlTags = map[string]bool{
+		"table": true, "thead": true, "tbody": true, "tfoot": true, "tr": true,
+		"th": true, "td": true, "caption": true,
+		"p": true, "ul": true, "ol": true, "li": true, "dl": true, "dt": true, "dd": true,
+		"blockquote": true, "pre": true, "code": true, "kbd": true, "samp": true,
+		"a": true, "img": true, "figure": true, "figcaption": true, "hr": true,
+		"h1": true, "h2": true, "h3": true, "h4": true, "h5": true, "h6": true,
+		"button": true, "input": true, "select": true, "label": true, "fieldset": true,
+		"legend": true, "details": true, "summary": true, "dialog": true,
+	}
+
 	instRe  = regexp.MustCompile(`\binst-[a-z0-9-]+`)
 	linkRe  = regexp.MustCompile(`\]\((\.[^)#]+\.md)(#[^)]*)?\)`)
 	tokRe   = regexp.MustCompile(`--[a-z][\w-]*(?:/[a-z0-9-]+)*`)
@@ -253,6 +272,58 @@ func main() {
 					problems = append(problems, fmt.Sprintf(
 						"%s:%d  справочник переоформляет кит: %q задаёт %s",
 						rel, i+1, strings.TrimSpace(sel), strings.TrimSuffix(prop, ":")))
+					break
+				}
+			}
+		}
+
+		// ── Вторая дверь: ГОЛЫЙ СЕЛЕКТОР ЭЛЕМЕНТА ─────────────────────────
+		//
+		// Проверка выше ищет правила, НАЗЫВАЮЩИЕ имя китового класса. Мимо неё
+		// проходит `.site-body td`, потому что `td` никакого имени не называет,
+		// — и переоформляет при этом каждую таблицу внутри каждого живого
+		// примера, ведь стили сайта лежат вне слоёв и выигрывают у кита.
+		//
+		// Замер: отступ ячейки в примере «Дашборд» оставался 8px во всех трёх
+		// плотностях, хотя --row-pad-y честно ездил 6 → 4 → 12. Плотность на
+		// таблице не работала, а страница обещала обратное.
+		//
+		// Дверь закрывается не внимательностью, а формой записи: правило прозы,
+		// трогающее рисунок, обязано вычесть из себя поддерево примера через
+		// `:not(.demo-stage *)`. Тогда оно физически не достаёт до кита.
+		for i, line := range lines {
+			br := strings.Index(line, "{")
+			if br < 0 {
+				continue
+			}
+			sel := strings.TrimSpace(line[:br])
+			if !strings.HasPrefix(sel, ".site-body") || strings.Contains(sel, ".demo-stage *") {
+				continue
+			}
+			// Голые имена элементов: всё, что осталось после вычёркивания
+			// классов, псевдоклассов, атрибутов и комбинаторов.
+			bare := selBare.FindAllString(selStrip.ReplaceAllString(sel, " "), -1)
+			hit := ""
+			for _, w := range bare {
+				if htmlTags[w] {
+					hit = w
+					break
+				}
+			}
+			if hit == "" {
+				continue
+			}
+			body := line[br:]
+			if !strings.Contains(body, "}") {
+				for j := i + 1; j < len(lines) && !strings.Contains(lines[j], "}"); j++ {
+					body += lines[j]
+				}
+			}
+			for _, prop := range banned {
+				if strings.Contains(body, prop) {
+					problems = append(problems, fmt.Sprintf(
+						"%s:%d  правило прозы достаёт внутрь живого примера: %q задаёт %s элементу <%s>. Добавьте :not(.demo-stage *)",
+						rel, i+1, sel, strings.TrimSuffix(prop, ":"), hit))
 					break
 				}
 			}

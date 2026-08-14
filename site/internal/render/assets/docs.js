@@ -1,28 +1,41 @@
 /* Скрипт сайта документации. В кит не входит.
-   Ровно пять работ: тема, плотность, поиск, копирование и вызов тоста в
-   примере — его нельзя показать разметкой, он заводится вызовом. */
+   Ровно шесть работ: тема, акцент, плотность, поиск, копирование и вызов
+   тоста в примере — его нельзя показать разметкой, он заводится вызовом. */
 
 (() => {
   const root = document.documentElement;
 
-  /* ── Тема и плотность ───────────────────────────────────────────────────
+  /* ── Тема, акцент и плотность ───────────────────────────────────────────
      Сайт переключает их теми же атрибутами, что и любое приложение на ките.
      Это не демонстрация ради демонстрации: если темизация где-то протекает,
-     видно будет здесь первым. */
+     видно будет здесь первым.
 
-  const theme = document.querySelector('[data-theme-picker]');
-  if (theme) {
-    theme.value = localStorage.getItem('instrument-theme') || '';
-    theme.addEventListener('change', () => {
-      if (theme.value) {
-        root.dataset.theme = theme.value;
-        localStorage.setItem('instrument-theme', theme.value);
+     Три ручки ортогональны: 6 тем × 4 акцента × 3 плотности = 72 сочетания,
+     и справочник обязан показывать любое из них. Ровно поэтому переключатели
+     независимы, а не сведены в один список пресетов: пресет скрыл бы, что
+     оси не пересекаются, и первое же протёкшее сочетание нашлось бы у
+     пользователя, а не здесь. */
+
+  /* Атрибут на корне: пустое значение — снять, иначе поставить.
+     Одна функция на тему и акцент, потому что разница между ними ровно в
+     имени атрибута; два одинаковых блока разошлись бы при первой правке. */
+  const knob = (sel, attr, key) => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    el.value = localStorage.getItem(key) || '';
+    el.addEventListener('change', () => {
+      if (el.value) {
+        root.setAttribute(attr, el.value);
+        localStorage.setItem(key, el.value);
       } else {
-        delete root.dataset.theme;
-        localStorage.removeItem('instrument-theme');
+        root.removeAttribute(attr);
+        localStorage.removeItem(key);
       }
     });
-  }
+  };
+
+  knob('[data-theme-picker]', 'data-theme', 'instrument-theme');
+  knob('[data-accent-picker]', 'data-accent', 'instrument-accent');
 
   const density = document.querySelector('[data-density-picker]');
   if (density) {

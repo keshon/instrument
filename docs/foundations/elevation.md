@@ -30,7 +30,7 @@ group-en: "Foundations"
 Глубину передаёт **порядок светлоты**. Тень означает здесь одно — «плавает
 сверху и сейчас исчезнет», — и носителей у неё два: поповер и модалка.
 
-```html preview
+```html preview context
 <div class="inst-panel">
   <div class="inst-panel-header">
     <span class="inst-panel-title">Прогон #4127</span>

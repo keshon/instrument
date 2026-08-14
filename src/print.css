@@ -33,7 +33,7 @@
     --surface-page:    var(--n-1);
     --surface-raised:  var(--n-0);
     --surface-overlay: var(--n-0);
-    --surface-field:   var(--n-1);
+    --surface-field:   var(--surface-raised);
 
     --accent-text: var(--a-5);
     --ok-text:     var(--ok-5);

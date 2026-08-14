@@ -189,12 +189,20 @@
 
 .inst-legend-item { display: flex; align-items: center; gap: var(--space-3); }
 
+/* Умолчание образца — АКЦЕНТ, а не первый категориальный тон.
+
+   Легенда из одной строки подписывает один ряд, а категориальный цвет
+   существует, чтобы РАЗЛИЧАТЬ ряды: различать ему там нечего. Ряд №1 берёт
+   --chart-1 тогда, когда есть ряд №2, и тогда --series проставляется явно —
+   на всех рядах, включая первый.
+
+   Правило общее с самим графиком, см. .inst-sparkline ниже.               */
 .inst-legend-swatch {
   flex: none;
   inline-size: var(--size-dot);
   block-size: var(--size-dot);
   border-radius: var(--radius-xs);
-  background: var(--series, var(--chart-1));
+  background: var(--series, var(--accent-mark));
 }
 
 .inst-legend-value { color: var(--text-primary); font-weight: var(--weight-medium); }
@@ -208,6 +216,21 @@
    заслуживает своего места.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* ОДИН РЯД — НЕ КАТЕГОРИЯ, поэтому умолчание здесь --accent-mark.
+
+   Спарклайн однорядный по определению — его собственная страница отправляет
+   два ряда в график с легендой. Значит, категориальный тон ему не положен
+   никогда: цвет ряда кодирует, КАКОЙ из нескольких, а выбора нет.
+
+   Цена прежнего умолчания мерялась на дашборде кита: спарклайн расхода стоял
+   на --chart-1 (тогда 280°), а мера бюджета в шестидесяти пикселях под ним —
+   на --accent-mark (250°). Два разных синих на одном экране, ровно то
+   соседство, которое кит запрещает для акцента; запрет был написан про
+   --accent-mark против --accent-solid и до категориальной палитры не доставал.
+
+   С ручкой акцента на четыре положения дистанция вообще перестала быть
+   гарантией: глина стоит на 45°, а --chart-4 на 55°. Разделение теперь по
+   ОБЛАСТЯМ, а не по градусам, и умолчание — его первая половина.           */
 .inst-sparkline {
   inline-size: 100%;
   block-size: calc(var(--control-h-md) * 1.25);
@@ -215,7 +238,7 @@
 
   & > .inst-sparkline-line {
     fill: none;
-    stroke: var(--series, var(--chart-1));
+    stroke: var(--series, var(--accent-mark));
     stroke-width: 1.5;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -225,13 +248,13 @@
   /* Заливка под линией — единственный разрешённый в ките градиент, и он не
      градиент: это сплошной тон с альфой.                                  */
   & > .inst-sparkline-area {
-    fill: var(--series, var(--chart-1));
+    fill: var(--series, var(--accent-mark));
     fill-opacity: 0.12;
     stroke: none;
   }
 
   & > .inst-sparkline-last {
-    fill: var(--series, var(--chart-1));
+    fill: var(--series, var(--accent-mark));
     stroke: var(--surface-raised);
     stroke-width: var(--size-marker);
   }

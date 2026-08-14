@@ -11,6 +11,8 @@
   try {
     var t = localStorage.getItem('instrument-theme');
     if (t) document.documentElement.dataset.theme = t;
+    var a = localStorage.getItem('instrument-accent');
+    if (a) document.documentElement.dataset.accent = a;
     var d = localStorage.getItem('instrument-density');
     if (d) document.documentElement.dataset.density = d;
   } catch (e) {}
@@ -124,6 +126,18 @@
               <option value="dark-light">{{ t .Lang "theme.dl" }}</option>
               <option value="dark-soft">{{ t .Lang "theme.ds" }}</option>
               <option value="dark">{{ t .Lang "theme.d" }}</option>
+            </select>
+          </span>
+        </div>
+
+        <div class="site-view-row">
+          <span class="inst-nav-label">{{ t .Lang "accent" }}</span>
+          <span class="inst-select-wrap site-theme">
+            <select class="inst-select inst-select--sm" aria-label="{{ t .Lang "accent.aria" }}" data-accent-picker>
+              <option value="">{{ t .Lang "accent.pe" }}</option>
+              <option value="graphite">{{ t .Lang "accent.gr" }}</option>
+              <option value="indigo">{{ t .Lang "accent.in" }}</option>
+              <option value="clay">{{ t .Lang "accent.cl" }}</option>
             </select>
           </span>
         </div>
