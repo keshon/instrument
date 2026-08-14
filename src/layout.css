@@ -390,15 +390,14 @@
 
 /* Подпись секции — обычное предложение и тише данных, как и заголовок
    панели. Капса здесь нет по той же причине, что и везде.                */
-/* Подпись группы, а не заголовок области. Разные работы, и до сих пор они
-   звучали одинаково: и она, и .inst-panel-title стояли на 13/500 — то есть
-   ярлык над рядом карточек кричал ровно так же, как имя целой панели.
-
-   Теперь у кита три различимых регистра подписи вместо двух одинаковых:
-     имя панели      15/500 основным   — его ищут глазами на дашборде
-     подпись группы  12/400 приглушённым — она обслуживает то, что под ней
-     сами данные     13/400 основным
-   Размер наконец участвует в иерархии, а не только цвет и вес.            */
+/* Подпись группы, а не заголовок области. Разные работы, и звучат они по
+   разному регистру, а не по разному кеглю:
+     имя панели      14/600 основным      — его ищут глазами на дашборде
+     подпись группы  12.5/400 приглушённым — она обслуживает то, что под ней
+     сами данные     14/400 основным
+   Ярлык над рядом карточек тише и мельче имени целой панели, а имя панели
+   отличается от данных весом. Ступень кегля ВВЕРХ не берёт ни один из них:
+   шесть панелей дали бы шесть точек притяжения вместо данных.             */
 .inst-section-title { font-size: var(--text-xs); font-weight: var(--weight-normal); color: var(--text-muted); }
 .inst-section-actions { margin-inline-start: auto; }
 
@@ -473,6 +472,17 @@
      подчёркивание под курсором теперь и есть умолчание base.css. Крошки —
      единственная хромированная часть кита, где ссылка стоит СРЕДИ ТЕКСТА,
      поэтому подчёркивание на наведении ей идёт, а не мешает.              */
+  /* Звено — настоящая цель нажатия. Без своей высоты оно 18px, и вместе с
+     зазором до соседа даёт 21.5 при норме 24: замерено на чужом интерфейсе.
+     Растёт ОБЛАСТЬ, а не кегль — тот же приём, что у флажка и крестика тега:
+     форма кита от доступности не толстеет. */
+  & a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--tap-min);
+  }
+
   & a:hover { color: var(--text-primary); }
   & [aria-current="page"] { color: var(--text-primary); }
 }
@@ -521,6 +531,309 @@
     font-weight: var(--weight-medium);
     border-block-end-color: var(--accent-solid);
   }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Рельс разделов
+
+   Вертикальная навигация одними значками. Не вариант .inst-nav, а свой
+   компонент, и разница не в направлении: у пункта навигации подпись есть
+   ВСЕГДА и она несёт смысл, а рельс опознают по форме глифа. Из этого
+   следует всё остальное — значок крупнее, подпись уходит в подсказку и в
+   aria-label, счётчик садится на глиф, а ширина равна цели нажатия.
+
+   Дыра всплыла на двух разных настоящих интерфейсах.
+
+   Разметка: <nav class="inst-rail"><a class="inst-rail-item" aria-label="…">
+   Подпись ОБЯЗАТЕЛЬНА в aria-label: значок без имени не имеет доступного
+   имени вовсе, и рельс для скринридера становится рядом пустых кнопок.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  /* Ширина ИНТРИНСИК: отступ плюс кнопка. Фиксированный токен здесь был бы
+     третьим числом, которое обязано совпасть с двумя другими, — и он же не
+     реагировал бы на плотность, оставляя кнопку болтаться в широком рельсе. */
+  padding: var(--space-3);
+  background: var(--surface-sunken);
+}
+
+/* Разрыв между группами: то, что внизу (учётная запись, параметры), прижато
+   к низу, а не отбито отступом. */
+.inst-rail-spacer { margin-block-start: auto; }
+
+.inst-rail-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Кнопка КРУПНЕЕ цели нажатия, и это не щедрость. Значок рельса 24px, а
+     --tap-min ровно 24: глиф заполнил бы кнопку целиком, без единого пикселя
+     поля. Поймал гейт пропорций отношением 1.000 при полосе 0.50–0.75.
+     --control-h-lg даёт 0.63 и реагирует на плотность. */
+  inline-size: var(--control-h-lg);
+  block-size: var(--control-h-lg);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+
+  /* Значок без подписи КРУПНЕЕ обычного: он не сопровождает слово, а
+     заменяет его, и меряется против цели нажатия, а не против прописной. */
+  --icon-size: var(--size-icon-lg);
+
+  &:hover { background: var(--surface-hover); color: var(--text-primary); }
+
+  /* Выбранный несёт ДВА носителя: заливку и метку у края. Одной заливки мало
+     — на приглушённой поверхности рельса она едва отличается от наведения, а
+     метка у края видна периферийным зрением и не спорит с глифом. Тот же
+     --size-marker и то же место, что у текущего пункта навигации. */
+  &[aria-current]:not([aria-current="false"]) {
+    background: var(--surface-selected);
+    color: var(--accent-text);
+  }
+
+  &[aria-current]:not([aria-current="false"])::before {
+    content: "";
+    position: absolute;
+    inset-block: var(--space-2);
+    inset-inline-start: calc(var(--space-3) * -1);
+    inline-size: var(--size-marker);
+    background: var(--accent-mark);
+  }
+}
+
+/* Счётчик садится в угол глифа и наружу от него: изнутри он закрыл бы форму,
+   по которой раздел и опознают. */
+.inst-rail-count {
+  position: absolute;
+  inset-block-end: calc(var(--space-1) * -1);
+  inset-inline-end: calc(var(--space-2) * -1);
+  pointer-events: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Строка состояния
+
+   Полоса высотой В СТРОКУ с группами по краям: ветка и ошибки слева, режим
+   и кодировка справа. Тулбар сюда не годится и не должен: он держит КОНТРОЛЫ
+   и потому высок (--control-h-*), а здесь стоят показания, которые читают, а
+   не нажимают, — хотя нажать почти каждое можно.
+
+   Дыра всплыла на двух разных настоящих интерфейсах.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-statusbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-3);
+  /* Высота набирается кеглем и отступом, а не --control-h-*: полоса обязана
+     остаться в строку, иначе она съедает низ экрана у инструмента, ради
+     которого экран и открыт. */
+  min-block-size: calc(var(--control-h-xs) + var(--space-2));
+  background: var(--surface-sunken);
+  border-block-start: var(--hairline) solid var(--border-subtle);
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
+}
+
+.inst-statusbar-end { margin-inline-start: auto; display: flex; align-items: center; gap: var(--space-2); }
+
+.inst-statusbar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-2);
+  /* Область до нормы, форма прежняя — полоса от доступности не толстеет. */
+  min-block-size: var(--control-h-xs);
+  border-radius: var(--radius-xs);
+  color: inherit;
+  white-space: nowrap;
+  text-decoration: none;
+
+  /* Значок в полосе мельче обычного: кегль здесь --text-2xs, и мера значка
+     считается против ЕГО прописной, а не против базовой. */
+  --icon-size: var(--size-icon-sm);
+}
+
+/* Нажимаемое показание отзывается, нечитаемое молчит: у <span> ховера нет. */
+.inst-statusbar-item:is(button, a):hover { background: var(--surface-hover); color: var(--text-primary); }
+
+.inst-statusbar-item[data-tone] { color: var(--tone-ink); }
+
+/* ── Вкладки-чипы ───────────────────────────────────────────────────────────
+
+   Второй вид вкладки, и он не украшение, а другая работа.
+
+   Вкладка-полоса переключает РАЗДЕЛ: разделов немного, они заданы заранее и не
+   закрываются. Вкладка-чип держит ОТКРЫТЫЙ ДОКУМЕНТ: их сколько угодно, они
+   появляются и закрываются по ходу дела, у каждой есть свой значок и своё
+   состояние «не сохранено».
+
+   Полоса под таким рядом перестаёт работать: она рисует одну линию под всеми,
+   и на двадцати вкладках выбранную приходится искать. Заливка выбранной
+   читается сразу и на любой длине ряда.
+
+   Дыра всплыла на двух разных настоящих интерфейсах.                        */
+
+.inst-tabs--chips {
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border-block-end: none;
+
+  & > .inst-tab {
+    /* ЧИП ЦЕЛИКОМ, а не приклеенный к низу. Скруглены только верхние углы
+       плюс метка снизу — это вкладка-полоса, переодетая в заливку; чип не
+       прирастает к содержимому, он ЛЕЖИТ на полосе. Скругление берётся у
+       контрола: чип и есть контрол, и в плотном режиме скругляется слабее.
+
+       Высота — из лестницы контролов, а не из отступа. Отступ по вертикали
+       набирал 8 сверху и 8 снизу поверх строки, и ряд вкладок выходил выше
+       кнопки рядом: чип читался кирпичом, а не контролом. */
+    position: relative;
+    min-block-size: var(--control-h-sm);
+    padding-block: 0;
+    padding-inline: var(--pad-panel);
+    margin-block-end: 0;
+    border-block-end: none;
+    border-radius: var(--radius-control-md);
+
+    /* Фон чипа объявлен переменной: под него подмешивается градиент, которым
+       текст уходит под крестик, и градиенту нужно знать, к какому цвету
+       сходиться. */
+    --tab-bg: var(--surface-raised);
+  }
+
+  & > .inst-tab:hover { background: var(--surface-hover); }
+
+  /* Выбранный берёт МЯГКУЮ обратную поверхность: тёмную в светлой теме,
+     светлую в тёмной. Приподнятая не работает — ряд лежит на той же
+     приподнятой, и выбранный отличался бы на шаг светлоты, то есть почти
+     ничем. Полная инверсия работает слишком: она для подсказки, которая
+     мелькнула, а вкладка стоит всё время.
+
+     Носителей по-прежнему два и ни один не цвет: поверхность и начертание. */
+  & > .inst-tab[aria-selected="true"],
+  & > .inst-tab[aria-current]:not([aria-current="false"]) {
+    --tab-bg: var(--surface-inverse-soft);
+    background: var(--tab-bg);
+    color: var(--text-on-inverse);
+  }
+
+  /* ── Крестик как оверлей ────────────────────────────────────────────────
+
+     В потоке крестик отнимал бы у подписи место постоянно, хотя нужен он
+     редко: имя файла читают всё время, закрывают вкладку один раз. Поэтому он
+     всплывает у дальнего края поверх подписи и только под курсором.
+
+     Подпись при этом не обрывается на полуслове — под крестиком лежит
+     градиент к фону чипа, и она уходит в него. Отсюда и --tab-bg: градиенту
+     нужен цвет, к которому сходиться, а он у выбранного и обычного разный.  */
+  & > .inst-tab::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: calc(var(--control-h-xs) + var(--space-6));
+    border-radius: inherit;
+    background: linear-gradient(to left, var(--tab-bg) 60%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-1) var(--ease-out);
+  }
+
+  & > .inst-tab > .inst-tab-close {
+    position: absolute;
+    inset-inline-end: var(--space-2);
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity var(--dur-1) var(--ease-out);
+  }
+
+  /* Показывается вместе с градиентом — и под курсором, и с клавиатуры:
+     невидимая кнопка, до которой доехал Tab, это ловушка. */
+  & > .inst-tab:hover::after,
+  & > .inst-tab:focus-within::after { opacity: 1; }
+
+  & > .inst-tab:hover > .inst-tab-close,
+  & > .inst-tab:focus-within > .inst-tab-close,
+  & > .inst-tab[data-state="modified"] > .inst-tab-close { opacity: 1; }
+
+  /* Несохранённое — состояние, а не действие: точка видна всегда, и место под
+     неё РЕЗЕРВИРУЕТСЯ. Без резерва она вставала поверх последних букв имени, а
+     градиент под ней прятал их насовсем: под курсором так и задумано — там
+     оверлей и уходит он вместе с курсором, — но постоянное состояние не имеет
+     права постоянно съедать имя файла, ради которого вкладка существует. */
+  & > .inst-tab[data-state="modified"] {
+    padding-inline-end: calc(var(--pad-panel) + var(--control-h-xs));
+  }
+
+  & > .inst-tab[aria-selected="true"] > .inst-tab-close,
+  & > .inst-tab[aria-current]:not([aria-current="false"]) > .inst-tab-close {
+    color: inherit;
+    &:hover { background: var(--surface-hover); }
+  }
+}
+
+/* Крестик — НАСТОЯЩАЯ кнопка внутри вкладки, а не глиф на ней: закрывают
+   вкладку с клавиатуры, и цель нажатия у крестика своя.
+
+   Область растёт невидимым ::before до --tap-min, форма остаётся мелкой —
+   тот же приём, что у крестика тега.                                       */
+.inst-tab-close {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* КВАДРАТ с полем вокруг глифа, а не глиф размером с себя. Крестик в 10px
+     это цель в 10px и заливка наведения размером с сам знак — по такой не
+     видно, что навёл, и попасть в неё трудно. Коробка берётся из лестницы
+     контролов, глиф внутри остаётся служебным. */
+  inline-size: var(--control-h-xs);
+  block-size: var(--control-h-xs);
+  --icon-size: var(--size-chevron);
+  border-radius: var(--radius-2xs);
+  color: var(--text-muted);
+  cursor: pointer;
+
+  /* Область до нормы WCAG растёт невидимым ::before: форма от доступности не
+     толстеет — тот же приём, что у крестика тега. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    translate: -50% -50%;
+    inline-size: var(--tap-min);
+    block-size: var(--tap-min);
+  }
+
+  &:hover { background: var(--surface-active); color: var(--text-primary); }
+}
+
+/* Несохранённое: на месте крестика точка, пока по нему не навели. Состояние
+   живёт на вкладке атрибутом, потому что меняется в течение её жизни. */
+.inst-tab[data-state="modified"] > .inst-tab-close {
+  color: var(--accent-mark);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inline-size: var(--size-dot);
+    block-size: var(--size-dot);
+    border-radius: var(--radius-full);
+    background: currentColor;
+  }
+
+  & > .inst-icon { visibility: hidden; }
+  &:hover > .inst-icon { visibility: visible; }
+  &:hover::after { content: none; }
 }
 
 /* ── Постраничная навигация ─────────────────────────────────────────────── */

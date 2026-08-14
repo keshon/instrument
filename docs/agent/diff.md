@@ -5,6 +5,7 @@ layout: component
 source: src/agent.css
 api:
   - { name: "inst-diff", kind: "класс", doc: "Контейнер" }
+  - { name: "inst-diff--flush", kind: "модификатор", doc: "Без рамки и радиуса: диф занимает панель целиком, и своя рамка легла бы второй линией поверх её границы" }
   - { name: "inst-diff-head", kind: "класс", doc: "Шапка: путь и статистика" }
   - { name: "inst-diff-path", kind: "класс", doc: "Путь к файлу. Обрезается с конца" }
   - { name: "inst-diff-stat", kind: "класс", doc: "`+N` / `−M`" }

@@ -8,6 +8,7 @@ api:
   - { name: "inst-accordion-item", kind: "класс", doc: "Секция. Рамка, радиус, `overflow: hidden`" }
   - { name: "inst-accordion-head", kind: "класс", doc: "Заголовок. Высота от `--control-h-lg`, шеврон у дальнего края" }
   - { name: "inst-accordion-body", kind: "класс", doc: "Содержимое" }
+  - { name: "inst-accordion-item--flush", kind: "модификатор", doc: "Секция ВНУТРИ чужой рамки: панели, карточки, поля примера. Своей рамки и радиуса нет, остаётся шов сверху" }
   - { name: "--space-1", kind: "токен" }
   - { name: "--space-3", kind: "токен" }
   - { name: "--pad-cell-x", kind: "токен" }
@@ -102,6 +103,27 @@ group-en: "Feedback"
 Волосок под заголовком появляется **только у открытой секции**
 (`.inst-accordion-item[open] > .inst-accordion-head`): у закрытой отделять
 нечего.
+
+### Внутри чужой рамки
+
+Раскрывашка часто стоит не сама по себе, а внизу панели или карточки: «ещё
+поля», «разметка», «журнал». Своя рамка была бы там второй в пикселе от первой,
+а своё скругление — скруглением внутри скругления, ни с чем не концентричным.
+
+```html preview context
+<div class="inst-panel" style="inline-size:26rem">
+  <div class="inst-panel-header"><span class="inst-panel-title">Прогон 4127</span></div>
+  <div class="inst-panel-body">Собран за 4,2 с. Тестов 318, упавших нет.</div>
+  <details class="inst-accordion-item inst-accordion-item--flush">
+    <summary class="inst-accordion-head">Параметры сборки</summary>
+    <div class="inst-accordion-body">Ветка master, коммит d7c9cd3, кэш включён.</div>
+  </details>
+</div>
+```
+
+Остаётся один шов сверху: секция **продолжает** то, под чем стоит, а не
+объявляет себя отдельным блоком. Контейнер `.inst-accordion` при этом не нужен
+— секция здесь одна и живёт в чужой стопке.
 
 ## Поведение
 

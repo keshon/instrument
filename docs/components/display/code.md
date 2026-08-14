@@ -6,8 +6,12 @@ source: src/components.css
 js: Копирование в буфер — делает кит
 api:
   - { name: "inst-code", kind: "класс", doc: "Блок кода. Прокручивается по горизонтали" }
+  - { name: "inst-code--numbered", kind: "модификатор", doc: "Листинг с колонкой номеров строк" }
+  - { name: "inst-code-line", kind: "класс", doc: "Строка листинга. Только внутри `--numbered`" }
+  - { name: "inst-code-num", kind: "класс", doc: "Номер. `--text-muted`, потому что его читают. Не выделяется мышью" }
+  - { name: "inst-code-src", kind: "класс", doc: "Сам код. Единственное место, где живёт `overflow-wrap: anywhere`" }
   - { name: "inst-copyable", kind: "класс", doc: "Однострочное значение с кнопкой" }
-  - { name: "inst-copy", kind: "класс", doc: "Кнопка копирования. Работу выполняет [kit.js](../../foundations/behavior.md)" }
+  - { name: "inst-copy", kind: "класс", doc: "Кнопка копирования. Работу выполняет [kit.js](../../foundations/behavior.md). Внутри `.inst-code` встаёт в дальний верхний угол сама" }
   - { name: "data-copy", kind: "атрибут", doc: "Копировать это значение, а не текст блока" }
   - { name: "data-copied-label", kind: "атрибут", doc: "Своя фраза для скринридера вместо «Скопировано»" }
   - { name: "data-failed-label", kind: "атрибут", doc: "То же для неудачи. По умолчанию «Не удалось скопировать»" }
@@ -27,8 +31,19 @@ group-en: "Data display"
 Блок кода и однострочное значение, которое хочется скопировать: путь, хеш,
 идентификатор.
 
+Страница про оба: первый показывают, второй забирают.
+
 ```html preview
-<div class="inst-code">go -C tools run ./cmd/contrast</div>
+<div class="inst-code">go -C tools run ./cmd/contrast
+  <button class="inst-copy" type="button" aria-label="Скопировать команду">
+    <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
+  </button>
+</div>
+<span class="inst-copyable">a4f7c2e91b0d5537
+  <button class="inst-copy" type="button" aria-label="Скопировать a4f7c2e91b0d5537">
+    <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
+  </button>
+</span>
 ```
 
 ## Использование

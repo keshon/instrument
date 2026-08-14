@@ -12,3 +12,4 @@ site/dist/
 # Скомпилированный генератор
 site/site
 site/site.exe
+/_prototype

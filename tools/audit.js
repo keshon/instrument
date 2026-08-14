@@ -328,6 +328,13 @@ window.kitAudit = (function () {
     var icons = root0.querySelectorAll('.inst-icon');
     for (var j = 0; j < icons.length; j++) {
       var ic = icons[j];
+      /* Служебный глиф в эту меру не попадает. .inst-icon--sm — это размер
+         ШЕВРОНА (--size-chevron), и он обязан быть мельче прописной: он не
+         содержимое строки, а указатель на раскрытие. Своя полоса у него уже
+         есть в текстовом гейте (cmd/proportion, «шеврон к базе кегля»), и
+         мерить его здесь второй, чужой мерой значит выдавать верную работу за
+         нарушение. */
+      if (ic.classList.contains('inst-icon--sm')) continue;
       var host = ic.parentElement;
       if (!host) continue;
       var hostText = '';

@@ -41,8 +41,8 @@ group-en: "Agent layer"
     <li data-tone="error">chunks.bin — удаление</li>
   </ul>
   <div class="inst-approval-actions">
-    <button class="inst-btn inst-btn--primary" type="button">Разрешить</button>
-    <button class="inst-btn" type="button">Отклонить</button>
+    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Разрешить</button>
+    <button class="inst-btn inst-btn--sm" type="button">Отклонить</button>
   </div>
 </div>
 ```
@@ -87,8 +87,8 @@ group-en: "Agent layer"
   <div class="inst-approval-head">Требуется подтверждение</div>
   <div class="inst-approval-what">Записать 4 файла</div>
   <div class="inst-approval-actions">
-    <button class="inst-btn inst-btn--primary" type="button">Разрешить</button>
-    <button class="inst-btn" type="button">Отклонить</button>
+    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Разрешить</button>
+    <button class="inst-btn inst-btn--sm" type="button">Отклонить</button>
   </div>
 </div>
 <div class="inst-approval" data-state="approved" role="group" aria-label="Разрешено">
@@ -165,7 +165,7 @@ block.addEventListener('click', async (e) => {
     <li>Пересборка займёт около 40 с</li>
   </ul>
   <div class="inst-approval-actions">
-    <button class="inst-btn inst-btn--primary inst-btn--sm" type="button">Разрешить</button>
+    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Разрешить</button>
     <button class="inst-btn inst-btn--sm" type="button">Отклонить</button>
     <button class="inst-btn inst-btn--ghost inst-btn--sm" type="button">Разрешать всегда</button>
   </div>

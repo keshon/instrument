@@ -6,6 +6,7 @@ source: src/components.css
 js: Ленивая подгрузка детей — слой приложения. Стрелки, раскрытие и бегущий tabindex делает кит
 api:
   - { name: "inst-tree", kind: "класс", doc: "Контейнер" }
+  - { name: "inst-tree--guides", kind: "модификатор", doc: "Вертикальные направляющие вложенности. Нужны от четырёх уровней; на двух были бы шумом" }
   - { name: "inst-tree-item", kind: "класс", doc: "Узел" }
   - { name: "inst-tree-twist", kind: "класс", doc: "Треугольник раскрытия. Поворачивается по `aria-expanded`" }
   - { name: "aria-expanded", kind: "атрибут", doc: "`true` · `false`. Только у узлов с детьми" }

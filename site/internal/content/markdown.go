@@ -124,6 +124,7 @@ type codeRenderer struct {
 	heroOpen   bool
 	sectionOn  bool
 	heroDemoOn bool
+	section    string // id открытого раздела: ссылкам «Связанного» нужен свой класс
 	ids        map[string]int
 }
 
@@ -144,6 +145,7 @@ func (r *codeRenderer) uniq(id string) string {
 func (r *codeRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindFencedCodeBlock, r.render)
 	reg.Register(ast.KindHeading, r.heading)
+	reg.Register(ast.KindLink, r.link)
 }
 
 func (r *codeRenderer) heading(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
@@ -189,10 +191,35 @@ func (r *codeRenderer) heading(w util.BufWriter, source []byte, n ast.Node, ente
 	fmt.Fprintf(w, `<section class="doc-s" id="%s" data-section="%s"><h2 class="doc-s-title">`,
 		escape(id), escape(id))
 	r.sectionOn = true
+	r.section = id
 	if known {
 		w.WriteString(escape(title))
 		return ast.WalkSkipChildren, nil
 	}
+	return ast.WalkContinue, nil
+}
+
+// Ссылка «Связанного» — КИТОВАЯ КНОПКА, а не своя плашка сайта.
+//
+// Раздел показывает ряд переходов, и раньше сайт рисовал их сам: высота,
+// отступ, рамка, радиус — всё то, что уже умеет .inst-btn на <a>. Справочник,
+// который вокруг чужих компонентов рисует свои, показывает не то, что раздаёт.
+// В остальных разделах ссылка остаётся ссылкой: там она внутри предложения.
+func (r *codeRenderer) link(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+	n := node.(*ast.Link)
+	if !entering {
+		w.WriteString(`</a>`)
+		return ast.WalkContinue, nil
+	}
+	cls := ""
+	if r.section == "related" {
+		cls = ` class="inst-btn inst-btn--sm"`
+	}
+	title := ""
+	if len(n.Title) > 0 {
+		title = fmt.Sprintf(` title="%s"`, escape(string(n.Title)))
+	}
+	fmt.Fprintf(w, `<a%s href="%s"%s>`, cls, escape(string(n.Destination)), title)
 	return ast.WalkContinue, nil
 }
 
@@ -348,11 +375,15 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 		// из токенов, а тема кита работает на любом поддереве. Второй
 		// переключатель у каждого из двухсот примеров был лишней дорогой к
 		// тому же результату.
-		fmt.Fprintf(w, `<figure class="demo%s" data-demo>`+
-			`<figcaption class="demo-bar">`+
-			`<span class="demo-label">%s</span>`+
+		// Рама примера собрана КИТОМ, а не своими стилями сайта. Справочник,
+		// который рисует свою рамку вокруг чужого компонента, показывает не
+		// то, что раздаёт: панель с шапкой, телом и раскрывающимся низом у
+		// кита есть, и повод писать её заново отсутствует.
+		fmt.Fprintf(w, `<figure class="inst-panel demo%s" data-demo>`+
+			`<figcaption class="inst-panel-header demo-bar">`+
+			`<span class="inst-panel-title">%s</span>`+
 			`</figcaption>`+
-			`<div class="demo-stage inst-theme">`+
+			`<div class="inst-panel-body demo-stage inst-theme">`+
 			`<div class="demo-root%s">%s</div></div>`,
 			hero, label, ctxClass(ctx), raw)
 		writeCode(w, raw, lang, true, lg)
@@ -366,7 +397,8 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 
 func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
 	if inDemo {
-		fmt.Fprintf(w, `<details class="demo-code"><summary class="demo-code-head">%s</summary>`,
+		fmt.Fprintf(w, `<details class="inst-accordion-item inst-accordion-item--flush demo-code">`+
+			`<summary class="inst-accordion-head">%s</summary>`,
 			i18n.T(lg, "demo.markup"))
 	}
 	cls := "code-block"

@@ -27,8 +27,8 @@ group-en: "Charts"
 
 ```html preview
 <svg class="inst-sparkline" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">
-  <path class="inst-sparkline-area" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6 120,32 0,32Z"/>
-  <path class="inst-sparkline-line" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6"/>
+  <path class="inst-sparkline-area" d="M0,27 5,24 10,26 15,21 20,23 25,18 30,20 35,14 40,17 45,11 50,15 55,9 60,13 65,6 70,10 75,5 80,12 85,8 90,11 95,4 100,7 105,3 110,6 115,4 120,2 120,32 0,32Z"/>
+  <path class="inst-sparkline-line" d="M0,27 5,24 10,26 15,21 20,23 25,18 30,20 35,14 40,17 45,11 50,15 55,9 60,13 65,6 70,10 75,5 80,12 85,8 90,11 95,4 100,7 105,3 110,6 115,4 120,2"/>
 </svg>
 ```
 
@@ -39,7 +39,7 @@ group-en: "Charts"
 
 ```html
 <svg class="inst-sparkline" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">
-  <path class="inst-sparkline-line" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6"/>
+  <path class="inst-sparkline-line" d="M0,27 5,24 10,26 15,21 20,23 25,18 30,20 35,14 40,17 45,11 50,15 55,9 60,13 65,6 70,10 75,5 80,12 85,8 90,11 95,4 100,7 105,3 110,6 115,4 120,2"/>
 </svg>
 ```
 
@@ -74,8 +74,8 @@ group-en: "Charts"
 
 ```html preview
 <svg class="inst-sparkline" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">
-  <path class="inst-sparkline-area" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6 120,32 0,32Z"/>
-  <path class="inst-sparkline-line" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6"/>
+  <path class="inst-sparkline-area" d="M0,27 5,24 10,26 15,21 20,23 25,18 30,20 35,14 40,17 45,11 50,15 55,9 60,13 65,6 70,10 75,5 80,12 85,8 90,11 95,4 100,7 105,3 110,6 115,4 120,2 120,32 0,32Z"/>
+  <path class="inst-sparkline-line" d="M0,27 5,24 10,26 15,21 20,23 25,18 30,20 35,14 40,17 45,11 50,15 55,9 60,13 65,6 70,10 75,5 80,12 85,8 90,11 95,4 100,7 105,3 110,6 115,4 120,2"/>
   <circle class="inst-sparkline-last" cx="120" cy="6" r="2.5"/>
 </svg>
 ```
@@ -121,8 +121,8 @@ group-en: "Charts"
   <div class="inst-metric-label">Токенов в сутки</div>
   <div class="inst-metric-value">184<span class="inst-metric-unit">&nbsp;тыс.</span></div>
   <svg class="inst-sparkline" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">
-    <path class="inst-sparkline-area" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6 120,32 0,32Z"/>
-    <path class="inst-sparkline-line" d="M0,26 12,22 24,24 36,16 48,18 60,10 72,13 84,7 96,9 108,4 120,6"/>
+    <path class="inst-sparkline-area" d="M0,27 5,24 10,26 15,21 20,23 25,18 30,20 35,14 40,17 45,11 50,15 55,9 60,13 65,6 70,10 75,5 80,12 85,8 90,11 95,4 100,7 105,3 110,6 115,4 120,2 120,32 0,32Z"/>
+    <path class="inst-sparkline-line" d="M0,27 5,24 10,26 15,21 20,23 25,18 30,20 35,14 40,17 45,11 50,15 55,9 60,13 65,6 70,10 75,5 80,12 85,8 90,11 95,4 100,7 105,3 110,6 115,4 120,2"/>
   </svg>
   <div class="inst-metric-label">За 11 суток</div>
 </div>

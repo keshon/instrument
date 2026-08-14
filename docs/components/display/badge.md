@@ -5,6 +5,8 @@ layout: component
 source: src/components.css
 api:
   - { name: "inst-badge", kind: "класс", doc: "Базовый" }
+  - { name: "inst-badge--outline", kind: "модификатор", doc: "Тон несёт рамка, заливки нет. Для ряда, где бейдж стоит рядом со значками и плашка тяжелее всего ряда" }
+  - { name: "inst-badge--count", kind: "модификатор", doc: "Круглый счётчик-накладка на значок: без горизонтального отступа, сплошная заливка акцентом" }
   - { name: "inst-dot", kind: "класс", doc: "Точка состояния внутри. Наследует тон от бейджа" }
   - { name: "inst-nav-count", kind: "класс", doc: "Модификатор положения для счётчика в навигации" }
   - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт" }
@@ -30,6 +32,9 @@ group-en: "Data display"
 <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
 <span class="inst-badge" data-tone="warn"><span class="inst-dot"></span>с замечаниями</span>
 <span class="inst-badge" data-tone="error"><span class="inst-dot"></span>упало</span>
+
+<span class="inst-badge inst-badge--outline" data-tone="ok">New</span>
+<span class="inst-badge inst-badge--outline" data-tone="warn">beta</span>
 ```
 
 ## Использование

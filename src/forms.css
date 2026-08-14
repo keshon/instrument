@@ -27,7 +27,7 @@
   min-block-size: var(--control-h-md);
   padding-inline: var(--control-pad-sm);
   border: var(--hairline) solid var(--border-control);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control-md);
   background: var(--surface-field);
   color: var(--text-primary);
   font-size: var(--text-sm);
@@ -74,8 +74,8 @@
    Меняются высота и кегль, но не горизонтальный отступ: у поля текст
    прижат к краю, а не отцентрован, поэтому отступу незачем расти вместе
    с высотой — так же, как у базового размера.                            */
-.inst-input--sm, .inst-select--sm { min-block-size: var(--control-h-sm); font-size: var(--text-xs); }
-.inst-input--lg, .inst-select--lg { min-block-size: var(--control-h-lg); font-size: var(--text-md); }
+.inst-input--sm, .inst-select--sm { min-block-size: var(--control-h-sm); border-radius: var(--radius-control-sm); font-size: var(--text-xs); }
+.inst-input--lg, .inst-select--lg { min-block-size: var(--control-h-lg); border-radius: var(--radius-control-lg); font-size: var(--text-md); }
 
 .inst-textarea {
   min-block-size: calc(var(--control-h-md) * 2.5);
@@ -88,7 +88,7 @@
    «текстовое поле — это два с половиной контрола высотой», и в каждом
    размере считается от своей высоты контрола. Кегль идёт за полем, иначе
    textarea рядом с input --sm набран крупнее соседа.                      */
-.inst-textarea--sm { min-block-size: calc(var(--control-h-sm) * 2.5); font-size: var(--text-xs); }
+.inst-textarea--sm { min-block-size: calc(var(--control-h-sm) * 2.5); border-radius: var(--radius-control-sm); font-size: var(--text-xs); }
 .inst-textarea--lg { min-block-size: calc(var(--control-h-lg) * 2.5); font-size: var(--text-md); }
 
 /* Селект требует обёртки, и это осознанная плата. Шеврон рисуется маской
@@ -490,7 +490,21 @@
   margin-block-start: var(--pad-panel);
   padding-block: var(--pad-panel);
   border-block-start: var(--hairline) solid var(--border);
-  background: var(--form-actions-bg, var(--surface-page));
+
+  /* ЗАЛИВКИ ПО УМОЛЧАНИЮ НЕТ, и это не экономия, а следствие геометрии.
+
+     Кнопки полосы обязаны стоять по одной вертикали с полями над ними —
+     иначе форма читается двумя колонками. Значит бокового отступа у полосы
+     быть не может, значит заливка кончается ровно на краю первой кнопки:
+     кнопка упирается в границу собственного фона, и полоса выглядит
+     обрезанной по ней.
+
+     Дотянуться до краёв полоса может, только зная поле родителя, — и в этом
+     единственном случае заливка появляется (см. правило для тела панели
+     ниже). Там же она и нужна: заливка держит дно у ПРОКРУЧИВАЕМОЙ области,
+     чтобы под полосой не просвечивало проезжающее содержимое. У формы, стоящей
+     в потоке страницы, прокручивать нечего, и черты сверху достаточно.    */
+  background: var(--form-actions-bg, none);
 }
 
 /* Внутри панели полоса обязана ГАСИТЬ её внутренний отступ по бокам и снизу,
@@ -500,7 +514,11 @@
 
    Заодно здесь же правильный фон: внутри панели это её поверхность, а не
    поверхность страницы.                                                   */
-.inst-panel-body > .inst-form-actions {
+/* Форма-обёртка отступа не приносит, поэтому полоса внутри неё дотягивается
+   до тех же краёв: <form class="inst-form"> в теле панели — разметка обычная,
+   и терять на ней дно полосе не за что. */
+.inst-panel-body > .inst-form-actions,
+.inst-panel-body > .inst-form > .inst-form-actions {
   --form-actions-bg: var(--surface-raised);
   margin-inline: calc(var(--panel-body-pad, var(--pad-panel)) * -1);
   margin-block-end: calc(var(--panel-body-pad, var(--pad-panel)) * -1);
@@ -523,7 +541,7 @@
   align-items: stretch;
   min-block-size: var(--control-h-md);
   border: var(--hairline) solid var(--border-control);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control-md);
   background: var(--surface-field);
   overflow: hidden;
 

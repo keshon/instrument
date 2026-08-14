@@ -271,7 +271,7 @@ group-en: "Foundations"
 | Группа | Токены |
 |---|---|
 | Шкала | `--space-1` … `--space-10` (2 · 4 · 6 · 8 · 12 · 16 · 24 · 32 · 48 · 64) |
-| Радиусы | `--radius-xs` 3 · `--radius-sm` 5 · `--radius-md` 7 · `--radius-lg` 11 · `--radius-full` |
+| Радиусы | `--radius-2xs` 2 · `--radius-xs` 4 · `--radius-sm` 6 · `--radius-md` 8 · `--radius-lg` 12 · `--radius-full`. У контролов — `--radius-control-sm/md/lg`, они едут за плотностью |
 | Линии | `--hairline` (0.5px от 1.5dppx, иначе 1px) · `--stroke` 1px |
 
 ### Движение
