@@ -98,6 +98,10 @@ func main() {
 		// того, на какой системе его собрали: git отдаёт исходники с CRLF на
 		// Windows, и -check не совпадал сам с собой.
 		b = bytes.ReplaceAll(b, []byte("\r\n"), []byte("\n"))
+		if err := checkBraces(name, b); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 		// Импорт в слой вкладывает ВСЁ содержимое файла — ровно это и
 		// воспроизводится блоком. Иначе слои разъехались бы, а порядок слоёв
 		// у кита несёт смысл: motion и print обязаны перебивать компоненты.
@@ -281,6 +285,92 @@ func lastByte(b *strings.Builder) byte {
 		return 0
 	}
 	return s[len(s)-1]
+}
+
+// checkBraces сверяет баланс фигурных скобок в файле кита.
+//
+// Импорт в слой вкладывает файл в блок `@layer X { ... }`, поэтому лишняя `}`
+// закрывает не правило, а сам слой: остаток файла — и всё, что импортировано в
+// тот же слой следом, — оказывается ВНЕ слоёв. Неслойное правило выигрывает у
+// любого слоя, то есть у таких компонентов перестают работать переопределения
+// приложения, prefers-reduced-motion, @media print и forced-colors.
+//
+// В src/ через @import баг не виден: лишняя скобка на верхнем уровне —
+// синтаксическая ошибка, браузер её отбрасывает, а слой назначает импорт.
+// Сравнение dist/ с src/ его тоже не видит: скобка одинаково стоит в обоих.
+// Поэтому проверка идёт по исходнику и до сборки.
+//
+// Строки, комментарии и url(...) без кавычек пропускаются: внутри масок из
+// data-URI скобки — часть рисунка, а не структуры.
+func checkBraces(name string, css []byte) error {
+	s := string(css)
+	line := 1
+	depth := 0
+	openLine := 0 // строка последней незакрытой «{»
+
+	var quote byte
+	inURL := false
+
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c == '\n' {
+			line++
+		}
+
+		switch {
+		case quote != 0:
+			if c == '\\' && i+1 < len(s) {
+				i++
+			} else if c == quote {
+				quote = 0
+			}
+		case inURL:
+			if c == ')' {
+				inURL = false
+			}
+		case c == '"' || c == '\'':
+			quote = c
+		case c == '/' && i+1 < len(s) && s[i+1] == '*':
+			end := strings.Index(s[i+2:], "*/")
+			if end < 0 {
+				return fmt.Errorf("%s:%d: комментарий не закрыт", name, line)
+			}
+			line += strings.Count(s[i:i+2+end+2], "\n")
+			i += 2 + end + 1
+		case c == '(' && i >= 3 && strings.EqualFold(s[i-3:i], "url"):
+			j := i + 1
+			for j < len(s) && (s[j] == ' ' || s[j] == '\t' || s[j] == '\n') {
+				j++
+			}
+			if j < len(s) && s[j] != '"' && s[j] != '\'' {
+				inURL = true
+			}
+		case c == '{':
+			if depth == 0 {
+				openLine = line
+			}
+			depth++
+		case c == '}':
+			depth--
+			if depth < 0 {
+				return fmt.Errorf(
+					"%s:%d: лишняя «}».\n"+
+						"Файл вкладывается в блок @layer, поэтому она закроет слой, а не правило:\n"+
+						"остаток файла окажется вне слоёв и начнёт выигрывать у стилей приложения,\n"+
+						"prefers-reduced-motion и @media print.",
+					name, line)
+			}
+		}
+	}
+
+	if depth > 0 {
+		return fmt.Errorf("%s: не закрыто блоков: %d, первый открыт на строке %d",
+			name, depth, openLine)
+	}
+	if quote != 0 {
+		return fmt.Errorf("%s: строка не закрыта", name)
+	}
+	return nil
 }
 
 // checkPkgVersion сверяет версию в package.json с VERSION.
