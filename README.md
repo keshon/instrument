@@ -23,7 +23,7 @@ npm i @keshon/instrument
 ```
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.6.0/dist/instrument.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.6.1/dist/instrument.min.css">
 ```
 
 Версию в адресе указывайте точно: `@latest` кэшируется на неделю и может

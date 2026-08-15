@@ -1,4 +1,4 @@
-/*! instrument 0.6.0 — https://github.com/keshon/instrument
+/*! instrument 0.6.1 — https://github.com/keshon/instrument
     Собран из src/. Правится ИСХОДНИК, а не этот файл. */
 @layer kit.tokens, kit.base, kit.layout, kit.components, kit.overlay, kit.agent, kit.motion, kit.print;
 
