@@ -293,7 +293,9 @@ group-en: "Blocks"
   <form method="dialog">
     <div class="inst-dialog-head">
       <span class="inst-dialog-title">Параметры</span>
-      <button class="inst-btn inst-btn--sm inst-btn--ghost inst-dialog-close" type="submit" aria-label="Закрыть">✕</button>
+      <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon inst-dialog-close" type="submit" aria-label="Закрыть">
+        <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
     </div>
     <div class="inst-dialog-body">
       <form class="inst-form inst-form--side">

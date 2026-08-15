@@ -13,7 +13,9 @@ api:
   - { name: "inst-dialog-foot", kind: "класс", doc: "Подвал с действиями" }
   - { name: "inst-dialog-foot-note", kind: "класс", doc: "Пояснение, отжимающее кнопки к дальнему краю" }
   - { name: "inst-sheet", kind: "класс", doc: "Другая раскладка того же `<dialog>` — [шторка](./sheet.md)" }
-  - { name: "inst-dialog-foot--end", kind: "модификатор", doc: "Действия у дальнего края" }
+  - { name: "inst-dialog-sub", kind: "класс", doc: "Подпись под заголовком: чего диалог хочет, если из заголовка это не следует целиком" }
+  - { name: "inst-dialog-foot--start", kind: "модификатор", doc: "Действия у ближнего края. Умолчание — дальний" }
+  - { name: "inst-dialog--scroll", kind: "модификатор", doc: "Тело прокручивается: возвращает линейки под шапкой и над подвалом" }
   - { name: "--surface-overlay", kind: "токен" }
   - { name: "--shadow-modal", kind: "токен" }
   - { name: "--scrim", kind: "токен" }
@@ -46,7 +48,9 @@ group-en: "Overlays"
   <form method="dialog">
     <div class="inst-dialog-head">
       <span class="inst-dialog-title">Удалить прогон #4127?</span>
-      <button class="inst-btn inst-btn--sm inst-btn--ghost inst-dialog-close" type="submit" aria-label="Закрыть">✕</button>
+      <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon inst-dialog-close" type="submit" aria-label="Закрыть">
+        <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
     </div>
     <div class="inst-dialog-body inst-stack">
       <p>Будут удалены лог, артефакты и диф. Ссылки на прогон в отчётах перестанут открываться.</p>
@@ -71,10 +75,12 @@ group-en: "Overlays"
   <form method="dialog">
     <div class="inst-dialog-head">
       <span class="inst-dialog-title">Заголовок</span>
-      <button class="inst-btn inst-btn--sm inst-btn--ghost inst-dialog-close" type="submit" aria-label="Закрыть">✕</button>
+      <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon inst-dialog-close" type="submit" aria-label="Закрыть">
+        <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
     </div>
     <div class="inst-dialog-body">…</div>
-    <div class="inst-dialog-foot inst-dialog-foot--end">
+    <div class="inst-dialog-foot">
       <button class="inst-btn" type="submit">Закрыть</button>
     </div>
   </form>
@@ -107,7 +113,7 @@ group-en: "Overlays"
 | `inst-dialog-close` | Крестик. Прижимается к дальнему краю шапки |
 | `inst-dialog-body` | Тело. Единственная прокручиваемая часть |
 | `inst-dialog-foot` | Подвал с действиями |
-| `inst-dialog-foot--end` | Действия у дальнего края |
+| `inst-dialog-foot--start` | Действия у ближнего края. Умолчание — дальний |
 | `inst-dialog-foot-note` | Пояснение у ближнего края, отжимающее кнопки к дальнему |
 
 Шапка и подвал не сжимаются (`flex: none`), прокручивается только тело. Из-за

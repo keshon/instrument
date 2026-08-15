@@ -613,7 +613,7 @@
   --radius-xs: 4px;   /* инлайн: бейджи, образцы, торцы полос */
   --radius-sm: 6px;   /* контролы внутри карточки */
   --radius-md: 8px;   /* отдельно стоящие контролы */
-  --radius-lg: 12px;  /* карточки, панели */
+  --radius-lg: 12px;  /* карточки, панели, модалка */
   --radius-full: 999px;
 
   /* ══ Движение ════════════════════════════════════════════════════════════
@@ -3439,6 +3439,65 @@ hr {
   & .inst-num { text-align: end; white-space: nowrap; }
 }
 
+/* Ячейка-плитка: каждое значение в своей коробке, между коробками просвет.
+
+   Линейка отделяет строку от строки и ничего не говорит про КОЛОНКУ: на
+   пятнадцати колонках глаз, идущий вправо, теряет и строку, и границу
+   значения. Плитка держит и то и другое сразу — у каждого значения свой
+   контур, и ряд читается как ряд плиток, а не как поле с линейками.
+
+   Шапка плиткой НЕ становится: она не значение, а имя колонки, и коробка
+   вокруг имени сделала бы её равной данным.
+
+   border-collapse: separate обязателен — в схлопнутой модели соседи делят
+   одну границу, и просвета между ними не существует.                      */
+.inst-table--cells {
+  border-collapse: separate;
+  border-spacing: var(--space-1);
+  /* Просвет ложится и по внешнему краю: отрицательное поле возвращает
+     таблицу на место, иначе она стоит с отступом, которого никто не объявлял. */
+  margin: calc(var(--space-1) * -1);
+
+  & th {
+    background: none;
+    border-block-end: none;
+  }
+
+  & td {
+    background: var(--surface-sunken);
+    border-block-end: none;
+    border-radius: var(--radius-xs);
+  }
+
+  & tbody tr:hover td { background: var(--surface-hover); }
+  & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
+}
+}
+
+/* Полосатый вариант: строку держит ЗАЛИВКА, а не линейка.
+
+   Линейка под каждой строкой работает, пока колонок пять. На пятнадцати глаз
+   уезжает по вертикали между колонками, и линейка ему не помогает: она
+   отделяет строку от соседа, но не показывает, ГДЕ ты внутри строки. Заливка
+   через одну показывает — она тянется на всю ширину и никуда не девается при
+   горизонтальной прокрутке.
+
+   ВМЕСТО линеек, а не вместе с ними: заливка и линейка на одной строке дают
+   решётку, то есть ровно то, от чего кит уходит.
+
+   Красится ярусом поверхностей, а не тенью и не рамкой: полоса — это
+   поверхность, и заводить ей шестой смысл серого незачем.                 */
+.inst-table--zebra {
+  & td { border-block-end: none; }
+  & tbody tr:nth-child(even) td { background: var(--surface-sunken); }
+
+  /* Наведение и выбор повторены здесь намеренно: под чётной строкой уже лежит
+     заливка полосы, и без повтора она перебивала бы их порядком в файле —
+     состояние проиграло бы оформлению. */
+  & tbody tr:hover td { background: var(--surface-hover); }
+  & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
+}
+
 /* Липкая шапка — опция, а не умолчание: в нескроллящемся контексте sticky
    прилипал бы к вьюпорту, что на длинной странице неожиданно.            */
 .inst-table--sticky thead th {
@@ -5692,6 +5751,19 @@ hr {
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-dialog {
+  /* Поле листа — СВОЁ, и живёт оно на компоненте, а не в ярусе ролей.
+
+     Ступенью выше карточки: лист висит над всем экраном и держит один вопрос,
+     карточка стоит в ряду таких же и экономит место соседям. Пробовал поднять
+     саму роль --pad-card — она держит ещё карточку выбора, обведённый
+     фильдсет, зону перетаскивания и блоки согласия, и раздувать их всех ради
+     диалога значит чинить не там.
+
+     За плотностью не едет намеренно, по той же причине, что --tap-min и
+     --label-col: плотность про то, сколько строк влезет в список, а лист
+     показывает один вопрос — сжимать его не за чем.                       */
+  --dialog-pad: var(--space-7);
+
   margin: auto;
   padding: 0;
   inline-size: min(34rem, 100vw - var(--space-8));
@@ -5741,36 +5813,81 @@ hr {
    без единого класса кита.                                                 */
 html:has(dialog:modal) { overflow: hidden; }
 
+/* Модалка — ОДНА ПОВЕРХНОСТЬ, а не три этажа с перекрытиями.
+
+   Линейки под шапкой и над подвалом делят лист на три коробки, и на коротком
+   диалоге — а короткий он почти всегда, потому что задаёт один вопрос — это
+   три коробки вокруг двух строчек текста. Лист начинает выглядеть окном
+   приложения, тогда как он спрашивает и закрывается.
+
+   Работу линеек берёт на себя отступ: он один и тот же у шапки, тела и
+   подвала, поэтому лист читается как лист.
+
+   Линейка остаётся нужной ровно в одном случае — когда тело ПРОКРУЧИВАЕТСЯ и
+   содержимое уезжает под шапку. Для него есть --scroll, и он объявлен явно,
+   а не выведен из длины: длину CSS не знает.                              */
 .inst-dialog-head {
-  display: flex;
-  align-items: center;
-  gap: var(--gap-inline);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-2) var(--gap-inline);
   flex: none;
-  padding: var(--pad-panel) var(--pad-card);
-  border-block-end: var(--hairline) solid var(--border-subtle);
+  padding: var(--dialog-pad) var(--dialog-pad) var(--space-4);
 }
 
-.inst-dialog-title { font-size: var(--text-md); font-weight: var(--weight-medium); }
-.inst-dialog-close { margin-inline-start: auto; }
+.inst-dialog-title {
+  grid-area: 1 / 1;
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-ui);
+}
+
+/* Подпись под заголовком: чего диалог хочет, если из заголовка это не следует
+   целиком. Тише и мельче — она обслуживает вопрос, а не задаёт его. */
+.inst-dialog-sub {
+  grid-area: 2 / 1;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-ui);
+}
+
+/* Крестик прижат к своему углу и не растягивает шапку: он в отдельной
+   колонке, а не в конце строки заголовка. */
+.inst-dialog-close { grid-area: 1 / 2; margin-inline-start: 0; }
 
 .inst-dialog-body {
   flex: 1;
   min-block-size: 0;
   overflow: auto;
-  padding: var(--pad-card);
+  padding: 0 var(--dialog-pad);
 }
 
 .inst-dialog-foot {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: end;
   gap: var(--space-3);
   flex: none;
-  padding: var(--pad-panel) var(--pad-card);
-  border-block-start: var(--hairline) solid var(--border-subtle);
+  /* Подвал прижат к правому краю по умолчанию: главное действие диалога стоит
+     последним, и искать его в середине листа неоткуда. */
+  justify-content: flex-end;
+  padding: var(--dialog-pad);
 }
 
-.inst-dialog-foot--end { justify-content: flex-end; }
+/* Прокручиваемое тело — единственный случай, когда линейки нужны: без них
+   содержимое уезжает под шапку и выныривает из-под подвала без границы. */
+.inst-dialog--scroll {
+  & > form > .inst-dialog-head, & > .inst-dialog-head {
+    border-block-end: var(--hairline) solid var(--border-subtle);
+    padding-block-end: var(--dialog-pad);
+  }
+  & > form > .inst-dialog-body, & > .inst-dialog-body { padding-block: var(--dialog-pad); }
+  & > form > .inst-dialog-foot, & > .inst-dialog-foot {
+    border-block-start: var(--hairline) solid var(--border-subtle);
+  }
+}
+
+.inst-dialog-foot--start { justify-content: flex-start; }
 .inst-dialog-foot-note { margin-inline-end: auto; font-size: var(--text-xs); color: var(--text-muted); }
 
 /* ── Шторка ─────────────────────────────────────────────────────────────────

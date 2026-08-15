@@ -31,7 +31,9 @@ group-en: "Overlays"
   <form method="dialog">
     <div class="inst-dialog-head">
       <span class="inst-dialog-title">Параметры прогона</span>
-      <button class="inst-btn inst-btn--sm inst-btn--ghost inst-dialog-close" type="submit" aria-label="Закрыть">✕</button>
+      <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon inst-dialog-close" type="submit" aria-label="Закрыть">
+        <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
     </div>
     <div class="inst-dialog-body">
       <dl class="inst-kv">
@@ -41,7 +43,7 @@ group-en: "Overlays"
         <dt>Начат</dt><dd>19:38:04</dd>
       </dl>
     </div>
-    <div class="inst-dialog-foot inst-dialog-foot--end">
+    <div class="inst-dialog-foot">
       <button class="inst-btn" type="submit">Закрыть</button>
     </div>
   </form>
@@ -58,7 +60,7 @@ group-en: "Overlays"
   <form method="dialog">
     <div class="inst-dialog-head">…</div>
     <div class="inst-dialog-body">…</div>
-    <div class="inst-dialog-foot inst-dialog-foot--end">…</div>
+    <div class="inst-dialog-foot">…</div>
   </form>
 </dialog>
 ```
@@ -85,7 +87,7 @@ group-en: "Overlays"
 
 Все части — от [модалки](./dialog.md): `inst-dialog-head`,
 `inst-dialog-title`, `inst-dialog-close`, `inst-dialog-body`,
-`inst-dialog-foot`, `inst-dialog-foot--end`, `inst-dialog-foot-note`.
+`inst-dialog-foot`, `inst-dialog-foot--start`, `inst-dialog-foot-note`.
 
 Модификатор меняет раскладку:
 

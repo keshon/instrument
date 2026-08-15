@@ -458,6 +458,22 @@ var (
 	commentRe = regexp.MustCompile(`(?s)&lt;!--.*?--&gt;|/\*.*?\*/`)
 	cssPropRe = regexp.MustCompile(`(?m)^(\s*)([a-z-]+):`)
 	cssVarRe  = regexp.MustCompile(`(--[a-z][\w-]*)`)
+
+	// Строка и ключевое слово ловятся ОДНИМ проходом, а не двумя.
+	//
+	// Двумя нельзя: что бы ни красилось первым, второй проход зайдёт внутрь
+	// уже покрашенного и покрасит `const` внутри строки или имя класса внутри
+	// подписи. Чередование в одном регулярном выражении разбирает строку
+	// слева направо, и внутренность строки для второй ветки просто не
+	// существует — она уже съедена первой.
+	jsRe = regexp.MustCompile("(&#34;[^&\n]*&#34;|'[^'\n]*'|`[^`\n]*`)|" +
+		`\b(await|async|case|catch|class|const|continue|default|delete|else|export|extends|` +
+		`false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return|switch|` +
+		`this|throw|true|try|typeof|undefined|var|void|while|yield)\b`)
+
+	// Только полная строка-комментарий. `//` посреди строки — это чаще всего
+	// адрес: в `https://` первый же проход съел бы половину примера.
+	jsLineRe = regexp.MustCompile(`(?m)^(\s*)(//.*)$`)
 )
 
 func highlight(raw, lang string) string {
@@ -469,6 +485,14 @@ func highlight(raw, lang string) string {
 	case "css":
 		s = cssPropRe.ReplaceAllString(s, `$1<b class="t-attr">$2</b>:`)
 		s = cssVarRe.ReplaceAllString(s, `<b class="t-val">$1</b>`)
+	case "js", "javascript", "json":
+		s = jsRe.ReplaceAllStringFunc(s, func(m string) string {
+			if strings.HasPrefix(m, "&#34;") || strings.HasPrefix(m, "'") || strings.HasPrefix(m, "`") {
+				return `<b class="t-val">` + m + `</b>`
+			}
+			return `<b class="t-tag">` + m + `</b>`
+		})
+		s = jsLineRe.ReplaceAllString(s, `$1<i class="t-com">$2</i>`)
 	}
 	return commentRe.ReplaceAllString(s, `<i class="t-com">$0</i>`)
 }
@@ -529,6 +553,9 @@ func writeIcons(w util.BufWriter) {
 	}
 	w.WriteString(`</div>`)
 
+	// Символы страниц справочника в каталог не идут: они принадлежат сайту, в
+	// поставку кита не входят, и место им не здесь. Названы числом, чтобы читатель
+	// видел, что файл спрайта больше того, что кит раздаёт.
 	fmt.Fprintf(w, `<p class="icon-note">Плюс %d символов страниц справочника `+
 		`(<code>i-p-*</code>) — они принадлежат сайту, а не киту.</p>`, len(pages))
 }

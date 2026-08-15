@@ -11,6 +11,8 @@ api:
   - { name: "inst-col-select", kind: "класс", doc: "Колонка чекбоксов, ширина по контролу" }
   - { name: "inst-col-actions", kind: "класс", doc: "Колонка действий, ширина по содержимому" }
   - { name: "inst-row-actions", kind: "класс", doc: "Обёртка действий: проявляется на наведении и фокусе" }
+  - { name: "inst-table--cells", kind: "модификатор", doc: "Ячейка-плитка: каждое значение в своей коробке, между коробками просвет" }
+  - { name: "inst-table--zebra", kind: "модификатор", doc: "Полосы вместо линеек. Для широкой таблицы: на пятнадцати колонках линейка не показывает, ГДЕ ты внутри строки" }
   - { name: "inst-table--sticky", kind: "модификатор", doc: "Липкая шапка" }
   - { name: "inst-table--sticky-col", kind: "модификатор", doc: "Липкая первая колонка" }
   - { name: "aria-sort", kind: "атрибут", value: "ascending · descending", doc: "на `<th>`" }
@@ -299,6 +301,54 @@ table.addEventListener('inst:selectall', (e) => {
   </div>
 </div>
 ```
+
+### Ячейка-плитка
+
+```html preview
+<table class="inst-table inst-table--cells">
+  <thead><tr><th>Прогон</th><th>Ветка</th><th>Модель</th><th class="inst-num">Токенов</th></tr></thead>
+  <tbody>
+    <tr><td>nightly-4127</td><td>main</td><td>opus</td><td class="inst-num">186 000</td></tr>
+    <tr><td>audio-pass</td><td>fix/mixdown</td><td>sonnet</td><td class="inst-num">42 300</td></tr>
+    <tr><td>biomes-04</td><td>main</td><td>opus</td><td class="inst-num">98 700</td></tr>
+  </tbody>
+</table>
+```
+
+Линейка отделяет строку от строки и ничего не говорит про **колонку**: на
+пятнадцати колонках глаз, идущий вправо, теряет и строку, и границу значения.
+Плитка держит и то и другое сразу — у каждого значения своя коробка.
+
+Шапка плиткой не становится: она не значение, а имя колонки, и коробка вокруг
+имени сделала бы её равной данным.
+
+### Полосы вместо линеек
+
+```html preview
+<table class="inst-table inst-table--zebra">
+  <thead><tr><th>Прогон</th><th>Ветка</th><th>Модель</th><th class="inst-num">Токенов</th><th class="inst-num">Время</th></tr></thead>
+  <tbody>
+    <tr><td>nightly-4127</td><td>main</td><td>opus</td><td class="inst-num">186 000</td><td class="inst-num">21 с</td></tr>
+    <tr><td>audio-pass</td><td>fix/mixdown</td><td>sonnet</td><td class="inst-num">42 300</td><td class="inst-num">4,2 с</td></tr>
+    <tr><td>biomes-04</td><td>main</td><td>opus</td><td class="inst-num">98 700</td><td class="inst-num">11,5 с</td></tr>
+    <tr><td>terrain-88</td><td>main</td><td>sonnet</td><td class="inst-num">150 400</td><td class="inst-num">18,2 с</td></tr>
+  </tbody>
+</table>
+```
+
+Линейка под каждой строкой работает, пока колонок пять. На пятнадцати она
+отделяет строку от соседа, но не показывает, **где вы внутри строки**, — глаз
+уезжает по вертикали, пока идёт вправо. Заливка через одну показывает: она
+тянется на всю ширину и не пропадает при горизонтальной прокрутке.
+
+Вместе с линейками её ставить нельзя: два разделителя на одной границе дают
+решётку. Поэтому вариант линейки **снимает**, а не дополняет.
+
+| Берите полосы | Берите линейки |
+|---|---|
+| Колонок больше семи, таблицу прокручивают вбок | Колонок до пяти, строка видна целиком |
+| Строки читают целиком, слева направо | Строки сравнивают между собой по одной колонке |
+| Таблица длинная и стоит на своей поверхности | Таблица короткая и лежит внутри карточки |
 
 ## Правила
 

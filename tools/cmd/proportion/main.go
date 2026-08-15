@@ -163,13 +163,13 @@ var absolutes = []absCheck{
 		return true, fmt.Sprintf("--text-2xs = %.2fpx", got)
 	}},
 	{"радиусы чётные", func(v func(string) float64) (bool, string) {
-		for _, n := range []string{"--radius-xs", "--radius-sm", "--radius-md", "--radius-lg"} {
+		for _, n := range []string{"--radius-2xs", "--radius-xs", "--radius-sm", "--radius-md", "--radius-lg"} {
 			r := v(n)
 			if int(r)%2 != 0 || r != float64(int(r)) {
 				return false, fmt.Sprintf("%s = %g: нечётный радиус даёт половину устройственного пикселя при плотности 1.5, и дуга стыкуется с гранью мимо сетки", n, r)
 			}
 		}
-		return true, "4 · 6 · 8 · 12"
+		return true, "2 · 4 · 6 · 8 · 12"
 	}},
 	{"лестница радиусов растёт", func(v func(string) float64) (bool, string) {
 		xs, sm, md, lg := v("--radius-xs"), v("--radius-sm"), v("--radius-md"), v("--radius-lg")
