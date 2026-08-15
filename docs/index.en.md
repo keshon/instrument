@@ -3,42 +3,50 @@ title: instrument
 template: splash
 ---
 
-A CSS kit for interfaces that show a human what a machine is doing: task
+A CSS library for interfaces that show a human what a machine is doing: task
 queues, runs, logs, inspectors, states and uncertainty.
+
+No build step, no dependencies, one link tag.
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.6.0/dist/instrument.min.css">
+```
+
+Or from npm: `npm i @keshon/instrument`.
 
 ## Who it is for
 
 Dashboards, admin panels and agent tooling — screens where **data** is the
-point, where people sit for hours, and where the machine works while the
-human watches.
+point, where people sit for hours, and where the machine works while the human
+watches.
 
-It has what general-purpose kits do not: a task queue, a step with a body, an
-approval request, a failure block, a diff, parallel run lanes, a log with
-columns, a budget and a tree.
+It covers what general-purpose kits usually leave out: a task queue, a step
+with a body, an approval request, a failure block, a diff, parallel run lanes,
+a log with columns, a budget and a tree.
 
-**What it is not for.** Landing pages, shops, content sites. The kit is
-deliberately quiet: no gradients, no glows, no shadows on cards, no bold
-weights. An all-caps heading is forbidden by a rule, not missing by oversight.
+**What it is not for.** Landing pages, shops, content sites. Visual effects are
+limited: no gradients, no glows, no shadows on cards, no bold weights. All-caps
+headings are forbidden by a rule.
 
-## Three things that are usually not done
+## Features
 
-**Contrast is checked by machine.** 504 colour pairs against WCAG thresholds
-across six themes. The tool reads the real `tokens.css` and resolves `var()`,
-`light-dark()` and `color-mix()` the way a browser does, so it cannot drift
-from the kit.
+**Six themes, four accents, three densities** — three independent axes, all set
+through markup attributes. Density is declared on a container, not picked as a
+component variant: one attribute on a panel retunes everything inside it.
 
-**Tap targets are checked by machine too.** 51 targets across all three
-densities, including the spacing exception — otherwise compact density would
-be a violation by construction.
+**Contrast is checked by machine.** 2208 token pairs against WCAG thresholds
+across every theme and accent. The tool reads the real `tokens.css` and
+resolves `var()`, `light-dark()` and `color-mix()` the way a browser does. What
+those tokens add up to on screen — after nesting and translucent layers — is
+measured by a separate pixel audit you run on your own application.
+
+**Tap targets are checked too.** 54 checks across all three densities,
+including the WCAG 2.2 spacing exception.
 
 **Reduced motion does not switch indicators off.** Transitions collapse, but
-infinite activity indicators **slow down rather than stop**: a kit whose whole
-job is showing that a machine is busy must keep showing it. An infinite
-animation squeezed to 0.01ms is not a shorter animation, it is a stopped one.
-
-**Density is a container attribute, not a component variant.** One attribute
-on a panel retunes everything inside it, because components carry no numbers
-of their own.
+infinite activity indicators slow down instead of stopping: an animation
+squeezed to 0.01ms is a stopped animation, and a stopped indicator reports that
+work has halted.
 
 ## Install
 
@@ -46,27 +54,31 @@ of their own.
 <link rel="stylesheet" href="dist/instrument.min.css">
 ```
 
-82 KB, one request, 14 KB gzipped. Keyboard behaviour is a separate file and
+97 KB, one request, 16 KB gzipped. Keyboard behaviour is a separate file and
 optional:
 
 ```html
 <script type="module" src="dist/instrument.js"></script>
 ```
 
-No build step. `instrument.css` declares the layer order, and that order is
-what guarantees application styles always win — without `!important`.
+Icons need the sprite inlined in the document: `<use href="#i-close">` is
+subject to the same-origin rule, so a link to an external sprite file renders
+nothing and reports no error. Inline `assets/sprite.svg` (99 symbols) as the
+first element of `<body>`.
+
+The kit lives entirely in cascade layers and your styles do not, so any rule of
+yours wins without `!important`.
 
 ## Requirements
 
 Chrome 123+ · Safari 17.5+ · Firefox 120+ — for `light-dark()`, `oklch()`,
-cascade layers, nesting, `:has()` and the `lh` unit. There are no polyfills
-and there will not be.
+cascade layers, nesting, `:has()` and the `lh` unit. There are no polyfills.
 
 ## Translation
 
-The documentation is written in Russian and translated page by page. A page
-without its own translation shows the Russian text with a notice rather than
-a 404 — otherwise translating seventy-five pages would be all-or-nothing.
+The documentation is written in Russian. This page is currently the only
+translated one; a page without its own translation shows the Russian text with
+a notice rather than a 404.
 
-**The API reference is the same in both languages**: class, token and
-attribute names were English from the start.
+**The API reference is the same in both languages**: class, token and attribute
+names were English from the start.

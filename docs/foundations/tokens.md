@@ -233,13 +233,13 @@ group-en: "Foundations"
 | `--size-thumb` | 14px |
 | `--size-track` | 4px |
 | `--size-meter` | 6px |
-| `--size-spinner` | 13px |
+| `--size-spinner` | 14px |
 | `--size-icon` | 16px |
 | `--size-chevron` | 10px |
 | `--size-marker` | 2px |
 | `--size-gutter` | 14px |
 | `--size-indent` | 14px |
-| `--label-col` | 92px |
+| `--label-col` | 104px |
 
 ### Раскладка
 
@@ -302,9 +302,9 @@ group-en: "Foundations"
 | Атрибут | `color-scheme` | `--hue-neutral` | Ещё |
 |---|---|---|---|
 | нет | по системе | 75 | |
-| `data-theme="light-neutral"` | `light` | — | `--tint: 0` — уклон выключен |
-| `data-theme="light"` | `light` | 75 | |
-| `data-theme="light-cool"` | `light` | 250 | |
+| `data-theme="light-neutral"` | `light` | 75 | `--tint: 0` — умолчание, чистый серый |
+| `data-theme="light"` | `light` | 75 | `--tint: 2` — тёплая |
+| `data-theme="light-cool"` | `light` | 250 | `--tint: 2` — холодная |
 | `data-theme="dark-light"` | `dark` | 75 | Стопка на две ступени вверх, плюс подписи статусов и дорожка |
 | `data-theme="dark-soft"` | `dark` | 75 | Переопределены `--surface-sunken` `--surface-page` `--surface-raised` `--surface-overlay` `--surface-field` |
 | `data-theme="dark"` | `dark` | 75 | |
@@ -334,7 +334,7 @@ group-en: "Foundations"
 ## API
 
 Перечисляет генератор, читая `src/tokens.css`. Список не пишется руками и
-потому не может отстать от кита.
+потому не может отстать от исходников.
 
 ```api
 ```

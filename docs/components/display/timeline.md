@@ -82,7 +82,7 @@ group-en: "Data display"
 
 ## Варианты
 
-Точка берёт тот же `data-tone`, что и весь кит.
+Точка берёт тот же `data-tone`, что и вся библиотека.
 
 ```html preview
 <div class="inst-timeline">
