@@ -9,7 +9,7 @@ queues, runs, logs, inspectors, states and uncertainty.
 No build step, no dependencies, one link tag.
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.6.1/dist/instrument.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.6.2/dist/instrument.min.css">
 ```
 
 Or from npm: `npm i @keshon/instrument`.

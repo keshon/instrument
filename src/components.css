@@ -1085,7 +1085,6 @@
   & tbody tr:hover td { background: var(--surface-hover); }
   & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
 }
-}
 
 /* Полосатый вариант: строку держит ЗАЛИВКА, а не линейка.
 

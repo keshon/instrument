@@ -130,7 +130,7 @@ go -C tools run ./cmd/dist          # пересобрать поставку
 go -C tools run ./cmd/dist -check   # и сверить её с src/
 
 # 2. тег: по нему jsDelivr отдаёт файл прямо из GitHub, без npm
-git tag v0.6.1 && git push --tags
+git tag v0.6.2 && git push --tags
 
 # 3. реестр
 npm publish
