@@ -1,0 +1,53 @@
+{
+  "name": "@keshon/instrument",
+  "version": "0.6.0",
+  "description": "CSS-кит для интерфейсов, которые показывают человеку работу машины: очереди задач, прогоны, логи, инспекторы, состояния и неопределённость",
+  "keywords": [
+    "css",
+    "design-system",
+    "ui-kit",
+    "dashboard",
+    "agent",
+    "design-tokens",
+    "oklch",
+    "cascade-layers",
+    "no-build",
+    "accessibility"
+  ],
+  "license": "MIT",
+  "author": "Innokentiy Sokolov",
+  "homepage": "https://instrument.keshon.ru",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keshon/instrument.git"
+  },
+  "bugs": {
+    "url": "https://github.com/keshon/instrument/issues"
+  },
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": "./dist/instrument.css",
+    "./min": "./dist/instrument.min.css",
+    "./js": "./dist/instrument.js",
+    "./sprite.svg": "./assets/sprite.svg",
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "style": "dist/instrument.css",
+  "files": [
+    "dist",
+    "src",
+    "assets",
+    "VERSION",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -17,6 +17,8 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -47,6 +49,18 @@ func main() {
 			os.Exit(1)
 		}
 		ver = strings.TrimSpace(string(b))
+	}
+
+	// Версия объявлена ДВАЖДЫ: в VERSION и в package.json. Разойтись им нечем
+	// — кроме забывчивости, а она случается ровно в момент выпуска.
+	//
+	// Цена расхождения не косметическая: шапка dist/ печатает VERSION, а npm
+	// публикует package.json, и в реестр уезжает пакет, внутри которого
+	// написана другая версия. Дальше это не отследить: файл на CDN лежит с
+	// одним номером, а комментарий внутри него называет другой.
+	if err := checkPkgVersion(filepath.Dir(*src), ver); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 
 	entry, err := os.ReadFile(filepath.Join(*src, "kit.css"))
@@ -267,6 +281,36 @@ func lastByte(b *strings.Builder) byte {
 		return 0
 	}
 	return s[len(s)-1]
+}
+
+// checkPkgVersion сверяет версию в package.json с VERSION.
+//
+// Отсутствие package.json — не ошибка: кит работает файлом и без реестра, и
+// репозиторий, из которого его берут ссылкой, package.json не обязан иметь.
+// А вот РАСХОЖДЕНИЕ — ошибка, и молчаливая: она видна только после публикации.
+func checkPkgVersion(root, ver string) error {
+	b, err := os.ReadFile(filepath.Join(root, "package.json"))
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("не прочитать package.json: %w", err)
+	}
+
+	var pkg struct {
+		Version string `json:"version"`
+	}
+	if err := json.Unmarshal(b, &pkg); err != nil {
+		return fmt.Errorf("package.json не разбирается: %w", err)
+	}
+	if pkg.Version != ver {
+		return fmt.Errorf(
+			"версии разошлись: VERSION = %s, package.json = %s.\n"+
+				"В шапке dist/ печатается первая, а в реестр уезжает вторая —\n"+
+				"на CDN окажется файл, который называет сам себя не так, как пакет вокруг него.",
+			ver, pkg.Version)
+	}
+	return nil
 }
 
 // isDrop — символы, рядом с которыми пробел не значит ничего.
