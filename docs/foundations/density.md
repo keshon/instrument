@@ -93,7 +93,7 @@ group-en: "Foundations"
 | `--pad-panel` | `--space-4` | `--space-5` | `--space-6` |
 | `--pad-card` | `--space-5` | `--space-6` | `--space-7` |
 | `--pad-cell-x` | `--space-3` | `--space-4` | `--space-5` |
-| `--row-pad-y` | `--space-2` | `--space-3` | `--space-5` |
+| `--row-pad-y` | `--space-2` | `--space-3` | `--space-4` |
 | `--gap-row` | `--space-2` | `--space-3` | `--space-4` |
 | `--gap-inline` | `--space-3` | `--space-4` | `--space-5` |
 
