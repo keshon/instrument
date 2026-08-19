@@ -68,7 +68,7 @@ strong, b { font-weight: var(--weight-medium); }
   font-size: var(--text-md);
   line-height: var(--leading-prose);
   font-variant-numeric: proportional-nums;
-  max-inline-size: 68ch;
+  max-inline-size: var(--measure);
 
   & p { text-wrap: pretty; }
   & > * + * { margin-block-start: var(--space-5); }

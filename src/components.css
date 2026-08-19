@@ -1784,7 +1784,10 @@
   &:not([data-tone])::before { content: none; }
 }
 
-.inst-banner-body { min-inline-size: 0; }
+/* Мера обрезает ТЕЛО, а не сам баннер: подложка сообщения уровня страницы
+   обязана идти во всю ширину, а текст на ней — нет. Без этого на широком
+   дашборде строка доходила до 105 знаков при норме 45–75. */
+.inst-banner-body { min-inline-size: 0; max-inline-size: var(--measure); }
 .inst-banner-title { font-weight: var(--weight-medium); }
 .inst-banner-text { color: var(--text-secondary); }
 .inst-banner-actions { flex: none; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }

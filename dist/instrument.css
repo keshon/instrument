@@ -616,6 +616,18 @@
   --leading-ui:    1.4;   /* переносящиеся подписи, ячейки таблиц */
   --leading-prose: 1.65;  /* проза */
 
+  /* МЕРА — предельная длина строки, которую глаз проходит, не теряя начала
+     следующей. Классическая норма 45–75 знаков; 68 стоит у верхнего края,
+     потому что интерфейсные описания короткие и переносятся редко.
+
+     Роль, а не литерал: до этого 68ch было вписано в двух местах руками, и
+     каждое следующее место выбирало число заново. Замерено, во что это
+     обходится: тело баннера на широком контейнере доходило до 105 знаков.
+
+     Единица ch, а не пиксели, — иначе мера разъезжается с кеглем на каждой
+     из пяти ступеней масштаба.                                            */
+  --measure: 68ch;
+
   /* Трекинг: отрицательный на крупном, нулевой на мелком. Оптическая
      коррекция, не стиль — крупный кегль по умолчанию выглядит разреженным. */
   --tracking-tight: -0.01em;
@@ -1903,7 +1915,7 @@ strong, b { font-weight: var(--weight-medium); }
   font-size: var(--text-md);
   line-height: var(--leading-prose);
   font-variant-numeric: proportional-nums;
-  max-inline-size: 68ch;
+  max-inline-size: var(--measure);
 
   & p { text-wrap: pretty; }
   & > * + * { margin-block-start: var(--space-5); }
@@ -2482,7 +2494,7 @@ hr {
 }
 
 .inst-page-title { font-size: var(--text-xl); }
-.inst-page-desc { font-size: var(--text-sm); line-height: var(--leading-ui); color: var(--text-secondary); max-inline-size: 68ch; }
+.inst-page-desc { font-size: var(--text-sm); line-height: var(--leading-ui); color: var(--text-secondary); max-inline-size: var(--measure); }
 .inst-page-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
 
 .inst-section {
@@ -4857,7 +4869,10 @@ hr {
   &:not([data-tone])::before { content: none; }
 }
 
-.inst-banner-body { min-inline-size: 0; }
+/* Мера обрезает ТЕЛО, а не сам баннер: подложка сообщения уровня страницы
+   обязана идти во всю ширину, а текст на ней — нет. Без этого на широком
+   дашборде строка доходила до 105 знаков при норме 45–75. */
+.inst-banner-body { min-inline-size: 0; max-inline-size: var(--measure); }
 .inst-banner-title { font-weight: var(--weight-medium); }
 .inst-banner-text { color: var(--text-secondary); }
 .inst-banner-actions { flex: none; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }

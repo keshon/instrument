@@ -373,7 +373,7 @@
 }
 
 .inst-page-title { font-size: var(--text-xl); }
-.inst-page-desc { font-size: var(--text-sm); line-height: var(--leading-ui); color: var(--text-secondary); max-inline-size: 68ch; }
+.inst-page-desc { font-size: var(--text-sm); line-height: var(--leading-ui); color: var(--text-secondary); max-inline-size: var(--measure); }
 .inst-page-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
 
 .inst-section {
