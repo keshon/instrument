@@ -1,54 +1,92 @@
 /* Скрипт сайта документации. В кит не входит.
-   Ровно шесть работ: тема, акцент, плотность, поиск, копирование и вызов
-   тоста в примере — его нельзя показать разметкой, он заводится вызовом. */
+   Ровно семь работ: тема, акцент, масштаб, плотность, поиск, копирование и
+   вызов тоста в примере — его нельзя показать разметкой, он заводится
+   вызовом. */
 
 (() => {
   const root = document.documentElement;
 
-  /* ── Тема, акцент и плотность ───────────────────────────────────────────
+  /* ── Тема, акцент, масштаб и плотность ──────────────────────────────────
      Сайт переключает их теми же атрибутами, что и любое приложение на ките.
      Это не демонстрация ради демонстрации: если темизация где-то протекает,
      видно будет здесь первым.
 
-     Три ручки ортогональны: 6 тем × 4 акцента × 3 плотности = 72 сочетания,
-     и справочник обязан показывать любое из них. Ровно поэтому переключатели
-     независимы, а не сведены в один список пресетов: пресет скрыл бы, что
-     оси не пересекаются, и первое же протёкшее сочетание нашлось бы у
-     пользователя, а не здесь. */
+     Четыре ручки ортогональны: 6 тем × 4 акцента × 5 масштабов × 3 плотности =
+     360 сочетаний, и справочник обязан показывать любое из них. Ровно поэтому
+     переключатели независимы, а не сведены в один список пресетов: пресет
+     скрыл бы, что оси не пересекаются, и первое же протёкшее сочетание
+     нашлось бы у пользователя, а не здесь.
 
-  /* Атрибут на корне: пустое значение — снять, иначе поставить.
-     Одна функция на тему и акцент, потому что разница между ними ровно в
-     имени атрибута; два одинаковых блока разошлись бы при первой правке. */
-  const knob = (sel, attr, key) => {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    el.value = localStorage.getItem(key) || '';
-    el.addEventListener('change', () => {
-      if (el.value) {
-        root.setAttribute(attr, el.value);
-        localStorage.setItem(key, el.value);
-      } else {
-        root.removeAttribute(attr);
-        localStorage.removeItem(key);
+     Масштаб добавлен четвёртой осью потому, что тремя плотностями «крупнее»
+     было не выразить: просторная давала воздух, а не размер. */
+
+  /* Атрибут на корне: пустое значение — снять, иначе поставить. Одна функция
+     на масштаб, тему и акцент, потому что разница между ними ровно в имени
+     атрибута; три одинаковых блока разошлись бы при первой правке.
+
+     Выпадашка — меню кита в поповере, а не нативный <select>: список,
+     нарисованный операционной системой, был единственным местом в этой панели,
+     до которого кит не дотягивался.
+
+     Состояние ведёт САЙТ, а не кит, и это не обход, а контракт: у кита
+     `follows: null` на роли menu, потому что пункт меню — действие, а не
+     выбор. Здесь пункт всё-таки выбор, поэтому aria-checked переносим сами.
+     Стрелки и Escape при этом остаются за китом. */
+  const menuKnob = (sel, attr, key) => {
+    const menu = document.querySelector(sel);
+    if (!menu) return;
+    const pop = menu.closest('[popover]');
+    const trigger = document.querySelector('[popovertarget="' + pop.id + '"]');
+    const items = [...menu.querySelectorAll('[role="menuitem"]')];
+
+    const apply = (v) => {
+      if (v) { root.setAttribute(attr, v); localStorage.setItem(key, v); }
+      else { root.removeAttribute(attr); localStorage.removeItem(key); }
+      for (const x of items) {
+        const on = (x.dataset.v || '') === (v || '');
+        x.setAttribute('aria-checked', String(on));
+        /* Подпись кнопки — то, что выбрано. Иначе панель приходится
+           открывать, чтобы вспомнить, на чём остановился. */
+        if (on && trigger) trigger.textContent = x.dataset.label || x.textContent.trim();
       }
+    };
+
+    apply(localStorage.getItem(key) || '');
+
+    menu.addEventListener('click', (e) => {
+      const item = e.target.closest('[role="menuitem"]');
+      if (!item) return;
+      apply(item.dataset.v || '');
+      pop.hidePopover();
     });
   };
 
-  knob('[data-theme-picker]', 'data-theme', 'instrument-theme');
-  knob('[data-accent-picker]', 'data-accent', 'instrument-accent');
+  menuKnob('[data-scale-picker]', 'data-scale', 'instrument-scale');
+  menuKnob('[data-theme-picker]', 'data-theme', 'instrument-theme');
+  menuKnob('[data-accent-picker]', 'data-accent', 'instrument-accent');
 
-  const density = document.querySelector('[data-density-picker]');
-  if (density) {
-    const items = [...density.querySelectorAll('[role="radio"]')];
+  /* Плотность осталась сегментированным контролом: три коротких слова, и все
+     три видны сразу — прятать их в список значило бы менять один щелчок на
+     два. У масштаба выбор подписан кеглем, а не словом, и там список выигрывает.
+
+     Обе ручки стоят в панели раздельно, а не сведены в один список из пяти
+     положений: пресет скрыл бы, что оси не пересекаются, и сочетание «крупно
+     и плотно» — самое полезное на большом мониторе — оказалось бы
+     невыразимым. */
+  const picker = (sel, attr, key) => {
+    const group = document.querySelector(sel);
+    if (!group) return;
+    const items = [...group.querySelectorAll('[role="radio"]')];
     const apply = (v) => {
-      if (v === 'default') { delete root.dataset.density; localStorage.removeItem('instrument-density'); }
-      else { root.dataset.density = v; localStorage.setItem('instrument-density', v); }
+      if (v === 'default') { delete root.dataset[attr]; localStorage.removeItem(key); }
+      else { root.dataset[attr] = v; localStorage.setItem(key, v); }
     };
 
     /* Начальное состояние ставит сайт: он один знает, что лежит в
        localStorage. Дальше выбор ведёт кит. */
-    const saved = localStorage.getItem('instrument-density') || 'default';
-    const start = items.find((x) => x.dataset.v === saved) || items[1];
+    const saved = localStorage.getItem(key) || 'default';
+    const start = items.find((x) => x.dataset.v === saved)
+      || items.find((x) => x.dataset.v === 'default') || items[0];
     for (const x of items) {
       x.setAttribute('aria-checked', String(x === start));
       x.tabIndex = x === start ? 0 : -1;
@@ -62,8 +100,10 @@
 
        Это и есть проверка поведения на живом: перестань кит работать —
        плотность перестанет переключаться на глазах. */
-    density.addEventListener('inst:select', (e) => apply(e.target.dataset.v));
-  }
+    group.addEventListener('inst:select', (e) => apply(e.target.dataset.v));
+  };
+
+  picker('[data-density-picker]', 'density', 'instrument-density');
 
   /* ── Поиск ──────────────────────────────────────────────────────────────
      Индекс — один JSON на весь сайт, грузится по первому обращению.

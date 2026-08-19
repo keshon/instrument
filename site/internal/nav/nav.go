@@ -19,7 +19,7 @@ var sections = []struct {
 	{"start", []string{"install"}},
 	{"foundations", []string{
 		"colors", "typography", "spacing", "elevation", "motion",
-		"density", "icons", "behavior", "utilities", "tokens",
+		"density", "scale", "icons", "behavior", "utilities", "tokens",
 	}},
 	{"layout", []string{
 		"shell", "container", "flow", "split", "page-header", "section",

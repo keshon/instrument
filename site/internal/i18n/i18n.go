@@ -48,6 +48,12 @@ var strings = map[string]map[Lang]string{
 	"density.sm":    {RU: "Плотно", EN: "Compact"},
 	"density.md":    {RU: "Обычно", EN: "Default"},
 	"density.lg":    {RU: "Свободно", EN: "Comfortable"},
+	// Пункт масштаба подписан кеглем, а высота контрола уходит в пояснение:
+	// «крупно» ни о чём не сообщает, пока не нажато, «16px» — сообщает сразу.
+	"scale":         {RU: "Масштаб", EN: "Scale"},
+	"scale.aria":    {RU: "Базовый кегль интерфейса", EN: "Interface base size"},
+	"scale.base":    {RU: "умолчание", EN: "default"},
+	"scale.ctl":     {RU: "контрол", EN: "control"},
 	"theme":         {RU: "Тема", EN: "Theme"},
 	"theme.aria":    {RU: "Тема оформления", EN: "Colour theme"},
 	"theme.system":  {RU: "По системе", EN: "System"},

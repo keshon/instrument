@@ -169,7 +169,8 @@ var absolutes = []absCheck{
 				return false, fmt.Sprintf("%s = %g: нечётный радиус даёт половину устройственного пикселя при плотности 1.5, и дуга стыкуется с гранью мимо сетки", n, r)
 			}
 		}
-		return true, "2 · 4 · 6 · 8 · 12"
+		return true, fmt.Sprintf("%g · %g · %g · %g · %g",
+			v("--radius-2xs"), v("--radius-xs"), v("--radius-sm"), v("--radius-md"), v("--radius-lg"))
 	}},
 	{"лестница радиусов растёт", func(v func(string) float64) (bool, string) {
 		xs, sm, md, lg := v("--radius-xs"), v("--radius-sm"), v("--radius-md"), v("--radius-lg")
@@ -198,6 +199,38 @@ var densities = []struct{ id, label string }{
 	{"comfortable", "свободная"},
 }
 
+// Масштаб — ВТОРАЯ размерная ось, и проверять её отдельно от плотности
+// нельзя: обе двигают высоты контролов, а их сочетание описано собственной
+// ячейкой токенов. Поэтому проверок 3 × 3, а не 3 + 3.
+//
+// Ступени вниз нет намеренно: плотный режим уже стоит на полу WCAG 2.5.8, и
+// масштаб меньше единицы пробил бы критерий по построению.
+var scales = []struct{ id, label string }{
+	{"", "14px"},
+	{"15", "15px"},
+	{"16", "16px"},
+	{"17", "17px"},
+	{"18", "18px"},
+}
+
+// combo — одна ячейка сетки «масштаб × плотность». Оси расплющены в один
+// список нарочно: так тело проверки остаётся одноуровневым, а добавление
+// третьей оси не превратит его в лестницу из вложенных циклов.
+type combo struct {
+	scale, dens string
+	label       string
+}
+
+func combos() []combo {
+	var out []combo
+	for _, sc := range scales {
+		for _, d := range densities {
+			out = append(out, combo{scale: sc.id, dens: d.id, label: sc.label + " · " + d.label})
+		}
+	}
+	return out
+}
+
 func main() {
 	tokens := flag.String("tokens", "../src/tokens.css", "путь к tokens.css")
 	verbose := flag.Bool("v", false, "показать пройденные")
@@ -216,7 +249,7 @@ func main() {
 		base[k] = v
 	}
 	// Отступ контрола выводится ниже блоков плотности, общим правилом.
-	for k, v := range src.Decls(regexp.MustCompile(`:where\(:root\), \[data-density\]\s*\{`)) {
+	for k, v := range src.Decls(regexp.MustCompile(`:where\(:root\), \[data-density\], \[data-scale\]\s*\{`)) {
 		base[k] = v
 	}
 	if len(base) == 0 {
@@ -239,7 +272,6 @@ func main() {
 	var problems []string
 	total := 0
 
-	// Радиусы от плотности не зависят — проверяются один раз.
 	valOf := func(vals map[string]string) func(string) float64 {
 		return func(n string) float64 {
 			v, err := css.ResolvePx(vals, n)
@@ -250,23 +282,48 @@ func main() {
 			return v
 		}
 	}
-	for _, rc := range absolutes {
-		total++
-		ok, note := rc.fn(valOf(base))
-		if !ok {
-			problems = append(problems, fmt.Sprintf("  · %-*s  %s", width, rc.label, note))
-		} else if *verbose {
-			fmt.Printf("  · %-*s  %s\n", width, rc.label, note)
-		}
-	}
 
-	for _, d := range densities {
+	// scaleVals — база плюс одномерная часть масштаба: кегли, лестница
+	// радиусов, глифы и текстовые ширины.
+	scaleVals := func(id string) map[string]string {
 		vals := map[string]string{}
 		for k, v := range base {
 			vals[k] = v
 		}
-		if d.id != "" {
-			for k, v := range src.Decls(regexp.MustCompile(`\[data-density="` + d.id + `"\]\s*\{`)) {
+		if id != "" {
+			for k, v := range src.Decls(regexp.MustCompile(`\[data-scale="` + id + `"\]\s*\{`)) {
+				vals[k] = v
+			}
+		}
+		return vals
+	}
+
+	// Радиусы от плотности не зависят, но от МАСШТАБА зависят: лестница
+	// переобъявляется целиком. Поэтому абсолютные проверки гоняются по разу
+	// на масштаб, а не один раз на весь кит.
+	for _, sc := range scales {
+		vals := scaleVals(sc.id)
+		for _, rc := range absolutes {
+			total++
+			ok, note := rc.fn(valOf(vals))
+			if !ok {
+				problems = append(problems, fmt.Sprintf("  · %-*s  %s  (масштаб %s)", width, rc.label, note, sc.label))
+			} else if *verbose {
+				fmt.Printf("  · %-*s  %s  (масштаб %s)\n", width, rc.label, note, sc.label)
+			}
+		}
+	}
+
+	for _, d := range combos() {
+		vals := scaleVals(d.scale)
+		// Плотность приходит из своего блока, когда масштаб обычный, и из
+		// двумерной ячейки, когда нет: ячейка полностью описывает пару.
+		if d.dens != "" {
+			re := regexp.MustCompile(`\[data-density="` + d.dens + `"\]\s*\{`)
+			if d.scale != "" {
+				re = regexp.MustCompile(`\[data-scale="` + d.scale + `"\]\[data-density="` + d.dens + `"\]`)
+			}
+			for k, v := range src.Decls(re) {
 				vals[k] = v
 			}
 		}
@@ -274,7 +331,12 @@ func main() {
 			fmt.Printf("\n── %s ──\n", d.label)
 		}
 		for _, r := range rules {
-			if d.id != "" && !r.perDens {
+			// perDens означает «зависит от ПЛОТНОСТИ», а не «от любой ячейки».
+			// Лестницу кеглей плотность не трогает, поэтому в её ячейках
+			// правило пропускается — но МАСШТАБ её переобъявляет целиком, и
+			// пропускать его нельзя. Пока здесь стояло d.perDens, ладдеры
+			// масштаба не проверялись ни разу и прошли гейт незаслуженно.
+			if d.dens != "" && !r.perDens {
 				continue
 			}
 			total++
@@ -310,5 +372,6 @@ func main() {
 		fmt.Printf("· %d проверок при корне %gpx, провалено %d\n", total, css.RootPx, len(problems))
 		os.Exit(1)
 	}
-	fmt.Printf("· все %d проверок пройдены в %d плотностях при корне %gpx\n", total, len(densities), css.RootPx)
+	fmt.Printf("· все %d проверок пройдены в %d сочетаниях масштаба и плотности при корне %gpx\n",
+		total, len(combos()), css.RootPx)
 }

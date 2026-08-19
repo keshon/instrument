@@ -82,7 +82,14 @@
    кита выглядела бы как три кнопки без подписи. Кнопка «Вид» даёт им имя. */
 .site-view-body { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-3); }
 .site-view-row { display: flex; flex-direction: column; gap: var(--space-3); }
-.site-theme { inline-size: 100%; }
+/* Кнопка, открывающая список. Ведёт себя как поле выбора, а не как кнопка
+   действия: занимает всю ширину строки и прижимает подпись к началу, потому
+   что подпись здесь — выбранное значение, а не название команды. */
+.site-pick {
+  inline-size: 100%;
+  justify-content: flex-start;
+  font-variant-numeric: tabular-nums;
+}
 
 /* Переключатель языка — ссылки внутри сегментированного контрола: смена
    языка это переход, а не состояние, и средний клик обязан работать. */

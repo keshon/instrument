@@ -1147,6 +1147,564 @@
   --size-indent:   16px;
 }
 
+/* ==========================================================================
+   Масштаб
+
+   Вторая размерная ось, и она НЕ дубликат плотности. Проверка та же, что у
+   атрибутных словарей: если две ручки дают один результат, это одна ручка с
+   двумя именами. Здесь они расходятся, и расходятся по кеглю.
+
+     ПЛОТНОСТЬ двигает геометрию и НЕ ТРОГАЕТ КЕГЛЬ. В блоках выше нет ни
+     одного --text-*: текст остаётся 14px во всех трёх режимах, меняется
+     воздух вокруг него.
+
+     МАСШТАБ двигает кегль ВМЕСТЕ с геометрией. Все соотношения те же,
+     рисунок сохраняется, экран целиком становится крупнее.
+
+   Дырка, которую это закрывает: на 27″ 4K при системном масштабе 100% кит
+   рисовался мелко, и ручки не было. Просторная плотность давала воздух, а
+   не размер, — то есть отвечала на другой вопрос.
+
+   ── Ступень названа базовым кеглем ────────────────────────────────────────
+
+   data-scale="16" значит «база интерфейса 16px», а не шестнадцатую ступень
+   какой-то шкалы. Имя ступени и есть ответ на вопрос, который человек задаёт,
+   выбирая масштаб; «крупно» на этот вопрос не отвечает, пока не нажато.
+
+   ── Почему лестница начинается с 14, а не с 12 ────────────────────────────
+
+   Это не выбор, а арифметика двух правил кита, перемноженных друг на друга.
+   Пол кегля — 11px, минимальный шаг лестницы — 1.12 (ниже него соседние
+   ступени сливаются). Под базой лежат ДВЕ ступени, 2xs и xs, значит
+
+       минимальная база = 11 × 1.12 × 1.12 = 13.8px
+
+   и 14 — первое целое, которое в это влезает. При базе 13 второй ступени
+   вниз достаётся 10.36px, при базе 12 — 9.57px; обе ниже пола. Уронить
+   лестницу ниже можно, только сдвинув один из трёх параметров: пол, шаг или
+   число ступеней под базой. Каждый из них — отдельное решение, и ни одно не
+   принимается ради того, чтобы список начинался с круглого числа.
+
+   ── Почему таблица, а не множитель ────────────────────────────────────────
+
+   По той же причине, по которой вариант акцента — шесть явных значений, а не
+   множитель хромы: умножение молча ломает правила кита. Радиусы обязаны
+   остаться чётными, иначе дуга садится мимо устройственной сетки на плотности
+   1.5. Лестница радиусов обязана остаться строго возрастающей. Отношение
+   радиуса контрола к его высоте обязано удержаться в полосе 0.16–0.30, а шаг
+   кегля — в полосе 1.12–1.30.
+
+   Пропорциональный пересчёт лестницы кегля проваливает последнее правило
+   регулярно: при базе 16 честная доля даёт xs = 14.5, то есть шаг 1.103.
+   Поэтому значения авторские, а сторожит их cmd/proportion — по всем
+   сочетаниям масштаба и плотности.
+
+   ── Приоритет ─────────────────────────────────────────────────────────────
+
+   МАСШТАБ ПЕРВИЧЕН. Блоки стоят ПОСЛЕ блоков плотности, поэтому при
+   одиночном совпадении токен забирает масштаб: специфичность у них
+   одинаковая, и разводит их порядок. Плотность возвращает своё в двумерной
+   ячейке [data-scale][data-density] со специфичностью (0,2,0).
+
+   Ячеек восемь, а не двенадцать: сочетание «масштаб × обычная плотность» уже
+   описано одномерным блоком, а «база 14 × любая плотность» — это блоки
+   плотности выше, которых правка не касается вовсе. Умолчание остаётся без
+   атрибута, как нейтральная тема и обычная плотность.
+
+   У каждой ячейки ДВА селектора, и второй обязателен. Самое частое
+   расположение — масштаб на <html> как настройка человека, плотность на
+   отдельной панели, то есть НИЖЕ. Парный селектор такую пару не ловит: он
+   требует оба атрибута на одном элементе. Без потомкового варианта плотная
+   панель внутри крупного масштаба взяла бы геометрию базы, оставив при этом
+   крупный кегль, — то есть ровно ту поломку, против которой высоты
+   применяются как min-block-size.
+
+   ── Чего здесь нет ────────────────────────────────────────────────────────
+
+   --hairline не масштабируется. Не по принципу, а потому что не может:
+   браузер снапает рамку к устройственному пикселю, и ×1.07 от единицы
+   возвращается в ту же единицу. Строка обещала бы изменение, которого не
+   происходит, а токен, который нельзя применить, — долг, а не резерв.
+
+   --tap-min не масштабируется, потому что это НОРМА, а не размер: 24px — пол
+   критерия. Лестница идёт только вверх, поэтому фиксированный пол ничего не
+   жмёт.
+
+   --radius-2xs приколочен к 2px на всех ступенях. Единственное число в
+   таблице, которое нельзя выбрать свободно: точка растёт до 8px, и радиус 4
+   дал бы ровно половину — то есть круг, а круг занят пометкой обратимого
+   пункта.
+   ========================================================================== */
+
+[data-scale="15"] {
+  --text-2xs: 0.71875rem;   /* 11.5 */
+  --text-xs:  0.8125rem;    /* 13 */
+  --text-sm:  0.9375rem;    /* 15 — база интерфейса */
+  --text-md:  1.0625rem;    /* 17 */
+  --text-lg:  1.21875rem;   /* 19.5 */
+  --text-xl:  1.46875rem;   /* 23.5 */
+  --text-2xl: 1.875rem;     /* 30 */
+
+  --radius-2xs: 2px;        /* приколочен: см. шапку */
+  --radius-xs:  4px;
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  12px;
+
+  --control-h-xs: 22px;
+  --control-h-sm: 28px;
+  --control-h-md: 35px;
+  --control-h-lg: 41px;
+
+  --radius-control-sm: var(--radius-sm);
+  --radius-control-md: var(--radius-md);
+  --radius-control-lg: var(--radius-md);
+
+  --pad-panel:   var(--space-5);
+  --pad-card:    var(--space-6);
+  --pad-cell-x:  var(--space-4);
+  --row-pad-y:   var(--space-3);
+  --gap-row:     var(--space-3);
+  --gap-inline:  var(--space-4);
+  --pad-block-y: var(--space-4);
+
+  --size-dot:      6px;
+  --size-check:    16px;
+  --size-switch-w: 32px;
+  --size-switch-h: 19px;
+  --size-thumb:    15px;
+  --size-track:    4px;
+  --size-meter:    6px;
+  --size-spinner:  15px;
+  --size-icon:     19px;
+  --size-icon-lg:  26px;
+  --size-icon-sm:  14px;
+  --size-chevron:  11px;
+  --size-tick:     3px;
+  --size-marker:   2px;
+  --size-gutter:   15px;
+  --size-indent:   15px;
+
+  /* Всё, что размечено ТЕКСТОМ, обязано ехать вместе с кеглем — иначе
+     повторяется ровно та поломка, которой посвящён комментарий у --label-col:
+     подпись переросла колонку и порвала выравнивание всей формы. Плотность их
+     не трогает, потому что не трогает кегль; масштаб трогает по той же
+     логике, только с обратным знаком.                                      */
+  --label-col:     112px;
+  --aside-w:       244px;
+  --col-min:       274px;
+  --container-max: 80rem;
+  --split-side:    19rem;
+  --split-main:    32rem;
+}
+
+[data-scale="16"] {
+  --text-2xs: 0.78125rem;   /* 12.5 */
+  --text-xs:  0.875rem;     /* 14 */
+  --text-sm:  1rem;         /* 16 — база интерфейса */
+  --text-md:  1.15625rem;   /* 18.5 */
+  --text-lg:  1.3125rem;    /* 21 */
+  --text-xl:  1.625rem;     /* 26 */
+  --text-2xl: 2.0625rem;    /* 33 */
+
+  --radius-2xs: 2px;
+  --radius-xs:  6px;
+  --radius-sm:  8px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+
+  --control-h-xs: 24px;
+  --control-h-sm: 30px;
+  --control-h-md: 38px;
+  --control-h-lg: 44px;
+
+  --radius-control-sm: var(--radius-sm);
+  --radius-control-md: var(--radius-md);
+  --radius-control-lg: var(--radius-md);
+
+  --pad-panel:   var(--space-6);
+  --pad-card:    var(--space-7);
+  --pad-cell-x:  var(--space-5);
+  --row-pad-y:   var(--space-4);
+  --gap-row:     var(--space-4);
+  --gap-inline:  var(--space-5);
+  --pad-block-y: var(--space-5);
+
+  --size-dot:      7px;
+  --size-check:    17px;
+  --size-switch-w: 34px;
+  --size-switch-h: 20px;
+  --size-thumb:    16px;
+  --size-track:    5px;
+  --size-meter:    7px;
+  --size-spinner:  16px;
+  --size-icon:     20px;
+  --size-icon-lg:  28px;
+  --size-icon-sm:  16px;
+  --size-chevron:  11px;
+  --size-tick:     4px;
+  --size-marker:   2px;
+  --size-gutter:   16px;
+  --size-indent:   16px;
+
+  --label-col:     120px;
+  --aside-w:       256px;
+  --col-min:       288px;
+  --container-max: 84rem;
+  --split-side:    20rem;
+  --split-main:    34rem;
+}
+
+[data-scale="17"] {
+  --text-2xs: 0.8125rem;    /* 13 */
+  --text-xs:  0.9375rem;    /* 15 */
+  --text-sm:  1.0625rem;    /* 17 — база интерфейса */
+  --text-md:  1.21875rem;   /* 19.5 */
+  --text-lg:  1.40625rem;   /* 22.5 */
+  --text-xl:  1.75rem;      /* 28 */
+  --text-2xl: 2.21875rem;   /* 35.5 */
+
+  --radius-2xs: 2px;
+  --radius-xs:  6px;
+  --radius-sm:  8px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+
+  --control-h-xs: 25px;
+  --control-h-sm: 32px;
+  --control-h-md: 40px;
+  --control-h-lg: 47px;
+
+  --radius-control-sm: var(--radius-sm);
+  --radius-control-md: var(--radius-md);
+  --radius-control-lg: var(--radius-md);
+
+  --pad-panel:   var(--space-6);
+  --pad-card:    var(--space-7);
+  --pad-cell-x:  var(--space-5);
+  --row-pad-y:   var(--space-4);
+  --gap-row:     var(--space-4);
+  --gap-inline:  var(--space-5);
+  --pad-block-y: var(--space-5);
+
+  --size-dot:      7px;
+  --size-check:    18px;
+  --size-switch-w: 37px;
+  --size-switch-h: 22px;
+  --size-thumb:    17px;
+  --size-track:    5px;
+  --size-meter:    7px;
+  --size-spinner:  17px;
+  --size-icon:     22px;
+  --size-icon-lg:  30px;
+  --size-icon-sm:  16px;
+  --size-chevron:  12px;
+  --size-tick:     4px;
+  --size-marker:   2px;
+  --size-gutter:   17px;
+  --size-indent:   17px;
+
+  --label-col:     128px;
+  --aside-w:       268px;
+  --col-min:       302px;
+  --container-max: 88rem;
+  --split-side:    21rem;
+  --split-main:    36rem;
+}
+
+[data-scale="18"] {
+  --text-2xs: 0.875rem;     /* 14 */
+  --text-xs:  1rem;         /* 16 */
+  --text-sm:  1.125rem;     /* 18 — база интерфейса */
+  --text-md:  1.3125rem;    /* 21 */
+  --text-lg:  1.5rem;       /* 24 */
+  --text-xl:  1.875rem;     /* 30 */
+  --text-2xl: 2.375rem;     /* 38 */
+
+  --radius-2xs: 2px;
+  --radius-xs:  6px;
+  --radius-sm:  8px;
+  --radius-md:  10px;
+  --radius-lg:  16px;
+
+  --control-h-xs: 26px;
+  --control-h-sm: 34px;
+  --control-h-md: 42px;
+  --control-h-lg: 50px;
+
+  --radius-control-sm: var(--radius-sm);
+  --radius-control-md: var(--radius-md);
+  --radius-control-lg: var(--radius-md);
+
+  --pad-panel:   var(--space-7);
+  --pad-card:    var(--space-8);
+  --pad-cell-x:  var(--space-6);
+  --row-pad-y:   var(--space-5);
+  --gap-row:     var(--space-5);
+  --gap-inline:  var(--space-6);
+  --pad-block-y: var(--space-6);
+
+  --size-dot:      8px;
+  --size-check:    19px;
+  --size-switch-w: 38px;
+  --size-switch-h: 23px;
+  --size-thumb:    18px;
+  --size-track:    5px;
+  --size-meter:    8px;
+  --size-spinner:  18px;
+  --size-icon:     24px;
+  --size-icon-lg:  32px;
+  --size-icon-sm:  18px;
+  --size-chevron:  12px;
+  --size-tick:     4px;
+  --size-marker:   3px;
+  --size-gutter:   18px;
+  --size-indent:   18px;
+
+  --label-col:     136px;
+  --aside-w:       280px;
+  --col-min:       316px;
+  --container-max: 92rem;
+  --split-side:    22rem;
+  --split-main:    38rem;
+}
+
+/* ── Двумерные ячейки ──────────────────────────────────────────────────────
+
+   Здесь стоит ровно то, что трогают ОБЕ оси: высоты, скругление контрола,
+   отступы и размеры глифов. Кегль, лестница радиусов и текстовые ширины в
+   ячейках отсутствуют намеренно — их двигает только масштаб, и повторять их
+   тут значило бы завести дубликат, который однажды разойдётся.
+
+   Скругление контрола записано ССЫЛКАМИ в лестницу, а не числами: лестница
+   уже отмасштабирована блоком выше, и ячейке остаётся выбрать ступень.     */
+
+[data-scale="15"][data-density="compact"],
+[data-scale="15"] [data-density="compact"] {
+  --control-h-xs: 19px;
+  --control-h-sm: 24px;
+  --control-h-md: 29px;
+  --control-h-lg: 36px;
+
+  --radius-control-sm: var(--radius-xs);
+  --radius-control-md: var(--radius-sm);
+  --radius-control-lg: var(--radius-md);
+
+  --pad-panel:   var(--space-4);
+  --pad-card:    var(--space-5);
+  --pad-cell-x:  var(--space-3);
+  --row-pad-y:   var(--space-2);
+  --gap-row:     var(--space-2);
+  --gap-inline:  var(--space-3);
+  --pad-block-y: var(--space-3);
+
+  --size-check:    14px;
+  --size-switch-w: 28px;
+  --size-switch-h: 16px;
+  --size-thumb:    13px;
+  --size-spinner:  14px;
+  --size-gutter:   13px;
+  --size-indent:   13px;
+}
+
+[data-scale="15"][data-density="comfortable"],
+[data-scale="15"] [data-density="comfortable"] {
+  --control-h-xs: 24px;
+  --control-h-sm: 34px;
+  --control-h-md: 39px;
+  --control-h-lg: 47px;
+
+  --radius-control-sm: var(--radius-md);
+  --radius-control-md: var(--radius-md);
+  --radius-control-lg: var(--radius-lg);
+
+  --pad-panel:   var(--space-6);
+  --pad-card:    var(--space-7);
+  --pad-cell-x:  var(--space-5);
+  --row-pad-y:   var(--space-4);
+  --gap-row:     var(--space-4);
+  --gap-inline:  var(--space-5);
+  --pad-block-y: var(--space-5);
+
+  --size-check:    18px;
+  --size-switch-w: 36px;
+  --size-switch-h: 21px;
+  --size-thumb:    17px;
+  --size-spinner:  17px;
+  --size-gutter:   17px;
+  --size-indent:   17px;
+}
+
+[data-scale="16"][data-density="compact"],
+[data-scale="16"] [data-density="compact"] {
+  --control-h-xs: 20px;
+  --control-h-sm: 26px;
+  --control-h-md: 32px;
+  --control-h-lg: 38px;
+
+  --radius-control-sm: var(--radius-xs);
+  --radius-control-md: var(--radius-sm);
+  --radius-control-lg: var(--radius-md);
+
+  --pad-panel:   var(--space-5);
+  --pad-card:    var(--space-6);
+  --pad-cell-x:  var(--space-4);
+  --row-pad-y:   var(--space-3);
+  --gap-row:     var(--space-3);
+  --gap-inline:  var(--space-4);
+  --pad-block-y: var(--space-4);
+
+  --size-check:    15px;
+  --size-switch-w: 30px;
+  --size-switch-h: 17px;
+  --size-thumb:    14px;
+  --size-spinner:  15px;
+  --size-gutter:   14px;
+  --size-indent:   14px;
+}
+
+[data-scale="16"][data-density="comfortable"],
+[data-scale="16"] [data-density="comfortable"] {
+  --control-h-xs: 26px;
+  --control-h-sm: 34px;
+  --control-h-md: 42px;
+  --control-h-lg: 50px;
+
+  --radius-control-sm: var(--radius-md);
+  --radius-control-md: var(--radius-md);
+  --radius-control-lg: var(--radius-lg);
+
+  --pad-panel:   var(--space-7);
+  --pad-card:    var(--space-8);
+  --pad-cell-x:  var(--space-6);
+  --row-pad-y:   var(--space-5);
+  --gap-row:     var(--space-5);
+  --gap-inline:  var(--space-6);
+  --pad-block-y: var(--space-6);
+
+  --size-check:    19px;
+  --size-switch-w: 38px;
+  --size-switch-h: 23px;
+  --size-thumb:    18px;
+  --size-spinner:  18px;
+  --size-gutter:   18px;
+  --size-indent:   18px;
+}
+
+[data-scale="17"][data-density="compact"],
+[data-scale="17"] [data-density="compact"] {
+  --control-h-xs: 21px;
+  --control-h-sm: 28px;
+  --control-h-md: 34px;
+  --control-h-lg: 40px;
+
+  --radius-control-sm: var(--radius-xs);
+  --radius-control-md: var(--radius-sm);
+  --radius-control-lg: var(--radius-md);
+
+  --pad-panel:   var(--space-5);
+  --pad-card:    var(--space-6);
+  --pad-cell-x:  var(--space-4);
+  --row-pad-y:   var(--space-3);
+  --gap-row:     var(--space-3);
+  --gap-inline:  var(--space-4);
+  --pad-block-y: var(--space-4);
+
+  --size-check:    16px;
+  --size-switch-w: 32px;
+  --size-switch-h: 19px;
+  --size-thumb:    15px;
+  --size-spinner:  16px;
+  --size-gutter:   15px;
+  --size-indent:   15px;
+}
+
+[data-scale="17"][data-density="comfortable"],
+[data-scale="17"] [data-density="comfortable"] {
+  --control-h-xs: 27px;
+  --control-h-sm: 36px;
+  --control-h-md: 44px;
+  --control-h-lg: 53px;
+
+  --radius-control-sm: var(--radius-md);
+  --radius-control-md: var(--radius-md);
+  --radius-control-lg: var(--radius-lg);
+
+  --pad-panel:   var(--space-7);
+  --pad-card:    var(--space-8);
+  --pad-cell-x:  var(--space-6);
+  --row-pad-y:   var(--space-5);
+  --gap-row:     var(--space-5);
+  --gap-inline:  var(--space-6);
+  --pad-block-y: var(--space-6);
+
+  --size-check:    21px;
+  --size-switch-w: 41px;
+  --size-switch-h: 24px;
+  --size-thumb:    19px;
+  --size-spinner:  19px;
+  --size-gutter:   19px;
+  --size-indent:   19px;
+}
+
+[data-scale="18"][data-density="compact"],
+[data-scale="18"] [data-density="compact"] {
+  --control-h-xs: 22px;
+  --control-h-sm: 28px;
+  --control-h-md: 34px;
+  /* 44, а не 42: при 42 значок рельса давал 32/42 = 0.762 при потолке 0.76.
+     Двигается высота, а не значок — значок держит отношение к кеглю. */
+  --control-h-lg: 44px;
+
+  --radius-control-sm: var(--radius-xs);
+  --radius-control-md: var(--radius-sm);
+  --radius-control-lg: var(--radius-md);
+
+  --pad-panel:   var(--space-6);
+  --pad-card:    var(--space-7);
+  --pad-cell-x:  var(--space-5);
+  --row-pad-y:   var(--space-4);
+  --gap-row:     var(--space-4);
+  --gap-inline:  var(--space-5);
+  --pad-block-y: var(--space-5);
+
+  --size-check:    17px;
+  --size-switch-w: 34px;
+  --size-switch-h: 19px;
+  --size-thumb:    16px;
+  --size-spinner:  17px;
+  --size-gutter:   16px;
+  --size-indent:   16px;
+}
+
+[data-scale="18"][data-density="comfortable"],
+[data-scale="18"] [data-density="comfortable"] {
+  --control-h-xs: 28px;
+  --control-h-sm: 38px;
+  --control-h-md: 48px;
+  --control-h-lg: 56px;
+
+  --radius-control-sm: var(--radius-md);
+  --radius-control-md: var(--radius-md);
+  --radius-control-lg: var(--radius-lg);
+
+  --pad-panel:   var(--space-8);
+  --pad-card:    var(--space-9);
+  --pad-cell-x:  var(--space-7);
+  --row-pad-y:   var(--space-6);
+  --gap-row:     var(--space-6);
+  --gap-inline:  var(--space-7);
+  --pad-block-y: var(--space-7);
+
+  --size-check:    22px;
+  --size-switch-w: 44px;
+  --size-switch-h: 26px;
+  --size-thumb:    21px;
+  --size-spinner:  21px;
+  --size-gutter:   21px;
+  --size-indent:   21px;
+}
+
 /* ── Отступ контрола выводится из его высоты ────────────────────────────────
 
    Правило стоит ЗДЕСЬ, а не в ярусе ролей, и это не вкус, а устройство
@@ -1157,13 +1715,15 @@
    не доходит. Проверено замером — отступ кнопки оставался 12px во всех трёх
    режимах, хотя высота честно менялась 26→32→36.
 
-   Отсюда второй селектор. На элементе, несущем сам атрибут, --control-h-*
+   Отсюда второй селектор — и третий: масштаб ставит высоты по той же схеме,
+   что плотность, поэтому элемент с [data-scale] обязан пересчитать отступ
+   так же. На элементе, несущем сам атрибут, --control-h-*
    уже переопределён, и та же формула считается заново с его числами. Формула
    при этом одна: дубликата, который однажды разойдётся, не появляется.
    Вложенная плотность работает по той же причине — плотная панель внутри
    просторной страницы пересчитает отступ по своей высоте.                  */
 
-:where(:root), [data-density] {
+:where(:root), [data-density], [data-scale] {
   --control-pad-sm: calc(var(--control-h-sm) * var(--control-ratio-sm));
   --control-pad-md: calc(var(--control-h-md) * var(--control-ratio-md));
   --control-pad-lg: calc(var(--control-h-lg) * var(--control-ratio-lg));

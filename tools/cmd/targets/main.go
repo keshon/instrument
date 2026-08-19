@@ -103,6 +103,38 @@ var densities = []struct{ id, label string }{
 	{"comfortable", "свободная"},
 }
 
+// Масштаб — вторая размерная ось. Для этой проверки она важнее плотности:
+// плотность жмёт цели вниз, к полу критерия, а масштаб тянет вверх, и
+// опасное сочетание — крупный масштаб с плотной раскладкой, где ячейка
+// возвращает высоты почти к обычным, оставляя кегль крупным.
+//
+// Ступени вниз нет: плотный режим уже стоит на полу, и масштаб меньше
+// единицы пробил бы 2.5.8 по построению.
+var scales = []struct{ id, label string }{
+	{"", "14px"},
+	{"15", "15px"},
+	{"16", "16px"},
+	{"17", "17px"},
+	{"18", "18px"},
+}
+
+// combo — ячейка сетки «масштаб × плотность». Оси расплющены в один список,
+// чтобы тело проверки осталось одноуровневым.
+type combo struct {
+	scale, dens string
+	label       string
+}
+
+func combos() []combo {
+	var out []combo
+	for _, sc := range scales {
+		for _, d := range densities {
+			out = append(out, combo{scale: sc.id, dens: d.id, label: sc.label + " · " + d.label})
+		}
+	}
+	return out
+}
+
 func main() {
 	tokens := flag.String("tokens", "../src/tokens.css", "путь к tokens.css")
 	verbose := flag.Bool("v", false, "показать пройденные")
@@ -134,18 +166,28 @@ func main() {
 	}
 
 	failed, total := 0, 0
-	for _, d := range densities {
+	for _, d := range combos() {
 		vals := map[string]string{}
 		for k, v := range base {
 			vals[k] = v
 		}
-		if d.id != "" {
-			for k, v := range src.Decls(regexp.MustCompile(`\[data-density="` + d.id + `"\]\s*\{`)) {
+		// Одномерная часть масштаба ложится первой, двумерная ячейка — поверх.
+		if d.scale != "" {
+			for k, v := range src.Decls(regexp.MustCompile(`\[data-scale="` + d.scale + `"\]\s*\{`)) {
+				vals[k] = v
+			}
+		}
+		if d.dens != "" {
+			re := regexp.MustCompile(`\[data-density="` + d.dens + `"\]\s*\{`)
+			if d.scale != "" {
+				re = regexp.MustCompile(`\[data-scale="` + d.scale + `"\]\[data-density="` + d.dens + `"\]`)
+			}
+			for k, v := range src.Decls(re) {
 				vals[k] = v
 			}
 		}
 
-		fmt.Printf("\nПЛОТНОСТЬ %s\n", d.label)
+		fmt.Printf("\nМАСШТАБ · ПЛОТНОСТЬ %s\n", d.label)
 		fmt.Println(strings.Repeat("─", width+34))
 
 		for _, t := range targets {
@@ -200,7 +242,7 @@ func main() {
 	if *verbose {
 		fmt.Printf("· все %d целей держат %.0f×%.0f в трёх плотностях\n", total, min, min)
 	} else {
-		fmt.Printf("· все %d проверок пройдены в %d плотностях\n", total, len(densities))
+		fmt.Printf("· все %d проверок пройдены в %d сочетаниях масштаба и плотности\n", total, len(combos()))
 	}
 }
 

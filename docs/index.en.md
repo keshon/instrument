@@ -54,7 +54,7 @@ work has halted.
 <link rel="stylesheet" href="dist/instrument.min.css">
 ```
 
-97 KB, one request, 16 KB gzipped. Keyboard behaviour is a separate file and
+106 KB, one request, 17 KB gzipped. Keyboard behaviour is a separate file and
 optional:
 
 ```html

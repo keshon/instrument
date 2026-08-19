@@ -42,8 +42,8 @@ import '@keshon/instrument/js';         // поведение, по желани
 <link rel="stylesheet" href="instrument.min.css">
 ```
 
-Возьмите `dist/instrument.min.css` — 97 КБ, 16 КБ в gzip. Это вся библиотека:
-токены, шесть тем, три плотности, все компоненты. `dist/instrument.css` — то же
+Возьмите `dist/instrument.min.css` — 106 КБ, 17 КБ в gzip. Это вся библиотека:
+токены, шесть тем, пять масштабов, три плотности, все компоненты. `dist/instrument.css` — то же
 самое без сжатия и с комментариями.
 
 ## Иконки

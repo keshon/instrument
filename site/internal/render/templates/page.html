@@ -15,6 +15,8 @@
     if (a) document.documentElement.dataset.accent = a;
     var d = localStorage.getItem('instrument-density');
     if (d) document.documentElement.dataset.density = d;
+    var s = localStorage.getItem('instrument-scale');
+    if (s) document.documentElement.dataset.scale = s;
   } catch (e) {}
 </script>
 </head>
@@ -94,6 +96,46 @@
 
     <div class="inst-popover inst-popover--anchored" id="site-view" popover>
       <div class="site-view-body">
+        {{/* Масштаб стоит ПЕРЕД плотностью, и порядок здесь смысловой: сначала
+             человек выбирает, насколько крупным ему видеть кит, и только потом
+             — сколько воздуха оставить внутри выбранного размера. Обратный
+             порядок читался бы как «плотность, а масштаб — её уточнение»,
+             тогда как в токенах первичен ровно масштаб.
+
+             Список, а не сегментированный контрол, и подпись у пункта —
+             КЕГЛЬ, а не имя ступени. «Крупно» ни о чём не сообщает, пока не
+             нажато; «16px» отвечает на вопрос сразу, а имя ступени уезжает в
+             пояснение под ним. Ровно для этого случая в ките и существует
+             .inst-menu-item-sub. */}}
+        <div class="site-view-row">
+          <span class="inst-nav-label">{{ t .Lang "scale" }}</span>
+          <button class="inst-btn inst-btn--sm site-pick" type="button" popovertarget="site-scale"
+                  aria-label="{{ t .Lang "scale.aria" }}" data-pick-label>14px</button>
+          <div class="inst-popover inst-popover--anchored" id="site-scale" popover>
+            {{/* Пояснение под кеглем — высота контрола на этой ступени. Она
+                 меняется на КАЖДОЙ ступени, в отличие от сценария («крупный
+                 монитор»), которого на пять ступеней честно не хватает: пришлось
+                 бы придумывать разницу между пятнадцатым и семнадцатым. */}}
+            <div class="inst-menu" role="menu" data-scale-picker>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="default" data-label="14px" aria-checked="true">
+                <span class="inst-menu-item-main">14px
+                  <span class="inst-menu-item-sub">{{ t .Lang "scale.base" }} · {{ t .Lang "scale.ctl" }} 32px</span></span></button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="15" data-label="15px" aria-checked="false">
+                <span class="inst-menu-item-main">15px
+                  <span class="inst-menu-item-sub">{{ t .Lang "scale.ctl" }} 35px</span></span></button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="16" data-label="16px" aria-checked="false">
+                <span class="inst-menu-item-main">16px
+                  <span class="inst-menu-item-sub">{{ t .Lang "scale.ctl" }} 38px</span></span></button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="17" data-label="17px" aria-checked="false">
+                <span class="inst-menu-item-main">17px
+                  <span class="inst-menu-item-sub">{{ t .Lang "scale.ctl" }} 40px</span></span></button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="18" data-label="18px" aria-checked="false">
+                <span class="inst-menu-item-main">18px
+                  <span class="inst-menu-item-sub">{{ t .Lang "scale.ctl" }} 42px</span></span></button>
+            </div>
+          </div>
+        </div>
+
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "density" }}</span>
           <div class="inst-segmented" role="radiogroup" aria-label="{{ t .Lang "density" }}" data-density-picker>
@@ -115,31 +157,44 @@
         </div>
         {{ end }}
 
+        {{/* Тема и акцент — меню кита, а не нативный <select>.
+
+             Нативный список рисует операционная система, и внутри поповера,
+             набранного китом, он единственный элемент, которого кит не
+             касается: своя гарнитура, свои отступы, своя подсветка выбранного.
+             Витрина, показывающая семьдесят два сочетания токенов, обязана
+             показывать и собственную выпадашку. */}}
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "theme" }}</span>
-          <span class="inst-select-wrap site-theme">
-            <select class="inst-select inst-select--sm" aria-label="{{ t .Lang "theme.aria" }}" data-theme-picker>
-              <option value="">{{ t .Lang "theme.system" }}</option>
-              <option value="light-neutral">{{ t .Lang "theme.ln" }}</option>
-              <option value="light">{{ t .Lang "theme.l" }}</option>
-              <option value="light-cool">{{ t .Lang "theme.lc" }}</option>
-              <option value="dark-light">{{ t .Lang "theme.dl" }}</option>
-              <option value="dark-soft">{{ t .Lang "theme.ds" }}</option>
-              <option value="dark">{{ t .Lang "theme.d" }}</option>
-            </select>
-          </span>
+          <button class="inst-btn inst-btn--sm site-pick" type="button" popovertarget="site-theme"
+                  aria-label="{{ t .Lang "theme.aria" }}" data-pick-label>{{ t .Lang "theme.system" }}</button>
+          <div class="inst-popover inst-popover--anchored" id="site-theme" popover>
+            <div class="inst-menu" role="menu" data-theme-picker>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="" aria-checked="true">{{ t .Lang "theme.system" }}</button>
+              <span class="inst-menu-sep"></span>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="light-neutral" aria-checked="false">{{ t .Lang "theme.ln" }}</button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="light" aria-checked="false">{{ t .Lang "theme.l" }}</button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="light-cool" aria-checked="false">{{ t .Lang "theme.lc" }}</button>
+              <span class="inst-menu-sep"></span>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="dark-light" aria-checked="false">{{ t .Lang "theme.dl" }}</button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="dark-soft" aria-checked="false">{{ t .Lang "theme.ds" }}</button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="dark" aria-checked="false">{{ t .Lang "theme.d" }}</button>
+            </div>
+          </div>
         </div>
 
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "accent" }}</span>
-          <span class="inst-select-wrap site-theme">
-            <select class="inst-select inst-select--sm" aria-label="{{ t .Lang "accent.aria" }}" data-accent-picker>
-              <option value="">{{ t .Lang "accent.pe" }}</option>
-              <option value="graphite">{{ t .Lang "accent.gr" }}</option>
-              <option value="indigo">{{ t .Lang "accent.in" }}</option>
-              <option value="clay">{{ t .Lang "accent.cl" }}</option>
-            </select>
-          </span>
+          <button class="inst-btn inst-btn--sm site-pick" type="button" popovertarget="site-accent"
+                  aria-label="{{ t .Lang "accent.aria" }}" data-pick-label>{{ t .Lang "accent.pe" }}</button>
+          <div class="inst-popover inst-popover--anchored" id="site-accent" popover>
+            <div class="inst-menu" role="menu" data-accent-picker>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="" aria-checked="true">{{ t .Lang "accent.pe" }}</button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="graphite" aria-checked="false">{{ t .Lang "accent.gr" }}</button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="indigo" aria-checked="false">{{ t .Lang "accent.in" }}</button>
+              <button class="inst-menu-item" type="button" role="menuitem" data-v="clay" aria-checked="false">{{ t .Lang "accent.cl" }}</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
