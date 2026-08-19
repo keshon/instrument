@@ -13,7 +13,7 @@ rem                              registry dist
 rem     check <name> -v          the flag is forwarded to the tool
 rem     check dist               rebuild dist/ from src/
 rem     check site               build the documentation site
-rem     check serve              build and serve on :4322
+rem     check serve [port]       build and serve; default :4322
 rem     check pixels [/section/] rendered-pixel audit; needs Chrome and a server
 rem     check fmt                gofmt over both modules
 rem     check figma <args>       Figma dump reader. NOT a check
@@ -39,6 +39,15 @@ cd /d "%~dp0"
 
 set "LOG=%TEMP%\instrument-check.log"
 set "fails=0"
+
+rem The port lives in ONE place. It used to be typed into both `serve` and
+rem `pixels` separately, and CONTRIBUTING showed a third value for the manual
+rem invocation -- so serving on one port and auditing another looked like a
+rem clean run over a server that was never asked anything.
+rem
+rem   check serve 4321
+rem   set INSTRUMENT_PORT=4321
+if not defined INSTRUMENT_PORT set "INSTRUMENT_PORT=4322"
 
 if "%~1"==""          goto all
 if /i "%~1"=="all"    goto all
@@ -75,7 +84,7 @@ echo   check ^<name^> -v          verbose; the flag is forwarded to the tool
 echo.
 echo   check dist               rebuild dist/ from src/
 echo   check site               build the documentation site
-echo   check serve              build and serve on :4322
+echo   check serve [port]       build and serve; default :4322
 echo   check pixels [/section/] rendered-pixel audit; needs "check serve" running
 echo.
 echo   check fmt                gofmt over both modules. CI runs it; "all" does not
@@ -117,13 +126,16 @@ if errorlevel 1 (
   set /a fails+=1
 ) else (
   rem A normal run prints one summary line per check: a list nobody reads is
-  rem noise, not a report. But a flag passed by hand IS a request for detail,
-  rem and swallowing it after that would be perverse.
-  if "%~2"=="" (
-    call :tail
-  ) else (
+  rem noise, not a report. `-v` asked for detail, so swallowing it after that
+  rem would be perverse.
+  rem
+  rem The test is `-v` specifically, not "any argument": the full run passes
+  rem `-check` to dist, which is plumbing, not a request to be shown everything.
+  if /i "%~2"=="-v" (
     echo.
     type "%LOG%"
+  ) else (
+    call :tail
   )
 )
 exit /b
@@ -187,11 +199,12 @@ if errorlevel 1 set /a fails+=1
 goto done
 
 :serve
+if not "%~2"=="" set "INSTRUMENT_PORT=%~2"
 echo.
-echo   http://localhost:4322    Ctrl+C to stop
+echo   http://localhost:%INSTRUMENT_PORT%    Ctrl+C to stop
 echo   No watch mode: restart after editing sources.
 echo.
-go -C site run ./cmd/site -serve :4322
+go -C site run ./cmd/site -serve :%INSTRUMENT_PORT%
 goto done
 
 rem -- rendered-pixel audit ---------------------------------------------------
@@ -205,9 +218,9 @@ rem   check pixels                     every page
 rem   check pixels /components/        one section
 :pixels
 echo.
-echo   Needs "check serve" running in another window.
+echo   Needs "check serve" running in another window on :%INSTRUMENT_PORT%.
 echo.
-node tools\audit-run.mjs --base http://localhost:4322 %2
+node tools\audit-run.mjs --base http://localhost:%INSTRUMENT_PORT% %2
 if errorlevel 1 set /a fails+=1
 goto done
 
