@@ -57,7 +57,7 @@
 .inst-approval-what {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  line-height: 1.55;
+  line-height: var(--leading-code);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
   /* Относительное — по второй половине закона, а не по первой. Подложка тут
@@ -217,7 +217,7 @@
 .inst-diff-body {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  line-height: 1.55;
+  line-height: var(--leading-code);
   overflow: auto;
   scrollbar-gutter: stable;
   background: var(--surface-sunken);
@@ -549,7 +549,7 @@
 .inst-failure-reason {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  line-height: 1.55;
+  line-height: var(--leading-code);
   overflow-wrap: anywhere;
 }
 

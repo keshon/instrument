@@ -1617,7 +1617,7 @@
   padding: var(--pad-block-y) var(--pad-panel);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  line-height: 1.55;
+  line-height: var(--leading-code);
   overflow: auto;
   /* Место под скроллбар резервируется ТОЛЬКО здесь и в двух других
      растущих областях (.inst-code, .inst-diff-body). На обычной панели это

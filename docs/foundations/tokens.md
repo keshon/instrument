@@ -290,7 +290,7 @@ group-en: "Foundations"
 | Семейства | `--font-sans` `--font-mono` |
 | Кегли | `--text-2xs` `--text-xs` `--text-sm` `--text-md` `--text-lg` `--text-xl` `--text-2xl` |
 | Начертания | `--weight-normal` `--weight-medium` |
-| Интерлиньяж | `--leading-tight` `--leading-ui` `--leading-prose` |
+| Интерлиньяж | `--leading-tight` `--leading-ui` `--leading-code` `--leading-prose` |
 | Трекинг | `--tracking-tight` `--tracking-normal` |
 | Мера | `--measure` |
 
