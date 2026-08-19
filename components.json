@@ -178,6 +178,9 @@
       "page": "whole",
       "forced": "border"
     },
+    "aria": {
+      "role": "alert"
+    },
     "parts": {
       "inst-failure-head": {
         "forced": "glyph"
@@ -298,6 +301,13 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
+    },
+    "aria": {
+      "role": "menu",
+      "roving": "js",
+      "item": {
+        "role": "menuitem"
+      }
     }
   },
   "meter": {
@@ -306,6 +316,20 @@
       "print": "hide",
       "page": "flow",
       "forced": "border"
+    },
+    "aria": {
+      "role": "progressbar",
+      "requires": [
+        "aria-valuemin",
+        "aria-valuemax",
+        "aria-valuenow"
+      ],
+      "exceptions": {
+        "aria-valuenow": {
+          "when": "[data-state=\"indeterminate\"]",
+          "why": "у неопределённой полосы отсутствие valuenow и есть сообщение"
+        }
+      }
     },
     "parts": {
       "inst-meter-fill": {
@@ -434,6 +458,17 @@
       "print": "hide",
       "page": "flow",
       "forced": "none"
+    },
+    "aria": {
+      "role": "radiogroup",
+      "roving": "author",
+      "requires": [
+        "aria-label"
+      ],
+      "item": {
+        "role": "radio",
+        "state": "aria-checked"
+      }
     }
   },
   "select": {
@@ -573,6 +608,14 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
+    },
+    "aria": {
+      "role": "tablist",
+      "roving": "author",
+      "item": {
+        "role": "tab",
+        "state": "aria-selected"
+      }
     }
   },
   "tag": {
@@ -589,6 +632,14 @@
       "print": "keep",
       "page": "whole",
       "forced": "selection"
+    },
+    "aria": {
+      "role": "listbox",
+      "roving": "author",
+      "item": {
+        "role": "option",
+        "state": "aria-selected"
+      }
     }
   },
   "timeline": {
@@ -640,6 +691,13 @@
       "page": "flow",
       "forced": "none"
     },
+    "aria": {
+      "on": "inst-tooltip-text",
+      "role": "tooltip",
+      "requires": [
+        "id"
+      ]
+    },
     "parts": {
       "inst-tooltip-text": {
         "print": "hide"
@@ -652,6 +710,16 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
+    },
+    "aria": {
+      "role": "tree",
+      "roving": "author",
+      "item": {
+        "role": "treeitem",
+        "requires": [
+          "aria-level"
+        ]
+      }
     },
     "parts": {
       "inst-tree-item": {

@@ -52,9 +52,9 @@ group-en: "Blocks"
         <div class="inst-split-side inst-panel">
           <div class="inst-toolbar">
             <div class="inst-segmented" role="radiogroup" aria-label="Фильтр по состоянию">
-              <button type="button" role="radio" aria-checked="true">Все</button>
-              <button type="button" role="radio" aria-checked="false">Идут</button>
-              <button type="button" role="radio" aria-checked="false">Упало</button>
+              <button type="button" role="radio" aria-checked="true"  tabindex="0">Все</button>
+              <button type="button" role="radio" aria-checked="false" tabindex="-1">Идут</button>
+              <button type="button" role="radio" aria-checked="false" tabindex="-1">Упало</button>
             </div>
           </div>
           <div class="inst-panel-body inst-panel-body--list">

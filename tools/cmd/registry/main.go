@@ -61,7 +61,27 @@ var base = map[string]string{"flow": "block", "print": "keep", "page": "flow", "
 
 type entry struct {
 	Axes  map[string]string            `json:"axes"`
+	Aria  *aria                        `json:"aria,omitempty"`
 	Parts map[string]map[string]string `json:"parts,omitempty"`
+}
+
+// Разметочный контракт: роль — это обещание, и невыполненное обещание хуже
+// необъявленного. Здесь лежит то, что обязан написать АВТОР разметки; что
+// делает за него instrument.js, сказано полем roving.
+type aria struct {
+	On       string   `json:"on"` // класс-носитель роли, если не корень
+	Role     string   `json:"role"`
+	Roving   string   `json:"roving"` // author · js
+	Requires []string `json:"requires"`
+	Item     *struct {
+		Role     string   `json:"role"`
+		State    string   `json:"state"`
+		Requires []string `json:"requires"`
+	} `json:"item"`
+	Exceptions map[string]struct {
+		When string `json:"when"`
+		Why  string `json:"why"`
+	} `json:"exceptions"`
 }
 
 // ── разбор CSS ─────────────────────────────────────────────────────────────
@@ -331,6 +351,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	kitJSBytes, err := os.ReadFile(filepath.Join(*src, "kit.js"))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "не прочитать instrument.js:", err)
+		os.Exit(1)
+	}
+	kitJS := groupsBlockRe.FindString(string(kitJSBytes))
+
 	owner, classes, err := ownership(*docs)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "не прочитать документацию:", err)
@@ -476,6 +503,50 @@ func main() {
 		}
 	}
 
+	// ── 5. словарь ролей kit.js против реестра ────────────────────────────
+	//
+	// В kit.js стоит закрытый список ролей с контрактом клавиатуры, и над ним
+	// написано, что он совпадает с таблицей разметочного контракта. Совпадение
+	// это до сих пор держалось на памяти — и уже разошлось: скрипт выполняет
+	// клавиатуру для tablist, а строки про вкладки в таблице не было.
+	//
+	// Роль, которую скрипт обслуживает молча, обещает клавиатуру от имени кита;
+	// роль, объявленная в реестре без поддержки скрипта, обещает её впустую.
+	// Сверяются оба направления.
+	jsRoles := set{}
+	for _, m := range groupsRe.FindAllStringSubmatch(kitJS, -1) {
+		jsRoles[m[1]] = true
+	}
+	regRoles := set{}
+	for name, e := range reg {
+		if e.Aria == nil || e.Aria.Item == nil {
+			continue
+		}
+		regRoles[e.Aria.Role] = true
+		checks++
+		if e.Aria.Roving != "author" && e.Aria.Roving != "js" {
+			add("%s: roving = %q вне словаря (author · js)", name, e.Aria.Roving)
+		}
+	}
+	for _, r := range jsRoles.sorted() {
+		checks++
+		if !regRoles[r] {
+			add("instrument.js выполняет клавиатуру для role=%q, но в реестре эту роль не объявляет никто.\n      "+
+				"Роль обещает клавиатуру от имени кита — обещание должно быть записано", r)
+		}
+	}
+	for _, r := range regRoles.sorted() {
+		checks++
+		if !jsRoles[r] {
+			add("реестр объявляет группу role=%q, но instrument.js её не обслуживает — обещание клавиатуры пустое", r)
+		}
+	}
+
+	// ── 6. разметочный контракт по живым примерам ─────────────────────────
+	markup, markupChecks := checkMarkup(*docs, reg, classes)
+	problems = append(problems, markup...)
+	checks += markupChecks
+
 	if *verbose {
 		fmt.Printf("компонентов в реестре: %d\n", len(reg))
 		fmt.Printf("классов, названных документацией: %d\n", len(owner))
@@ -516,4 +587,237 @@ func sortedKeys(m map[string]set) []string {
 	}
 	sort.Strings(out)
 	return out
+}
+
+// Ключи словаря GROUPS в instrument.js — роли, у которых есть контракт
+// клавиатуры. Читается сам модуль, а не копия списка: копия и есть то, что
+// разошлось.
+var groupsRe = regexp.MustCompile(`(?m)^\s{2}([a-z]+):\s*\{`)
+
+// Сам блок GROUPS, а не весь модуль: слово вида `menu:` встречается в файле и
+// вне словаря, и без вырезки блока в список ролей попадала бы случайная строка.
+var groupsBlockRe = regexp.MustCompile(`(?s)const GROUPS = \{.*?\n\};`)
+
+// ── Разметочный контракт по живым примерам ────────────────────────────────
+//
+// Роль — это обещание: `role="listbox"` сообщает вспомогательной технологии,
+// что стрелки работают. Пока обещание не выполнено, компонент не «не доделан»,
+// он ОБМАНЫВАЕТ. До сих пор за таблицей контракта не следило ничего: слов
+// «aria» и «role» не было ни в одной из шести проверок.
+//
+// Проверяются ПРИМЕРЫ, а не CSS, и это единственное правильное место. Пример —
+// то, что читатель копирует к себе; пример, забывший обязательный атрибут,
+// расходится тиражом. Он же и есть исполняемый тест компонента: другого у кита
+// нет, и заводить второй значило бы получить два расходящихся описания.
+//
+// Разбор — свой, на полсотни строк, потому что зависимостей у tools/ нет
+// намеренно. Разметка примеров написана руками и заведомо правильна по форме:
+// полноценный парсер здесь решал бы задачу, которой нет.
+
+var fenceRe = regexp.MustCompile("(?s)```html preview[^\n]*\n(.*?)```")
+
+// tag — открывающий тег с его атрибутами и границами поддерева.
+type tag struct {
+	name  string
+	attrs map[string]string
+	start int // индекс в списке тегов
+	end   int // индекс первого тега ЗА поддеревом
+}
+
+var voidTags = map[string]bool{
+	"area": true, "base": true, "br": true, "col": true, "embed": true,
+	"hr": true, "img": true, "input": true, "link": true, "meta": true,
+	"source": true, "track": true, "wbr": true,
+}
+
+var tagRe = regexp.MustCompile(`<(/?)([a-zA-Z][\w-]*)((?:\s+[^<>"']+(?:"[^"]*")?)*)\s*(/?)>`)
+var attrRe = regexp.MustCompile(`([a-zA-Z_:][-\w:.]*)(?:\s*=\s*"([^"]*)")?`)
+
+// scan разбирает фрагмент в плоский список открывающих тегов, у каждого из
+// которых известна граница поддерева. Этого достаточно и для «есть ли атрибут
+// на элементе», и для «какие элементы лежат внутри».
+func scan(html string) []tag {
+	var out []tag
+	var stack []int
+	for _, m := range tagRe.FindAllStringSubmatch(html, -1) {
+		closing, name, rawAttrs, selfClose := m[1] == "/", strings.ToLower(m[2]), m[3], m[4] == "/"
+		if closing {
+			for len(stack) > 0 {
+				top := stack[len(stack)-1]
+				stack = stack[:len(stack)-1]
+				out[top].end = len(out)
+				if out[top].name == name {
+					break
+				}
+			}
+			continue
+		}
+		attrs := map[string]string{}
+		for _, a := range attrRe.FindAllStringSubmatch(rawAttrs, -1) {
+			if a[1] != "" {
+				attrs[strings.ToLower(a[1])] = a[2]
+			}
+		}
+		out = append(out, tag{name: name, attrs: attrs, start: len(out), end: -1})
+		if !selfClose && !voidTags[name] {
+			stack = append(stack, len(out)-1)
+		} else {
+			out[len(out)-1].end = len(out)
+		}
+	}
+	for i := range out {
+		if out[i].end < 0 {
+			out[i].end = len(out)
+		}
+	}
+	return out
+}
+
+func hasClass(t tag, c string) bool {
+	for _, f := range strings.Fields(t.attrs["class"]) {
+		if f == c {
+			return true
+		}
+	}
+	return false
+}
+
+// checkMarkup сверяет примеры страниц с ARIA-контрактами реестра.
+func checkMarkup(docs string, reg map[string]entry, classes map[string][]string) ([]string, int) {
+	var problems []string
+	checks := 0
+
+	for name, e := range reg {
+		if e.Aria == nil {
+			continue
+		}
+		host := ""
+		if cs := classes[name]; len(cs) > 0 {
+			host = cs[0]
+		}
+		if e.Aria.On != "" {
+			host = e.Aria.On
+		}
+
+		for _, page := range pagesOf(docs) {
+			b, err := os.ReadFile(page)
+			if err != nil {
+				continue
+			}
+			text := strings.ReplaceAll(string(b), "\r\n", "\n")
+			for _, f := range fenceRe.FindAllStringSubmatch(text, -1) {
+				tags := scan(f[1])
+				for i, t := range tags {
+					if !hasClass(t, host) || t.attrs["role"] != e.Aria.Role {
+						continue
+					}
+					// filepath.Rel, а не TrimPrefix: путь приходит флагом и
+					// может быть записан с любым разделителем, а сообщение
+					// обязано читаться одинаково.
+					short := page
+					if rel, err := filepath.Rel(docs, page); err == nil {
+						short = filepath.ToSlash(rel)
+					}
+					where := fmt.Sprintf("%s пример с .%s", short, host)
+					checks++
+					for _, req := range e.Aria.Requires {
+						if _, ok := t.attrs[req]; ok {
+							continue
+						}
+						if ex, has := e.Aria.Exceptions[req]; has && matchesWhen(t, ex.When) {
+							continue
+						}
+						problems = append(problems, fmt.Sprintf(
+							"  · %s: нет %s при role=%q.\n      Роль обещает это вспомогательной технологии — без атрибута обещание ложно",
+							where, req, e.Aria.Role))
+					}
+					if e.Aria.Item == nil {
+						continue
+					}
+					var items []tag
+					for _, c := range tags[i+1 : t.end] {
+						if c.attrs["role"] == e.Aria.Item.Role {
+							items = append(items, c)
+						}
+					}
+					if len(items) == 0 {
+						problems = append(problems, fmt.Sprintf(
+							"  · %s: role=%q без единого role=%q внутри", where, e.Aria.Role, e.Aria.Item.Role))
+						continue
+					}
+					checks++
+					if st := e.Aria.Item.State; st != "" {
+						for _, it := range items {
+							if _, ok := it.attrs[st]; !ok {
+								problems = append(problems, fmt.Sprintf(
+									"  · %s: у role=%q нет %s — состояние живёт в атрибуте, а не в классе",
+									where, e.Aria.Item.Role, st))
+								break
+							}
+						}
+					}
+					for _, req := range e.Aria.Item.Requires {
+						for _, it := range items {
+							if _, ok := it.attrs[req]; !ok {
+								problems = append(problems, fmt.Sprintf(
+									"  · %s: у role=%q нет %s", where, e.Aria.Item.Role, req))
+								break
+							}
+						}
+					}
+					// Бегущий tabindex обязателен там, где его пишет АВТОР.
+					// Где его расставляет instrument.js, требовать нечего:
+					// у меню пункты лежат в закрытом поповере и в обход не
+					// попадают, пока его не открыли.
+					if e.Aria.Roving == "author" {
+						checks++
+						zero := 0
+						for _, it := range items {
+							if it.attrs["tabindex"] == "0" {
+								zero++
+							}
+						}
+						if zero != 1 {
+							problems = append(problems, fmt.Sprintf(
+								"  · %s: бегущий tabindex — %d пунктов с tabindex=\"0\" из %d, нужен ровно один.\n"+
+									"      Без него Tab пройдёт по каждому пункту, и группа перестанет быть одним контролом",
+								where, zero, len(items)))
+						}
+					}
+				}
+			}
+		}
+	}
+	sort.Strings(problems)
+	return problems, checks
+}
+
+// matchesWhen проверяет условие исключения вида [data-state="indeterminate"].
+func matchesWhen(t tag, when string) bool {
+	m := regexp.MustCompile(`\[([\w-]+)="([^"]*)"\]`).FindStringSubmatch(when)
+	if m == nil {
+		return false
+	}
+	return t.attrs[m[1]] == m[2]
+}
+
+var pageCache []string
+
+func pagesOf(docs string) []string {
+	if pageCache != nil {
+		return pageCache
+	}
+	for _, dir := range []string{"components", "agent", "layout", "blocks"} {
+		filepath.WalkDir(filepath.Join(docs, dir), func(p string, d os.DirEntry, err error) error {
+			if err != nil || d.IsDir() {
+				return nil
+			}
+			if strings.HasSuffix(p, ".md") && !strings.HasSuffix(p, ".en.md") {
+				pageCache = append(pageCache, p)
+			}
+			return nil
+		})
+	}
+	sort.Strings(pageCache)
+	return pageCache
 }

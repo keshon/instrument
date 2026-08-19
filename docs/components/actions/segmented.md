@@ -28,9 +28,9 @@ group-en: "Actions"
 
 ```html preview
 <div class="inst-segmented" role="radiogroup" aria-label="Режим отображения">
-  <button type="button" role="radio" aria-checked="true">Список</button>
-  <button type="button" role="radio" aria-checked="false">Сетка</button>
-  <button type="button" role="radio" aria-checked="false">Таблица</button>
+  <button type="button" role="radio" aria-checked="true"  tabindex="0">Список</button>
+  <button type="button" role="radio" aria-checked="false" tabindex="-1">Сетка</button>
+  <button type="button" role="radio" aria-checked="false" tabindex="-1">Таблица</button>
 </div>
 ```
 
@@ -95,9 +95,9 @@ group-en: "Actions"
 
 ```html preview
 <div class="inst-segmented" role="radiogroup" aria-label="Выбрано первое">
-  <button type="button" role="radio" aria-checked="true">Выбрано</button>
-  <button type="button" role="radio" aria-checked="false">Обычное</button>
-  <button type="button" role="radio" aria-checked="false" disabled>Недоступно</button>
+  <button type="button" role="radio" aria-checked="true"  tabindex="0">Выбрано</button>
+  <button type="button" role="radio" aria-checked="false" tabindex="-1">Обычное</button>
+  <button type="button" role="radio" aria-checked="false" tabindex="-1" disabled>Недоступно</button>
 </div>
 ```
 
@@ -173,9 +173,9 @@ group.addEventListener('inst:select', (e) => {
   </div>
   <div class="inst-page-actions">
     <div class="inst-segmented" role="radiogroup" aria-label="Период">
-      <button type="button" role="radio" aria-checked="false">День</button>
-      <button type="button" role="radio" aria-checked="true">Неделя</button>
-      <button type="button" role="radio" aria-checked="false">Месяц</button>
+      <button type="button" role="radio" aria-checked="false" tabindex="-1">День</button>
+      <button type="button" role="radio" aria-checked="true"  tabindex="0">Неделя</button>
+      <button type="button" role="radio" aria-checked="false" tabindex="-1">Месяц</button>
     </div>
   </div>
 </div>

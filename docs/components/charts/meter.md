@@ -84,7 +84,8 @@ group-en: "Charts"
      aria-valuenow="74" aria-valuemin="0" aria-valuemax="100">
   <div class="inst-meter-fill" style="inline-size:74%"></div>
 </div>
-<div class="inst-meter" data-state="indeterminate" role="progressbar" aria-label="Индексация">
+<div class="inst-meter" data-state="indeterminate" role="progressbar" aria-label="Индексация"
+     aria-valuemin="0" aria-valuemax="100">
   <div class="inst-meter-fill"></div>
 </div>
 ```
@@ -137,7 +138,8 @@ group-en: "Charts"
 </div>
 <div>
   <div class="inst-meter-row"><span>Индексация</span><span class="inst-meter-value">длительность неизвестна</span></div>
-  <div class="inst-meter" data-state="indeterminate" role="progressbar" aria-label="Индексация">
+  <div class="inst-meter" data-state="indeterminate" role="progressbar" aria-label="Индексация"
+     aria-valuemin="0" aria-valuemax="100">
     <div class="inst-meter-fill"></div>
   </div>
 </div>

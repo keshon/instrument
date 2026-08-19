@@ -97,8 +97,8 @@ group-en: "Navigation"
   <div class="inst-panel-header"><span class="inst-panel-title">Модули</span></div>
   <div class="inst-toolbar">
     <div class="inst-segmented" role="radiogroup" aria-label="Вид">
-      <button type="button" role="radio" aria-checked="true">Список</button>
-      <button type="button" role="radio" aria-checked="false">Сетка</button>
+      <button type="button" role="radio" aria-checked="true"  tabindex="0">Список</button>
+      <button type="button" role="radio" aria-checked="false" tabindex="-1">Сетка</button>
     </div>
     <span class="inst-toolbar-sep"></span>
     <span class="inst-search">
