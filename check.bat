@@ -9,7 +9,7 @@ rem  CI, otherwise local is green while push is red.
 rem
 rem     check                    every check
 rem     check <name>             one of: contrast targets proportion docscheck
-rem                              registry dist
+rem                              registry mutate dist
 rem     check <name> -v          the flag is forwarded to the tool
 rem     check dist               rebuild dist/ from src/
 rem     check site               build the documentation site
@@ -65,7 +65,7 @@ rem -- handed to `go run` as it comes: a typo would otherwise surface as a Go
 rem -- build error about a missing package, which says nothing about what was
 rem -- actually mistyped. Trailing arguments are forwarded, so `-v` works --
 rem -- and `-v` is exactly what is wanted the moment a check goes red.
-for %%g in (contrast targets proportion docscheck registry) do (
+for %%g in (contrast targets proportion docscheck registry mutate) do (
   if /i "%~1"=="%%g" (
     call :gate %~1 %2 %3
     goto done
@@ -79,7 +79,7 @@ rem -- what this file offers -------------------------------------------------
 :usage
 echo.
 echo   check                    every check, same as CI
-echo   check ^<name^>             one of: contrast targets proportion docscheck registry
+echo   check ^<name^>             one of: contrast targets proportion docscheck registry mutate
 echo   check ^<name^> -v          verbose; the flag is forwarded to the tool
 echo.
 echo   check dist               rebuild dist/ from src/
@@ -104,6 +104,7 @@ call :gate targets
 call :gate proportion
 call :gate docscheck
 call :gate registry
+call :gate mutate
 call :gate dist -check
 call :sitegate
 call :vetgate
