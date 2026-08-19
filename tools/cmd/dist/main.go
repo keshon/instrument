@@ -106,6 +106,10 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
+		if err := checkBans(name, b); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 		// Импорт в слой вкладывает ВСЁ содержимое файла — ровно это и
 		// воспроизводится блоком. Иначе слои разъехались бы, а порядок слоёв
 		// у кита несёт смысл: motion и print обязаны перебивать компоненты.
@@ -446,6 +450,133 @@ func checkRoleTier(name string, css []byte) error {
 			return fmt.Errorf("%s:%d: просвет мимо яруса ролей — var(--space-%s). "+
 				"Между разделами берите --gap-section, внутри — --gap-row или --gap-inline",
 				name, i+1, m[1])
+		}
+	}
+	return nil
+}
+
+// blankComments заменяет тела комментариев пробелами, СОХРАНЯЯ переносы строк.
+//
+// Без этого проверки ниже ловили бы сами объяснения: слово «!important»
+// встречается в шапках kit.css, motion.css, print.css и forms.css, а «#333» —
+// в описании второго закона прямо в tokens.css. Вырезать комментарии целиком
+// нельзя: номер строки в сообщении обязан совпадать с тем, что откроют.
+func blankComments(css []byte) []byte {
+	out := make([]byte, len(css))
+	copy(out, css)
+	for i := 0; i+1 < len(out); {
+		if out[i] != '/' || out[i+1] != '*' {
+			i++
+			continue
+		}
+		j := i
+		for ; j+1 < len(out); j++ {
+			if out[j] == '*' && out[j+1] == '/' {
+				j += 2
+				break
+			}
+		}
+		if j+1 >= len(out) {
+			j = len(out)
+		}
+		for k := i; k < j; k++ {
+			if out[k] != '\n' {
+				out[k] = ' '
+			}
+		}
+		i = j
+	}
+	return out
+}
+
+// Раздел «Запрещено» принципов дизайна, переведённый в регулярные выражения.
+//
+// Все пять правил СЕГОДНЯ ЗЕЛЁНЫЕ — это защёлки, а не работа. Смысл гейта не в
+// том, чтобы что-то найти сейчас, а в том, чтобы запрет перестал держаться на
+// памяти: каждое из пяти нарушается одной строкой, которая выглядит безобидно
+// и не даёт ошибки в браузере.
+var (
+	banImportant = regexp.MustCompile(`!\s*important`)
+	banBold      = regexp.MustCompile(`font-weight:\s*(700|800|900|bold)\b`)
+	banColor     = regexp.MustCompile(`#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(|\boklch\(|\bcolor\(`)
+	banUtility   = regexp.MustCompile(`\.[mp][trblxy]?-[0-9]`)
+
+	maskDecl = regexp.MustCompile(`\bmask(-image)?\s*:`)
+	maskInk  = regexp.MustCompile(`^#(000|000000)$`)
+	uriHex   = regexp.MustCompile(`%23[0-9a-fA-F]{3,8}`)
+	urlDecl  = regexp.MustCompile(`([\w-]+)\s*:\s*[^;]*url\(`)
+)
+
+// Слой токенов. Здесь сырой цвет — это РАБОТА, а не нарушение: tokens.css
+// объявляет рампы и семантику, print.css возвращает светлую тему на бумаге,
+// переприсваивая те же семантические имена. Оба яруса 1–2, и обоим положено
+// называть цвет числом. Всем остальным — нет.
+var colorLayer = map[string]bool{"tokens.css": true, "print.css": true}
+
+// checkBans сторожит запреты, которые до сих пор держались на внимательности.
+//
+// Проверка построчная и потому не видит объявления, разорванного переносом.
+// Для четырёх правил из пяти это безразлично — свойство и значение стоят на
+// одной строке, — а для маски проверено отдельно: во всех 27 объявлениях кита
+// маска однострочная.
+func checkBans(name string, raw []byte) error {
+	css := blankComments(raw)
+	for i, line := range strings.Split(string(css), "\n") {
+		at := fmt.Sprintf("%s:%d", name, i+1)
+
+		// !important. Исключение ровно одно и названо поимённо: [hidden] в
+		// base.css — это корректность, а не оформление.
+		if banImportant.MatchString(line) {
+			if !(name == "base.css" && strings.Contains(line, "[hidden]")) {
+				return fmt.Errorf("%s: !important. Единственное разрешённое — [hidden] в base.css. "+
+					"Порядок слоёв решает то же самое и не ломает обещание «стили приложения выигрывают»", at)
+			}
+		}
+
+		// Вес 700. base.css закрывает единственную дверь, через которую его
+		// приносит платформа (strong и b сброшены на --weight-medium); эта
+		// закрывает дверь, через которую его принесёт правка.
+		if m := banBold.FindStringSubmatch(line); m != nil {
+			return fmt.Errorf("%s: вес %s. В ките два веса — --weight-normal и --weight-medium (600). "+
+				"Настоящего 500 у Segoe UI нет, а 700 в инструментальном интерфейсе кричит громче данных", at, m[1])
+		}
+
+		// Утилиты отступов. Шкала разрежена сверху намеренно, и набор утилит
+		// вернул бы «чуть побольше» первым классом.
+		if m := banUtility.FindString(line); m != "" {
+			return fmt.Errorf("%s: утилита отступа %q. Ритм задают примитивы потока "+
+				"(.inst-stack, .inst-cluster, .inst-grid) с зазором, названным намерением", at, m)
+		}
+
+		// Сырой цвет вне слоя токенов — это захардкоженная светлая тема.
+		if !colorLayer[name] {
+			for _, c := range banColor.FindAllString(line, -1) {
+				// Маска — исключение, и оно узкое: цвет в ней не цвет, а
+				// альфа-канал, которым вырезается форма. Заливка приходит
+				// токеном, поэтому чёрный здесь единственное осмысленное
+				// значение, и только он и разрешён.
+				if maskDecl.MatchString(line) && maskInk.MatchString(c) {
+					continue
+				}
+				return fmt.Errorf("%s: сырой цвет %q. Компонент обращается к семантике "+
+					"(--text-primary, --surface-raised), а не к числу: число — это захардкоженная светлая тема", at, c)
+			}
+		}
+
+		// Цвет внутри data-URI. Форма рисуется маской, цвет приходит токеном —
+		// значит в самой картинке цвета нет, есть только чернила формы.
+		for _, h := range uriHex.FindAllString(line, -1) {
+			if h != "%23000" {
+				return fmt.Errorf("%s: цвет %s внутри data-URI. Форма рисуется маской и красится токеном; "+
+					"внутри картинки допустим только %%23000 — чернила самой формы", at, h)
+			}
+		}
+
+		// url() только в маске. Картинка, поставленная фоном, красится собой и
+		// потому не умеет следовать теме.
+		if m := urlDecl.FindStringSubmatch(line); m != nil && !strings.HasPrefix(m[1], "mask") {
+			return fmt.Errorf("%s: url() в свойстве %q. Картинка допускается только маской (mask, mask-image): "+
+				"фоновая красится собой и не следует ни теме, ни тону", at, m[1])
 		}
 	}
 	return nil
