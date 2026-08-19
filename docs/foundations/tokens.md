@@ -102,7 +102,7 @@ group-en: "Foundations"
 | `--surface-hover` | чёрный 3.5% | белый 4.5% |
 | `--surface-active` | чёрный 6.5% | белый 8% |
 | `--surface-selected` | `--a-4` 14%, в обеих темах | |
-| `--surface-recessed` | чёрный 5% | чёрный 20% |
+| `--surface-recessed` | чёрный 6% | чёрный 20% |
 | `--surface-recessed-hover` | чёрный 2.5% | чёрный 10% |
 | `--surface-recessed-active` | чёрный 7.5% | чёрный 28% |
 

@@ -435,6 +435,19 @@ func main() {
 	fmt.Printf("страниц: %d  ·  классов в ките: %d  ·  покрыто: %d (%d%%)\n\n",
 		len(pages), len(kit), covered, pct)
 
+	// Таблицы токенов: сверка ЗНАЧЕНИЙ, а не существования. Отдельным списком,
+	// потому что это другой род ошибки: класс на месте, токен на месте, врёт
+	// только число.
+	staleTable := false
+	if stale := checkTokenTables(*srcDir, *docsDir); len(stale) > 0 {
+		fmt.Printf("── таблица токенов разошлась с кодом (%d) ──\n", len(stale))
+		for _, s := range stale {
+			fmt.Println("  " + s)
+		}
+		fmt.Println()
+		staleTable = true
+	}
+
 	if len(problems) > 0 {
 		seen := map[string]bool{}
 		var uniq []string
@@ -476,11 +489,11 @@ func main() {
 		}
 	}
 
-	if len(problems) == 0 && len(undocumented) == 0 && len(pending) == 0 {
+	if len(problems) == 0 && len(undocumented) == 0 && len(pending) == 0 && !staleTable {
 		fmt.Println("· документация и кит сходятся полностью")
 	}
 
-	if len(problems) > 0 {
+	if len(problems) > 0 || staleTable {
 		os.Exit(1)
 	}
 }
