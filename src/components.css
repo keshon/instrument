@@ -1222,7 +1222,10 @@
   }
 
   & td {
-    background: var(--surface-sunken);
+    /* Относительное: у варианта разделённые границы, и сквозь просветы видна
+       подложка таблицы. Отношение ячейки к ней обязано держаться одинаковым,
+       где бы таблица ни стояла. */
+    background: var(--surface-recessed);
     border-block-end: none;
     border-radius: var(--radius-xs);
   }

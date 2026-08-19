@@ -60,7 +60,11 @@
   line-height: 1.55;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
+  /* Относительное — по второй половине закона, а не по первой. Подложка тут
+     как раз фиксирована: родитель .inst-approval явно стоит на --surface-raised.
+     Но ГЛУБИНА была вдвое лишней: raised против sunken даёт провал 0.087 при
+     целевых 0.033, потому что панель уже сама на шаг выше страницы. */
+  background: var(--surface-recessed);
   overflow-wrap: anywhere;
 }
 
