@@ -92,6 +92,10 @@ var targets = []target{
 	// высоты она быть не может.
 	{label: "подстановка", where: "components.css .inst-insert", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-2"},
 
+	// Чип фильтра. Соседи разделены собственным зазором полосы, как у
+	// пагинации: ширина по тексту, поэтому по ширине считается высота.
+	{label: "чип фильтра", where: "components.css .inst-chip", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-2"},
+
 	// Крестик тега. Самая маленькая цель кита: подписи рядом нет, а соседний
 	// тег стоит вплотную — исключение по расстоянию неприменимо.
 	{label: "крестик тега", where: "data.css .inst-tag-remove", w: "--size-chevron", h: "--size-chevron", hit: "--tap-min", alone: true},

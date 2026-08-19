@@ -73,7 +73,13 @@
   padding-inline: var(--space-3);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
+  /* Утопление относительное, а не ступень рампы, — по той же причине, по
+     которой его сменило умолчание кнопки. Ступень задаёт светлоту абсолютно
+     и потому знает одну глубину, а тег стоит то в строке прозы, то в панели,
+     то в карточке. На приподнятой панели --surface-sunken давал провал 0.087
+     вместо 0.033: панель уже сама на шаг выше, и шаги складывались.
+     Тега это касается чаще, чем кнопки: в панели он живёт почти всегда.   */
+  background: var(--surface-recessed);
   color: var(--text-secondary);
   font-size: var(--text-xs);
   white-space: nowrap;

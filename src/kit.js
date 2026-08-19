@@ -77,6 +77,28 @@ const GROUPS = {
 
 const GROUP_SELECTOR = Object.keys(GROUPS).map((r) => `[role="${r}"]`).join(',');
 
+/* Множественный выбор снимает «выделение следует за фокусом».
+ *
+ * По APG одиночный listbox выделяет то, на что встал фокус, — и очередь задач
+ * ровно этот случай. Множественный ведёт себя иначе: стрелка ТОЛЬКО двигает
+ * фокус, включает и выключает пробел. Иначе пройти полосу фильтров стрелками
+ * значило бы включить всё, мимо чего прошёл.
+ *
+ * Флаг ищется на группе, а не на пункте: aria-multiselectable — её атрибут, и
+ * роль от него не меняется, listbox остаётся listbox'ом. Поэтому словарь ролей
+ * трогать не пришлось: множественность — надстройка над записью, а не шестая
+ * строка в ней.
+ *
+ * follows переезжает в multi, а не теряется: имя атрибута нужно переключателю,
+ * чтобы знать, что писать. Меню сюда не попадает — там follows пуст, выбора
+ * нет вовсе, и надстраиваться не над чем. */
+function specOf(group) {
+  const spec = GROUPS[group.getAttribute('role')];
+  if (!spec || !spec.follows) return spec || null;
+  if (group.getAttribute('aria-multiselectable') !== 'true') return spec;
+  return { ...spec, follows: null, multi: spec.follows };
+}
+
 /* Ось берётся из aria-orientation, если он есть: горизонтальное дерево и
    вертикальные вкладки существуют, и разметка вправе так сказать. */
 function axisOf(group, spec) {
@@ -120,7 +142,11 @@ function roving(group, spec, current) {
  * пункта в одиночном списке — состояние, из которого разметка уже не выйдет. */
 function move(group, spec, to) {
   for (const el of itemsOf(group, spec)) el.tabIndex = el === to ? 0 : -1;
-  select(group, spec, to);
+  /* В множественной группе стрелка НЕ выбирает. Иначе проход по полосе
+     фильтров включал бы каждый, мимо которого прошёл, — и «выделение следует
+     за фокусом» из одиночного списка превращалось бы в «выделяется всё».
+     Переключает там пробел, и приходит он сюда другой дорогой: через click.  */
+  if (!spec.multi) select(group, spec, to);
   to.focus();
 }
 
@@ -133,6 +159,17 @@ function move(group, spec, to) {
  * куда шёл: приложение отказалось вести состояние само, а не запретило
  * человеку перемещаться. */
 function select(group, spec, to) {
+  /* Множественный выбор переключает ОДИН пункт и не трогает соседей — в этом
+     и состоит его отличие. Ветка стоит здесь, а не в обработчике клавиш,
+     потому что через select() приходят обе дороги: и стрелка с пробелом, и
+     щелчок мышью. Развилка одна — значит, и место у неё одно.             */
+  if (spec.multi) {
+    const on = to.getAttribute(spec.multi) === 'true';
+    const value = to.dataset.value ?? to.textContent.trim();
+    if (!emit(to, 'select', { value, selected: !on })) return;
+    to.setAttribute(spec.multi, String(!on));
+    return;
+  }
   if (!spec.follows || to.getAttribute(spec.follows) === 'true') return;
   if (!emit(to, 'select', { value: to.dataset.value ?? to.textContent.trim() })) return;
   const items = itemsOf(group, spec);
@@ -267,7 +304,7 @@ function onKeydown(e) {
 
   const group = item.closest(GROUP_SELECTOR);
   if (!group) return;
-  const spec = GROUPS[group.getAttribute('role')];
+  const spec = specOf(group);
   if (!spec) return;
 
   const axis = axisOf(group, spec);
@@ -320,7 +357,7 @@ function onKeydown(e) {
 function onFocusin(e) {
   const group = e.target.closest?.(GROUP_SELECTOR);
   if (!group) return;
-  const spec = GROUPS[group.getAttribute('role')];
+  const spec = specOf(group);
   if (!spec) return;
   const item = e.target.closest(spec.item);
   if (item) roving(group, spec, item);
@@ -765,7 +802,7 @@ function onClick(e) {
   // бегущий tabindex.
   const group = e.target.closest?.(GROUP_SELECTOR);
   if (!group) return;
-  const spec = GROUPS[group.getAttribute('role')];
+  const spec = specOf(group);
   const item = spec && e.target.closest(spec.item);
   if (item && itemsOf(group, spec).includes(item)) select(group, spec, item);
 }
@@ -789,7 +826,7 @@ function onPointerDown(e) {
 /** Расставить бегущий tabindex и привести к данным то, что от них зависит. */
 export function refresh(root = document) {
   for (const group of root.querySelectorAll?.(GROUP_SELECTOR) || []) {
-    const spec = GROUPS[group.getAttribute('role')];
+    const spec = specOf(group);
     if (spec) roving(group, spec);
   }
   // Начальное состояние: <output> и «выбрать всё» обязаны совпадать с

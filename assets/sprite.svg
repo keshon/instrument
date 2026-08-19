@@ -93,4 +93,5 @@
   <symbol id="i-p-rail" viewBox="0 0 16 16"><rect x="2" y="2.5" width="4.2" height="11" rx="1.2"/><circle cx="4.1" cy="5.4" r=".9" fill="currentColor" stroke="none"/><circle cx="4.1" cy="8.5" r=".9" fill="currentColor" stroke="none"/><path d="M9 2.5h5"/><path d="M9 13.5h5"/></symbol>
   <symbol id="i-p-statusbar" viewBox="0 0 16 16"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M2 10.5h12"/><circle cx="4.6" cy="12" r=".8" fill="currentColor" stroke="none"/><path d="M9 12h2.6"/></symbol>
   <symbol id="i-p-change" viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M8 5.4v5.2M5.4 8h5.2"/></symbol>
+  <symbol id="i-p-chip" viewBox="0 0 16 16"><rect x="1.7" y="3.3" width="6.4" height="4.4" rx="2.2"/><rect x="1.7" y="3.3" width="6.4" height="4.4" rx="2.2" fill="currentColor" stroke="none" opacity=".25"/><rect x="9.3" y="3.3" width="5" height="4.4" rx="2.2"/><rect x="1.7" y="9.6" width="8" height="4.4" rx="2.2"/></symbol>
 </svg>

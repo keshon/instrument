@@ -101,7 +101,16 @@ var cases = []kase{
 	{"текст: muted на панели", "--text-muted", []string{"--surface-raised"}, text},
 	{"текст: muted на странице", "--text-muted", []string{"--surface-page"}, text},
 	{"текст: muted во врезе (лог)", "--text-muted", []string{"--surface-sunken"}, text},
-	{"текст: primary в поле ввода", "--text-primary", []string{"--surface-field"}, text},
+	// Утопленные поверхности полупрозрачны и потому объявляются СТОПКОЙ:
+	// первым идёт подложка, вторым — сама заливка. Flatten их складывает.
+	// Одним слоем такую пару объявить нельзя — гейт прочитает альфу как
+	// непрозрачный цвет и померяет контраст с чёрным.
+	{"текст: primary в поле на панели", "--text-primary", []string{"--surface-raised", "--surface-field"}, text},
+	{"текст: primary в поле на странице", "--text-primary", []string{"--surface-page", "--surface-field"}, text},
+	{"текст: подпись кнопки", "--text-primary", []string{"--surface-raised", "--surface-recessed"}, text},
+	{"текст: подпись кнопки под курсором", "--text-primary", []string{"--surface-raised", "--surface-recessed-hover"}, text},
+	{"текст: тег на панели", "--text-secondary", []string{"--surface-raised", "--surface-recessed"}, text},
+	{"текст: чип выбранный", "--accent-text", []string{"--surface-raised", "--surface-recessed"}, text},
 
 	// faint — порог декорации, а не чтения. Читаемому тексту он запрещён.
 	{"декор: faint на панели", "--text-faint", []string{"--surface-raised"}, large},
@@ -146,7 +155,7 @@ var cases = []kase{
 	// Несущие границы: граница И ЕСТЬ контрол.
 	{"граница контрола на панели", "--border-control", []string{"--surface-raised"}, large},
 	{"граница контрола на странице", "--border-control", []string{"--surface-page"}, large},
-	{"граница контрола во врезе", "--border-control", []string{"--surface-field"}, large},
+	{"граница контрола во врезе", "--border-control", []string{"--surface-raised", "--surface-field"}, large},
 
 	// Заполнение меры относительно собственной дорожки, и дорожки — на всех
 	// поверхностях, где мера может стоять.
@@ -187,10 +196,10 @@ var cases = []kase{
 	// Формы.
 	{"карточка выбора: заголовок", "--text-primary", []string{"--surface-raised", "--accent-bg"}, text},
 	{"карточка выбора: описание", "--text-secondary", []string{"--surface-raised", "--accent-bg"}, text},
-	{"множественный выбор: выбранный пункт", "--accent-text", []string{"--surface-field", "--surface-selected"}, text},
+	{"множественный выбор: выбранный пункт", "--accent-text", []string{"--surface-raised", "--surface-field", "--surface-selected"}, text},
 	{"приставка поля", "--text-muted", []string{"--surface-sunken"}, text},
 	{"readonly: текст на врезе", "--text-primary", []string{"--surface-sunken"}, text},
-	{"пунктир зоны файла", "--border-control", []string{"--surface-field"}, large},
+	{"пунктир зоны файла", "--border-control", []string{"--surface-raised", "--surface-field"}, large},
 	{"обязательность", "--err-text", []string{"--surface-raised"}, text},
 
 	// Раскладка и навигация.
