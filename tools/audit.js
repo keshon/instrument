@@ -161,6 +161,23 @@ window.kitAudit = (function () {
     return { w: w, h: h, rect: r };
   }
 
+  /* ПЛОСКОСТЬ, в которой лежит элемент: сам открытый поповер или модалка,
+     а для всего остального — null, то есть страница.
+
+     Возвращается именно узел, а не «да/нет». Двух причин достаточно, и обе
+     измерены. Открытый поповер лежит в верхнем слое и плавает НАД страницей:
+     палец, целящийся в пункт меню, ни во что под ним не попадёт, и мерить
+     расстояние между слоями значит мерить то, чего на экране нет. А два
+     РАЗНЫХ открытых поповера — это две разные плавающие панели, и соседями
+     они друг другу тоже не приходятся.
+
+     Второе важнее, чем кажется: бегунок раскрывает ВСЕ поповеры страницы
+     разом, чего в жизни не бывает, и без разделения по плоскостям три демо-
+     меню на одной странице начинают мерить расстояние друг до друга. */
+  function planeOf(el) {
+    return el.closest('[popover]:popover-open, dialog[open]');
+  }
+
   function inlineInText(el) {
     if (getComputedStyle(el).display !== 'inline') return false;
 
@@ -199,6 +216,22 @@ window.kitAudit = (function () {
       // cannot be thinner than its borders), and any threshold big enough to
       // catch it would start excusing genuinely too-small controls.
       if (cs.clipPath.indexOf('inset(50%') === 0) return false;
+
+      // Целей у ЗАКРЫТОГО поповера нет, даже пока он ещё виден.
+      //
+      // Поповеры типа auto образуют стек: открытие соседнего закрывает
+      // предыдущий. Бегунок раскрывает их все подряд, значит открытым
+      // остаётся последний, а прочие закрываются — и с
+      // transition-behavior: allow-discrete продолжают рисоваться, пока
+      // гаснут. Коробка у них при этом настоящая, позиция — умолчание
+      // поповера, то есть все они складываются в одну стопку по центру.
+      //
+      // Так и набирались 244 «нарушения» на восьмидесяти пяти страницах:
+      // мерилось расстояние между пунктами меню, которых на экране в этот
+      // момент уже нет, а те, что остались, стояли друг на друге.
+      var pop = e.closest('[popover]');
+      if (pop && !pop.matches(':popover-open')) return false;
+
       return !inlineInText(e);
     });
     var boxes = els.map(function (e) {
@@ -213,11 +246,18 @@ window.kitAudit = (function () {
       for (var j = 0; j < boxes.length; j++) {
         var o = boxes[j];
         if (o.e === e || e.contains(o.e) || o.e.contains(e)) continue;
+        // Соседство — вопрос ПЛОСКОСТИ, и у каждой всплывающей панели она своя.
+        //
+        // Проверка ниже ловила только ПЕРЕКРЫТИЕ, а этого мало: край поповера
+        // может оказаться в шести сотых пикселя от ссылки в навигации под ним,
+        // не накрыв её. Так и вышло — 244 ложных нарушения на восьмидесяти
+        // пяти страницах, все про переключатель плотности в открытом меню.
+        if (planeOf(e) !== planeOf(o.e)) continue;
         var dx = Math.max(0, Math.max(r.left - o.r.right, o.r.left - r.right));
         var dy = Math.max(0, Math.max(r.top - o.r.bottom, o.r.top - r.bottom));
-        // Boxes that overlap are not neighbours, they are layers: a sticky
-        // header scrolling over a card reads as distance zero and fails
-        // everything under it. Spacing is a question about the plane.
+        // Перекрывшиеся коробки — тоже слои, а не соседи: закреплённая шапка,
+        // проехавшая над карточкой, читается как расстояние ноль и валит всё
+        // под собой.
         if (dx === 0 && dy === 0) continue;
         gap = Math.min(gap, Math.sqrt(dx * dx + dy * dy));
       }

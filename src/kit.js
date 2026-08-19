@@ -748,7 +748,14 @@ function syncSlider(input) {
 
   if (!input.id) return;
   for (const out of input.ownerDocument.querySelectorAll(`output[for~="${CSS.escape(input.id)}"]`)) {
-    out.textContent = input.value;
+    // Сравнение перед записью — не микрооптимизация, а условие завершения.
+    //
+    // Присвоение textContent заменяет текстовый узел ДАЖЕ когда текст тот же,
+    // то есть заводит правку childList. Наблюдатель на неё просыпается и
+    // зовёт refresh(), refresh() снова пишет тот же текст — и страница со
+    // слайдером больше не простаивает никогда. Замерено: вкладка перестаёт
+    // отвечать, а прогон по пикселям вставал на этой странице насмерть.
+    if (out.textContent !== input.value) out.textContent = input.value;
   }
 }
 
@@ -920,15 +927,27 @@ export function start(root = document, { observe = true } = {}) {
   const target = root.body || root;
   if (observe && target && typeof MutationObserver === 'function') {
     let queued = false;
+    const watch = () => observer.observe(target, { childList: true, subtree: true });
     observer = new MutationObserver(() => {
       if (queued) return;
       queued = true;
       queueMicrotask(() => {
         queued = false;
+        // Наблюдатель СНИМАЕТСЯ на время обхода, и это защёлка, а не
+        // оптимизация. refresh() пишет в разметку — бегущий tabindex, ответ
+        // «выбрать всё», значение слайдера, — и каждая такая запись способна
+        // разбудить наблюдателя снова. Флаг queued от этого не спасает: он
+        // сброшен ДО обхода, поэтому правка, сделанная самим обходом, честно
+        // заводит следующий круг, и страница перестаёт простаивать вовсе.
+        //
+        // disconnect() заодно выбрасывает очередь записей, поэтому после
+        // подписки заново прошлые правки не всплывают.
+        observer.disconnect();
         refresh(root);
+        watch();
       });
     });
-    observer.observe(target, { childList: true, subtree: true });
+    watch();
   }
 }
 
