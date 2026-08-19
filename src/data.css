@@ -18,6 +18,8 @@
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-avatar {
+  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  align-self: var(--flow-self, center);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -45,6 +47,8 @@
 /* Группа с наложением. Кольцо цвета поверхности отделяет соседей, поэтому
    стопка читается как стопка, а не как слипшееся пятно.                   */
 .inst-avatars {
+  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  align-self: var(--flow-self, center);
   display: flex;
   align-items: center;
 
@@ -69,6 +73,8 @@
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-tag {
+  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  align-self: var(--flow-self, center);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -286,7 +292,7 @@
   }
 }
 
-.inst-ring-wrap { position: relative; display: inline-flex; }
+.inst-ring-wrap { position: relative; display: inline-flex; align-self: var(--flow-self, center); }
 .inst-ring-label {
   position: absolute;
   inset: 0;

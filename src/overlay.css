@@ -234,7 +234,7 @@
    нужен .inst-popover, который живёт в верхнем слое.
    ────────────────────────────────────────────────────────────────────────── */
 
-.inst-tooltip { position: relative; display: inline-flex; }
+.inst-tooltip { position: relative; display: inline-flex; align-self: var(--flow-self, center); }
 
 .inst-tooltip-text {
   position: absolute;

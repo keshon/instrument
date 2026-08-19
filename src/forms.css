@@ -162,6 +162,8 @@
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-checkbox, .inst-radio, .inst-switch {
+  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  align-self: var(--flow-self, center);
   display: inline-flex;
   align-items: center;
   gap: var(--gap-inline);
