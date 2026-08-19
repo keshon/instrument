@@ -8,7 +8,7 @@ rem  is NOT a second list of checks -- a line added here must also appear in
 rem  CI, otherwise local is green while push is red.
 rem
 rem     check              every check
-rem     check contrast     one of: contrast targets proportion docscheck
+rem     check contrast     one of: contrast targets proportion docscheck registry
 rem     check dist         rebuild dist/ from src/
 rem     check site         build the documentation site
 rem     check serve        build and serve on :4322
@@ -54,6 +54,7 @@ call :gate contrast
 call :gate targets
 call :gate proportion
 call :gate docscheck
+call :gate registry
 call :gate dist -check
 call :sitegate
 call :vetgate

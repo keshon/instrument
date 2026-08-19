@@ -1,0 +1,665 @@
+{
+  "accordion": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "approval": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "whole",
+      "forced": "border"
+    },
+    "parts": {
+      "inst-approval-head": {
+        "forced": "glyph"
+      }
+    }
+  },
+  "avatar": {
+    "axes": {
+      "flow": "inline",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-avatars": {
+        "flow": "inline"
+      }
+    }
+  },
+  "badge": {
+    "axes": {
+      "flow": "inline",
+      "print": "keep",
+      "page": "flow",
+      "forced": "border"
+    },
+    "parts": {
+      "inst-dot": {
+        "forced": "fill"
+      }
+    }
+  },
+  "banner": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "whole",
+      "forced": "none"
+    }
+  },
+  "breadcrumbs": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "budget": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "button": {
+    "axes": {
+      "flow": "inline",
+      "print": "keep",
+      "page": "flow",
+      "forced": "border"
+    }
+  },
+  "button-group": {
+    "axes": {
+      "flow": "inline",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "calendar": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "card": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "whole",
+      "forced": "border"
+    }
+  },
+  "change": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "chip": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "choice-card": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "code": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-copy": {
+        "print": "hide"
+      }
+    }
+  },
+  "container": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "dialog": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "diff": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "whole",
+      "forced": "border"
+    }
+  },
+  "empty": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "failure": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "whole",
+      "forced": "border"
+    },
+    "parts": {
+      "inst-failure-head": {
+        "forced": "glyph"
+      }
+    }
+  },
+  "file": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "flow": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "form": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-form-actions": {
+        "print": "hide"
+      }
+    }
+  },
+  "history": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "input": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "border"
+    },
+    "parts": {
+      "inst-textarea": {
+        "forced": "border"
+      }
+    }
+  },
+  "inserts": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "kv": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-prop": {
+        "page": "whole"
+      }
+    }
+  },
+  "lane": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-lane-track": {
+        "forced": "border"
+      },
+      "inst-lane-span": {
+        "forced": "fill"
+      }
+    }
+  },
+  "legend": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "log": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-log-line": {
+        "page": "whole"
+      }
+    }
+  },
+  "menu": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "meter": {
+    "axes": {
+      "flow": "block",
+      "print": "hide",
+      "page": "flow",
+      "forced": "border"
+    },
+    "parts": {
+      "inst-meter-fill": {
+        "print": "hide",
+        "forced": "fill"
+      }
+    }
+  },
+  "metric": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "whole",
+      "forced": "none"
+    }
+  },
+  "nav": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "note": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "glyph"
+    }
+  },
+  "num-field": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "border"
+    }
+  },
+  "page-header": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-page-actions": {
+        "print": "hide"
+      }
+    }
+  },
+  "pagination": {
+    "axes": {
+      "flow": "block",
+      "print": "hide",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-pager-item": {
+        "flow": "inline"
+      }
+    }
+  },
+  "panel": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "whole",
+      "forced": "border"
+    }
+  },
+  "popover": {
+    "axes": {
+      "flow": "block",
+      "print": "hide",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "rail": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "ring": {
+    "axes": {
+      "flow": "inline",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "run": {
+    "axes": {
+      "flow": "inline",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "search": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "section": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "segmented": {
+    "axes": {
+      "flow": "inline",
+      "print": "hide",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "select": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "glyph"
+    },
+    "parts": {
+      "inst-select": {
+        "forced": "border"
+      }
+    }
+  },
+  "sheet": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "shell": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-shell-aside": {
+        "print": "hide"
+      },
+      "inst-skip-link": {
+        "print": "hide"
+      }
+    }
+  },
+  "skeleton": {
+    "axes": {
+      "flow": "block",
+      "print": "hide",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "slider": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "sparkline": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "spinner": {
+    "axes": {
+      "flow": "block",
+      "print": "hide",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "split": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "states": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "fill"
+    },
+    "parts": {
+      "inst-caret": {
+        "print": "hide"
+      }
+    }
+  },
+  "statusbar": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "step": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "whole",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-step-twist": {
+        "forced": "glyph"
+      },
+      "inst-output-more": {
+        "print": "hide",
+        "flow": "inline"
+      }
+    }
+  },
+  "steps": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "table": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "selection"
+    }
+  },
+  "tabs": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "tag": {
+    "axes": {
+      "flow": "inline",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "task": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "whole",
+      "forced": "selection"
+    }
+  },
+  "timeline": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "toast": {
+    "axes": {
+      "flow": "block",
+      "print": "hide",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "toggles": {
+    "axes": {
+      "flow": "inline",
+      "print": "keep",
+      "page": "flow",
+      "forced": "border"
+    },
+    "parts": {
+      "inst-radio": {
+        "forced": "border",
+        "flow": "inline"
+      },
+      "inst-switch": {
+        "forced": "fill",
+        "flow": "inline"
+      }
+    }
+  },
+  "toolbar": {
+    "axes": {
+      "flow": "block",
+      "print": "hide",
+      "page": "flow",
+      "forced": "none"
+    }
+  },
+  "tooltip": {
+    "axes": {
+      "flow": "inline",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-tooltip-text": {
+        "print": "hide"
+      }
+    }
+  },
+  "tree": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-tree-item": {
+        "forced": "selection"
+      },
+      "inst-tree-twist": {
+        "forced": "glyph"
+      }
+    }
+  }
+}
