@@ -3501,7 +3501,6 @@ hr {
    1px #373632 без заливки), и он там сосуществует с утопленной вторичной, а
    не заменяет её.                                                          */
 .inst-btn--field {
-  --btn-border: var(--border);
   --btn-bg: var(--surface-field);
   --btn-border: var(--border-control);
   --btn-fg: var(--text-secondary);
