@@ -61,10 +61,10 @@ type target struct {
 var targets = []target{
 	// Кнопки. Иконочная квадратная, поэтому ширина равна высоте. В ряду
 	// кнопки разделены зазором ряда.
-	{label: "кнопка sm", where: "components.css .inst-btn--sm", w: "--control-h-sm", h: "--control-h-sm", gap: "--gap-inline"},
-	{label: "кнопка md", where: "components.css .inst-btn", w: "--control-h-md", h: "--control-h-md", gap: "--gap-inline"},
-	{label: "кнопка lg", where: "components.css .inst-btn--lg", w: "--control-h-lg", h: "--control-h-lg", gap: "--gap-inline"},
-	{label: "иконочная кнопка sm", where: "components.css .inst-btn--sm.inst-btn--icon", w: "--control-h-sm", h: "--control-h-sm", gap: "--gap-inline"},
+	{label: "кнопка sm", where: "actions.css .inst-btn--sm", w: "--control-h-sm", h: "--control-h-sm", gap: "--gap-inline"},
+	{label: "кнопка md", where: "actions.css .inst-btn", w: "--control-h-md", h: "--control-h-md", gap: "--gap-inline"},
+	{label: "кнопка lg", where: "actions.css .inst-btn--lg", w: "--control-h-lg", h: "--control-h-lg", gap: "--gap-inline"},
+	{label: "иконочная кнопка sm", where: "actions.css .inst-btn--sm.inst-btn--icon", w: "--control-h-sm", h: "--control-h-sm", gap: "--gap-inline"},
 
 	// Флажки и переключатели. Соседа у них нет: в колонке выбора таблицы
 	// флажок стоит один, без подписи, — значит норму держит сам.
@@ -83,18 +83,18 @@ var targets = []target{
 	{label: "пункт навигации", where: "layout.css .inst-nav-item", w: "--control-h-md", h: "--control-h-md", gap: "--space-1"},
 	{label: "пункт пагинации", where: "layout.css .inst-pager-item", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-2"},
 	{label: "пункт меню", where: "overlay.css .inst-menu-item", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-1"},
-	{label: "узел дерева", where: "components.css .inst-tree-item", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-1"},
+	{label: "узел дерева", where: "text.css .inst-tree-item", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-1"},
 	{label: "день календаря", where: "data.css .inst-calendar-day", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-1"},
-	{label: "сегмент контрола", where: "components.css .inst-segmented > button", w: "--control-h-md", h: "calc(var(--control-h-md) - var(--space-2))", gap: "--space-1"},
+	{label: "сегмент контрола", where: "actions.css .inst-segmented > button", w: "--control-h-md", h: "calc(var(--control-h-md) - var(--space-2))", gap: "--space-1"},
 
 	// Подстановка. Ширина у неё по тексту, поэтому по ширине считается
 	// высота: даже у самой короткой подписи есть боковые отступы, и уже
 	// высоты она быть не может.
-	{label: "подстановка", where: "components.css .inst-insert", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-2"},
+	{label: "подстановка", where: "rows.css .inst-insert", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-2"},
 
 	// Чип фильтра. Соседи разделены собственным зазором полосы, как у
 	// пагинации: ширина по тексту, поэтому по ширине считается высота.
-	{label: "чип фильтра", where: "components.css .inst-chip", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-2"},
+	{label: "чип фильтра", where: "actions.css .inst-chip", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-2"},
 
 	// Крестик тега. Самая маленькая цель кита: подписи рядом нет, а соседний
 	// тег стоит вплотную — исключение по расстоянию неприменимо.

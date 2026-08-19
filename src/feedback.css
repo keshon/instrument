@@ -1,0 +1,198 @@
+/* ==========================================================================
+   instrument — сообщения
+
+   Сноска, пустое состояние, баннер, аккордеон. То, чем интерфейс отвечает
+   человеку.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Сноска — врезка в поток. Только левая граница, поэтому углы прямые.
+
+   Тон несёт ИКОНКУ, а не только цвет полоски: без значка warn и error
+   отличаются друг от друга исключительно цветом — прямое нарушение
+   собственного закона «цвет не может быть единственным носителем».
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-inline);
+  border-inline-start: var(--size-marker) solid var(--tone-ink, var(--border-strong));
+  border-radius: 0;
+  padding: var(--row-pad-y) var(--pad-panel);
+  font-size: var(--text-sm);
+  line-height: var(--leading-ui);
+  color: var(--text-secondary);
+
+  &::before {
+    content: "";
+    flex: none;
+    inline-size: var(--size-icon);
+    block-size: var(--size-icon);
+    /* Центрируется по ПЕРВОЙ СТРОКЕ текста, а не по верху блока: 1lh — это
+       реальная высота строки, поэтому формула сама подстраивается под кегль
+       и плотность. Ручной сдвиг на -1px задирал значок на 2.1px вверх. */
+    margin-block-start: calc((1lh - var(--size-icon)) / 2);
+    background: var(--tone-ink);
+  }
+  &:not([data-tone])::before { content: none; }
+
+}
+
+/* Иконки тона — общие для сноски и баннера. Один набор масок на два
+   компонента: дублировать data-URI значило бы завести второй источник
+   истины для формы значка.                                              */
+:is(.inst-note, .inst-banner)[data-tone="running"]::before, :is(.inst-note, .inst-banner)[data-tone="neutral"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M8 7.4v3.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='5.2' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+:is(.inst-note, .inst-banner)[data-tone="ok"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.4 8.2 7.2 10 10.6 6.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+:is(.inst-note, .inst-banner)[data-tone="warn"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 2.2 14.6 13.4H1.4z' fill='none' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M8 6.6v3' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='11.6' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+:is(.inst-note, .inst-banner)[data-tone="error"]::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Пустое состояние
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-inline);
+  padding: var(--space-9) var(--space-6);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.inst-empty-title { color: var(--text-secondary); }
+.inst-empty-desc  { font-size: var(--text-xs); line-height: var(--leading-ui); max-inline-size: 44ch; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Баннер — сообщение уровня страницы
+
+   Это НЕ сноска. Сноска (.inst-note) — врезка в поток, она поясняет то, рядом с
+   чем стоит, и несёт только полосу у края. Баннер относится ко всему
+   экрану, поэтому у него заливка, рамка и место под действие: «доступ
+   истекает через три дня», «идёт обслуживание», «изменения не сохранены».
+
+   Тон несёт иконку — тот же общий набор масок, что у сноски.
+   Закрытие баннера — это JS: без него он остаётся на месте и не мешает.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-inline);
+  padding: var(--pad-block-y) var(--pad-panel);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--tone-bg, var(--surface-sunken));
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-ui);
+
+  &::before {
+    content: "";
+    flex: none;
+    inline-size: var(--size-icon);
+    block-size: var(--size-icon);
+    /* Центрируется по ПЕРВОЙ СТРОКЕ текста, а не по верху блока: 1lh — это
+       реальная высота строки, поэтому формула сама подстраивается под кегль
+       и плотность. Ручной сдвиг на -1px задирал значок на 2.1px вверх. */
+    margin-block-start: calc((1lh - var(--size-icon)) / 2);
+    background: var(--tone-ink, var(--text-secondary));
+  }
+  &:not([data-tone])::before { content: none; }
+}
+
+/* Мера обрезает ТЕЛО, а не сам баннер: подложка сообщения уровня страницы
+   обязана идти во всю ширину, а текст на ней — нет. Без этого на широком
+   дашборде строка доходила до 105 знаков при норме 45–75. */
+.inst-banner-body { min-inline-size: 0; max-inline-size: var(--measure); }
+.inst-banner-title { font-weight: var(--weight-medium); }
+.inst-banner-text { color: var(--text-secondary); }
+.inst-banner-actions { flex: none; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Аккордеон
+
+   На <details>, поэтому раскрытие, клавиатура и роль достаются от
+   платформы. Атрибут name на элементах делает группу взаимоисключающей —
+   открытой остаётся ровно одна секция, и тоже без единой строки JS.
+
+   Это не .inst-step: шаг — строка вызова инструмента с телом, аккордеон —
+   раздел содержимого. Разные работы.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-accordion { display: flex; flex-direction: column; gap: var(--space-1); }
+
+.inst-accordion-item {
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.inst-accordion-head {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-inline);
+  min-block-size: var(--control-h-lg);
+  padding: var(--row-pad-y) var(--pad-cell-x);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker { display: none; }
+  &:hover { background: var(--surface-hover); }
+
+  &::after {
+    content: "";
+    flex: none;
+    margin-inline-start: auto;
+    inline-size: var(--size-chevron);
+    block-size: var(--size-chevron);
+    background: var(--text-muted);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.75 6 7.75 9 4.75' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: rotate var(--dur-1) var(--ease-out);
+  }
+}
+
+.inst-accordion-item[open] > .inst-accordion-head {
+  border-block-end: var(--hairline) solid var(--border-subtle);
+}
+.inst-accordion-item[open] > .inst-accordion-head::after { rotate: 180deg; }
+
+.inst-accordion-body { padding: var(--pad-panel) var(--pad-cell-x); }
+
+/* Раскрывашка ВНУТРИ чужой рамки: панели, карточки, поля примера.
+
+   Своя рамка была бы второй в пикселе от первой, а своё скругление —
+   скруглением внутри скругления, которое ни с чем не концентрично. Остаётся
+   только шов сверху: раскрывашка продолжает то, под чем стоит, а не
+   объявляет себя отдельным блоком.                                        */
+.inst-accordion-item--flush {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  border-block-start: var(--hairline) solid var(--border-subtle);
+
+  /* Отступ по краю берётся у ПАНЕЛИ, а не у ячейки. Отдельно стоящий
+     аккордеон отбивает заголовок как строку списка (--pad-cell-x), но внутри
+     рамы это чужая мера: подпись панели стоит на --pad-panel, и ручка внизу
+     обязана встать по той же вертикали. Иначе у одной рамы два разных края —
+     8 и 6 в плотном, 16 и 12 в свободном. */
+  & > .inst-accordion-head,
+  & > .inst-accordion-body { padding-inline: var(--pad-panel); }
+}

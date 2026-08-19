@@ -2,7 +2,7 @@
 title: Сноска
 group: Обратная связь
 layout: component
-source: src/components.css
+source: src/feedback.css
 api:
   - { name: "inst-note", kind: "класс", doc: "Всё. У сноски нет частей: заголовка и действий у неё не бывает по определению" }
   - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт. Без атрибута значок не рисуется" }

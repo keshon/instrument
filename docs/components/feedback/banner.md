@@ -2,7 +2,7 @@
 title: Баннер
 group: Обратная связь
 layout: component
-source: src/components.css
+source: src/feedback.css
 js: Закрытие баннера — слой приложения. Крестика у баннера нет
 api:
   - { name: "inst-banner", kind: "класс", doc: "Контейнер. Заливка тона, рамка, значок" }

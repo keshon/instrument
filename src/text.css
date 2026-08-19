@@ -1,0 +1,178 @@
+/* ==========================================================================
+   instrument — машинный текст
+
+   Лог, код и дерево. Моноширинное, плотное, читаемое посимвольно.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Лог и код
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-log {
+  background: var(--surface-sunken);
+  /* Дорожка — контрол размера md, поэтому радиус берёт у него и едет за
+     плотностью. Сегмент внутри получает тот же радиус МИНУС поле дорожки:
+     концентричность здесь считается, а не подбирается парой токенов, и
+     потому держится во всех трёх плотностях. */
+  border-radius: var(--radius-control-md);
+  padding: var(--pad-block-y) var(--pad-panel);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-code);
+  overflow: auto;
+  /* Место под скроллбар резервируется ТОЛЬКО здесь и в двух других
+     растущих областях (.inst-code, .inst-diff-body). На обычной панели это
+     оборачивалось мёртвой полосой в 10px у правого края, которой нет у
+     шапки и тулбара выше, — содержимое переставало с ними совпадать.
+     Резервировать имеет смысл там, где содержимое реально прибывает.   */
+  scrollbar-gutter: stable;
+}
+
+.inst-log-line {
+  display: grid;
+  grid-template-columns: max-content max-content 1fr;
+  gap: var(--gap-inline);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+
+  &[data-tone="warn"]  { --level-ink: var(--warn-text); }
+  &[data-tone="error"] { --level-ink: var(--err-text); color: var(--err-text); }
+}
+
+/* Ширина в ch, а не по контенту. Сетка объявлена на СТРОКЕ, то есть у каждой
+   строки она своя: по содержимому колонка уровня меняла бы ширину от слова к
+   слову, и сообщение уезжало бы на каждом error.                          */
+.inst-log-time  { inline-size: 8ch; color: var(--text-muted); }
+.inst-log-level { inline-size: 5ch; color: var(--level-ink, var(--text-muted)); }
+
+.inst-code {
+  background: var(--surface-sunken);
+  border: var(--hairline) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--pad-block-y) var(--pad-panel);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+/* Листинг с номерами строк.
+
+   У .inst-code нумерации не было вовсе, а у .inst-diff-line она есть — но это
+   ДИФ: две колонки номеров (было и стало) и колонка знака. Обычный листинг
+   такой формой не собрать, и на чужом интерфейсе это пришлось писать местным
+   классом дважды.
+
+   Номер берёт --text-muted, а не --text-faint: его ЧИТАЮТ — по нему находят
+   место в файле и на него ссылаются в разговоре. На декоративном ярусе он
+   давал 3.59 при норме 4.5, и это ровно тот промах, что уже был у многоточия
+   пагинации и у прочерка «значения нет».
+
+   Ширина колонки в ch, а не по содержимому: иначе на сотой строке номер
+   становится шире, и весь код уезжает вправо на один знак.
+
+   Разметка: .inst-code > .inst-code-line > (.inst-code-num + .inst-code-src) */
+.inst-code--numbered {
+  padding-inline: 0;
+
+  & > .inst-code-line {
+    display: grid;
+    grid-template-columns: 5ch minmax(0, 1fr);
+    gap: var(--gap-inline);
+    padding-inline: var(--pad-panel);
+  }
+
+  & > .inst-code-line:hover { background: var(--surface-hover); }
+}
+
+.inst-code-num {
+  color: var(--text-muted);
+  text-align: end;
+  /* Номер не выделяется мышью: копируют код, а не разметку страницы. */
+  user-select: none;
+}
+
+/* anywhere живёт ТОЛЬКО здесь, на колонке кода. На строке он уменьшил бы её
+   минимальную ширину до знака и схлопнул обе колонки. */
+.inst-code-src { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Чип инлайнового кода — ТОЛЬКО вне <pre>.
+
+   Без «:not(pre) >» правило било и по <code> внутри блока кода. Инлайновый
+   элемент получает горизонтальный отступ в начале своего бокса, то есть на
+   ПЕРВОЙ строке, — и весь блок съезжал на пять пикселей одной строкой.
+   Найти это глазами трудно: смещение меньше знака, и заметно оно только
+   если сравнить первую строку с закрывающей. */
+:not(pre) > code:not(.inst-code) {
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-sunken);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Дерево
+
+   Разметка: role="tree" на контейнере, role="treeitem" + aria-level на
+   узлах, roving tabindex — на слое, где есть JS. Без ролей aria-expanded
+   и aria-selected на голых div невалидны.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-tree { font-size: var(--text-sm); }
+
+/* Направляющие вложенности.
+
+   Глубину дерево отбивает отступом, и на двух-трёх уровнях этого довольно. На
+   файловом дереве в семь уровней — уже нет: глаз теряет, к какой ветке
+   относится строка, и вынужден считать отступы. Линия делает это за него.
+
+   Вариантом, а не умолчанием: у дерева задач и у дерева сцены уровней два, и
+   там линии были бы шумом.
+
+   Рисуется фоном, а не рамкой у потомка: потомков у строки нет — дерево здесь
+   ПЛОСКИЙ список с --depth, а не вложенные списки, потому что виртуализация
+   плоского списка возможна, а вложенного нет. Позиция линии считается из того
+   же --size-indent, которым набран отступ, поэтому разъехаться они не могут. */
+.inst-tree--guides > .inst-tree-item {
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--border) 0 var(--hairline),
+    transparent var(--hairline) var(--size-indent));
+  background-position: calc(var(--space-3) + var(--size-indent) / 2) 0;
+  background-size: calc(var(--depth, 0) * var(--size-indent)) 100%;
+  background-repeat: no-repeat;
+}
+
+.inst-tree-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: var(--control-h-sm);
+  padding-inline: var(--space-3);
+  padding-inline-start: calc(var(--space-3) + (var(--depth, 0) * var(--size-indent)));
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+
+  &:hover { background: var(--surface-hover); }
+  &[aria-selected="true"] { background: var(--surface-selected); color: var(--accent-text); }
+  &[aria-selected="true"]:hover { background: color-mix(in oklab, var(--surface-selected), var(--surface-hover)); }
+}
+
+.inst-tree-item + .inst-tree-item { margin-block-start: var(--space-1); }
+
+.inst-tree-twist {
+  flex: none;
+  inline-size: var(--size-chevron);
+  block-size: var(--size-chevron);
+  background: var(--text-muted);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: rotate var(--dur-1) var(--ease-out);
+}
+
+/* Лист: место под завиток сохраняется, чтобы подписи держали колонку. */
+.inst-tree-item:not([aria-expanded]) > .inst-tree-twist { background: none; }
+.inst-tree-item[aria-expanded="true"] > .inst-tree-twist { rotate: 90deg; }

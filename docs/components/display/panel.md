@@ -2,7 +2,7 @@
 title: Панель
 group: Отображение данных
 layout: component
-source: src/components.css
+source: src/surfaces.css
 api:
   - { name: "inst-panel", kind: "класс", doc: "Область. Контейнер по инлайновой оси" }
   - { name: "inst-panel-header", kind: "класс", doc: "Шапка: имя и действия" }

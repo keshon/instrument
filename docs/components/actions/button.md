@@ -2,7 +2,7 @@
 title: Кнопка
 group: Действия
 layout: component
-source: src/components.css
+source: src/actions.css
 api:
   - { name: "inst-btn",          kind: "класс",       doc: "Базовый. На `<button>` или `<a>`. Обязателен всегда" }
   - { name: "inst-btn-group",    kind: "класс",       doc: "Контейнер группы: снимает рамку у соседа и скругляет только торцы" }

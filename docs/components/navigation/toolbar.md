@@ -2,7 +2,7 @@
 title: Тулбар
 group: Навигация
 layout: component
-source: src/components.css
+source: src/surfaces.css
 api:
   - { name: "inst-toolbar", kind: "класс", doc: "Полоса. Ряд с зазором `--space-3` и нижней линией" }
   - { name: "inst-toolbar-sep", kind: "класс", doc: "Вертикальный разделитель групп" }

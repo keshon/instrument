@@ -2,7 +2,7 @@
 title: Точка и каретка
 group: Обратная связь
 layout: component
-source: src/components.css
+source: src/status.css
 api:
   - { name: "inst-dot", kind: "класс", doc: "Точка состояния. Читает `--tone-mark`" }
   - { name: "inst-caret", kind: "класс", doc: "Каретка потокового текста" }

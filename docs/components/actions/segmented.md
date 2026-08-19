@@ -2,7 +2,7 @@
 title: Сегментированный контрол
 group: Действия
 layout: component
-source: src/components.css
+source: src/actions.css
 js: Выбор, стрелки и бегущий tabindex — делает `instrument.js`
 api:
   - { name: "inst-segmented", kind: "класс", doc: "Контейнер. Внутри — голые `button` или `a`, свой класс им не нужен" }

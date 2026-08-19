@@ -2,7 +2,7 @@
 title: Код и копируемое значение
 group: Отображение данных
 layout: component
-source: src/components.css
+source: src/agent.css
 js: Копирование в буфер — делает `instrument.js`
 api:
   - { name: "inst-code", kind: "класс", doc: "Блок кода. Прокручивается по горизонтали" }

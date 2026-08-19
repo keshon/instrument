@@ -2,7 +2,7 @@
 title: Метрика
 group: Отображение данных
 layout: component
-source: src/components.css
+source: src/surfaces.css
 api:
   - { name: "inst-metric", kind: "класс", doc: "Одна метрика" }
   - { name: "inst-metric-row", kind: "класс", doc: "Ряд метрик" }

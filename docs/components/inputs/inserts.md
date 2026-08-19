@@ -2,7 +2,7 @@
 title: Вставки
 group: Ввод
 layout: component
-source: src/components.css
+source: src/rows.css
 js: Вставка в поле по нажатию — делает `instrument.js`
 api:
   - { name: "inst-inserts", kind: "класс", doc: "Ряд подстановок" }

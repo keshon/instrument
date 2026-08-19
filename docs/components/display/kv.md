@@ -2,7 +2,7 @@
 title: Список свойств
 group: Отображение данных
 layout: component
-source: src/components.css
+source: src/table.css
 api:
   - { name: "inst-kv", kind: "класс", doc: "Список только для чтения, на `<dl>`" }
   - { name: "inst-kv--tight", kind: "класс", doc: "Колонка имён по содержимому. Для узких контейнеров" }

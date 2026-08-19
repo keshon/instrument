@@ -1,0 +1,401 @@
+/* ==========================================================================
+   instrument — таблица и пары
+
+   Таблица со всей обвязкой — сортировка, выбор, действия строки, итоги, —
+   список пар ключ-значение и строка свойства.
+
+   Обвязка таблицы стояла в конце components.css, отдельно от самой
+   таблицы, и переехала сюда. Перестановка безопасна и проверена: у её
+   правил нет ни одного общего корневого класса с тем, что лежало между.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Таблица
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-table {
+  --table-head-bg: var(--surface-raised);
+
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+
+  & th {
+    text-align: start;
+    font-weight: var(--weight-normal);
+    color: var(--text-muted);
+    padding: var(--row-pad-y) var(--pad-cell-x);
+    border-block-end: var(--hairline) solid var(--border);
+    white-space: nowrap;
+  }
+
+  & td {
+    padding: var(--row-pad-y) var(--pad-cell-x);
+    border-block-end: var(--hairline) solid var(--border-subtle);
+    line-height: var(--leading-ui);
+  }
+
+  & tbody tr:last-child td { border-block-end: none; }
+  & tbody tr:hover td { background: var(--surface-hover); }
+
+  /* Выделение строки — тот же язык, что у строки задачи и узла дерева. */
+  & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
+
+  /* Числа выравниваются вправо и остаются табличными — величина читается
+     как форма колонки, без чтения цифр.
+
+     И не переносятся. Заголовок колонки перенос уже не допускает, а ячейка
+     под ним допускала: в узком окне «4 of 20» ломалось на «4 of» и «20» —
+     две строки, которые глаз складывает обратно вручную, и колонка чисел
+     перестаёт быть формой.                                               */
+  & .inst-num { text-align: end; white-space: nowrap; }
+}
+
+/* Ячейка-плитка: каждое значение в своей коробке, между коробками просвет.
+
+   Линейка отделяет строку от строки и ничего не говорит про КОЛОНКУ: на
+   пятнадцати колонках глаз, идущий вправо, теряет и строку, и границу
+   значения. Плитка держит и то и другое сразу — у каждого значения свой
+   контур, и ряд читается как ряд плиток, а не как поле с линейками.
+
+   Шапка плиткой НЕ становится: она не значение, а имя колонки, и коробка
+   вокруг имени сделала бы её равной данным.
+
+   border-collapse: separate обязателен — в схлопнутой модели соседи делят
+   одну границу, и просвета между ними не существует.                      */
+.inst-table--cells {
+  border-collapse: separate;
+  border-spacing: var(--space-1);
+  /* Просвет ложится и по внешнему краю: отрицательное поле возвращает
+     таблицу на место, иначе она стоит с отступом, которого никто не объявлял. */
+  margin: calc(var(--space-1) * -1);
+
+  & th {
+    background: none;
+    border-block-end: none;
+  }
+
+  & td {
+    /* Относительное: у варианта разделённые границы, и сквозь просветы видна
+       подложка таблицы. Отношение ячейки к ней обязано держаться одинаковым,
+       где бы таблица ни стояла. */
+    background: var(--surface-recessed);
+    border-block-end: none;
+    border-radius: var(--radius-xs);
+  }
+
+  & tbody tr:hover td { background: var(--surface-hover); }
+  & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
+}
+
+/* Полосатый вариант: строку держит ЗАЛИВКА, а не линейка.
+
+   Линейка под каждой строкой работает, пока колонок пять. На пятнадцати глаз
+   уезжает по вертикали между колонками, и линейка ему не помогает: она
+   отделяет строку от соседа, но не показывает, ГДЕ ты внутри строки. Заливка
+   через одну показывает — она тянется на всю ширину и никуда не девается при
+   горизонтальной прокрутке.
+
+   ВМЕСТО линеек, а не вместе с ними: заливка и линейка на одной строке дают
+   решётку, то есть ровно то, от чего кит уходит.
+
+   Красится ярусом поверхностей, а не тенью и не рамкой: полоса — это
+   поверхность, и заводить ей шестой смысл серого незачем.                 */
+.inst-table--zebra {
+  & td { border-block-end: none; }
+  /* Полоса зебры относительна ПО ОПРЕДЕЛЕНИЮ: она красит не сама себя, а
+     чередование поверх той поверхности, на которой стоит таблица. Абсолютной
+     ступенью на панели она давала не намёк, а тяжёлую полосатость. */
+  & tbody tr:nth-child(even) td { background: var(--surface-recessed); }
+
+  /* Наведение и выбор повторены здесь намеренно: под чётной строкой уже лежит
+     заливка полосы, и без повтора она перебивала бы их порядком в файле —
+     состояние проиграло бы оформлению. */
+  & tbody tr:hover td { background: var(--surface-hover); }
+  & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
+}
+
+/* Липкая шапка — опция, а не умолчание: в нескроллящемся контексте sticky
+   прилипал бы к вьюпорту, что на длинной странице неожиданно.            */
+.inst-table--sticky thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-sticky);
+  background: var(--table-head-bg);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Список пар ключ–значение — для инспекторов и панелей подробностей
+
+   Колонка подписей — тот же токен, что у инспектора: два почти одинаковых
+   примитива не имеют права разъезжаться по метрике: своими числами они
+   расходятся на десяток пикселей и на типографику.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* МЕТРИКА ОБЩАЯ СО СТРОКОЙ СВОЙСТВА, ВСЯ, А НЕ ТОЛЬКО ШИРИНА КОЛОНКИ.
+
+   Обещание «два способа показать пару имя–значение не имеют права разъезжаться»
+   держалось на одном --label-col, и этого не хватало: колонка совпадала, а
+   зазор и горизонтальный отступ — нет. Замер на экране инспектора, где оба
+   примитива стоят друг под другом в одной панели:
+
+     .inst-prop   подпись от 309px, значение от 421px, зазор 8px
+     .inst-kv     подпись от 301px, значение от 417px, зазор 12px
+
+   Восемь пикселей по левому краю и четыре по колонке значений — ровно столько,
+   чтобы «Полигонов» и «Обновлён» читались выпавшими из списка над ними, хотя
+   каждый примитив по отдельности выровнен безупречно.
+
+   Тон подписи расходился тем же образом: --text-muted против --text-secondary.
+   Имя свойства — это ПОДПИСЬ, а не метаданные, и ступень у неё одна.
+
+   Теперь общее всё, что видно: колонка, зазор, отступ, тон.               */
+.inst-kv {
+  display: grid;
+  grid-template-columns: minmax(0, var(--label-col)) 1fr;
+  gap: var(--space-3) var(--gap-inline);
+  padding-inline: var(--pad-cell-x);
+  font-size: var(--text-sm);
+  align-items: baseline;
+
+  & > dt { color: var(--text-secondary); }
+  & > dd { margin: 0; min-inline-size: 0; }
+}
+
+/* Узкий контейнер: колонка подписей по содержимому, а не общая.
+   Общая колонка — обещание, что строки выровнены МЕЖДУ вложениями, и она
+   стоит своей ширины: в карточке на 235px фиксированные 92px съедали
+   четыре десятых, и значение «1» оказывалось посреди пустоты. Внутри
+   карточки такого обещания нет и не нужно — сравнивают строки внутри неё. */
+.inst-kv--tight { grid-template-columns: max-content 1fr; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Строка свойства — примитив инспектора
+
+   Подпись слева, контрол справа, одна строка, плотно. Колонка подписей —
+   общий токен, поэтому строки выравниваются независимо от глубины
+   вложенности.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-props { display: flex; flex-direction: column; }
+
+.inst-prop {
+  display: grid;
+  grid-template-columns: var(--label-col) 1fr;
+  align-items: center;
+  gap: var(--gap-inline);
+  padding: var(--space-2) var(--pad-cell-x);
+  min-block-size: calc(var(--control-h-sm) + var(--space-3));
+
+  &:hover { background: var(--surface-hover); }
+}
+
+/* Обрезанная подпись обязана иметь title: иначе полное имя свойства
+   прочитать нечем.                                                        */
+.inst-prop-label {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: var(--leading-ui);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inst-prop-control { min-inline-size: 0; display: flex; gap: var(--space-2); align-items: center; }
+
+/* Числовое поле: подпись оси служит ручкой перетаскивания, поэтому курсор
+   меняется на ней, а не на отдельном степпере — тянуть будут за букву.
+   Контракт: у input обязан быть aria-label с осью, иначе скринридер
+   прочитает «поле, 128» без указания, чего именно.                       */
+.inst-num-field {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--control-h-sm);
+  min-inline-size: 0;
+  border: var(--hairline) solid var(--border-control);
+  /* Высота у поля из лестницы sm — и радиус оттуда же. Постоянные 6px ехали
+     ПРОТИВ остальных: в плотном режиме поле выходило круглее кнопки той же
+     высоты, в свободном — площе. */
+  border-radius: var(--radius-control-sm);
+  background: var(--surface-field);
+  overflow: hidden;
+
+  &:hover { border-color: var(--text-muted); }
+  &:focus-within { border-color: var(--accent-border); }
+
+  /* Кольцо обводит ВЕСЬ контрол, а не поле внутри него.
+     Буква оси, ручка перетаскивания и ввод — один контрол на вид и на
+     ощупь; кольцо вокруг одного только <input> обрезало ось и читалось как
+     подсветка чужого элемента. Тот же приём, что у выбираемой карточки. */
+  &:has(> input:focus-visible) {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 1px;
+  }
+  & > input:focus-visible { outline: none; }
+
+  & > .inst-num-axis {
+    flex: none;
+    padding-inline: var(--space-3);
+    font-size: var(--text-2xs);
+    color: var(--text-muted);
+    cursor: ew-resize;
+    user-select: none;
+  }
+
+  & > input {
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: 100%;
+    padding-inline: var(--space-2) var(--space-3);
+    border: none;
+    background: transparent;
+    font-size: var(--text-xs);
+    appearance: textfield;
+    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button { appearance: none; margin: 0; }
+  }
+}
+
+/* Первый настоящий контейнерный запрос: в узкой панели строка свойства
+   перестаёт быть двухколоночной — подпись встаёт над контролом. Без запроса
+   инспектор в боковой колонке расплющивается.                      */
+@container panel (inline-size < 22rem) {
+  .inst-prop {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+    align-items: start;
+  }
+}
+
+.inst-vec { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--space-2); min-inline-size: 0; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Таблица: сортировка, выбор, действия, итоги
+
+   Всё, без чего таблица админки не таблица. Поведение (сама сортировка,
+   отметка «выбрать всё») — слой приложения; кит отвечает за то, чтобы
+   состояние было видно и озвучено.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Заголовок-сортировка — настоящая кнопка внутри th: её надо нажимать с
+   клавиатуры. Направление несёт ЗНАЧОК, а не только позиция: aria-sort
+   озвучивает то же самое.                                                */
+/* Поверхность наведения лежит на ЯЧЕЙКЕ, а не на кнопке внутри неё: кнопка
+   растянута по ширине, но не на отступы ячейки, и заливка на ней оставила бы
+   поля непрокрашенными — подсветка не совпала бы с тем, что нажимается.   */
+.inst-table th:has(> .inst-sort):hover { background: var(--surface-hover); }
+
+.inst-table th > .inst-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  inline-size: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+
+  &:hover { color: var(--text-primary); }
+
+  &::after {
+    content: "";
+    flex: none;
+    inline-size: var(--size-chevron);
+    block-size: var(--size-chevron);
+    background: var(--text-faint);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.6 5 6 2.6 8.4 5M3.6 7 6 9.4 8.4 7' fill='none' stroke='%23000' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+}
+
+/* Числовые колонки сортируются от правого края — значок идёт перед
+   подписью, иначе он отрывается от неё на всю ширину ячейки.             */
+.inst-table th.inst-num > .inst-sort { justify-content: flex-end; flex-direction: row-reverse; }
+
+.inst-table th[aria-sort] {
+  color: var(--text-primary);
+}
+.inst-table th[aria-sort="ascending"] > .inst-sort::after {
+  background: var(--accent-text);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 9.5V2.8M3.4 5.4 6 2.8l2.6 2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.inst-table th[aria-sort="descending"] > .inst-sort::after {
+  background: var(--accent-text);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v6.7M3.4 6.6 6 9.2l2.6-2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* Колонка выбора и колонка действий прижаты к краям и не растягиваются. */
+.inst-table .inst-col-select { inline-size: var(--control-h-md); }
+.inst-table .inst-col-actions { inline-size: 1%; white-space: nowrap; text-align: end; }
+
+/* Действия строки появляются на наведении, но с клавиатуры доступны
+   ВСЕГДА: спрятать их от Tab значило бы сделать таблицу неуправляемой без
+   мыши. Поэтому opacity, а не display, и возврат при :focus-within.      */
+.inst-table .inst-row-actions {
+  display: inline-flex;
+  gap: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease-out);
+}
+.inst-table tbody tr:hover .inst-row-actions,
+.inst-table tbody tr:focus-within .inst-row-actions,
+.inst-table tbody tr[aria-selected="true"] .inst-row-actions { opacity: 1; }
+
+/* Итоги. Верхняя граница плотнее строчной: это черта под данными, а не
+   ещё одна строка.                                                       */
+.inst-table tfoot td {
+  border-block-start: var(--hairline) solid var(--border);
+  border-block-end: none;
+  font-weight: var(--weight-medium);
+}
+
+/* Липкая первая колонка — для широких таблиц, которые скроллятся вбок.
+   Фон обязателен, иначе под ней просвечивает уезжающее содержимое.
+
+   И он обязан быть НЕПРОЗРАЧНЫМ. Ховер и выделение строки объявлены выше и
+   специфичнее (`.inst-table tbody tr:hover td` — 0,2,3 против 0,2,1), поэтому
+   выигрывали, а значения у них полупрозрачные: под выделенной строкой липкая
+   колонка становилась стеклянной ровно там, где её работа — быть стеной.
+
+   Отсюда приём: фон колонки остаётся НЕПРОЗРАЧНЫМ всегда, а состояние
+   кладётся поверх него внутренней тенью с огромным разбросом. Это настоящая
+   композиция — полупрозрачный слой ЛОЖИТСЯ на непрозрачный, — в отличие от
+   color-mix, который усредняет и альфу тоже: смесь 14%-цвета с непрозрачным
+   давала 0.57, то есть колонка оставалась стеклянной наполовину.
+
+   Тень здесь не тень: тем же приёмом в ките нарисованы хайрлайн меры и
+   кольцо свитча. Альфа состояния при этом остаётся какой была — токены
+   менять не нужно, и состояния по-прежнему складываются.                 */
+.inst-table--sticky-col :is(th, td):first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  background: var(--table-head-bg);
+}
+
+.inst-table--sticky-col tbody tr:hover :is(th, td):first-child {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 0 0 100vmax var(--surface-hover);
+}
+.inst-table--sticky-col tbody tr[aria-selected="true"] :is(th, td):first-child {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 0 0 100vmax var(--surface-selected);
+}
+.inst-table--sticky-col tbody tr[aria-selected="true"]:hover :is(th, td):first-child {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 0 0 100vmax var(--surface-selected),
+              inset 0 0 0 100vmax var(--surface-hover);
+}
+
+/* Угол — пересечение двух липких осей, и он обязан быть НАД обеими: число
+   меньше --z-sticky пустило бы заголовки поверх него.                    */
+.inst-table--sticky-col.inst-table--sticky thead th:first-child {
+  z-index: calc(var(--z-sticky) + 1);
+}
+
+/* Строка выбранной подсветкой не должна терять ховер. */
+.inst-table tbody tr[aria-selected="true"]:hover td {
+  background: color-mix(in oklab, var(--surface-selected), var(--surface-hover));
+}

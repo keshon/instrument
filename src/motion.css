@@ -44,8 +44,11 @@
   .inst-meter[data-state="indeterminate"] > .inst-meter-fill { animation-duration: 3s; }
 
   /* Все точки, которые пульсируют: собственный тон, тон родителя-бейджа,
-     состояние строки очереди и состояние шага. Список обязан совпадать с
-     тем, что заводит inst-pulse в components.css и agent.css.              */
+     состояние строки очереди и состояние шага.
+
+     Список обязан совпадать с тем, что заводит inst-pulse, и держалось это
+     на памяти. Теперь сторожит cmd/registry, и сторожит выводом, а не
+     объявлением: замедлять надо ровно то, у чего бесконечная анимация. */
   [data-tone="running"] .inst-dot,
   .inst-dot[data-tone="running"],
   .inst-task[data-state="running"] .inst-dot,

@@ -2,7 +2,7 @@
 title: Карточка
 group: Отображение данных
 layout: component
-source: src/components.css
+source: src/surfaces.css
 api:
   - { name: "inst-card", kind: "класс", doc: "Базовый" }
   - { name: "inst-card-title", kind: "класс", doc: "Заголовок объекта" }

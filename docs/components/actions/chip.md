@@ -2,7 +2,7 @@
 title: Чип
 group: Действия
 layout: component
-source: src/components.css
+source: src/actions.css
 js: Переключение, стрелки и бегущий tabindex — делает `instrument.js`
 api:
   - { name: "inst-chips", kind: "класс", doc: "Полоса. Несёт `role=\"listbox\"` и переносится по ширине" }

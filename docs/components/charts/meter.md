@@ -2,7 +2,7 @@
 title: Мера
 group: Графики
 layout: component
-source: src/components.css
+source: src/status.css
 api:
   - { name: "inst-meter", kind: "класс", doc: "Дорожка. Носитель роли и значений" }
   - { name: "inst-meter-fill", kind: "класс", doc: "Заливка. Обязательный единственный ребёнок" }

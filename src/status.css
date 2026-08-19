@@ -1,0 +1,206 @@
+/* ==========================================================================
+   instrument — состояние
+
+   Бейдж, точка, спиннер, каретка, мера. Всё, что показывает, чем занята
+   машина.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Состояние: бейдж, точка, спиннер, каретка
+
+   Каждое состояние ходит с точкой И со словом: цвет в одиночку не работает
+   примерно для 8% мужчин и вообще ни для одного распечатанного скриншота.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-badge {
+  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  align-self: var(--flow-self, center);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--control-h-xs);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-xs);
+  /* Запасная заливка утоплена ОТНОСИТЕЛЬНО — как у тега и у умолчания
+     кнопки. Тон, когда он задан, остаётся собственным цветом: у него своя
+     работа, и глубина ему не нужна.                                      */
+  background: var(--tone-bg, var(--surface-recessed));
+  color: var(--tone-ink, var(--text-secondary));
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Точка внутри бейджа наследует тон от бейджа — атрибут проставляется один
+   раз на группу, а не дублируется в разметке.
+
+   display обязателен. Без него точка живёт только внутри флекс- или
+   грид-родителя, где display заменяется на блочный автоматически; в ячейке
+   таблицы, в абзаце и в любом обычном контейнере это был инлайновый span,
+   к которому inline-size и block-size НЕ ПРИМЕНЯЮТСЯ, — точка занимала 0×0 и
+   не рисовалась вовсе. Компонент не имеет права зависеть от раскладки
+   родителя.                                                              */
+.inst-dot {
+  display: inline-block;
+  flex: none;
+  inline-size: var(--size-dot);
+  block-size: var(--size-dot);
+  /* Скруглённый квадрат, а не круг. Круг в ките уже НАГРУЖЕН: в списке
+     последствий им помечен обратимый пункт, а квадратом — необратимый, и это
+     носитель наравне с тоном. Точка состояния к той оси отношения не имеет и
+     чужую форму занимать не должна.
+
+     .inst-dots свою пару круг/квадрат сохраняет: там форма работает, здесь
+     она свободна. Два компонента, две работы. */
+  border-radius: var(--radius-2xs);
+  background: var(--tone-mark, var(--text-faint));
+}
+
+/* Контурный вариант: тон несёт РАМКА, а заливки нет вовсе.
+
+   Заведён потому, что заливка бейджа — это плашка, и на светлой поверхности
+   она читается как объект. Там, где бейдж стоит в ряду инструментов рядом со
+   значками, плашка тяжелее всего ряда: она единственная с фоном. Контур даёт
+   тот же смысл тише.
+
+   Тон берётся из того же словаря, что у сплошного, — общий --tone-ink, а не
+   свой набор: два способа получить один и тот же цвет однажды разойдутся.
+   Рамка полупрозрачна от него же, поэтому тон остаётся один, а не два. */
+.inst-badge--outline {
+  background: none;
+  border: var(--hairline) solid color-mix(in oklab, var(--tone-ink, var(--text-secondary)) 40%, transparent);
+}
+
+/* Счётчик — НАКЛАДКА на значок, а не чип в строке.
+
+   Бейдж по устройству чип: у него горизонтальный отступ под слово и прямой
+   угол. Поверх значка он выходит 26×20 на коробке 32×32, то есть закрывает то,
+   что подписывает. Счётчику нужно другое: круг размером с цифру, который
+   садится в угол глифа и оставляет глиф читаемым.
+
+   Отсюда три отличия и ни одного лишнего: отступ снимается, угол становится
+   полным, ширина не меньше высоты — иначе однозначное число даёт овал.
+
+   Заливка сплошная, а не тоновая: счётчик читают издалека и мельком, и
+   тонированный фон на этом размере не отличить от чипа рядом. Подпись на
+   заливке берёт --accent-on, как у сплошной кнопки. */
+.inst-badge--count {
+  min-inline-size: var(--control-h-xs);
+  padding-inline: var(--space-1);
+  border-radius: var(--radius-full);
+  justify-content: center;
+  background: var(--accent-solid);
+  color: var(--accent-on);
+}
+
+[data-tone="running"] .inst-dot, .inst-dot[data-tone="running"] {
+  animation: inst-pulse 1.6s var(--ease-in-out) infinite;
+}
+
+@keyframes inst-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* Спиннер — SVG, а не рамка на div.
+
+   Круг из border-radius на боксе в 13px при дробном DPR растрируется с
+   центром на полупикселе, и на вращении это видно как биение. У SVG центр
+   задан в системе координат viewBox, поворот применяется к боксу целиком,
+   растеризация происходит после — биения нет ни при каком DPR.
+
+   Разметка: <svg class="spinner"><circle class="spinner-track"/><circle
+   class="spinner-arc"/></svg> с viewBox="0 0 16 16".                      */
+.inst-spinner {
+  flex: none;
+  inline-size: var(--size-spinner);
+  block-size: var(--size-spinner);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  animation: inst-spin 0.7s linear infinite;
+
+  & > .inst-spinner-track { stroke: var(--border-control); }
+  & > .inst-spinner-arc {
+    stroke: var(--accent-mark);
+    /* Длина окружности при r=6.5 — примерно 40.8. Четверть на дугу. */
+    stroke-dasharray: 11 30;
+  }
+}
+
+@keyframes inst-spin { to { rotate: 360deg; } }
+
+/* Каретка, отмечающая ещё поступающий текст. Это курсор терминала: он и
+   должен стоять вплотную к последнему знаку, потому что показывает точку,
+   куда придёт следующий символ. Отбивка — ровно на просвет, чтобы он не
+   слипался с буквой.
+
+   Ступенями, а не плавно: затухающая каретка читается как артефакт
+   отрисовки, а не как активность.                                        */
+.inst-caret {
+  display: inline-block;
+  inline-size: 0.45em;
+  block-size: 1.05em;
+  margin-inline-start: 0.1em;
+  vertical-align: text-bottom;
+  background: var(--accent-mark);
+  animation: inst-blink 1s steps(2, start) infinite;
+}
+
+@keyframes inst-blink { 50% { opacity: 0; } }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Мера
+
+   Один тон, потому что сравнивается одна величина. Определённая заполняется,
+   неопределённая метётся. Никогда не изображать прогресс определённой
+   полосой, застрявшей на 90%.
+
+   Разметка обязана нести role="progressbar" и aria-valuenow/min/max —
+   иначе значение существует только в пикселях ширины и недоступно ни
+   скринридеру, ни тесту.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-meter {
+  block-size: var(--size-meter);
+  border-radius: var(--radius-xs);
+  background: var(--track);
+  /* Протяжённость дорожки показывает хайрлайн, а не её собственный цвет:
+     так дорожка может остаться достаточно светлой, чтобы заливка на ней
+     держала 3:1.                                                          */
+  box-shadow: inset 0 0 0 var(--hairline) var(--border);
+  overflow: hidden;
+}
+
+.inst-meter-fill {
+  block-size: 100%;
+  border-radius: var(--radius-xs);
+  background: var(--tone-mark, var(--accent-mark));
+  transition: inline-size var(--dur-3) var(--ease-out);
+}
+
+.inst-meter[data-state="indeterminate"] > .inst-meter-fill {
+  inline-size: 35%;
+  animation: inst-sweep 1.3s var(--ease-in-out) infinite;
+}
+
+@keyframes inst-sweep {
+  0%   { translate: -100% 0; }
+  100% { translate: 340% 0; }
+}
+
+.inst-meter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--gap-inline);
+  font-size: var(--text-sm);
+  margin-block-end: var(--space-3);
+}
+
+.inst-meter-value { color: var(--text-secondary); }

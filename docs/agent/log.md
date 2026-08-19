@@ -2,7 +2,7 @@
 title: Лог
 group: Агентный слой
 layout: component
-source: src/components.css
+source: src/text.css
 js: Копирование делает `instrument.js`. Прокрутка за хвостом и виртуализация — слой приложения
 api:
   - { name: "inst-log", kind: "класс", doc: "Контейнер, прокручивается" }

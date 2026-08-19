@@ -1,0 +1,108 @@
+/* ==========================================================================
+   instrument — строки
+
+   Строка очереди и вставки — плоские строки, которые прибывают во время
+   работы.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Строка задачи — примитив очереди
+
+   Фиксированный левый жёлоб, поэтому точки состояний выстраиваются в
+   вертикальную линию, которую можно просканировать, не читая ни слова.
+   Разметка: role="option" внутри role="listbox", иначе aria-selected на
+   голом div невалиден.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-task {
+  display: grid;
+  /* minmax, а не фиксированная колонка. Жёлоб задуман под точку состояния
+     (--size-dot, 6px), и токен держит его ширину, чтобы точки соседних строк
+     стояли в одну вертикаль. Но в жёлоб кладут не только точку: список файлов
+     с флажками — мультивыбор, чек-лист, отбор — случай не экзотический, а
+     --size-check (15px) в --size-gutter (14px) НЕ ВЛЕЗАЕТ. Замерено на
+     свёрстанном чужом интерфейсе: флажок вылезал на пиксель.
+
+     minmax сохраняет обещание и снимает запрет: колонка никогда не у́же
+     токена, поэтому точки по-прежнему выстроены, но растёт под то, что в неё
+     реально положили. Список однороден, значит выравнивание не страдает. */
+  grid-template-columns: minmax(var(--size-gutter), auto) 1fr auto;
+  align-items: center;
+  gap: var(--gap-inline);
+  padding: var(--row-pad-y) var(--pad-cell-x);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  cursor: default;
+
+  &:hover { background: var(--surface-hover); }
+  /* Выделение объявлено ПОСЛЕ ховера и полупрозрачно, поэтому состояния
+     складываются: ховер по выделенной строке остаётся виден.             */
+  &[aria-selected="true"] { background: var(--surface-selected); }
+  &[aria-selected="true"]:hover { background: color-mix(in oklab, var(--surface-selected), var(--surface-hover)); }
+
+  &[data-state="running"] { --tone-ink: var(--accent-text); }
+  &[data-state="done"]    { --tone-ink: var(--ok-text); }
+  &[data-state="failed"]  { --tone-ink: var(--err-text); }
+  &[data-state="warn"]    { --tone-ink: var(--warn-text); }
+  &[data-state="running"] .inst-dot { animation: inst-pulse 1.6s var(--ease-in-out) infinite; }
+
+  /* Завершённые отступают, а не гаснут: история остаётся читаемой, но
+     перестаёт спорить с тем, что идёт сейчас.                            */
+  &[data-state="done"] .inst-task-title { color: var(--text-secondary); }
+  /* Пропущенное — единственный случай прозрачности, и она мягкая: 0.55
+     роняло подпись под порог читаемости.                                 */
+  &[data-state="skipped"] { opacity: 0.7; }
+}
+
+/* Зазор между строками. Он не косметический: без него подсветка выделенной
+   строки смыкается с подсветкой соседней под курсором, и две строки
+   читаются как один блок.                                               */
+.inst-task + .inst-task { margin-block-start: var(--space-1); }
+
+.inst-task-gutter { display: flex; justify-content: center; }
+.inst-task-main { min-inline-size: 0; }
+.inst-task-meta { font-size: var(--text-xs); line-height: var(--leading-ui); color: var(--text-muted); white-space: nowrap; }
+.inst-task-title { line-height: var(--leading-ui); }
+.inst-task-sub { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: 1px; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Вставки
+
+   Ряд подстановок для поля рядом: имена переменных шаблона, ключи события,
+   поля записи. Нажатие кладёт значение в поле — это КНОПКА, а не метка.
+
+   Тише действий намеренно. Их бывает по десятку и больше на одно поле, и в
+   полный голос палитра кричала бы громче того, ради чего страница открыта.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-inserts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.inst-insert {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-h-sm);
+  padding-inline: var(--space-3);
+  border: var(--hairline) solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  /* Относительное: подстановка — инлайновый контрол, она стоит в строке
+     прозы, в поле и в логе. Зарегистрирована в cmd/targets как цель нажатия,
+     то есть заведомо не область. */
+  background: var(--surface-recessed);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+
+  &:hover { background: var(--surface-hover); color: var(--text-primary); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}

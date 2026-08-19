@@ -2,7 +2,7 @@
 title: Спиннер
 group: Обратная связь
 layout: component
-source: src/components.css
+source: src/status.css
 api:
   - { name: "inst-spinner", kind: "класс", doc: "Базовый. Ставится на `<svg>`" }
   - { name: "inst-spinner-track", kind: "класс", doc: "Дорожка. Прямой потомок `inst-spinner`" }

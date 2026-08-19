@@ -2,7 +2,7 @@
 title: Числовое поле инспектора
 group: Ввод
 layout: component
-source: src/components.css
+source: src/table.css
 js: Перетаскивание подписи оси — делает `instrument.js`
 api:
   - { name: "inst-num-field", kind: "класс", doc: "Обёртка: рамка, врез, фокус. Высота — `--control-h-sm`" }

@@ -2,7 +2,7 @@
 title: Группа кнопок
 group: Действия
 layout: component
-source: src/components.css
+source: src/actions.css
 api:
   - { name: "inst-btn-group", kind: "класс", doc: "Контейнер. Внутри — только `inst-btn`" }
   - { name: "--radius-md", kind: "токен" }

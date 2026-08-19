@@ -2,7 +2,7 @@
 title: Иконки
 group: Основания
 layout: foundation
-source: src/components.css
+source: src/tone.css
 api:
   - { name: "inst-sprite", kind: "класс", doc: "Спрайт в теле страницы. Прячет его: без правила это видимый блок в 150px" }
   - { name: "inst-icon", kind: "класс", doc: "Базовый. Обязателен всегда" }

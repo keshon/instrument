@@ -2,7 +2,7 @@
 title: Бейдж
 group: Отображение данных
 layout: component
-source: src/components.css
+source: src/status.css
 api:
   - { name: "inst-badge", kind: "класс", doc: "Базовый" }
   - { name: "inst-badge--outline", kind: "модификатор", doc: "Тон несёт рамка, заливки нет. Для ряда, где бейдж стоит рядом со значками и плашка тяжелее всего ряда" }

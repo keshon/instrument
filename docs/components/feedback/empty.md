@@ -2,7 +2,7 @@
 title: Пустое состояние
 group: Обратная связь
 layout: component
-source: src/components.css
+source: src/feedback.css
 api:
   - { name: "inst-empty", kind: "класс", doc: "Контейнер, центрирует содержимое" }
   - { name: "inst-empty-title", kind: "класс", doc: "Заголовок: почему пусто" }

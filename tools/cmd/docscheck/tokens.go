@@ -27,6 +27,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -352,5 +353,48 @@ func checkModeTables(srcDir, docsDir string) []string {
 			}
 		}
 	}
+	return problems
+}
+
+// ── Поле source в шапке страницы ──────────────────────────────────────────
+//
+// Каждая страница называет файл, из которого её компонент сделан, и сайт
+// печатает это ссылкой. Проверял её никто: разбиение components.css на восемь
+// файлов оставило двадцать пять страниц указывающими в пустоту, и ни один из
+// семи гейтов не сказал ни слова.
+//
+// Стоит эта ошибка ровно того, ради чего справочник существует: человек идёт
+// смотреть, как компонент устроен, и попадает в никуда.
+var sourceRe = regexp.MustCompile(`(?m)^source:\s*(\S+)\s*$`)
+
+func checkSourceFields(docsDir string) []string {
+	root := filepath.Dir(docsDir)
+	var problems []string
+	filepath.WalkDir(docsDir, func(p string, d os.DirEntry, err error) error {
+		if err != nil || d.IsDir() || !strings.HasSuffix(p, ".md") {
+			return nil
+		}
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return nil
+		}
+		text := strings.ReplaceAll(string(b), "\r\n", "\n")
+		i := strings.Index(text, "\n---")
+		if !strings.HasPrefix(text, "---\n") || i < 0 {
+			return nil
+		}
+		m := sourceRe.FindStringSubmatch(text[:i])
+		if m == nil {
+			return nil
+		}
+		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(m[1]))); err != nil {
+			rel, _ := filepath.Rel(docsDir, p)
+			problems = append(problems, fmt.Sprintf(
+				"%s: source указывает на %s — такого файла нет",
+				filepath.ToSlash(rel), m[1]))
+		}
+		return nil
+	})
+	sort.Strings(problems)
 	return problems
 }

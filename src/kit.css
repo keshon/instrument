@@ -16,7 +16,18 @@
 @import url("./tokens.css")     layer(kit.tokens);
 @import url("./base.css")       layer(kit.base);
 @import url("./layout.css")     layer(kit.layout);
-@import url("./components.css") layer(kit.components);
+/* Компоненты разложены по восьми файлам и все восемь идут в ОДИН слой:
+   разбиение про то, чтобы правило находилось, а не про каскад. Порядок
+   импортов повторяет прежний порядок разделов внутри components.css, поэтому
+   поток правил не изменился ни на знак. */
+@import url("./tone.css")       layer(kit.components);
+@import url("./actions.css")    layer(kit.components);
+@import url("./surfaces.css")   layer(kit.components);
+@import url("./status.css")     layer(kit.components);
+@import url("./table.css")      layer(kit.components);
+@import url("./rows.css")       layer(kit.components);
+@import url("./text.css")       layer(kit.components);
+@import url("./feedback.css")   layer(kit.components);
 @import url("./forms.css")      layer(kit.components);
 @import url("./data.css")       layer(kit.components);
 @import url("./overlay.css")    layer(kit.overlay);

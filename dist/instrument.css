@@ -21,7 +21,7 @@
                  числу. Единственный ярус, который перенастраивает плотность,
                  и единственная причина, по которой в компонентах нет констант.
 
-   4. КОМПОНЕНТ  --btn-bg и подобные. Живут в components.css.
+   4. КОМПОНЕНТ  --btn-bg и подобные. Живут рядом со своим компонентом.
 
    Компонент имеет право обращаться к ярусам 2 и 3. Компонент, дотянувшийся
    до --n-3, только что захардкодил светлую тему; компонент, написавший
@@ -2338,7 +2338,7 @@ hr {
 }
 
 /* Кнопка вызова колонки — .inst-shell-nav-toggle — живёт НЕ здесь, а в
-   components.css, хотя по смыслу принадлежит оболочке.
+   actions.css, хотя по смыслу принадлежит оболочке.
 
    Причина в каскаде, и она стоит того, чтобы быть записанной. Кнопка несёт
    .inst-btn с `display: inline-flex`, объявленный в слое kit.components,
@@ -2354,7 +2354,7 @@ hr {
 
 /* Единственный порог во всём ките, и один из двух его @media. Оболочка и
    есть то единственное, что действительно зависит от размера окна. Второй
-   @media стоит в components.css у .inst-shell-nav-toggle: он на ЭТОМ ЖЕ
+   @media стоит в actions.css у .inst-shell-nav-toggle: он на ЭТОМ ЖЕ
    пороге и про то же событие, а разнесён каскадом — см. комментарий там.
 
    ДВА поведения, и выбор между ними не вкусовой, а по ДЛИНЕ навигации.
@@ -3161,19 +3161,17 @@ hr {
 
 }
 
-/* ── components.css → kit.components ─────────────────────────────── */
+/* ── tone.css → kit.components ─────────────────────────────── */
 @layer kit.components {
 /* ==========================================================================
-   instrument — components
+   instrument — тон и значок
 
-   Правила, которым подчиняется каждый компонент в этом файле:
-   · только семантические токены и роли, никогда — сырой шаг рампы
-   · ни одного числа: высота из --control-h-*, размер из --size-*,
-     отступ из --pad-* и --gap-*. Число в компоненте ломает плотность
-   · состояние выражается поверхностью и рамкой, никогда — сдвигом layout
-   · цвет — это смысл; если он украшает, он удаляется
-   · форма рисуется маской, цвет берётся токеном. Цвет никогда не живёт
-     внутри data-URI: там он был бы захардкоженной темой
+   Не компоненты, а два примитива, которые читают все остальные: словарь
+   смыслового тона и коробка значка. Поэтому файл идёт первым.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -3239,6 +3237,26 @@ hr {
 }
 
 .inst-icon--sm { --icon-size: var(--size-chevron); }
+
+}
+
+/* ── actions.css → kit.components ─────────────────────────────── */
+@layer kit.components {
+/* ==========================================================================
+   instrument — действия
+
+   Кнопка со всеми весами, вызов боковой колонки, сегментированный контрол,
+   чип.
+
+   Кнопка вызова колонки живёт здесь, а не в layout.css, и это каскад, а не
+   недосмотр: она несёт .inst-btn из слоя kit.components, а layout.css
+   импортирован раньше — оттуда её не спрятать никаким селектором.
+   Объяснение целиком стоит на её месте в layout.css.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
    Кнопка
@@ -3916,6 +3934,20 @@ hr {
   &[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
 }
 
+}
+
+/* ── surfaces.css → kit.components ─────────────────────────────── */
+@layer kit.components {
+/* ==========================================================================
+   instrument — поверхности
+
+   Панель, карточка, метрика. То, на чём стоит остальное.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
+
 /* ──────────────────────────────────────────────────────────────────────────
    Поверхности: панель и карточка
 
@@ -4223,6 +4255,21 @@ hr {
   gap: var(--pad-panel);
 }
 
+}
+
+/* ── status.css → kit.components ─────────────────────────────── */
+@layer kit.components {
+/* ==========================================================================
+   instrument — состояние
+
+   Бейдж, точка, спиннер, каретка, мера. Всё, что показывает, чем занята
+   машина.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
+
 /* ──────────────────────────────────────────────────────────────────────────
    Состояние: бейдж, точка, спиннер, каретка
 
@@ -4418,6 +4465,25 @@ hr {
 }
 
 .inst-meter-value { color: var(--text-secondary); }
+
+}
+
+/* ── table.css → kit.components ─────────────────────────────── */
+@layer kit.components {
+/* ==========================================================================
+   instrument — таблица и пары
+
+   Таблица со всей обвязкой — сортировка, выбор, действия строки, итоги, —
+   список пар ключ-значение и строка свойства.
+
+   Обвязка таблицы стояла в конце components.css, отдельно от самой
+   таблицы, и переехала сюда. Перестановка безопасна и проверена: у её
+   правил нет ни одного общего корневого класса с тем, что лежало между.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
    Таблица
@@ -4679,6 +4745,149 @@ hr {
 .inst-vec { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--space-2); min-inline-size: 0; }
 
 /* ──────────────────────────────────────────────────────────────────────────
+   Таблица: сортировка, выбор, действия, итоги
+
+   Всё, без чего таблица админки не таблица. Поведение (сама сортировка,
+   отметка «выбрать всё») — слой приложения; кит отвечает за то, чтобы
+   состояние было видно и озвучено.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Заголовок-сортировка — настоящая кнопка внутри th: её надо нажимать с
+   клавиатуры. Направление несёт ЗНАЧОК, а не только позиция: aria-sort
+   озвучивает то же самое.                                                */
+/* Поверхность наведения лежит на ЯЧЕЙКЕ, а не на кнопке внутри неё: кнопка
+   растянута по ширине, но не на отступы ячейки, и заливка на ней оставила бы
+   поля непрокрашенными — подсветка не совпала бы с тем, что нажимается.   */
+.inst-table th:has(> .inst-sort):hover { background: var(--surface-hover); }
+
+.inst-table th > .inst-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  inline-size: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+
+  &:hover { color: var(--text-primary); }
+
+  &::after {
+    content: "";
+    flex: none;
+    inline-size: var(--size-chevron);
+    block-size: var(--size-chevron);
+    background: var(--text-faint);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.6 5 6 2.6 8.4 5M3.6 7 6 9.4 8.4 7' fill='none' stroke='%23000' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+}
+
+/* Числовые колонки сортируются от правого края — значок идёт перед
+   подписью, иначе он отрывается от неё на всю ширину ячейки.             */
+.inst-table th.inst-num > .inst-sort { justify-content: flex-end; flex-direction: row-reverse; }
+
+.inst-table th[aria-sort] {
+  color: var(--text-primary);
+}
+.inst-table th[aria-sort="ascending"] > .inst-sort::after {
+  background: var(--accent-text);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 9.5V2.8M3.4 5.4 6 2.8l2.6 2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.inst-table th[aria-sort="descending"] > .inst-sort::after {
+  background: var(--accent-text);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v6.7M3.4 6.6 6 9.2l2.6-2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* Колонка выбора и колонка действий прижаты к краям и не растягиваются. */
+.inst-table .inst-col-select { inline-size: var(--control-h-md); }
+.inst-table .inst-col-actions { inline-size: 1%; white-space: nowrap; text-align: end; }
+
+/* Действия строки появляются на наведении, но с клавиатуры доступны
+   ВСЕГДА: спрятать их от Tab значило бы сделать таблицу неуправляемой без
+   мыши. Поэтому opacity, а не display, и возврат при :focus-within.      */
+.inst-table .inst-row-actions {
+  display: inline-flex;
+  gap: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease-out);
+}
+.inst-table tbody tr:hover .inst-row-actions,
+.inst-table tbody tr:focus-within .inst-row-actions,
+.inst-table tbody tr[aria-selected="true"] .inst-row-actions { opacity: 1; }
+
+/* Итоги. Верхняя граница плотнее строчной: это черта под данными, а не
+   ещё одна строка.                                                       */
+.inst-table tfoot td {
+  border-block-start: var(--hairline) solid var(--border);
+  border-block-end: none;
+  font-weight: var(--weight-medium);
+}
+
+/* Липкая первая колонка — для широких таблиц, которые скроллятся вбок.
+   Фон обязателен, иначе под ней просвечивает уезжающее содержимое.
+
+   И он обязан быть НЕПРОЗРАЧНЫМ. Ховер и выделение строки объявлены выше и
+   специфичнее (`.inst-table tbody tr:hover td` — 0,2,3 против 0,2,1), поэтому
+   выигрывали, а значения у них полупрозрачные: под выделенной строкой липкая
+   колонка становилась стеклянной ровно там, где её работа — быть стеной.
+
+   Отсюда приём: фон колонки остаётся НЕПРОЗРАЧНЫМ всегда, а состояние
+   кладётся поверх него внутренней тенью с огромным разбросом. Это настоящая
+   композиция — полупрозрачный слой ЛОЖИТСЯ на непрозрачный, — в отличие от
+   color-mix, который усредняет и альфу тоже: смесь 14%-цвета с непрозрачным
+   давала 0.57, то есть колонка оставалась стеклянной наполовину.
+
+   Тень здесь не тень: тем же приёмом в ките нарисованы хайрлайн меры и
+   кольцо свитча. Альфа состояния при этом остаётся какой была — токены
+   менять не нужно, и состояния по-прежнему складываются.                 */
+.inst-table--sticky-col :is(th, td):first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  background: var(--table-head-bg);
+}
+
+.inst-table--sticky-col tbody tr:hover :is(th, td):first-child {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 0 0 100vmax var(--surface-hover);
+}
+.inst-table--sticky-col tbody tr[aria-selected="true"] :is(th, td):first-child {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 0 0 100vmax var(--surface-selected);
+}
+.inst-table--sticky-col tbody tr[aria-selected="true"]:hover :is(th, td):first-child {
+  background: var(--table-head-bg);
+  box-shadow: inset 0 0 0 100vmax var(--surface-selected),
+              inset 0 0 0 100vmax var(--surface-hover);
+}
+
+/* Угол — пересечение двух липких осей, и он обязан быть НАД обеими: число
+   меньше --z-sticky пустило бы заголовки поверх него.                    */
+.inst-table--sticky-col.inst-table--sticky thead th:first-child {
+  z-index: calc(var(--z-sticky) + 1);
+}
+
+/* Строка выбранной подсветкой не должна терять ховер. */
+.inst-table tbody tr[aria-selected="true"]:hover td {
+  background: color-mix(in oklab, var(--surface-selected), var(--surface-hover));
+}
+
+}
+
+/* ── rows.css → kit.components ─────────────────────────────── */
+@layer kit.components {
+/* ==========================================================================
+   instrument — строки
+
+   Строка очереди и вставки — плоские строки, которые прибывают во время
+   работы.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
    Строка задачи — примитив очереди
 
    Фиксированный левый жёлоб, поэтому точки состояний выстраиваются в
@@ -4775,6 +4984,20 @@ hr {
   &:hover { background: var(--surface-hover); color: var(--text-primary); }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
+
+}
+
+/* ── text.css → kit.components ─────────────────────────────── */
+@layer kit.components {
+/* ==========================================================================
+   instrument — машинный текст
+
+   Лог, код и дерево. Моноширинное, плотное, читаемое посимвольно.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
    Лог и код
@@ -4944,6 +5167,21 @@ hr {
 /* Лист: место под завиток сохраняется, чтобы подписи держали колонку. */
 .inst-tree-item:not([aria-expanded]) > .inst-tree-twist { background: none; }
 .inst-tree-item[aria-expanded="true"] > .inst-tree-twist { rotate: 90deg; }
+
+}
+
+/* ── feedback.css → kit.components ─────────────────────────────── */
+@layer kit.components {
+/* ==========================================================================
+   instrument — сообщения
+
+   Сноска, пустое состояние, баннер, аккордеон. То, чем интерфейс отвечает
+   человеку.
+
+   Импортируется в слой kit.components вместе с остальными частями: файлы
+   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
+   находилось, а не про каскад.
+   ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
    Сноска — врезка в поток. Только левая граница, поэтому углы прямые.
@@ -5131,134 +5369,6 @@ hr {
      8 и 6 в плотном, 16 и 12 в свободном. */
   & > .inst-accordion-head,
   & > .inst-accordion-body { padding-inline: var(--pad-panel); }
-}
-
-/* ──────────────────────────────────────────────────────────────────────────
-   Таблица: сортировка, выбор, действия, итоги
-
-   Всё, без чего таблица админки не таблица. Поведение (сама сортировка,
-   отметка «выбрать всё») — слой приложения; кит отвечает за то, чтобы
-   состояние было видно и озвучено.
-   ────────────────────────────────────────────────────────────────────────── */
-
-/* Заголовок-сортировка — настоящая кнопка внутри th: её надо нажимать с
-   клавиатуры. Направление несёт ЗНАЧОК, а не только позиция: aria-sort
-   озвучивает то же самое.                                                */
-/* Поверхность наведения лежит на ЯЧЕЙКЕ, а не на кнопке внутри неё: кнопка
-   растянута по ширине, но не на отступы ячейки, и заливка на ней оставила бы
-   поля непрокрашенными — подсветка не совпала бы с тем, что нажимается.   */
-.inst-table th:has(> .inst-sort):hover { background: var(--surface-hover); }
-
-.inst-table th > .inst-sort {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  inline-size: 100%;
-  color: inherit;
-  font: inherit;
-  text-align: inherit;
-  cursor: pointer;
-
-  &:hover { color: var(--text-primary); }
-
-  &::after {
-    content: "";
-    flex: none;
-    inline-size: var(--size-chevron);
-    block-size: var(--size-chevron);
-    background: var(--text-faint);
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.6 5 6 2.6 8.4 5M3.6 7 6 9.4 8.4 7' fill='none' stroke='%23000' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
-  }
-}
-
-/* Числовые колонки сортируются от правого края — значок идёт перед
-   подписью, иначе он отрывается от неё на всю ширину ячейки.             */
-.inst-table th.inst-num > .inst-sort { justify-content: flex-end; flex-direction: row-reverse; }
-
-.inst-table th[aria-sort] {
-  color: var(--text-primary);
-}
-.inst-table th[aria-sort="ascending"] > .inst-sort::after {
-  background: var(--accent-text);
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 9.5V2.8M3.4 5.4 6 2.8l2.6 2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-.inst-table th[aria-sort="descending"] > .inst-sort::after {
-  background: var(--accent-text);
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v6.7M3.4 6.6 6 9.2l2.6-2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-
-/* Колонка выбора и колонка действий прижаты к краям и не растягиваются. */
-.inst-table .inst-col-select { inline-size: var(--control-h-md); }
-.inst-table .inst-col-actions { inline-size: 1%; white-space: nowrap; text-align: end; }
-
-/* Действия строки появляются на наведении, но с клавиатуры доступны
-   ВСЕГДА: спрятать их от Tab значило бы сделать таблицу неуправляемой без
-   мыши. Поэтому opacity, а не display, и возврат при :focus-within.      */
-.inst-table .inst-row-actions {
-  display: inline-flex;
-  gap: var(--space-2);
-  opacity: 0;
-  transition: opacity var(--dur-1) var(--ease-out);
-}
-.inst-table tbody tr:hover .inst-row-actions,
-.inst-table tbody tr:focus-within .inst-row-actions,
-.inst-table tbody tr[aria-selected="true"] .inst-row-actions { opacity: 1; }
-
-/* Итоги. Верхняя граница плотнее строчной: это черта под данными, а не
-   ещё одна строка.                                                       */
-.inst-table tfoot td {
-  border-block-start: var(--hairline) solid var(--border);
-  border-block-end: none;
-  font-weight: var(--weight-medium);
-}
-
-/* Липкая первая колонка — для широких таблиц, которые скроллятся вбок.
-   Фон обязателен, иначе под ней просвечивает уезжающее содержимое.
-
-   И он обязан быть НЕПРОЗРАЧНЫМ. Ховер и выделение строки объявлены выше и
-   специфичнее (`.inst-table tbody tr:hover td` — 0,2,3 против 0,2,1), поэтому
-   выигрывали, а значения у них полупрозрачные: под выделенной строкой липкая
-   колонка становилась стеклянной ровно там, где её работа — быть стеной.
-
-   Отсюда приём: фон колонки остаётся НЕПРОЗРАЧНЫМ всегда, а состояние
-   кладётся поверх него внутренней тенью с огромным разбросом. Это настоящая
-   композиция — полупрозрачный слой ЛОЖИТСЯ на непрозрачный, — в отличие от
-   color-mix, который усредняет и альфу тоже: смесь 14%-цвета с непрозрачным
-   давала 0.57, то есть колонка оставалась стеклянной наполовину.
-
-   Тень здесь не тень: тем же приёмом в ките нарисованы хайрлайн меры и
-   кольцо свитча. Альфа состояния при этом остаётся какой была — токены
-   менять не нужно, и состояния по-прежнему складываются.                 */
-.inst-table--sticky-col :is(th, td):first-child {
-  position: sticky;
-  inset-inline-start: 0;
-  z-index: 1;
-  background: var(--table-head-bg);
-}
-
-.inst-table--sticky-col tbody tr:hover :is(th, td):first-child {
-  background: var(--table-head-bg);
-  box-shadow: inset 0 0 0 100vmax var(--surface-hover);
-}
-.inst-table--sticky-col tbody tr[aria-selected="true"] :is(th, td):first-child {
-  background: var(--table-head-bg);
-  box-shadow: inset 0 0 0 100vmax var(--surface-selected);
-}
-.inst-table--sticky-col tbody tr[aria-selected="true"]:hover :is(th, td):first-child {
-  background: var(--table-head-bg);
-  box-shadow: inset 0 0 0 100vmax var(--surface-selected),
-              inset 0 0 0 100vmax var(--surface-hover);
-}
-
-/* Угол — пересечение двух липких осей, и он обязан быть НАД обеими: число
-   меньше --z-sticky пустило бы заголовки поверх него.                    */
-.inst-table--sticky-col.inst-table--sticky thead th:first-child {
-  z-index: calc(var(--z-sticky) + 1);
-}
-
-/* Строка выбранной подсветкой не должна терять ховер. */
-.inst-table tbody tr[aria-selected="true"]:hover td {
-  background: color-mix(in oklab, var(--surface-selected), var(--surface-hover));
 }
 
 }
@@ -7131,7 +7241,7 @@ html:has(dialog:modal) { overflow: hidden; }
    instrument — агентный слой
 
    То, из чего на самом деле состоит интерфейс агента. Очередь задач, лог и
-   инспектор в components.css закрывают инструментальную половину; здесь —
+   инспектор в файлах компонентов закрывают инструментальную половину; здесь —
    вторая, без которой название кита было бы авансом.
 
    Порядок в файле — по частоте появления на экране, а не по алфавиту.
@@ -7786,7 +7896,7 @@ html:has(dialog:modal) { overflow: hidden; }
    слева. Отступ справа растёт на её ширину: длинная строка обязана уходить в
    прокрутку ПОД кнопкой, а не из-под неё.
 
-   Правило стоит ЗДЕСЬ, а не рядом с .inst-code в components.css: .inst-copy
+   Правило стоит ЗДЕСЬ, а не рядом с .inst-code в text.css: .inst-copy
    объявлен в слое kit.agent, который позже kit.components, и position оттуда
    перебивал бы любую специфичность. Компонент чинится в своём слое.        */
 .inst-code:has(> .inst-copy) {
@@ -7938,8 +8048,11 @@ html:has(dialog:modal) { overflow: hidden; }
   .inst-meter[data-state="indeterminate"] > .inst-meter-fill { animation-duration: 3s; }
 
   /* Все точки, которые пульсируют: собственный тон, тон родителя-бейджа,
-     состояние строки очереди и состояние шага. Список обязан совпадать с
-     тем, что заводит inst-pulse в components.css и agent.css.              */
+     состояние строки очереди и состояние шага.
+
+     Список обязан совпадать с тем, что заводит inst-pulse, и держалось это
+     на памяти. Теперь сторожит cmd/registry, и сторожит выводом, а не
+     объявлением: замедлять надо ровно то, у чего бесконечная анимация. */
   [data-tone="running"] .inst-dot,
   .inst-dot[data-tone="running"],
   .inst-task[data-state="running"] .inst-dot,
