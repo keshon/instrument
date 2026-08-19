@@ -1037,6 +1037,25 @@
   --pad-cell-x:  var(--space-4);
   --row-pad-y:   var(--space-3);
   --gap-row:     var(--space-3);
+  /* РАЗДЕЛ — четвёртая ступень ритма, и она выводится, а не назначается.
+     Ярус ролей упирался в 16px: самое громкое, чем можно было разделить два
+     блока, было того же порядка, что просвет ВНУТРИ блока (6–8). Экран из-за
+     этого читался сплошным потоком — сказать «здесь начинается другое» было
+     нечем, и 24, 32, 48, 64 лежали в шкале без единой роли.
+
+     Замерено на собранных экранах Anthropic: внутри группы 8·12·16, между
+     группами 54–61, то есть разрыв примерно вчетверо. У собственной консоли
+     прогонов весь диапазон 0–18, без разрыва вовсе.
+
+     Отсюда правило: раздел — это --gap-row, поднятый на ЧЕТЫРЕ ступени. Шкала
+     2·4·6·8·12·16·24·32·48·64 устроена так, что +4 ступени дают ровно ×4 в
+     каждой точке: 4→16, 6→24, 8→32, 12→48, 16→64. Отношение держится во всех
+     пятнадцати сочетаниях масштаба и плотности само, без отдельного подбора.
+
+     Проверка на попадание: в базовой ячейке роль даёт 24px — ровно то число,
+     которое .inst-stack--loose держал руками, дотягиваясь в шкалу мимо яруса.
+     Кит нащупал его раньше, чем назвал.                                     */
+  --gap-section: var(--space-7);
   --gap-inline:  var(--space-4);
 
   /* Вертикаль БЛОКА — шапка панели и оболочки, тулбар, баннер, лог, код,
@@ -1168,6 +1187,7 @@
   --pad-cell-x: var(--space-3);
   --row-pad-y:  var(--space-2);
   --gap-row:    var(--space-2);
+  --gap-section: var(--space-6);
   --gap-inline: var(--space-3);
   --pad-block-y: var(--space-3);
 
@@ -1196,6 +1216,7 @@
   --pad-cell-x: var(--space-5);
   --row-pad-y:  var(--space-5);
   --gap-row:    var(--space-4);
+  --gap-section: var(--space-8);
   --gap-inline: var(--space-5);
   --pad-block-y: var(--space-5);
 
@@ -1326,6 +1347,7 @@
   --pad-cell-x:  var(--space-4);
   --row-pad-y:   var(--space-3);
   --gap-row:     var(--space-3);
+  --gap-section: var(--space-7);
   --gap-inline:  var(--space-4);
   --pad-block-y: var(--space-4);
 
@@ -1388,6 +1410,7 @@
   --pad-cell-x:  var(--space-5);
   --row-pad-y:   var(--space-4);
   --gap-row:     var(--space-4);
+  --gap-section: var(--space-8);
   --gap-inline:  var(--space-5);
   --pad-block-y: var(--space-5);
 
@@ -1445,6 +1468,7 @@
   --pad-cell-x:  var(--space-5);
   --row-pad-y:   var(--space-4);
   --gap-row:     var(--space-4);
+  --gap-section: var(--space-8);
   --gap-inline:  var(--space-5);
   --pad-block-y: var(--space-5);
 
@@ -1502,6 +1526,7 @@
   --pad-cell-x:  var(--space-6);
   --row-pad-y:   var(--space-5);
   --gap-row:     var(--space-5);
+  --gap-section: var(--space-9);
   --gap-inline:  var(--space-6);
   --pad-block-y: var(--space-6);
 
@@ -1556,6 +1581,7 @@
   --pad-cell-x:  var(--space-3);
   --row-pad-y:   var(--space-2);
   --gap-row:     var(--space-2);
+  --gap-section: var(--space-6);
   --gap-inline:  var(--space-3);
   --pad-block-y: var(--space-3);
 
@@ -1584,6 +1610,7 @@
   --pad-cell-x:  var(--space-5);
   --row-pad-y:   var(--space-4);
   --gap-row:     var(--space-4);
+  --gap-section: var(--space-8);
   --gap-inline:  var(--space-5);
   --pad-block-y: var(--space-5);
 
@@ -1612,6 +1639,7 @@
   --pad-cell-x:  var(--space-4);
   --row-pad-y:   var(--space-3);
   --gap-row:     var(--space-3);
+  --gap-section: var(--space-7);
   --gap-inline:  var(--space-4);
   --pad-block-y: var(--space-4);
 
@@ -1640,6 +1668,7 @@
   --pad-cell-x:  var(--space-6);
   --row-pad-y:   var(--space-5);
   --gap-row:     var(--space-5);
+  --gap-section: var(--space-9);
   --gap-inline:  var(--space-6);
   --pad-block-y: var(--space-6);
 
@@ -1668,6 +1697,7 @@
   --pad-cell-x:  var(--space-4);
   --row-pad-y:   var(--space-3);
   --gap-row:     var(--space-3);
+  --gap-section: var(--space-7);
   --gap-inline:  var(--space-4);
   --pad-block-y: var(--space-4);
 
@@ -1696,6 +1726,7 @@
   --pad-cell-x:  var(--space-6);
   --row-pad-y:   var(--space-5);
   --gap-row:     var(--space-5);
+  --gap-section: var(--space-9);
   --gap-inline:  var(--space-6);
   --pad-block-y: var(--space-6);
 
@@ -1726,6 +1757,7 @@
   --pad-cell-x:  var(--space-5);
   --row-pad-y:   var(--space-4);
   --gap-row:     var(--space-4);
+  --gap-section: var(--space-8);
   --gap-inline:  var(--space-5);
   --pad-block-y: var(--space-5);
 
@@ -1754,6 +1786,7 @@
   --pad-cell-x:  var(--space-7);
   --row-pad-y:   var(--space-6);
   --gap-row:     var(--space-6);
+  --gap-section: var(--space-10);
   --gap-inline:  var(--space-7);
   --pad-block-y: var(--space-7);
 

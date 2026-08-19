@@ -288,7 +288,7 @@
   gap: var(--pad-panel);
 }
 .inst-stack--tight { gap: var(--gap-row); }
-.inst-stack--loose { gap: var(--space-7); }
+.inst-stack--loose { gap: var(--gap-section); }
 
 /* Растяжение по ширине остаётся умолчанием, и это правильно: в стопке стоят
    карточки, панели, поля и шапки экрана — им ширина колонки и нужна.
@@ -381,6 +381,12 @@
   flex-direction: column;
   gap: var(--gap-row);
 }
+
+/* Разделы отбиваются друг от друга ЧЕТВЁРТОЙ ступенью ритма. Просвет внутри
+   раздела — --gap-row, между разделами — он же на четыре ступени выше, то есть
+   вчетверо больше. Без этой отбивки соседние разделы стояли на том же просвете,
+   что строки внутри них, и граница между ними не читалась.                  */
+.inst-section + .inst-section { margin-block-start: var(--gap-section); }
 
 .inst-section-head {
   display: flex;
