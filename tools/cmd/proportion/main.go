@@ -20,6 +20,7 @@ import (
 	"os"
 	"regexp"
 	"sort"
+	"strings"
 	"unicode/utf8"
 
 	"instrument/tools/internal/css"
@@ -150,6 +151,16 @@ var rules = []rule{
 	// ── Вертикальный ритм ──────────────────────────────────────────────────
 	{label: "вертикаль блока к строке", a: "--pad-block-y", b: "--row-pad-y", min: 0.9, max: 1.7, perDens: true,
 		why: "шапка панели становится выше строки, которую подписывает"},
+
+	// «По вертикали теснее, чем по горизонтали: часть вертикального воздуха
+	// приносит интерлиньяж» — правило оформления, до сих пор жившее только
+	// текстом. Держалось оно в четырнадцати ячейках из пятнадцати: в свободной
+	// плотности на базовом кегле стояло 12 на 12, то есть ровно то, что
+	// правило запрещает. Верхняя граница строго меньше единицы — в этом всё
+	// содержание правила; нижняя отсекает обратный перекос, при котором
+	// строка сплющивается против собственных боков.
+	{label: "вертикаль строки к горизонтали", a: "--row-pad-y", b: "--pad-cell-x", min: 0.55, max: 0.95, perDens: true,
+		why: "вертикаль перестала быть теснее горизонтали — строка раздаётся вверх, хотя воздух ей уже дал интерлиньяж"},
 }
 
 // Не всё проверяется отношением. Пол кегля — абсолют, радиусы — свойство
@@ -331,6 +342,8 @@ func main() {
 		}
 	}
 
+	var grid []cellVals
+
 	for _, d := range combos() {
 		vals := scaleVals(d.scale)
 		// Плотность приходит из своего блока, когда масштаб обычный, и из
@@ -344,6 +357,7 @@ func main() {
 				vals[k] = v
 			}
 		}
+		grid = append(grid, cellVals{scale: d.scale, dens: d.dens, label: d.label, vals: vals})
 		if *verbose {
 			fmt.Printf("\n── %s ──\n", d.label)
 		}
@@ -378,6 +392,10 @@ func main() {
 		}
 	}
 
+	mono, monoChecked := checkMonotonic(grid, base)
+	problems = append(problems, mono...)
+	total += monoChecked
+
 	fmt.Println()
 	if len(problems) > 0 {
 		sort.Strings(problems)
@@ -391,4 +409,94 @@ func main() {
 	}
 	fmt.Printf("· все %d проверок пройдены в %d сочетаниях масштаба и плотности при корне %gpx\n",
 		total, len(combos()), css.RootPx)
+}
+
+// ── Кросс-ячеечная проверка ────────────────────────────────────────────────
+//
+// Правила выше меряют отношения ВНУТРИ одной ячейки и потому слепы к форме
+// самой таблицы. Ровно так через них прошла инверсия --row-pad-y: на базовом
+// кегле свободная плотность давала 12px, на масштабе 15 — 8px, то есть
+// геометрия УМЕНЬШАЛАСЬ при росте масштаба. Обе ячейки по отдельности лежали
+// в полосе «вертикаль блока к строке» (1.00 и 1.50 при допуске 0.9–1.7), и
+// гейт молчал.
+//
+// Здесь проверяется противоположное: не отношение в точке, а поведение
+// величины ВДОЛЬ ОСИ. Масштаб идёт только вверх, значит и размер, который он
+// двигает, обязан идти только вверх.
+//
+// Список токенов не заводится: он выводится из самих токенов. Проверяется
+// всё, что разрешается в пиксели во всех пяти масштабах, — цвета, доли и
+// ключевые слова отсеиваются сами тем, что не разрешаются. Ручной список
+// здесь был бы восьмым реестром, который надо помнить.
+//
+// Плато разрешено намеренно: лестница набрана целыми пикселями, и соседние
+// ступени законно совпадают после округления. Запрещено только УБЫВАНИЕ.
+
+type cellVals struct {
+	scale, dens string
+	label       string
+	vals        map[string]string
+}
+
+// tokenNames — имена в стабильном порядке, чтобы отчёт не прыгал между
+// прогонами.
+func tokenNames(base map[string]string) []string {
+	out := make([]string, 0, len(base))
+	for k := range base {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return out
+}
+
+func checkMonotonic(grid []cellVals, base map[string]string) (problems []string, checked int) {
+	byKey := map[string]map[string]string{}
+	for _, c := range grid {
+		byKey[c.scale+"/"+c.dens] = c.vals
+	}
+
+	for _, name := range tokenNames(base) {
+		for _, d := range densities {
+			// Дорожка токена вдоль масштаба при фиксированной плотности.
+			type step struct {
+				label string
+				px    float64
+			}
+			var track []step
+			ok := true
+			for _, sc := range scales {
+				vals := byKey[sc.id+"/"+d.id]
+				if vals == nil {
+					ok = false
+					break
+				}
+				px, err := css.ResolvePx(vals, name)
+				if err != nil {
+					// Не длина — не наше дело. Цвет, доля, ключевое слово.
+					ok = false
+					break
+				}
+				track = append(track, step{sc.label, px})
+			}
+			if !ok || len(track) < 2 {
+				continue
+			}
+			checked++
+			for i := 1; i < len(track); i++ {
+				// Допуск на дробные rem: 0.01px, а не точное сравнение.
+				if track[i].px < track[i-1].px-0.01 {
+					var line []string
+					for _, s := range track {
+						line = append(line, fmt.Sprintf("%s→%g", s.label, s.px))
+					}
+					problems = append(problems, fmt.Sprintf(
+						"  · %s  убывает при росте масштаба, плотность «%s»\n      %s\n"+
+							"      масштаб идёт только вверх: величина, которую он двигает, не имеет права уменьшиться",
+						name, d.label, strings.Join(line, "  ")))
+					break
+				}
+			}
+		}
+	}
+	return problems, checked
 }
