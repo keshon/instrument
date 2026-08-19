@@ -21,7 +21,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"unicode/utf8"
 
@@ -387,10 +389,117 @@ func main() {
 		}
 	}
 
+	// Охват таблицы: цвет текста, которого в ней нет, — это порог, который
+	// никто не мерил. Считается один раз, а не на каждую тему: вопрос не в
+	// значении, а в наличии строки.
+	gaps, inkCount, err := checkInkCoverage(filepath.Dir(*tokens), cases)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "не прочитать кит:", err)
+		os.Exit(1)
+	}
+	total += inkCount
+	failed += len(gaps)
+	if len(gaps) > 0 {
+		fmt.Println("\nОХВАТ ТАБЛИЦЫ")
+		for _, g := range gaps {
+			fmt.Println(g)
+		}
+	}
+
 	fmt.Println()
 	if failed > 0 {
 		fmt.Printf("✗ провалов: %d из %d\n", failed, total)
 		os.Exit(1)
 	}
-	fmt.Printf("· все %d проверок пройдены: %d тем × %d акцентов\n", total, len(themes), len(accents))
+	fmt.Printf("· все %d проверок пройдены: %d тем × %d акцентов, охват %d цветов текста\n",
+		total, len(themes), len(accents), inkCount)
 }
+
+// ── Покрытие: каждый цвет текста обязан быть кем-то проверен ───────────────
+//
+// Таблица пар выше — рукописная, и это правильно: пара несёт не только два
+// токена, но и СТОПКУ композиции («подпись в поле на панели» — два фона,
+// потому что врез полупрозрачен и складывается с панелью под ним). Такой факт
+// о вложенности разметки из tokens.css не выводится, и генерация пар обезличила
+// бы таблицу, у каждой строки которой есть человеческое имя.
+//
+// А вот ДЫРА в ней выводится, и стоит копейки. Компонент, покрасивший текст
+// новым токеном, о котором не подумали, ниоткуда себя не проявит: цвет
+// применится, порог никто не померяет, и узнается это от человека, который не
+// смог прочитать подпись.
+//
+// Поэтому здесь сверяется не результат, а ОХВАТ: всякий токен, которым кит
+// красит текст, обязан стоять передним планом хотя бы в одной паре. Что именно
+// под ним лежит, по-прежнему решает автор пары.
+var (
+	colorDecl = regexp.MustCompile(`(?:^|[;{])\s*color\s*:\s*([^;}]+)`)
+	varUse    = regexp.MustCompile(`var\(\s*(--[a-z][\w-]*)`)
+)
+
+// inkTokens — токены, которыми кит реально красит текст, с местом первой
+// встречи. tokens.css исключён: там цвет объявляется, а не применяется;
+// print.css — тоже, у бумаги свой набор.
+func inkTokens(dir string) (map[string]string, error) {
+	out := map[string]string{}
+	ents, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	for _, e := range ents {
+		name := e.Name()
+		if !strings.HasSuffix(name, ".css") || name == "tokens.css" || name == "print.css" {
+			continue
+		}
+		b, err := os.ReadFile(filepath.Join(dir, name))
+		if err != nil {
+			return nil, err
+		}
+		// Комментарии ГАСЯТСЯ, а не вырезаются: они занимают три четверти
+		// файла, и после вырезания номер строки уезжает на сотни строк — то
+		// есть сообщение показывает на чужое правило.
+		text := string(css.Blank([]byte(strings.ReplaceAll(string(b), "\r\n", "\n"))))
+		for _, m := range colorDecl.FindAllStringSubmatchIndex(text, -1) {
+			value := text[m[2]:m[3]]
+			line := strings.Count(text[:m[2]], "\n") + 1
+			for _, v := range varUse.FindAllStringSubmatch(value, -1) {
+				if _, seen := out[v[1]]; !seen {
+					out[v[1]] = fmt.Sprintf("%s:%d", name, line)
+				}
+			}
+		}
+	}
+	return out, nil
+}
+
+// checkInkCoverage возвращает токены, которыми красят текст, но которые не
+// стоят передним планом ни в одной паре.
+//
+// Компонентные переменные пропускаются: --btn-fg и --tone-ink не цвета, а
+// ПОДСТАНОВКИ — за ними стоит семантика, и меряется она под своим именем.
+// Проверять их значило бы требовать пару на каждое имя-посредник.
+func checkInkCoverage(dir string, cases []kase) ([]string, int, error) {
+	ink, err := inkTokens(dir)
+	if err != nil {
+		return nil, 0, err
+	}
+	covered := map[string]bool{}
+	for _, c := range cases {
+		covered[c.fg] = true
+	}
+	var bad []string
+	for tok, where := range ink {
+		if indirect.MatchString(tok) || covered[tok] {
+			continue
+		}
+		bad = append(bad, fmt.Sprintf(
+			"  ✗ %s  красит текст (%s), но не стоит передним планом ни в одной паре.\n"+
+				"      Заведите строку в таблице выше: непроверенный цвет текста — это порог, который никто не мерил",
+			tok, where))
+	}
+	sort.Strings(bad)
+	return bad, len(ink), nil
+}
+
+// Имена-посредники: компонентная переменная и тон. За ними стоит семантика,
+// которая меряется отдельно и под своим именем.
+var indirect = regexp.MustCompile(`^--(btn|tone|level|change|chart)-`)

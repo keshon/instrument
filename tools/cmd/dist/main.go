@@ -25,6 +25,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"instrument/tools/internal/css"
 )
 
 var (
@@ -455,40 +457,6 @@ func checkRoleTier(name string, css []byte) error {
 	return nil
 }
 
-// blankComments заменяет тела комментариев пробелами, СОХРАНЯЯ переносы строк.
-//
-// Без этого проверки ниже ловили бы сами объяснения: слово «!important»
-// встречается в шапках kit.css, motion.css, print.css и forms.css, а «#333» —
-// в описании второго закона прямо в tokens.css. Вырезать комментарии целиком
-// нельзя: номер строки в сообщении обязан совпадать с тем, что откроют.
-func blankComments(css []byte) []byte {
-	out := make([]byte, len(css))
-	copy(out, css)
-	for i := 0; i+1 < len(out); {
-		if out[i] != '/' || out[i+1] != '*' {
-			i++
-			continue
-		}
-		j := i
-		for ; j+1 < len(out); j++ {
-			if out[j] == '*' && out[j+1] == '/' {
-				j += 2
-				break
-			}
-		}
-		if j+1 >= len(out) {
-			j = len(out)
-		}
-		for k := i; k < j; k++ {
-			if out[k] != '\n' {
-				out[k] = ' '
-			}
-		}
-		i = j
-	}
-	return out
-}
-
 // Раздел «Запрещено» принципов дизайна, переведённый в регулярные выражения.
 //
 // Все пять правил СЕГОДНЯ ЗЕЛЁНЫЕ — это защёлки, а не работа. Смысл гейта не в
@@ -520,7 +488,7 @@ var colorLayer = map[string]bool{"tokens.css": true, "print.css": true}
 // одной строке, — а для маски проверено отдельно: во всех 27 объявлениях кита
 // маска однострочная.
 func checkBans(name string, raw []byte) error {
-	css := blankComments(raw)
+	css := css.Blank(raw)
 	for i, line := range strings.Split(string(css), "\n") {
 		at := fmt.Sprintf("%s:%d", name, i+1)
 
