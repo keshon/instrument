@@ -23,11 +23,14 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"instrument/tools/internal/css"
 )
 
 var (
@@ -178,4 +181,176 @@ func checkTokenTables(srcDir, docsDir string) []string {
 		}
 	}
 	return out
+}
+
+// ── Таблицы ПЛОТНОСТИ И МАСШТАБА ──────────────────────────────────────────
+//
+// Проверка выше сверяет двухколоночные таблицы цвета: токен, светлая тема,
+// тёмная. У density.md и scale.md форма другая — «токен × режим», и значения
+// лежат не в :root, а в блоках [data-density] и [data-scale]. Под эту форму
+// сверки не было, и это стоило ровно того, ради чего проверка вообще написана:
+// правка --row-pad-y прошла, а таблица осталась называть прежнюю ступень.
+// Класс на месте, токен на месте, врало только число.
+//
+// Разбираются лишь ячейки-ссылки (`--space-4`). Числа и проза пропускаются:
+// заставлять таблицу быть машиночитаемой целиком значило бы её выхолостить.
+
+// Шапка таблицы режимов: первая колонка — токен, дальше режимы.
+var modeHeadRe = regexp.MustCompile(`^\|\s*Токен\s*\|(.+)\|\s*$`)
+
+// Обратная кавычка внутри строки Go не уживается с сырым литералом, поэтому
+// склейка: она читается лучше, чем экранирование каждого разделителя таблицы.
+const bq = "`"
+
+var modeRowRe = regexp.MustCompile(`^\|\s*` + bq + `(--[a-z][\w-]*)` + bq + `\s*\|(.+)\|\s*$`)
+var refCellRe = regexp.MustCompile(`^` + bq + `(--[a-z][\w-]*)` + bq + `$`)
+
+// Своя регулярка объявления: у declRe в main.go одна группа захвата — ему
+// нужно только ИМЯ токена, а здесь нужно ещё и значение.
+var modeDeclRe = regexp.MustCompile(`(--[a-z][\w-]*)\s*:\s*([^;{}]+);`)
+
+// blockDecls вынимает объявления из ПЕРВОГО блока, чей селектор совпал.
+func blockDecls(css, selector string) map[string]string {
+	i := strings.Index(css, selector)
+	if i < 0 {
+		return nil
+	}
+	j := strings.Index(css[i:], "{")
+	if j < 0 {
+		return nil
+	}
+	depth, start := 0, i+j+1
+	for k := i + j; k < len(css); k++ {
+		switch css[k] {
+		case '{':
+			depth++
+		case '}':
+			depth--
+			if depth == 0 {
+				out := map[string]string{}
+				for _, m := range modeDeclRe.FindAllStringSubmatch(css[start:k], -1) {
+					out[m[1]] = strings.TrimSpace(m[2])
+				}
+				return out
+			}
+		}
+	}
+	return nil
+}
+
+// Имя колонки → селектор блока, в котором лежит её значение. Базовая колонка
+// разрешается пустым селектором: её значения стоят в ярусе ролей.
+var modeSelector = map[string]string{
+	"compact":      `[data-density="compact"] {`,
+	"comfortable":  `[data-density="comfortable"] {`,
+	"по умолчанию": "",
+	"14":           "",
+	"15":           `[data-scale="15"] {`,
+	"16":           `[data-scale="16"] {`,
+	"17":           `[data-scale="17"] {`,
+	"18":           `[data-scale="18"] {`,
+}
+
+func checkModeTables(srcDir, docsDir string) []string {
+	raw, err := os.ReadFile(filepath.Join(srcDir, "tokens.css"))
+	if err != nil {
+		return nil
+	}
+	sheet := commentRe.ReplaceAllString(string(raw), "")
+
+	// Ярус ролей: база, поверх которой режим переопределяет своё.
+	base := map[string]string{}
+	for _, sel := range []string{":root {", `:where(:root) {`} {
+		for k, v := range blockDecls(sheet, sel) {
+			base[k] = v
+		}
+	}
+
+	cache := map[string]map[string]string{}
+	values := func(mode string) map[string]string {
+		if v, ok := cache[mode]; ok {
+			return v
+		}
+		sel, known := modeSelector[mode]
+		if !known {
+			cache[mode] = nil
+			return nil
+		}
+		out := map[string]string{}
+		for k, v := range base {
+			out[k] = v
+		}
+		for k, v := range blockDecls(sheet, sel) {
+			out[k] = v
+		}
+		cache[mode] = out
+		return out
+	}
+
+	var problems []string
+	for _, name := range []string{"density.md", "scale.md"} {
+		md, err := os.ReadFile(filepath.Join(docsDir, "foundations", name))
+		if err != nil {
+			continue
+		}
+		var header []string
+		for i, line := range strings.Split(string(md), "\n") {
+			line = strings.TrimRight(line, "\r")
+			if m := modeHeadRe.FindStringSubmatch(line); m != nil {
+				header = nil
+				for _, c := range strings.Split(m[1], "|") {
+					header = append(header, strings.Trim(strings.TrimSpace(c), "`"))
+				}
+				continue
+			}
+			m := modeRowRe.FindStringSubmatch(line)
+			if m == nil || header == nil {
+				continue
+			}
+			cells := strings.Split(m[2], "|")
+			for k, cell := range cells {
+				if k >= len(header) {
+					break
+				}
+				text := strings.TrimSpace(cell)
+				vals := values(header[k])
+				if vals == nil {
+					continue // колонка не про режим: «когда», «зачем»
+				}
+				got, ok := vals[m[1]]
+				if !ok {
+					continue // токен в этом режиме не объявлен
+				}
+
+				// Ячейка-ссылка: сверяем имя.
+				if ref := refCellRe.FindStringSubmatch(text); ref != nil {
+					if got != "var("+ref[1]+")" {
+						problems = append(problems, fmt.Sprintf(
+							"%s:%d: %s в режиме «%s» — в таблице «%s», в коде «%s»",
+							name, i+1, m[1], header[k], ref[1], got))
+					}
+					continue
+				}
+
+				// Ячейка-число: сверяем ПИКСЕЛИ. Таблицы масштаба набраны
+				// кеглями в px, а токены объявлены в rem — без разрешения
+				// сотня чисел оставалась бы непроверенной ровно так же, как
+				// ступень плотности до сегодня.
+				want, err := strconv.ParseFloat(strings.TrimSuffix(text, "px"), 64)
+				if err != nil {
+					continue // проза
+				}
+				px, err := css.ResolvePx(vals, m[1])
+				if err != nil {
+					continue // не длина
+				}
+				if math.Abs(px-want) > 0.01 {
+					problems = append(problems, fmt.Sprintf(
+						"%s:%d: %s в режиме «%s» — в таблице %g, в коде %g (%s)",
+						name, i+1, m[1], header[k], want, px, got))
+				}
+			}
+		}
+	}
+	return problems
 }

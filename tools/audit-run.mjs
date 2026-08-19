@@ -80,37 +80,63 @@ async function launch() {
 }
 
 /* Тонкий клиент протокола: открыть вкладку, выполнить выражение, вернуть
-   значение. Больше от отладочного протокола здесь ничего не нужно. */
+   значение. Больше от отладочного протокола здесь ничего не нужно.
+
+   У каждой команды СВОЙ СРОК, и вкладка закрывается через finally. Без этих
+   двух вещей бегунок вставал намертво: ответ, который не пришёл, оставлял
+   промис висеть навсегда, а вкладка и сокет утекали при любом выходе мимо
+   последних строк. Проверка, которая молча замирает на середине, хуже
+   упавшей — та хотя бы называет страницу. */
+const CMD_TIMEOUT = 90_000;
+
 async function evalInPage(url, expr) {
   const tab = await (await fetch(
     `http://127.0.0.1:${PORT}/json/new?${encodeURIComponent(url)}`,
     { method: 'PUT' },
   )).json();
 
-  const ws = new WebSocket(tab.webSocketDebuggerUrl);
-  await new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; });
+  let ws;
+  try {
+    ws = new WebSocket(tab.webSocketDebuggerUrl);
+    await withTimeout(
+      new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; }),
+      CMD_TIMEOUT, 'сокет не открылся');
 
-  let id = 0;
-  const pending = new Map();
-  ws.onmessage = (e) => {
-    const msg = JSON.parse(e.data);
-    if (msg.id && pending.has(msg.id)) { pending.get(msg.id)(msg); pending.delete(msg.id); }
-  };
-  const send = (method, params) =>
-    new Promise((res) => { const i = ++id; pending.set(i, res); ws.send(JSON.stringify({ id: i, method, params })); });
+    let id = 0;
+    const pending = new Map();
+    ws.onmessage = (e) => {
+      const msg = JSON.parse(e.data);
+      if (msg.id && pending.has(msg.id)) { pending.get(msg.id)(msg); pending.delete(msg.id); }
+    };
+    const send = (method, params) => withTimeout(
+      new Promise((res) => { const i = ++id; pending.set(i, res); ws.send(JSON.stringify({ id: i, method, params })); }),
+      CMD_TIMEOUT, method + ' не ответил');
 
-  await send('Page.enable', {});
-  await send('Runtime.enable', {});
-  await sleep(450);                       // дать шрифтам и раскладке устояться
+    await send('Page.enable', {});
+    await send('Runtime.enable', {});
+    await sleep(450);                     // дать шрифтам и раскладке устояться
 
-  const out = await send('Runtime.evaluate', {
-    expression: expr, awaitPromise: true, returnByValue: true,
-  });
+    const out = await send('Runtime.evaluate', {
+      expression: expr, awaitPromise: true, returnByValue: true,
+    });
 
-  ws.close();
-  await fetch(`http://127.0.0.1:${PORT}/json/close/${tab.id}`);
-  if (out.result?.exceptionDetails) throw new Error(out.result.exceptionDetails.text);
-  return out.result?.result?.value;
+    if (out.result?.exceptionDetails) throw new Error(out.result.exceptionDetails.text);
+    return out.result?.result?.value;
+  } finally {
+    try { ws?.close(); } catch {}
+    // Вкладку закрываем ВСЕГДА. Утёкшая остаётся живой в headless-браузере и
+    // продолжает есть память; на восьмидесяти страницах это кончается тем,
+    // что тормозит уже сам Chrome, а виноватой выглядит проверка.
+    try { await fetch(`http://127.0.0.1:${PORT}/json/close/${tab.id}`); } catch {}
+  }
+}
+
+function withTimeout(p, ms, what) {
+  let t;
+  return Promise.race([
+    p.finally(() => clearTimeout(t)),
+    new Promise((_, rej) => { t = setTimeout(() => rej(new Error(what + ` за ${ms / 1000}с`)), ms); }),
+  ]);
 }
 
 const EXPR = (auditSrc) => `(async () => {
@@ -153,6 +179,7 @@ try {
       }
     }
     process.stdout.write(problems.length ? '×' : '·');
+    if (process.env.AUDIT_VERBOSE) console.log(' ' + p);
   }
 
   console.log('\n');

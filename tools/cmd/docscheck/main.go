@@ -439,6 +439,15 @@ func main() {
 	// потому что это другой род ошибки: класс на месте, токен на месте, врёт
 	// только число.
 	staleTable := false
+	if stale := checkModeTables(*srcDir, *docsDir); len(stale) > 0 {
+		fmt.Printf("── таблицы режимов разошлись с кодом (%d) ──\n", len(stale))
+		for _, s := range stale {
+			fmt.Println("  " + s)
+		}
+		fmt.Println()
+		staleTable = true
+	}
+
 	if stale := checkTokenTables(*srcDir, *docsDir); len(stale) > 0 {
 		fmt.Printf("── таблица токенов разошлась с кодом (%d) ──\n", len(stale))
 		for _, s := range stale {
