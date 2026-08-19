@@ -10,7 +10,7 @@ CSS-библиотека для интерфейсов, которые пока�
 Без сборки и без зависимостей, подключается одной строкой.
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.6.2/dist/instrument.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.7.0/dist/instrument.min.css">
 ```
 
 **[Установка](/start/install/)** — npm, CDN или файл, плюс целая страница для
