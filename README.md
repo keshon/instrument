@@ -76,7 +76,8 @@ npm i @keshon/instrument
 | `forms.css` | поля, валидация, раскладка формы |
 | `data.css` | аватар, тег, лента, легенда, спарклайн, кольцо, календарь |
 | `overlay.css` | поповер, меню, тултип, модалка, шторка |
-| `agent.css` | агентный слой и режим принудительных цветов |
+| `agent.css` | агентный слой: подтверждение, шаг, диф, вывод, дерево |
+| `forced.css` | `forced-colors` — режим принудительных цветов Windows |
 | `motion.css` | `prefers-reduced-motion` |
 | `print.css` | `@media print` |
 | `kit.js` | поведение клавиатуры, опционально — в поставке это `instrument.js` |
@@ -86,7 +87,7 @@ npm i @keshon/instrument
 
 ```
 kit.tokens → kit.base → kit.layout → kit.components → kit.overlay
-  → kit.agent → kit.motion → kit.print
+  → kit.agent → kit.forced → kit.motion → kit.print
 ```
 
 Стили приложения лежат вне слоёв и всегда выигрывают — без `!important`.

@@ -11,7 +11,7 @@
    неслойное объявление выигрывает у всех слоёв. Та же задача
    решалась через !important — и ломала обещание про приложение. */
 
-@layer kit.tokens, kit.base, kit.layout, kit.components, kit.overlay, kit.agent, kit.motion, kit.print;
+@layer kit.tokens, kit.base, kit.layout, kit.components, kit.overlay, kit.agent, kit.forced, kit.motion, kit.print;
 
 @import url("./tokens.css")     layer(kit.tokens);
 @import url("./base.css")       layer(kit.base);
@@ -21,5 +21,6 @@
 @import url("./data.css")       layer(kit.components);
 @import url("./overlay.css")    layer(kit.overlay);
 @import url("./agent.css")      layer(kit.agent);
+@import url("./forced.css")     layer(kit.forced);
 @import url("./motion.css")     layer(kit.motion);
 @import url("./print.css")      layer(kit.print);
