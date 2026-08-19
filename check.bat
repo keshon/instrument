@@ -7,12 +7,17 @@ rem  numbers, then what reads the documentation, and the site build last. This
 rem  is NOT a second list of checks -- a line added here must also appear in
 rem  CI, otherwise local is green while push is red.
 rem
-rem     check              every check
-rem     check contrast     one of: contrast targets proportion docscheck registry
-rem     check dist         rebuild dist/ from src/
-rem     check site         build the documentation site
-rem     check serve        build and serve on :4322
-rem     check pixels       rendered-pixel audit; needs Chrome and a live server
+rem     check                    every check
+rem     check <name>             one of: contrast targets proportion docscheck
+rem                              registry dist
+rem     check <name> -v          the flag is forwarded to the tool
+rem     check dist               rebuild dist/ from src/
+rem     check site               build the documentation site
+rem     check serve              build and serve on :4322
+rem     check pixels [/section/] rendered-pixel audit; needs Chrome and a server
+rem     check fmt                gofmt over both modules
+rem     check figma <args>       Figma dump reader. NOT a check
+rem     check help               this list
 rem
 rem  WHY THIS FILE IS IN ENGLISH, unlike everything else in the repository.
 rem  Not a language decision -- a cmd.exe one. A .bat is parsed byte by byte in
@@ -41,8 +46,43 @@ if /i "%~1"=="dist"   goto build
 if /i "%~1"=="site"   goto site
 if /i "%~1"=="serve"  goto serve
 if /i "%~1"=="pixels" goto pixels
+if /i "%~1"=="figma"  goto figma
+if /i "%~1"=="fmt"    goto fmt
+if /i "%~1"=="help"   goto usage
+if /i "%~1"=="-h"     goto usage
 
-call :gate %~1
+rem -- One gate by name. The name is matched against the list instead of being
+rem -- handed to `go run` as it comes: a typo would otherwise surface as a Go
+rem -- build error about a missing package, which says nothing about what was
+rem -- actually mistyped. Trailing arguments are forwarded, so `-v` works --
+rem -- and `-v` is exactly what is wanted the moment a check goes red.
+for %%g in (contrast targets proportion docscheck registry) do (
+  if /i "%~1"=="%%g" (
+    call :gate %~1 %2 %3
+    goto done
+  )
+)
+echo.
+echo   unknown check: %~1
+goto usage
+
+rem -- what this file offers -------------------------------------------------
+:usage
+echo.
+echo   check                    every check, same as CI
+echo   check ^<name^>             one of: contrast targets proportion docscheck registry
+echo   check ^<name^> -v          verbose; the flag is forwarded to the tool
+echo.
+echo   check dist               rebuild dist/ from src/
+echo   check site               build the documentation site
+echo   check serve              build and serve on :4322
+echo   check pixels [/section/] rendered-pixel audit; needs "check serve" running
+echo.
+echo   check fmt                gofmt over both modules. CI runs it; "all" does not
+echo   check figma ^<args^>       read a Figma "Copy as CSS" dump. NOT a check:
+echo                            it asserts nothing about the kit, so it cannot fail
+echo.
+set "fails=0"
 goto done
 
 rem -- everything ------------------------------------------------------------
@@ -76,7 +116,15 @@ if errorlevel 1 (
   type "%LOG%"
   set /a fails+=1
 ) else (
-  call :tail
+  rem A normal run prints one summary line per check: a list nobody reads is
+  rem noise, not a report. But a flag passed by hand IS a request for detail,
+  rem and swallowing it after that would be perverse.
+  if "%~2"=="" (
+    call :tail
+  ) else (
+    echo.
+    type "%LOG%"
+  )
 )
 exit /b
 
@@ -160,6 +208,34 @@ echo.
 echo   Needs "check serve" running in another window.
 echo.
 node tools\audit-run.mjs --base http://localhost:4322 %2
+if errorlevel 1 set /a fails+=1
+goto done
+
+rem -- formatting -------------------------------------------------------------
+rem
+rem Out of "all" on purpose, and the vet section above says why: on a working
+rem copy checked out before .gitattributes pinned *.go to LF, gofmt flags every
+rem file for line endings and a real violation drowns in the noise. That is a
+rem reason to keep it off the default run, not a reason to make it unreachable
+rem -- CI runs it, so it has to be runnable here too.
+:fmt
+echo.
+gofmt -l tools site
+if errorlevel 1 set /a fails+=1
+echo   (empty above means formatted; names listed are not)
+goto done
+
+rem -- Figma dump reader ------------------------------------------------------
+rem
+rem Deliberately outside "all" and outside CI, and its own header says why: it
+rem reads someone else's mock-up and asserts nothing about the kit, so it has
+rem nothing to fail. It is reachable from here anyway, because the reason a
+rem tool stops being used is having to retype its full invocation.
+rem
+rem   check figma -f temp\components-dump.css -list
+:figma
+echo.
+go -C tools run ./cmd/figma %2 %3 %4 %5 %6 %7
 if errorlevel 1 set /a fails+=1
 goto done
 
