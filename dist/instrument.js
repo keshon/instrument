@@ -27,6 +27,15 @@
    Модуль, а не классический скрипт: у него есть именованные экспорты, и на
    них потом сядут обёртки Svelte и React. Сборки по-прежнему нет.
 
+   Приложение, которое ведёт разметку само, отказывается от самозапуска
+   атрибутом `data-instrument="manual"` на <html> и зовёт start() руками —
+   объяснение в конце файла. Три ручки, и все три существуют для одного:
+   чтобы у атрибута не оказалось двух хозяев.
+
+     data-instrument="manual"   на <html> — не запускаться самому
+     start(root, {observe})     не поднимать наблюдателя
+     data-roving="manual"       на группе — tabindex ведёт приложение
+
    ── Почему делегирование, а не инициализация ──────────────────────────────
 
    Слушатели висят на документе, а элементы ищутся в момент нажатия. Для
@@ -38,6 +47,31 @@
    него не достижима по Tab вообще. Поэтому за появлением групп следит
    MutationObserver, а не человек.
    ========================================================================= */
+
+/* Всё, что кит ГОВОРИТ человеку, собрано здесь и только здесь.
+ *
+ * Четыре фразы уезжали вшитыми в код — то есть библиотека, объявленная
+ * framework-agnostic, разговаривала со скринридером на одном языке и
+ * дотянуться до неё было нечем. Две из четырёх имели переопределение
+ * атрибутом у кнопки, две не имели никакого.
+ *
+ * Атрибут остаётся и по-прежнему выигрывает: у него другая работа — сказать
+ * своё для ОДНОЙ кнопки. Здесь меняется язык всего экрана:
+ *
+ *     import { strings } from '@keshon/instrument/js';
+ *     strings.copied = 'Copied';
+ *
+ * Объект, а не функция перевода: словарь на четыре строки, которому нужны
+ * подстановки в одном месте. Полноценный i18n здесь был бы механизмом
+ * тяжелее задачи, а ключ, который некому перевести, — обещанием, которого
+ * кит не выполняет.
+ */
+export const strings = {
+  toasts: 'Уведомления',
+  copied: 'Скопировано',
+  copyFailed: 'Не удалось скопировать',
+  tagRemoved: (label) => `Метка ${label} снята`,
+};
 
 /* Роли, у которых есть контракт клавиатуры, и всё, что о них надо знать.
 
@@ -121,6 +155,28 @@ function itemsOf(group, spec, withHidden) {
   );
 }
 
+/* Кто ведёт бегущий tabindex.
+ *
+ * Из семи атрибутов, которые кит пишет, шесть уходят через отменяемое
+ * событие: приложение вызывает preventDefault и разметка остаётся
+ * нетронутой. Седьмой — tabindex — писался безусловно, и это единственное
+ * место, где у атрибута могло оказаться два хозяина: React, отрисовавший
+ * tabIndex из состояния, и кит, переписавший его в следующую микрозадачу.
+ *
+ * Событие сюда не годится, и это стоит записать, чтобы не предлагали снова.
+ * roving() зовётся из refresh(), то есть на КАЖДУЮ пачку мутаций документа, —
+ * событие на каждую группу при каждом обновлении было бы шумом, в котором
+ * приложение всё равно ответило бы одно и то же. Ответ здесь не про
+ * конкретный переход, а про владение целиком, и потому это объявление, а не
+ * решение: атрибут на группе, как и всё остальное в ките.
+ *
+ * Фокус при этом кит двигать не перестаёт: приложение забрало атрибут, а не
+ * запретило человеку ходить стрелками. Ровно так же ведёт себя отменённый
+ * inst:select. */
+function rovingOwned(group) {
+  return group.dataset.roving !== 'manual';
+}
+
 /* Бегущий tabindex: ровно один элемент группы достижим по Tab.
  *
  * Это и есть весь смысл. Список из двухсот строк, у каждой tabindex="0",
@@ -132,7 +188,9 @@ function roving(group, spec, current) {
   const active = current && items.includes(current)
     ? current
     : items.find((el) => el.getAttribute(spec.follows || 'aria-selected') === 'true') || items[0];
-  for (const el of items) el.tabIndex = el === active ? 0 : -1;
+  if (rovingOwned(group)) {
+    for (const el of items) el.tabIndex = el === active ? 0 : -1;
+  }
   return active;
 }
 
@@ -141,7 +199,9 @@ function roving(group, spec, current) {
  * Выбор снимается со ВСЕЙ группы, а не переключается на цели: два выделенных
  * пункта в одиночном списке — состояние, из которого разметка уже не выйдет. */
 function move(group, spec, to) {
-  for (const el of itemsOf(group, spec)) el.tabIndex = el === to ? 0 : -1;
+  if (rovingOwned(group)) {
+    for (const el of itemsOf(group, spec)) el.tabIndex = el === to ? 0 : -1;
+  }
   /* В множественной группе стрелка НЕ выбирает. Иначе проход по полосе
      фильтров включал бы каждый, мимо которого прошёл, — и «выделение следует
      за фокусом» из одиночного списка превращалось бы в «выделяется всё».
@@ -391,7 +451,7 @@ function toastRegion(doc) {
   // Живой регион вежливый: тост сообщает результат, а не прерывает работу.
   // Ошибка перебивает — на ней самой стоит role="alert".
   region.setAttribute('aria-live', 'polite');
-  region.setAttribute('aria-label', 'Уведомления');
+  region.setAttribute('aria-label', strings.toasts);
   doc.body.append(region);
   ensureOpen(region);
   return region;
@@ -593,8 +653,8 @@ async function onCopy(btn) {
   // «скопировано» там, где запись отклонена, — то есть ровно то враньё,
   // ради устранения которого неудача вообще отслеживается.
   const said = ok
-    ? btn.dataset.copiedLabel || 'Скопировано'
-    : btn.dataset.failedLabel || 'Не удалось скопировать';
+    ? btn.dataset.copiedLabel || strings.copied
+    : btn.dataset.failedLabel || strings.copyFailed;
   announce(btn.ownerDocument, said);
   clearTimeout(+btn.dataset.instTimer || 0);
   btn.dataset.instTimer = setTimeout(() => {
@@ -620,7 +680,7 @@ function onTagRemove(btn) {
     if (!next.matches('.inst-tag-remove') && next.tabIndex < 0) next.tabIndex = -1;
     next.focus();
   }
-  announce(btn.ownerDocument, `Метка ${label} снята`);
+  announce(btn.ownerDocument, strings.tagRemoved(label));
 }
 
 /* ── Перетаскивание подписи оси ──────────────────────────────────────────
@@ -837,8 +897,15 @@ export function refresh(root = document) {
 
 let observer = null;
 
-/** Подключить поведение. Вызывается сам при загрузке модуля. */
-export function start(root = document) {
+/** Подключить поведение. Вызывается сам при загрузке модуля.
+ *
+ * observe выключает MutationObserver. Он оправдан там, где узлы прибывают
+ * сами — очередь задач набирается по одной строке, — и лишний там, где о
+ * новых узлах и так известно: фреймворк знает про свой коммит, и второй
+ * наблюдатель на весь документ означает полный обход querySelectorAll на
+ * каждый его рендер. Тогда refresh() зовут из хука после отрисовки.
+ */
+export function start(root = document, { observe = true } = {}) {
   root.addEventListener('keydown', onKeydown);
   root.addEventListener('focusin', onFocusin);
   root.addEventListener('click', onClick);
@@ -851,7 +918,7 @@ export function start(root = document) {
   // очереди появляются по одной. Наблюдатель дешевле, чем требование звать
   // refresh() руками после каждого рендера, и не забывается.
   const target = root.body || root;
-  if (target && typeof MutationObserver === 'function') {
+  if (observe && target && typeof MutationObserver === 'function') {
     let queued = false;
     observer = new MutationObserver(() => {
       if (queued) return;
@@ -877,7 +944,27 @@ export function stop(root = document) {
   observer = null;
 }
 
-if (typeof document !== 'undefined') {
+/* Самозапуск — и способ от него отказаться.
+ *
+ * Отказ нужен ровно одному потребителю: тому, кто ведёт разметку сам. Импорт
+ * модуля в приложении на фреймворке поднимал наблюдателя на весь документ и
+ * подписку на шесть событий, о которых приложение не просило, — а отменить
+ * это можно было только вызвав stop() после того, как всё уже случилось.
+ *
+ * Отказ объявляется атрибутом, а не опцией импорта, потому что импорт — это
+ * уже поздно: к моменту, когда приложение получит управление, слушатели
+ * стоят. Атрибут читается в момент выполнения модуля и до первой подписки.
+ *
+ *     <html data-instrument="manual">
+ *
+ *     import { start, refresh } from '@keshon/instrument/js';
+ *     start(document, { observe: false });   // и refresh() после отрисовки
+ *
+ * Отсутствие атрибута оставляет прежнее поведение: <script type="module"> и
+ * побочный импорт работают как работали, и обещание «подключите модуль один
+ * раз на страницу» остаётся правдой. */
+if (typeof document !== 'undefined' &&
+    document.documentElement?.dataset.instrument !== 'manual') {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => start(), { once: true });
   } else {
