@@ -78,6 +78,16 @@ type kase struct {
 	fg    string
 	bg    []string
 	min   float64
+
+	// alt — ВТОРАЯ стопка, с которой сравнивается первая.
+	//
+	// Нужна там, где два состояния — альтернативы, а не слои. Наведение
+	// кнопки ЗАМЕНЯЕТ заливку умолчания (`--btn-bg` переприсваивается), а не
+	// ложится поверх неё, и вопрос стоит так: отличается ли наведённая кнопка
+	// от ненаведённой на одной и той же подложке. Без alt пара складывала
+	// плёнку наведения ПОВЕРХ плёнки умолчания и мерила композицию, которая
+	// на экране не рисуется никогда.
+	alt []string
 }
 
 // МЕРА выводится из порога, а не хранится отдельным полем.
@@ -95,142 +105,142 @@ func (c kase) isStep() bool { return c.min < 1 }
 var cases = []kase{
 	// Текст на трёх поверхностях. Каждая ступень проверяется везде, где может
 	// оказаться, — именно это правило и не выполнялось раньше.
-	{"текст: primary на панели", "--text-primary", []string{"--surface-raised"}, text},
-	{"текст: primary на странице", "--text-primary", []string{"--surface-page"}, text},
-	{"текст: primary во врезе", "--text-primary", []string{"--surface-sunken"}, text},
-	{"текст: secondary на панели", "--text-secondary", []string{"--surface-raised"}, text},
-	{"текст: secondary во врезе", "--text-secondary", []string{"--surface-sunken"}, text},
-	{"текст: muted на панели", "--text-muted", []string{"--surface-raised"}, text},
-	{"текст: muted на странице", "--text-muted", []string{"--surface-page"}, text},
-	{"текст: muted во врезе (лог)", "--text-muted", []string{"--surface-sunken"}, text},
+	{label: "текст: primary на панели", fg: "--text-primary", bg: []string{"--surface-raised"}, min: text},
+	{label: "текст: primary на странице", fg: "--text-primary", bg: []string{"--surface-page"}, min: text},
+	{label: "текст: primary во врезе", fg: "--text-primary", bg: []string{"--surface-sunken"}, min: text},
+	{label: "текст: secondary на панели", fg: "--text-secondary", bg: []string{"--surface-raised"}, min: text},
+	{label: "текст: secondary во врезе", fg: "--text-secondary", bg: []string{"--surface-sunken"}, min: text},
+	{label: "текст: muted на панели", fg: "--text-muted", bg: []string{"--surface-raised"}, min: text},
+	{label: "текст: muted на странице", fg: "--text-muted", bg: []string{"--surface-page"}, min: text},
+	{label: "текст: muted во врезе (лог)", fg: "--text-muted", bg: []string{"--surface-sunken"}, min: text},
 	// Утопленные поверхности полупрозрачны и потому объявляются СТОПКОЙ:
 	// первым идёт подложка, вторым — сама заливка. Flatten их складывает.
 	// Одним слоем такую пару объявить нельзя — гейт прочитает альфу как
 	// непрозрачный цвет и померяет контраст с чёрным.
-	{"текст: primary в поле на панели", "--text-primary", []string{"--surface-raised", "--surface-field"}, text},
-	{"текст: primary в поле на странице", "--text-primary", []string{"--surface-page", "--surface-field"}, text},
-	{"текст: подпись кнопки", "--text-primary", []string{"--surface-raised", "--surface-recessed"}, text},
-	{"текст: подпись кнопки под курсором", "--text-primary", []string{"--surface-raised", "--surface-recessed-hover"}, text},
-	{"текст: тег на панели", "--text-secondary", []string{"--surface-raised", "--surface-recessed"}, text},
-	{"текст: чип выбранный", "--accent-text", []string{"--surface-raised", "--surface-recessed"}, text},
+	{label: "текст: primary в поле на панели", fg: "--text-primary", bg: []string{"--surface-raised", "--surface-field"}, min: text},
+	{label: "текст: primary в поле на странице", fg: "--text-primary", bg: []string{"--surface-page", "--surface-field"}, min: text},
+	{label: "текст: подпись кнопки", fg: "--text-primary", bg: []string{"--surface-raised", "--surface-recessed"}, min: text},
+	{label: "текст: подпись кнопки под курсором", fg: "--text-primary", bg: []string{"--surface-raised", "--surface-recessed-hover"}, min: text},
+	{label: "текст: тег на панели", fg: "--text-secondary", bg: []string{"--surface-raised", "--surface-recessed"}, min: text},
+	{label: "текст: чип выбранный", fg: "--accent-text", bg: []string{"--surface-raised", "--surface-recessed"}, min: text},
 
 	// faint — порог декорации, а не чтения. Читаемому тексту он запрещён.
-	{"декор: faint на панели", "--text-faint", []string{"--surface-raised"}, large},
-	{"декор: faint во врезе", "--text-faint", []string{"--surface-sunken"}, large},
+	{label: "декор: faint на панели", fg: "--text-faint", bg: []string{"--surface-raised"}, min: large},
+	{label: "декор: faint во врезе", fg: "--text-faint", bg: []string{"--surface-sunken"}, min: large},
 
 	// Бейджи: 11px, значит полный текстовый порог.
-	{"бейдж: accent на своём фоне", "--accent-text", []string{"--surface-raised", "--accent-bg"}, text},
-	{"бейдж: ok на своём фоне", "--ok-text", []string{"--surface-raised", "--ok-bg"}, text},
-	{"бейдж: warn на своём фоне", "--warn-text", []string{"--surface-raised", "--warn-bg"}, text},
-	{"бейдж: err на своём фоне", "--err-text", []string{"--surface-raised", "--err-bg"}, text},
-	{"бейдж: нейтральный во врезе", "--text-secondary", []string{"--surface-sunken"}, text},
+	{label: "бейдж: accent на своём фоне", fg: "--accent-text", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
+	{label: "бейдж: ok на своём фоне", fg: "--ok-text", bg: []string{"--surface-raised", "--ok-bg"}, min: text},
+	{label: "бейдж: warn на своём фоне", fg: "--warn-text", bg: []string{"--surface-raised", "--warn-bg"}, min: text},
+	{label: "бейдж: err на своём фоне", fg: "--err-text", bg: []string{"--surface-raised", "--err-bg"}, min: text},
+	{label: "бейдж: нейтральный во врезе", fg: "--text-secondary", bg: []string{"--surface-sunken"}, min: text},
 
 	// Статусный текст живёт и вне бейджа — дельта метрики, ошибка поля, сноска.
-	{"статус: ok-text на панели", "--ok-text", []string{"--surface-raised"}, text},
-	{"статус: warn-text на панели", "--warn-text", []string{"--surface-raised"}, text},
-	{"статус: err-text на панели", "--err-text", []string{"--surface-raised"}, text},
-	{"статус: ok-text во врезе", "--ok-text", []string{"--surface-sunken"}, text},
-	{"статус: warn-text во врезе", "--warn-text", []string{"--surface-sunken"}, text},
-	{"статус: err-text во врезе", "--err-text", []string{"--surface-sunken"}, text},
+	{label: "статус: ok-text на панели", fg: "--ok-text", bg: []string{"--surface-raised"}, min: text},
+	{label: "статус: warn-text на панели", fg: "--warn-text", bg: []string{"--surface-raised"}, min: text},
+	{label: "статус: err-text на панели", fg: "--err-text", bg: []string{"--surface-raised"}, min: text},
+	{label: "статус: ok-text во врезе", fg: "--ok-text", bg: []string{"--surface-sunken"}, min: text},
+	{label: "статус: warn-text во врезе", fg: "--warn-text", bg: []string{"--surface-sunken"}, min: text},
+	{label: "статус: err-text во врезе", fg: "--err-text", bg: []string{"--surface-sunken"}, min: text},
 
 	// Сплошная кнопка. Ховер обязан УВЕЛИЧИВАТЬ контраст подписи, а не ронять.
-	{"кнопка: подпись на accent-solid", "--accent-on", []string{"--accent-solid"}, text},
-	{"кнопка: подпись на accent-hover", "--accent-on", []string{"--accent-hover"}, text},
-	{"ссылка: accent-text на странице", "--accent-text", []string{"--surface-page"}, text},
+	{label: "кнопка: подпись на accent-solid", fg: "--accent-on", bg: []string{"--accent-solid"}, min: text},
+	{label: "кнопка: подпись на accent-hover", fg: "--accent-on", bg: []string{"--accent-hover"}, min: text},
+	{label: "ссылка: accent-text на странице", fg: "--accent-text", bg: []string{"--surface-page"}, min: text},
 
 	// Индикаторы состояния — нетекстовые, но несущие: 3:1. Меряются тем же
 	// токеном, которым красятся: точка, заливка меры и штрих истории берут
 	// --*-mark, а не текстовую ступень.
-	{"метка: ok на панели", "--ok-mark", []string{"--surface-raised"}, large},
-	{"метка: ok во врезе", "--ok-mark", []string{"--surface-sunken"}, large},
-	{"метка: ok на дорожке", "--ok-mark", []string{"--surface-raised", "--track"}, large},
-	{"метка: warn на панели", "--warn-mark", []string{"--surface-raised"}, large},
-	{"метка: warn во врезе", "--warn-mark", []string{"--surface-sunken"}, large},
-	{"метка: err на панели", "--err-mark", []string{"--surface-raised"}, large},
-	{"метка: err во врезе", "--err-mark", []string{"--surface-sunken"}, large},
-	{"метка: err на дорожке", "--err-mark", []string{"--surface-raised", "--track"}, large},
-	{"точка: running на панели", "--accent-mark", []string{"--surface-raised"}, large},
-	{"точка: running во врезе", "--accent-mark", []string{"--surface-sunken"}, large},
-	{"каретка на панели", "--accent-mark", []string{"--surface-raised"}, large},
-	{"бегунок на дорожке", "--accent-mark", []string{"--surface-raised", "--track"}, large},
+	{label: "метка: ok на панели", fg: "--ok-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "метка: ok во врезе", fg: "--ok-mark", bg: []string{"--surface-sunken"}, min: large},
+	{label: "метка: ok на дорожке", fg: "--ok-mark", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "метка: warn на панели", fg: "--warn-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "метка: warn во врезе", fg: "--warn-mark", bg: []string{"--surface-sunken"}, min: large},
+	{label: "метка: err на панели", fg: "--err-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "метка: err во врезе", fg: "--err-mark", bg: []string{"--surface-sunken"}, min: large},
+	{label: "метка: err на дорожке", fg: "--err-mark", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "точка: running на панели", fg: "--accent-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "точка: running во врезе", fg: "--accent-mark", bg: []string{"--surface-sunken"}, min: large},
+	{label: "каретка на панели", fg: "--accent-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "бегунок на дорожке", fg: "--accent-mark", bg: []string{"--surface-raised", "--track"}, min: large},
 
 	// Несущие границы: граница И ЕСТЬ контрол.
-	{"граница контрола на панели", "--border-control", []string{"--surface-raised"}, large},
-	{"граница контрола на странице", "--border-control", []string{"--surface-page"}, large},
-	{"граница контрола во врезе", "--border-control", []string{"--surface-raised", "--surface-field"}, large},
+	{label: "граница контрола на панели", fg: "--border-control", bg: []string{"--surface-raised"}, min: large},
+	{label: "граница контрола на странице", fg: "--border-control", bg: []string{"--surface-page"}, min: large},
+	{label: "граница контрола во врезе", fg: "--border-control", bg: []string{"--surface-raised", "--surface-field"}, min: large},
 
 	// Заполнение меры относительно собственной дорожки, и дорожки — на всех
 	// поверхностях, где мера может стоять.
-	{"мера: заливка на дорожке (панель)", "--accent-mark", []string{"--surface-raised", "--track"}, large},
-	{"мера: заливка на дорожке (врез)", "--accent-mark", []string{"--surface-sunken", "--track"}, large},
-	{"мера: ok на дорожке", "--ok-text", []string{"--surface-raised", "--track"}, large},
-	{"мера: warn на дорожке", "--warn-text", []string{"--surface-raised", "--track"}, large},
-	{"мера: err на дорожке", "--err-text", []string{"--surface-raised", "--track"}, large},
+	{label: "мера: заливка на дорожке (панель)", fg: "--accent-mark", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "мера: заливка на дорожке (врез)", fg: "--accent-mark", bg: []string{"--surface-sunken", "--track"}, min: large},
+	{label: "мера: ok на дорожке", fg: "--ok-text", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "мера: warn на дорожке", fg: "--warn-text", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "мера: err на дорожке", fg: "--err-text", bg: []string{"--surface-raised", "--track"}, min: large},
 
 	// Категориальная палитра: каждый ряд обязан отделяться от поверхности.
-	{"график: ряд 1 на панели", "--chart-1", []string{"--surface-raised"}, large},
-	{"график: ряд 1 на странице", "--chart-1", []string{"--surface-page"}, large},
-	{"график: ряд 2 на панели", "--chart-2", []string{"--surface-raised"}, large},
-	{"график: ряд 2 на странице", "--chart-2", []string{"--surface-page"}, large},
-	{"график: ряд 3 на панели", "--chart-3", []string{"--surface-raised"}, large},
-	{"график: ряд 3 на странице", "--chart-3", []string{"--surface-page"}, large},
-	{"график: ряд 4 на панели", "--chart-4", []string{"--surface-raised"}, large},
-	{"график: ряд 4 на странице", "--chart-4", []string{"--surface-page"}, large},
-	{"график: ряд 5 на панели", "--chart-5", []string{"--surface-raised"}, large},
-	{"график: ряд 5 на странице", "--chart-5", []string{"--surface-page"}, large},
-	{"график: ряд 6 на панели", "--chart-6", []string{"--surface-raised"}, large},
-	{"график: ряд 6 на странице", "--chart-6", []string{"--surface-page"}, large},
+	{label: "график: ряд 1 на панели", fg: "--chart-1", bg: []string{"--surface-raised"}, min: large},
+	{label: "график: ряд 1 на странице", fg: "--chart-1", bg: []string{"--surface-page"}, min: large},
+	{label: "график: ряд 2 на панели", fg: "--chart-2", bg: []string{"--surface-raised"}, min: large},
+	{label: "график: ряд 2 на странице", fg: "--chart-2", bg: []string{"--surface-page"}, min: large},
+	{label: "график: ряд 3 на панели", fg: "--chart-3", bg: []string{"--surface-raised"}, min: large},
+	{label: "график: ряд 3 на странице", fg: "--chart-3", bg: []string{"--surface-page"}, min: large},
+	{label: "график: ряд 4 на панели", fg: "--chart-4", bg: []string{"--surface-raised"}, min: large},
+	{label: "график: ряд 4 на странице", fg: "--chart-4", bg: []string{"--surface-page"}, min: large},
+	{label: "график: ряд 5 на панели", fg: "--chart-5", bg: []string{"--surface-raised"}, min: large},
+	{label: "график: ряд 5 на странице", fg: "--chart-5", bg: []string{"--surface-page"}, min: large},
+	{label: "график: ряд 6 на панели", fg: "--chart-6", bg: []string{"--surface-raised"}, min: large},
+	{label: "график: ряд 6 на странице", fg: "--chart-6", bg: []string{"--surface-page"}, min: large},
 
 	// Оверлеи: всё, что лежит на --surface-overlay.
-	{"поповер: текст", "--text-primary", []string{"--surface-overlay"}, text},
-	{"меню: горячая клавиша", "--text-muted", []string{"--surface-overlay"}, text},
-	{"меню: опасный пункт", "--err-text", []string{"--surface-overlay"}, text},
-	{"меню: отмеченный пункт", "--accent-text", []string{"--surface-overlay"}, text},
-	{"тултип: текст", "--text-primary", []string{"--surface-overlay"}, text},
+	{label: "поповер: текст", fg: "--text-primary", bg: []string{"--surface-overlay"}, min: text},
+	{label: "меню: горячая клавиша", fg: "--text-muted", bg: []string{"--surface-overlay"}, min: text},
+	{label: "меню: опасный пункт", fg: "--err-text", bg: []string{"--surface-overlay"}, min: text},
+	{label: "меню: отмеченный пункт", fg: "--accent-text", bg: []string{"--surface-overlay"}, min: text},
+	{label: "тултип: текст", fg: "--text-primary", bg: []string{"--surface-overlay"}, min: text},
 
 	// Баннер: текст поверх тонированной заливки.
-	{"баннер ok: заголовок", "--text-primary", []string{"--surface-page", "--ok-bg"}, text},
-	{"баннер warn: заголовок", "--text-primary", []string{"--surface-page", "--warn-bg"}, text},
-	{"баннер error: заголовок", "--text-primary", []string{"--surface-page", "--err-bg"}, text},
-	{"баннер warn: пояснение", "--text-secondary", []string{"--surface-page", "--warn-bg"}, text},
-	{"баннер warn: значок", "--warn-text", []string{"--surface-page", "--warn-bg"}, large},
+	{label: "баннер ok: заголовок", fg: "--text-primary", bg: []string{"--surface-page", "--ok-bg"}, min: text},
+	{label: "баннер warn: заголовок", fg: "--text-primary", bg: []string{"--surface-page", "--warn-bg"}, min: text},
+	{label: "баннер error: заголовок", fg: "--text-primary", bg: []string{"--surface-page", "--err-bg"}, min: text},
+	{label: "баннер warn: пояснение", fg: "--text-secondary", bg: []string{"--surface-page", "--warn-bg"}, min: text},
+	{label: "баннер warn: значок", fg: "--warn-text", bg: []string{"--surface-page", "--warn-bg"}, min: large},
 
 	// Формы.
-	{"карточка выбора: заголовок", "--text-primary", []string{"--surface-raised", "--accent-bg"}, text},
-	{"карточка выбора: описание", "--text-secondary", []string{"--surface-raised", "--accent-bg"}, text},
-	{"множественный выбор: выбранный пункт", "--accent-text", []string{"--surface-raised", "--surface-field", "--surface-selected"}, text},
-	{"приставка поля", "--text-muted", []string{"--surface-sunken"}, text},
-	{"readonly: текст на врезе", "--text-primary", []string{"--surface-sunken"}, text},
-	{"пунктир зоны файла", "--border-control", []string{"--surface-raised", "--surface-field"}, large},
-	{"обязательность", "--err-text", []string{"--surface-raised"}, text},
+	{label: "карточка выбора: заголовок", fg: "--text-primary", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
+	{label: "карточка выбора: описание", fg: "--text-secondary", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
+	{label: "множественный выбор: выбранный пункт", fg: "--accent-text", bg: []string{"--surface-raised", "--surface-field", "--surface-selected"}, min: text},
+	{label: "приставка поля", fg: "--text-muted", bg: []string{"--surface-sunken"}, min: text},
+	{label: "readonly: текст на врезе", fg: "--text-primary", bg: []string{"--surface-sunken"}, min: text},
+	{label: "пунктир зоны файла", fg: "--border-control", bg: []string{"--surface-raised", "--surface-field"}, min: large},
+	{label: "обязательность", fg: "--err-text", bg: []string{"--surface-raised"}, min: text},
 
 	// Раскладка и навигация.
-	{"текст на боковой колонке", "--text-secondary", []string{"--surface-sunken"}, text},
-	{"навигация: текущий пункт", "--accent-text", []string{"--surface-sunken", "--surface-selected"}, text},
-	{"навигация: метка у края", "--accent-solid", []string{"--surface-sunken", "--surface-selected"}, large},
-	{"вкладка: подчёркивание", "--accent-solid", []string{"--surface-page"}, large},
-	{"крошки: разделитель", "--text-faint", []string{"--surface-page"}, large},
-	{"пагинация: текущая страница", "--accent-text", []string{"--surface-page", "--surface-selected"}, text},
-	{"шаги: полоса пройденного", "--accent-mark", []string{"--surface-page", "--track"}, large},
+	{label: "текст на боковой колонке", fg: "--text-secondary", bg: []string{"--surface-sunken"}, min: text},
+	{label: "навигация: текущий пункт", fg: "--accent-text", bg: []string{"--surface-sunken", "--surface-selected"}, min: text},
+	{label: "навигация: метка у края", fg: "--accent-solid", bg: []string{"--surface-sunken", "--surface-selected"}, min: large},
+	{label: "вкладка: подчёркивание", fg: "--accent-solid", bg: []string{"--surface-page"}, min: large},
+	{label: "крошки: разделитель", fg: "--text-faint", bg: []string{"--surface-page"}, min: large},
+	{label: "пагинация: текущая страница", fg: "--accent-text", bg: []string{"--surface-page", "--surface-selected"}, min: text},
+	{label: "шаги: полоса пройденного", fg: "--accent-mark", bg: []string{"--surface-page", "--track"}, min: large},
 
 	// Инверсная плашка: тултип и всё, что поясняет интерфейс, не будучи им.
 	// Пара своя, потому что ни одна ступень текста на ней не лежит: там свой
 	// передний план, и проверять его больше некому.
-	{"аннотация: текст на инверсии", "--text-on-inverse", []string{"--surface-inverse"}, text},
+	{label: "аннотация: текст на инверсии", fg: "--text-on-inverse", bg: []string{"--surface-inverse"}, min: text},
 	// …и сама плашка обязана отделяться от того, над чем висит, иначе смысл
 	// «это не содержимое» теряется на первой же тёмной теме.
-	{"аннотация: плашка на странице", "--surface-inverse", []string{"--surface-page"}, large},
-	{"аннотация: плашка на панели", "--surface-inverse", []string{"--surface-raised"}, large},
+	{label: "аннотация: плашка на странице", fg: "--surface-inverse", bg: []string{"--surface-page"}, min: large},
+	{label: "аннотация: плашка на панели", fg: "--surface-inverse", bg: []string{"--surface-raised"}, min: large},
 
 	// Кольцо фокуса — против того, что под ним.
-	{"фокус: кольцо на странице", "--focus-ring", []string{"--surface-page"}, large},
-	{"фокус: кольцо на панели", "--focus-ring", []string{"--surface-raised"}, large},
-	{"фокус: кольцо во врезе", "--focus-ring", []string{"--surface-sunken"}, large},
+	{label: "фокус: кольцо на странице", fg: "--focus-ring", bg: []string{"--surface-page"}, min: large},
+	{label: "фокус: кольцо на панели", fg: "--focus-ring", bg: []string{"--surface-raised"}, min: large},
+	{label: "фокус: кольцо во врезе", fg: "--focus-ring", bg: []string{"--surface-sunken"}, min: large},
 	// …и против того, что оно ОБВОДИТ. Этой пары здесь не было, и потому
 	// гейт годами оставался зелёным, пока в светлых темах --focus-ring и
 	// --accent-solid были одним и тем же цветом: контраст 1.00 на главной
 	// кнопке экрана. Порог — различимость, см. константу.
-	{"фокус: кольцо вокруг заливки primary", "--focus-ring", []string{"--accent-solid"}, distinct},
+	{label: "фокус: кольцо вокруг заливки primary", fg: "--focus-ring", bg: []string{"--accent-solid"}, min: distinct},
 
 	// ── СТУПЕНИ СТОПКИ ПОВЕРХНОСТЕЙ ────────────────────────────────────────
 	//
@@ -264,7 +274,8 @@ var cases = []kase{
 	// подложки и в стопку поверхностей не входят. Пара ловит и обратный случай:
 	// на абсолютной ступени мягкая уходила глубже умолчания, и лестница
 	// переворачивалась.
-	{label: "лестница: мягкая против умолчания", fg: "--surface-recessed-hover", bg: []string{"--surface-raised", "--surface-recessed"}, min: step},
+	{label: "лестница: мягкая против умолчания", fg: "--surface-recessed-hover", bg: []string{"--surface-raised"},
+		alt: []string{"--surface-raised", "--surface-recessed"}, min: step},
 
 	// КНОПКА ПРОТИВ ТОГО, НА ЧЁМ ЛЕЖИТ. Этой пары не было, и её отсутствие
 	// стоило дорого.
@@ -378,6 +389,17 @@ func main() {
 						r, unit := css.Ratio(fg, bg), ""
 						if c.isStep() {
 							r, unit = css.Step(fg, bg), " ΔL"
+							if len(c.alt) > 0 {
+								var other css.RGBA
+								if other, err = t.Flatten(c.alt); err == nil {
+									r = css.StepOf(css.Composite(fg, bg), other)
+								}
+							}
+						}
+						if err != nil {
+							failed, bad = failed+1, bad+1
+							lines = append(lines, fmt.Sprintf("  ✗ %s%s  ОШИБКА: %v", c.label, pad, err))
+							continue
 						}
 						mark := "·"
 						if r < c.min {
