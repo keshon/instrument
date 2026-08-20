@@ -163,6 +163,41 @@ var mutations = []mutation{
 		"source: src/actions.css", "source: src/nowhere.css",
 		"человек идёт смотреть устройство и попадает в пустоту"},
 
+	// ── docscheck: язык таблиц ─────────────────────────────────────────────
+	//
+	// Пять мутаций ниже проверяют одно: гейт сверяет таблицы по СТРУКТУРЕ, а
+	// не по русским словам в шапке и в ячейках. Каждая переводит одно слово и
+	// одновременно врёт числом. Если гейт ослеп на переводе, ложь проходит, и
+	// «документация и кит сходятся полностью» становится отчётом ни о чём.
+	{"шапка таблицы режимов переведена", "docscheck", "docs/foundations/density.md",
+		"| Токен | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--control-h-xs` | 18px | 20px | 22px |",
+		"| Token | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--control-h-xs` | 18px | 20px | 24px |",
+		"одно слово в шапке гасило сверку всей таблицы"},
+	{"колонка умолчания переведена", "docscheck", "docs/foundations/density.md",
+		"| Токен | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--size-check` | 13px | 15px | 17px |",
+		"| Токен | `compact` | default | `comfortable` |\n|---|---|---|---|\n| `--size-check` | 13px | 19px | 17px |",
+		"колонка узнавалась по подписи, а подпись — единственная русская из трёх"},
+	{"код режима в шапке переведён", "docscheck", "docs/foundations/density.md",
+		"| Токен | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--pad-panel` | `--space-4` | `--space-5` | `--space-6` |",
+		"| Токен | `плотная` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--pad-panel` | `--space-2` | `--space-5` | `--space-6` |",
+		"код режима — часть кита, и переведённый код обязан быть слышен"},
+	{"ячейка альфы переведена, значение соврало", "docscheck", "docs/foundations/tokens.md",
+		"| `--surface-recessed` | чёрный 6% | белый 5% |",
+		"| `--surface-recessed` | black 9% | белый 5% |",
+		"перевод ячейки уносил с собой проверку её числа"},
+	{"ячейка альфы не читается", "docscheck", "docs/foundations/tokens.md",
+		"| `--surface-recessed-hover` | чёрный 2.5% | белый 1.5% |",
+		"| `--surface-recessed-hover` | тёмный 2.5% | белый 1.5% |",
+		"непонятая ячейка в машинной колонке — это молчание, а не разрешение"},
+	{"таблица токенов в переводе соврала", "docscheck", "docs/foundations/tokens.en.md",
+		"",
+		"---\ntitle: Tokens\n---\n\n| Token | Light | Dark |\n|---|---|---|\n| `--surface-recessed` | black 9% | white 5% |\n",
+		"перевод страницы уносил её таблицы из-под сверки целиком"},
+	{"таблица режимов в переводе соврала", "docscheck", "docs/foundations/density.en.md",
+		"",
+		"---\ntitle: Density\n---\n\n| Token | `compact` | default | `comfortable` |\n|---|---|---|---|\n| `--row-pad-y` | `--space-2` | `--space-3` | `--space-6` |\n",
+		"проверка была прибита к русскому имени файла, а не к странице"},
+
 	// ── registry ───────────────────────────────────────────────────────────
 	{"компонент вне реестра", "registry", "components.json",
 		"\"toolbar\": {", "\"toolbar-renamed\": {",
@@ -192,6 +227,10 @@ var mutations = []mutation{
 	{"роль скрипта не объявлена в реестре", "registry", "components.json",
 		"\"role\": \"tablist\",", "\"role\": \"tablist-renamed\",",
 		"скрипт обещает клавиатуру от имени кита, а реестр об этом не знает"},
+	{"два бегущих tabindex на переведённой странице", "registry", "docs/components/actions/segmented.en.md",
+		"",
+		"---\ntitle: Segmented\nsource: src/actions.css\n---\n\n```html preview\n<div class=\"inst-segmented\" role=\"radiogroup\" aria-label=\"View\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"true\" tabindex=\"0\">List</button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Grid</button>\n</div>\n```\n",
+		"перевод пишется заново и ошибается чаще оригинала, а проверялся только оригинал"},
 }
 
 func main() {
@@ -331,6 +370,19 @@ func seed(repo, tree string) error {
 }
 
 func apply(path, from, to string) (bool, error) {
+	// Пустой from — мутация НОВЫМ файлом: гейт обязан увидеть страницу,
+	// которой в дереве не было. Уже существующий файл здесь значит то же,
+	// что ненайденный текст замены, — стенд разошёлся с китом, — поэтому
+	// это отказ, а не тихая перезапись.
+	if from == "" {
+		if _, err := os.Stat(path); err == nil {
+			return false, nil
+		}
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			return false, err
+		}
+		return true, os.WriteFile(path, []byte(to), 0o644)
+	}
 	b, err := os.ReadFile(path)
 	if err != nil {
 		return false, err
