@@ -1,19 +1,19 @@
 /* ==========================================================================
-   instrument — поверхности
+   instrument — surfaces
 
-   Панель, карточка, метрика. То, на чём стоит остальное.
+   The panel, the card, the metric. What everything else stands on.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Поверхности: панель и карточка
+   Surfaces: panel and card
 
-   Панель — область приложения (есть шапка, занимает своё место).
-   Карточка — ограниченный объект (то, что можно было бы перетащить).
-   Ни та, ни другая не получает тени. Тень означает «временное и сверху».
+   A panel is a REGION of the application (it has a header and holds its
+   place). A card is a BOUNDED OBJECT (the sort of thing one could drag).
+   Neither gets a shadow. A shadow means "temporary and above".
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-panel {
@@ -23,13 +23,13 @@
   background: var(--surface-raised);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-lg);
-  /* Панель — единица, которая перестраивается: компоненты внутри отвечают
-     на ЕЁ ширину, а не на ширину окна. Ширина к панели всегда приходит
-     снаружи, поэтому inline-size-контейнер здесь безопасен.              */
+  /* A panel is the unit that reflows: the components inside answer to ITS
+     width, not to the width of the window. A panel always receives its width
+     from outside, so an inline-size container is safe here.              */
   container: panel / inline-size;
-  /* ВНИМАНИЕ: обрезка по радиусу срежет поповер, открытый внутри панели.
-     Контракт кита: всплывающее рисуется в top layer (popover / портал), а
-     не внутри потока панели.                                             */
+  /* CAREFUL: clipping to the radius will cut off a popover opened inside the
+     panel. The kit's contract: anything that pops up is drawn in the top
+     layer (popover / portal), not inside the panel's flow.               */
   overflow: hidden;
 }
 
@@ -41,36 +41,38 @@
   padding: var(--pad-block-y) var(--pad-panel);
   border-block-end: var(--hairline) solid var(--border-subtle);
 
-  /* Тулбар сразу под шапкой сам приносит нижнюю линию — вторая была бы
-     двойным правилом на 30 пикселей.                                     */
+  /* A toolbar directly under the header brings its own bottom line — a
+     second one would be a double rule across 30 pixels.                  */
   &:has(+ .inst-toolbar) { border-block-end: none; }
 }
 
 .inst-panel-title {
-  /* КЕГЛЬ БАЗЫ, а иерархию несёт вес.
+  /* THE BASE SIZE, with weight carrying the hierarchy.
 
-     Ступень вверх имя панели не получает намеренно. Панелей на дашборде
-     шесть, и шесть подписей на ступень крупнее данных дают шесть точек, куда
-     тянется глаз, — вместо одной, где данные. Третий закон кита именно об
-     этом: подписи, рамки и шапки обслуживают данные и обязаны быть тише.
+     A panel name deliberately does not get a step up. A dashboard has six
+     panels, and six labels one step larger than the data give six places the
+     eye is pulled to — instead of one, where the data is. The kit's third law
+     is exactly this: labels, borders and headers serve the data and have to
+     be quieter than it.
 
-     Вес --weight-medium при этом остаётся, и его хватает: 600 против 400 —
-     разница заметнее одной ступени кегля и не отбирает у данных место.
-     Ступени размера у кита работают выше — на заголовке раздела и странице,
-     где иерархия действительно между блоками, а не внутри одного.        */
+     --weight-medium stays, and it is enough: 600 against 400 is a bigger
+     difference than one step of size, and it takes no room from the data. The
+     kit's size steps work higher up — on a section heading and on a page,
+     where the hierarchy really is between blocks rather than inside one.  */
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-normal);
-  /* Интерлиньяж СВОЙ, а не унаследованный, и от этого зависит высота шапки.
-     Без него заголовок панели имел три разные высоты: 16.25px как <h3>
-     (1.25 от base.css), 18.2px в приложении (1.4 от body) и 21.45px внутри
-     прозы (1.65) — то есть шапка панели в справочнике была на три пикселя
-     выше, чем она же в любом приложении. Правило кита «компонент не имеет
-     права зависеть от раскладки родителя» записано для точки состояния; к
-     интерлиньяжу оно применяется ровно так же.                           */
+  /* The line height is its OWN, not inherited, and the height of the header
+     depends on that. Without it a panel title has three different heights:
+     16.25px as an <h3> (1.25 from base.css), 18.2px in an application (1.4
+     from body) and 21.45px inside prose (1.65) — that is, a panel header in
+     the reference stands three pixels taller than the same header in any
+     application. The kit's rule that a component has no right to depend on
+     the layout of its parent is written for the state dot; it applies to line
+     height in exactly the same way.                                      */
   line-height: var(--leading-ui);
-  /* Обычное предложение, никогда не капс. Заголовок панели — подпись, а
-     капс делает подпись громче данных, которые она подписывает.          */
+  /* Sentence case, never all caps. A panel title is a label, and all caps
+     makes a label louder than the data it labels.                        */
 }
 
 .inst-panel-actions { margin-inline-start: auto; display: flex; align-items: center; gap: var(--space-2); }
@@ -85,34 +87,36 @@
 .inst-panel-body--flush { --panel-body-pad: 0; }
 .inst-panel-body--list  { --panel-body-pad: var(--gap-row); }
 
-/* СКРУГЛЕНИЕ СНИМАЕТСЯ ВМЕСТЕ С ОТСТУПОМ.
+/* THE RADIUS GOES WHEN THE PADDING GOES.
 
-   Строка задачи и узел дерева нарисованы как ВСТАВЛЕННЫЕ: у них свой радиус
-   и зазор между соседями, потому что подсветка выделения обязана читаться
-   отдельным предметом. В теле `--flush` отступа нет, и обе детали перестают
-   работать разом: скруглённая подсветка упирается в прямой край панели, а её
-   собственные 6px оказываются внутри 12px угла — два радиуса в одной точке.
+   A task row and a tree node are drawn as INSET: they have a radius of their
+   own and a gap between neighbours, because the selection highlight has to
+   read as a separate object. A `--flush` body has no padding, and both
+   details stop working at once: a rounded highlight runs into the square edge
+   of the panel, and its own 6px end up inside a 12px corner — two radii at
+   one point.
 
-   Это тот же класс ошибки, что кит уже назвал поимённо: «скругление на
-   односторонней рамке — всегда баг». Радиус, у которого нет своего поля,
-   рисует не форму, а огрех.
+   This is the class of error the kit already names: a radius on a one-sided
+   border is always a bug. A radius with no padding of its own draws a flaw
+   rather than a shape.
 
-   Поэтому `--flush` не запрещён, а ДОДЕЛАН: подсветка становится честной
-   полосой во всю ширину — приём файлового списка, — и выглядит намеренной.
-   Выбор между вставленной строкой и полосой остаётся за автором разметки, и
-   оба варианта теперь нарисованы правильно.                                */
+   So `--flush` is not banned but FINISHED: the highlight becomes an honest
+   full-width band — the file-list device — and looks deliberate. The choice
+   between an inset row and a band stays with the author of the markup, and
+   both are now drawn correctly.                                            */
 .inst-panel-body--flush :is(.inst-task, .inst-tree-item) {
   border-radius: 0;
   margin-block-start: 0;
 }
 
 .inst-card {
-  /* Колонка с просветом, а не блок. У варианта-ссылки ритм был, у обычной
-     карточки — нет: шапка вплотную упиралась в содержимое, и заголовок
-     читался частью первой строки данных. Одна и та же шапка не может
-     получать воздух в одном варианте и не получать в другом.
-     `align-items` здесь НЕ ставится (в отличие от `--link`): дети карточки
-     обычно обязаны занимать всю ширину — таблица свойств, сетка, поле.   */
+  /* A column with a gap, not a block. The link variant has the rhythm and a
+     plain card does not: its header butts straight into the content, and the
+     title reads as part of the first line of data. One and the same header
+     cannot get air in one variant and none in another.
+     `align-items` is NOT set here (unlike in `--link`): the children of a
+     card usually have to take the full width — a property table, a grid, a
+     field.                                                               */
   display: flex;
   flex-direction: column;
   gap: var(--gap-row);
@@ -122,31 +126,33 @@
   padding: var(--pad-card);
 }
 
-/* КАРТОЧКА ВНУТРИ ПАНЕЛИ ОТСТУПАЕТ, А НЕ ПОДНИМАЕТСЯ.
+/* A CARD INSIDE A PANEL RECEDES, IT DOES NOT RISE.
 
-   Первый закон поверхностей: глубину передаёт порядок светлоты. Панель и
-   карточка обе стояли на --surface-raised, то есть перепад между ними был
-   РОВНО 1.00, и различала их одна волосяная рамка на 1.31:1. На странице
-   «Высота и поверхности», которая этим порядком и объясняется, карточка внутри
-   панели не читалась вовсе — кит опровергал собственную страницу.
+   The first law of surfaces: depth is carried by the order of lightness. On
+   --surface-raised for both, panel and card sit at a step of EXACTLY 1.00
+   apart, and a single hairline at 1.31:1 is all that tells them apart. On the
+   page "Elevation and surfaces", which explains that very order, a card
+   inside a panel would not read at all — the kit refuting its own page.
 
-   Пряталось это за общей блёклостью: при перепаде страница↔панель в 1.05
-   плоской выглядела вся стопка, и одна плоская пара в ней не выделялась.
-   Разведённые поверхности оставили ровно одно место, где порядка светлоты нет.
+   That hides behind general flatness: at a page↔panel step of 1.05 the whole
+   stack looks flat, and one flat pair in it does not stand out. Spreading the
+   surfaces apart leaves exactly one place with no order of lightness left in
+   it.
 
-   Поднять карточку некуда: --surface-raised это чистый белый, потолок рампы.
-   Значит, направление одно — вниз. И это не уступка, а верное описание: панель
-   — ОБЛАСТЬ приложения, карточка внутри неё — ограниченный объект В этой
-   области, а вложенное содержимое от своей области отступает. Ровно так же
-   устроен врез под ввод, и ровно так ведут себя вложенные блоки в любом
-   редакторе: на белой странице выделенный кусок серый, а не белее белого.
+   There is nowhere to raise the card to: --surface-raised is pure white, the
+   ceiling of the ramp. So there is one direction, down. And that is not a
+   concession but the right description: a panel is a REGION of the
+   application, a card inside it is a bounded object IN that region, and
+   nested content recedes from the region that holds it. The input well is
+   built the same way, and nested blocks behave the same way in any editor: on
+   a white page the selected piece is grey, not whiter than white.
 
-   На СТРАНИЦЕ карточка по-прежнему приподнята: там потолок свободен, и объект
-   на пустом месте обязан быть выше него.
+   On a PAGE the card is still raised: there the ceiling is free, and an
+   object standing on empty ground has to be above it.
 
-   Через переменную, а не переопределением background: базовое правило читает
-   --card-surface, поэтому вариант остаётся одной строкой и не спорит с
-   .inst-card--link и прочими.                                               */
+   Through a variable rather than by overriding background: the base rule
+   reads --card-surface, so the variant stays one line and does not argue with
+   .inst-card--link and the rest.                                            */
 .inst-panel .inst-card { --card-surface: var(--surface-sunken); }
 
 .inst-card--interactive {
@@ -155,33 +161,33 @@
   &:hover { border-color: var(--border-strong); background: var(--surface-hover); }
 }
 
-/* Карточка, которая ЦЕЛИКОМ является ссылкой.
+/* A card that is ENTIRELY a link.
 
-   Цвет ссылка теперь наследует сама, поэтому от `color` вариант избавлен; а
-   вот подчёркивание под курсором ему пришлось бы протянуть через всё
-   содержимое карточки, и это не то, что показывает нажимаемость объекта
-   размером с карточку, — её показывает рамка и поверхность.
+   A link now inherits its colour, so the variant is free of `color`; the
+   hover underline, on the other hand, would have to be dragged through the
+   whole content of the card, and that is not what shows an object the size of
+   a card to be pressable — the border and the surface show that.
 
-   Обёртывать содержимое в ссылку ВНУТРИ карточки — хуже: цель нажатия
-   сжимается до строки заголовка, хотя нажимают по всей карточке. Ссылкой
-   должна быть сама карточка, и тогда цель равна ей.                        */
+   Wrapping the content in a link INSIDE the card is worse: the tap target
+   shrinks to the title line while people press anywhere on the card. The card
+   itself should be the link, and then the target equals it.                */
 .inst-card--link {
-  /* align-items обязателен — тот же капкан, что у .inst-stack: колоночный
-     флекс по умолчанию тянет детей на всю ширину, и ряд точек в 120px
-     становился боксом в 768. Видно это только замером: точки сами не
-     растягиваются и остаются у начала.                                    */
+  /* align-items is mandatory — the same trap as in .inst-stack: a column
+     flex stretches its children to the full width by default, and a 120px row
+     of dots becomes a 768px box. Only a measurement shows it: the dots
+     themselves do not stretch and stay at the start.                      */
   align-items: start;
   color: inherit;
   text-decoration: none;
 }
 
-/* Шапка карточки: заголовок и уходящий к дальнему краю значок перехода.
-   Значок декоративен — имя ссылке даёт заголовок.                        */
+/* The head of a card: the title and the go-to glyph pushed to the far edge.
+   The glyph is decorative — the title is what names the link.            */
 .inst-card-head {
   display: flex;
   align-items: center;
   gap: var(--gap-inline);
-  /* Шапке ширина нужна вся: значок перехода уходит к дальнему краю. */
+  /* The head needs the full width: the go-to glyph runs to the far edge. */
   align-self: stretch;
 
   & > .inst-icon:last-child {
@@ -213,34 +219,35 @@
 .inst-toolbar-spacer { margin-inline-start: auto; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Метрика
+   Metric
 
-   БЕЗ РАМКИ И БЕЗ ЗАЛИВКИ. Ряд метрик — одна группа, и разделяет числа в ней
-   воздух, а не оболочка.
+   NO BORDER. A row of metrics is one group, and what separates the numbers in
+   it is air and a change of ground — not an outline around each.
 
-   Правило было записано только про рамку — «рамка вокруг каждой превращает
-   четыре числа в четыре объекта», — а компонент при этом давал каждой метрике
-   заливку, радиус и внутренний отступ. Это соблюдение буквы против смысла:
-   заполненный скруглённый прямоугольник — БОЛЬШЕ объект, чем волосяной
-   контур, а не меньше. Четыре плитки читались четырьмя карточками ровно так
-   же, как читались бы четыре обведённые рамки.
+   The rule is about the border: an outline around every metric turns four
+   numbers into four objects, because outlines in a row add up into a grid.
+   Four tiles then read as four cards.
 
-   Заметно это стало после разводки светлых поверхностей: пока перепад
-   страница↔углубление был 1.05, плитка почти не проявлялась, и нарушение
-   пряталось за собственным дефектом палитры. На 1.08 плитки проступили.
+   A recessed fill is not the same offence, and the difference is the line. A
+   fill has no edge, so neighbouring tiles are parted by air rather than by a
+   boundary; each number keeps a ground of its own to be compared against. One
+   fill across the whole row erases that ground completely — checked on
+   screen, the row turns into a single seamless band in which the numbers stop
+   reading as separate quantities.
 
-   Числа в ряду сравнивают между собой, и сравнению мешает всё, что рисует
-   между ними границу. Поэтому здесь нет ни фона, ни рамки, ни радиуса —
-   только вертикальный ритм внутри самой метрики и зазор ряда снаружи.
+   How visible any of this is depends on the palette: at a page↔recess step of
+   1.05 a tile barely showed at all, and at 1.08 the tiles come through. That
+   is why the question is settled by measurement and not by taste.
 
-   Панель, в которой ряд стоит, оболочку уже дала. Второй оболочки не нужно. */
+   The panel the row stands in has already given the enclosure. A second one
+   is not wanted.                                                          */
 
 .inst-metric {
   padding: var(--pad-panel);
   border-radius: var(--radius-md);
-  /* Относительное: плитка лежит и на странице, и в панели, и в сетке внутри
-     карточки. Абсолютная ступень знала одну глубину и на приподнятом
-     контейнере проваливалась вдвое. */
+  /* Relative: a tile lies on a page, in a panel and in a grid inside a card
+     alike. An absolute step knows one depth only and sinks twice as deep on a
+     raised container. */
   background: var(--surface-recessed);
 }
 
@@ -254,7 +261,7 @@
   line-height: 1.1;
 }
 
-/* Единица — часть числа, поэтому она не имеет права с ним соревноваться. */
+/* The unit is part of the number, so it has no right to compete with it. */
 .inst-metric-unit {
   font-size: var(--text-md);
   color: var(--text-secondary);
@@ -262,19 +269,19 @@
   letter-spacing: var(--tracking-normal);
 }
 
-/* НАПРАВЛЕНИЕ и ОЦЕНКА — два разных факта, поэтому два атрибута.
-   Один класс на оба смысла не работает: «↓ 18%» времени это хорошо, «↑ 5
-   новых» предупреждений это плохо. Класс, названный стрелкой и означающий
-   оценку, — гарантированная ошибка применения.
+/* DIRECTION and JUDGEMENT are two different facts, hence two attributes.
+   One class for both meanings does not work: "↓ 18%" of time is good, "↑ 5
+   new" warnings is bad. A class named after an arrow and meaning a judgement
+   is a guaranteed misuse.
 
-   Оценку несёт data-tone, а не собственный data-polarity. Полярность была
-   третьим именем для тех же трёх цветов: good/bad/warn против ok/error/warn,
-   причём warn совпадал буквально. Два способа получить один и тот же
-   --warn-text — это два места, где он однажды разойдётся.
+   The judgement is carried by data-tone rather than by a data-polarity of its
+   own. Polarity would be a third name for the same three colours:
+   good/bad/warn against ok/error/warn, with warn matching literally. Two ways
+   to arrive at one --warn-text are two places for it to diverge one day.
 
-   Отсюда и одна строка вместо трёх правил: дельта просто читает --tone-ink,
-   который тон уже проставил. Побочно она получила neutral и running, до
-   которых у полярности слов не было.                                      */
+   Hence one line instead of three rules: the delta simply reads --tone-ink,
+   which the tone has already set. As a side effect it gains neutral and
+   running, which polarity had no words for.                                */
 .inst-metric-delta {
   margin-block-start: var(--space-2);
   font-size: var(--text-xs);
@@ -299,16 +306,8 @@
   }
 }
 
-/* Плитка на метрику, а не одна заливка на ряд.
-
-   Правило «четыре числа это одна группа» запрещает РАМКУ вокруг каждого, и
-   запрет остаётся: контуры в ряду складываются в решётку. Заливка так не
-   работает — у неё нет линии, и соседние плитки разделяет воздух, а не грань.
-
-   Общая заливка на весь ряд эту границу стирает совсем, и проверено это было
-   на экране: ряд превращается в одну бесшовную полосу, в которой числа больше
-   не читаются как отдельные величины. Сравнивают их именно поштучно, и каждой
-   нужна своя опора.                                                         */
+/* A tile per metric, not one fill across the row. The reasoning is in the
+   section header above; here it is only the grid that carries it out.      */
 .inst-metric-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));

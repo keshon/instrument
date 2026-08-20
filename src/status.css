@@ -1,23 +1,24 @@
 /* ==========================================================================
-   instrument — состояние
+   instrument — state
 
-   Бейдж, точка, спиннер, каретка, мера. Всё, что показывает, чем занята
-   машина.
+   The badge, the dot, the spinner, the caret, the meter. Everything that
+   shows what the machine is busy with.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Состояние: бейдж, точка, спиннер, каретка
+   State: badge, dot, spinner, caret
 
-   Каждое состояние ходит с точкой И со словом: цвет в одиночку не работает
-   примерно для 8% мужчин и вообще ни для одного распечатанного скриншота.
+   Every state travels with a dot AND a word: colour alone does not work for
+   roughly 8% of men, and for no printed screenshot at all.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-badge {
-  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  /* Sized by its content: it does not stretch in a column and centres in a
+     row. */
   align-self: var(--flow-self, center);
   display: inline-flex;
   align-items: center;
@@ -25,9 +26,9 @@
   min-block-size: var(--control-h-xs);
   padding-inline: var(--space-3);
   border-radius: var(--radius-xs);
-  /* Запасная заливка утоплена ОТНОСИТЕЛЬНО — как у тега и у умолчания
-     кнопки. Тон, когда он задан, остаётся собственным цветом: у него своя
-     работа, и глубина ему не нужна.                                      */
+  /* The fallback fill is RECESSED — as on a tag and on the default button.
+     A tone, when one is set, stays its own colour: it has its own job, and
+     depth is not part of it.                                             */
   background: var(--tone-bg, var(--surface-recessed));
   color: var(--tone-ink, var(--text-secondary));
   font-size: var(--text-2xs);
@@ -36,59 +37,65 @@
   white-space: nowrap;
 }
 
-/* Точка внутри бейджа наследует тон от бейджа — атрибут проставляется один
-   раз на группу, а не дублируется в разметке.
+/* A dot inside a badge inherits the badge's tone — the attribute is written
+   once on the group instead of being repeated in the markup.
 
-   display обязателен. Без него точка живёт только внутри флекс- или
-   грид-родителя, где display заменяется на блочный автоматически; в ячейке
-   таблицы, в абзаце и в любом обычном контейнере это был инлайновый span,
-   к которому inline-size и block-size НЕ ПРИМЕНЯЮТСЯ, — точка занимала 0×0 и
-   не рисовалась вовсе. Компонент не имеет права зависеть от раскладки
-   родителя.                                                              */
+   display is mandatory. Without it the dot only works inside a flex or grid
+   parent, where display is blockified automatically; in a table cell, in a
+   paragraph and in any ordinary container it is an inline span, and
+   inline-size and block-size DO NOT APPLY to one — the dot takes 0×0 and is
+   not drawn at all. A component has no right to depend on the layout of its
+   parent.                                                                 */
 .inst-dot {
   display: inline-block;
   flex: none;
   inline-size: var(--size-dot);
   block-size: var(--size-dot);
-  /* Скруглённый квадрат, а не круг. Круг в ките уже НАГРУЖЕН: в списке
-     последствий им помечен обратимый пункт, а квадратом — необратимый, и это
-     носитель наравне с тоном. Точка состояния к той оси отношения не имеет и
-     чужую форму занимать не должна.
+  /* A rounded square, not a circle. The circle is already LOADED in this
+     kit: in a list of consequences it marks a reversible item and a square
+     marks an irreversible one, and that is a carrier on equal footing with
+     tone. A state dot has nothing to do with that axis and must not borrow
+     somebody else's shape.
 
-     .inst-dots свою пару круг/квадрат сохраняет: там форма работает, здесь
-     она свободна. Два компонента, две работы. */
+     .inst-dots keeps its circle/square pair: there the shape does work, here
+     it is free. Two components, two jobs. */
   border-radius: var(--radius-2xs);
   background: var(--tone-mark, var(--text-faint));
 }
 
-/* Контурный вариант: тон несёт РАМКА, а заливки нет вовсе.
+/* The outline variant: the tone is carried by the BORDER, with no fill at
+   all.
 
-   Заведён потому, что заливка бейджа — это плашка, и на светлой поверхности
-   она читается как объект. Там, где бейдж стоит в ряду инструментов рядом со
-   значками, плашка тяжелее всего ряда: она единственная с фоном. Контур даёт
-   тот же смысл тише.
+   It exists because a badge fill is a plate, and on a light surface a plate
+   reads as an object. Where a badge stands in a toolbar beside glyphs, the
+   plate is the heaviest thing in the row: it is the only one with a
+   background. An outline says the same thing more quietly.
 
-   Тон берётся из того же словаря, что у сплошного, — общий --tone-ink, а не
-   свой набор: два способа получить один и тот же цвет однажды разойдутся.
-   Рамка полупрозрачна от него же, поэтому тон остаётся один, а не два. */
+   The tone comes from the same vocabulary as the solid one — the shared
+   --tone-ink, not a set of its own: two ways to arrive at one colour will
+   diverge one day. The border is a translucent mix of that same value, so the
+   tone stays one thing rather than two. */
 .inst-badge--outline {
   background: none;
   border: var(--hairline) solid color-mix(in oklab, var(--tone-ink, var(--text-secondary)) 40%, transparent);
 }
 
-/* Счётчик — НАКЛАДКА на значок, а не чип в строке.
+/* A count is an OVERLAY on a glyph, not a chip in a row.
 
-   Бейдж по устройству чип: у него горизонтальный отступ под слово и прямой
-   угол. Поверх значка он выходит 26×20 на коробке 32×32, то есть закрывает то,
-   что подписывает. Счётчику нужно другое: круг размером с цифру, который
-   садится в угол глифа и оставляет глиф читаемым.
+   A badge is a chip by construction: horizontal padding for a word and a
+   square corner. Over a glyph it comes out 26×20 on a 32×32 box, which is to
+   say it covers the thing it annotates. A count needs something else: a
+   circle the size of a digit that sits in the corner of the glyph and leaves
+   the glyph legible.
 
-   Отсюда три отличия и ни одного лишнего: отступ снимается, угол становится
-   полным, ширина не меньше высоты — иначе однозначное число даёт овал.
+   Hence three differences and not one more: the padding goes, the corner goes
+   full, and the width is never less than the height — otherwise a
+   single-digit number gives an oval.
 
-   Заливка сплошная, а не тоновая: счётчик читают издалека и мельком, и
-   тонированный фон на этом размере не отличить от чипа рядом. Подпись на
-   заливке берёт --accent-on, как у сплошной кнопки. */
+   The fill is solid rather than toned: a count is read from a distance and in
+   passing, and at this size a tinted background is indistinguishable from the
+   chip next to it. The label on the fill takes --accent-on, as on a solid
+   button. */
 .inst-badge--count {
   min-inline-size: var(--control-h-xs);
   padding-inline: var(--space-1);
@@ -107,15 +114,16 @@
   50% { opacity: 0.35; }
 }
 
-/* Спиннер — SVG, а не рамка на div.
+/* The spinner is SVG, not a border on a div.
 
-   Круг из border-radius на боксе в 13px при дробном DPR растрируется с
-   центром на полупикселе, и на вращении это видно как биение. У SVG центр
-   задан в системе координат viewBox, поворот применяется к боксу целиком,
-   растеризация происходит после — биения нет ни при каком DPR.
+   A circle made of border-radius on a 13px box rasterises with its centre on
+   a half-pixel at fractional DPR, and under rotation that shows as wobble. In
+   SVG the centre is stated in the viewBox coordinate system, the rotation
+   applies to the whole box and rasterisation happens after — there is no
+   wobble at any DPR.
 
-   Разметка: <svg class="spinner"><circle class="spinner-track"/><circle
-   class="spinner-arc"/></svg> с viewBox="0 0 16 16".                      */
+   Markup: <svg class="spinner"><circle class="spinner-track"/><circle
+   class="spinner-arc"/></svg> with viewBox="0 0 16 16".                   */
 .inst-spinner {
   flex: none;
   inline-size: var(--size-spinner);
@@ -128,20 +136,20 @@
   & > .inst-spinner-track { stroke: var(--border-control); }
   & > .inst-spinner-arc {
     stroke: var(--accent-mark);
-    /* Длина окружности при r=6.5 — примерно 40.8. Четверть на дугу. */
+    /* The circumference at r=6.5 is about 40.8. A quarter of it is the arc. */
     stroke-dasharray: 11 30;
   }
 }
 
 @keyframes inst-spin { to { rotate: 360deg; } }
 
-/* Каретка, отмечающая ещё поступающий текст. Это курсор терминала: он и
-   должен стоять вплотную к последнему знаку, потому что показывает точку,
-   куда придёт следующий символ. Отбивка — ровно на просвет, чтобы он не
-   слипался с буквой.
+/* The caret that marks text still arriving. It is a terminal cursor, and it
+   belongs right against the last character, because it shows the point the
+   next one will land on. The offset is exactly one hairline of air, so that
+   it does not fuse with the letter.
 
-   Ступенями, а не плавно: затухающая каретка читается как артефакт
-   отрисовки, а не как активность.                                        */
+   In steps, not smoothly: a fading caret reads as a rendering artefact
+   rather than as activity.                                               */
 .inst-caret {
   display: inline-block;
   inline-size: 0.45em;
@@ -155,24 +163,24 @@
 @keyframes inst-blink { 50% { opacity: 0; } }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Мера
+   Meter
 
-   Один тон, потому что сравнивается одна величина. Определённая заполняется,
-   неопределённая метётся. Никогда не изображать прогресс определённой
-   полосой, застрявшей на 90%.
+   One tone, because one quantity is being compared. A determinate meter
+   fills, an indeterminate one sweeps. Never portray progress with a
+   determinate bar stuck at 90%.
 
-   Разметка обязана нести role="progressbar" и aria-valuenow/min/max —
-   иначе значение существует только в пикселях ширины и недоступно ни
-   скринридеру, ни тесту.
+   The markup has to carry role="progressbar" and aria-valuenow/min/max —
+   otherwise the value exists only in pixels of width and is available neither
+   to a screen reader nor to a test.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-meter {
   block-size: var(--size-meter);
   border-radius: var(--radius-xs);
   background: var(--track);
-  /* Протяжённость дорожки показывает хайрлайн, а не её собственный цвет:
-     так дорожка может остаться достаточно светлой, чтобы заливка на ней
-     держала 3:1.                                                          */
+  /* The extent of the track is shown by a hairline rather than by the
+     track's own colour: that way the track can stay light enough for the
+     fill on it to hold 3:1.                                               */
   box-shadow: inset 0 0 0 var(--hairline) var(--border);
   overflow: hidden;
 }

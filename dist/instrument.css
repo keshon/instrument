@@ -1905,33 +1905,34 @@
 @layer kit.base {
 /* ==========================================================================
    instrument — base
-   Сброс и умолчания элементов. Всё, что здесь есть, иначе повторялось бы в
-   каждом компоненте.
+   The reset and the element defaults. Everything here would otherwise be
+   repeated in every component.
    ========================================================================== */
 
 *, *::before, *::after { box-sizing: border-box; }
 
 * { margin: 0; }
 
-/* Единственный !important во всём ките, и он назван поимённо. Это вопрос
-   корректности, а не оформления: без него любой .row { display: flex }
-   у приложения делает hidden-элемент видимым. Все остальные случаи, где
-   киту нужно перебить компонент, решаются порядком слоёв — см. kit.css. */
+/* The only !important in the whole kit, and it is named here. This is a
+   question of correctness rather than of styling: without it any .row {
+   display: flex } in the application makes a hidden element visible. Every
+   other case where the kit has to beat a component is settled by layer
+   order — see kit.css. */
 [hidden] { display: none !important; }
 
 html {
   -webkit-text-size-adjust: 100%;
-  /* Не smooth по умолчанию: scroll-behavior воюет с навигацией с клавиатуры
-     и делает длинные логи вязкими. Включается точечно, на конкретное
-     взаимодействие.                                                        */
+  /* Not smooth by default: scroll-behavior fights keyboard navigation and
+     makes long logs feel viscous. It is switched on where it is wanted, for
+     a particular interaction.                                              */
 }
 
 body {
   font-family: var(--font-sans);
-  /* База — интерфейс, а не проза. 13/1.4 это частый случай: подписи, ячейки,
-     кнопки, строки задач. Когда базой была проза 15/1.65, каждый компонент
-     был обязан переобъявить размер, а любой div приложения без класса
-     наследовал не тот кегль.                                               */
+  /* The base is interface, not prose. 13/1.4 is the common case: labels,
+     cells, buttons, task rows. With prose 15/1.65 as the base, every
+     component has to redeclare its size, and any classless div in the
+     application inherits the wrong one.                                    */
   font-size: var(--text-sm);
   line-height: var(--leading-ui);
   font-weight: var(--weight-normal);
@@ -1939,9 +1940,9 @@ body {
   background: var(--surface-page);
 }
 
-/* Цифры табличные везде по умолчанию. В инструментальном интерфейсе почти
-   любое число либо стоит в колонке, либо обновляется на месте, и
-   пропорциональные цифры дёргают оба случая.                              */
+/* Tabular figures everywhere by default. In an instrument interface almost
+   every number either stands in a column or updates in place, and
+   proportional figures make both twitch.                                  */
 body { font-variant-numeric: tabular-nums; }
 
 h1, h2, h3, h4, h5, h6 {
@@ -1957,17 +1958,17 @@ h2 { font-size: var(--text-xl); }
 h3 { font-size: var(--text-lg); }
 h4, h5, h6 { font-size: var(--text-md); }
 
-/* Единственная дверь, через которую запрещённый вес попадал на экран.
-   Конституция: «Вес 700. В шрифте он есть, здесь его нет». Платформа
-   отдаёт <strong> и <b> весом bolder, то есть 700, а сброса на них не было —
-   и 700 мерялся и в справочнике, и в живом приложении. Кит сбрасывает
-   умолчания элементов (hr, kbd, code, поля ввода); это того же рода, просто
-   пропущенное. */
+/* The one door a banned weight walks through onto the screen. The rule:
+   "Weight 700. The font has it, this kit does not." The platform gives
+   <strong> and <b> a weight of bolder, that is 700, and without a reset here
+   700 is measurable both in the reference and in a live application. The kit
+   resets element defaults (hr, kbd, code, form fields); this is the same
+   kind of reset, and it was simply missing. */
 strong, b { font-weight: var(--weight-medium); }
 
-/* ── Проза ────────────────────────────────────────────────────────────────
-   Опт-ин, а не умолчание. Тело ответа агента, описание, документация — всё,
-   что читают абзацами, а не сканируют глазом.                             */
+/* ── Prose ────────────────────────────────────────────────────────────────
+   Opt-in, not a default. The body of an agent's answer, a description,
+   documentation — everything read in paragraphs rather than scanned.      */
 
 .inst-prose {
   font-size: var(--text-md);
@@ -1978,45 +1979,47 @@ strong, b { font-weight: var(--weight-medium); }
   & p { text-wrap: pretty; }
   & > * + * { margin-block-start: var(--space-5); }
 
-  /* Заголовку нужен воздух сверху и почти не нужен снизу: он принадлежит
-     тому, что под ним. Пока весь ритм был одним шагом, заголовок висел
-     ровно посередине между своим текстом и чужим — и разделял их поровну,
-     то есть не разделял вовсе. */
+  /* A heading needs air above it and almost none below: it belongs to what
+     comes after. On a single-step rhythm the heading hangs exactly halfway
+     between its own text and somebody else's — separating them equally, that
+     is, not separating them at all. */
   & > * + :is(h2, h3, h4, h5, h6) { margin-block-start: var(--space-8); }
   & > :is(h2, h3, h4, h5, h6) + * { margin-block-start: var(--space-4); }
-  /* Списки прозы — только СВОИ. Компонент, построенный на <ul> или <ol>,
-     несёт класс, и правило его не трогает: без этого ритм прозы доставал до
-     шагов мастера и сдвигал каждый, кроме первого, на четыре пикселя вниз —
-     полоса состояния переставала стоять на одной линии. */
+  /* Prose lists are only its OWN. A component built on <ul> or <ol> carries
+     a class, and the rule leaves it alone: without that the prose rhythm
+     reaches into the steps of a wizard and pushes every one but the first
+     four pixels down — and the status bar stops standing on one line. */
   & :is(ul, ol):not([class]) { padding-inline-start: var(--space-7); }
   & :is(ul, ol):not([class]) > li + li { margin-block-start: var(--space-2); }
 }
 
-/* ── Ссылка ───────────────────────────────────────────────────────────────
-   Ссылка в ИНТЕРФЕЙСЕ и ссылка в ПРОЗЕ — разные вещи, и общее умолчание у
-   них было прозаическим. Это тот же выбор, что уже сделан строкой выше для
-   кегля: «База документа — интерфейс, а не проза».
+/* ── Link ─────────────────────────────────────────────────────────────────
+   A link in the INTERFACE and a link in PROSE are different things, and one
+   default for both can only be the prose one. This is the same choice made a
+   few lines above for type size: the base of the document is interface, not
+   prose.
 
-   Стояло: любая <a> красится акцентом и подчёркивается. Кит после этого
-   ДЕВЯТЬ раз защитно писал `text-decoration: none`, отменяя собственное
-   умолчание, — у кнопки, пункта меню, карточки-ссылки, вкладки, пункта
-   навигации, крошек, пагинации, сегмента и бренда оболочки. Один раз про
-   отмену забыли, и это записано в конституции поимённо.
+   Painting every <a> with the accent and underlining it costs nine defensive
+   `text-decoration: none` declarations across the kit, each cancelling its own
+   default — on the button, the menu item, the link card, the tab, the
+   navigation item, the breadcrumbs, the pagination, the segment and the shell
+   brand. Forget the cancellation once and the tenth place shows it.
 
-   Девять копий одной отмены — по определению самого кита «будущее
-   расхождение», и оно уже наступило. А на экране получалось хуже: в живом
-   приложении семнадцать имён мониторов оказывались синими и подчёркнутыми —
-   акцент, зарезервированный за интеракцией и состоянием «идёт», висел на
-   самом пассивном, что есть в строке, и был самым частым цветом экрана.
+   Nine copies of one cancellation are, by the kit's own definition, a future
+   divergence. On screen it comes out worse still: in a live application
+   seventeen monitor names turn blue and underlined — the accent, reserved for
+   interaction and for the "running" state, hanging on the most passive thing
+   in the row and becoming the most frequent colour on the screen.
 
-   Теперь наоборот. В интерфейсе ссылка наследует цвет и подчёркивается
-   только под курсором: её опознают по месту и форме, как кнопку. Акцент с
-   постоянным подчёркиванием остаётся там, где ссылка стоит СРЕДИ ТЕКСТА и
-   опознать её иначе нечем, — в прозе.
+   So it is the other way round. In the interface a link inherits its colour
+   and underlines only under the cursor: it is recognised by place and shape,
+   the way a button is. The accent with a permanent underline stays where a
+   link stands AMONG TEXT and there is nothing else to recognise it by — in
+   prose.
 
-   Компоненты, которым подчёркивание не нужно никогда, по-прежнему пишут
-   `text-decoration: none`, и это не дубликат: их слои объявлены позже
-   kit.base, поэтому отмена выигрывает порядком слоёв, а не специфичностью. */
+   Components that never want an underline still write `text-decoration: none`,
+   and that is not a duplicate: their layers are declared after kit.base, so
+   the cancellation wins by layer order rather than by specificity. */
 
 a {
   color: inherit;
@@ -2028,8 +2031,8 @@ a {
   &:hover { text-decoration-line: underline; }
 }
 
-/* Ссылка среди текста: здесь цвет и подчёркивание обязательны — соседний
-   текст выглядит так же, и опознать ссылку больше нечем.                  */
+/* A link among text: here colour and underline are mandatory — the text
+   beside it looks the same, and there is nothing else to know it by.      */
 .inst-prose a {
   color: var(--accent-text);
   text-decoration-line: underline;
@@ -2037,30 +2040,30 @@ a {
   &:hover { text-decoration-color: currentColor; }
 }
 
-/* Оптическая поправка объявлена ОДИН раз на весь список, включая .inst-u-mono.
-   Когда у утилиты было своё правило, <code class="u-mono"> получал
-   0.925 × 0.925 и уезжал под объявленный пол в 11px.                      */
+/* The optical correction is declared ONCE for the whole list, .inst-u-mono
+   included. With a rule of its own on the utility, <code class="u-mono">
+   takes 0.925 × 0.925 and drops below the declared floor of 11px.         */
 code, kbd, samp, pre, .inst-u-mono {
   font-family: var(--font-mono);
-  font-size: 0.925em;   /* моно оптически крупнее санса на том же кегле */
+  font-size: 0.925em;   /* mono reads larger than sans at the same size */
   font-variant-ligatures: none;
 }
 
-/* Внутри блока кода поправка уже применена контейнером — второй раз не надо. */
+/* Inside a code block the container already applied it — not a second time. */
 .inst-code code, pre code { font-size: inherit; }
 
-/* Инструмент живёт на клавиатуре, поэтому клавиша — элемент интерфейса,
-   а не безымянный моноширинный кусок.                                     */
+/* An instrument lives on the keyboard, so a key is an interface element
+   rather than an anonymous monospaced fragment.                           */
 kbd {
   display: inline-flex;
   align-items: center;
   min-inline-size: 1.6em;
   justify-content: center;
   padding: 1px var(--space-2);
-  /* --border-strong, а не --border-control: клавиша ничего не нажимает, это
-     ИЗОБРАЖЕНИЕ клавиши внутри текста. Несущая рамка положена тому, у чего
-     граница и есть контрол; здесь она рисунок, и на 3.4:1 бросалась в глаза
-     громче слов вокруг.                                                    */
+  /* --border-strong, not --border-control: a key presses nothing, it is a
+     PICTURE of a key inside text. A load-bearing border belongs to something
+     whose edge is the control itself; here the edge is drawing, and at 3.4:1
+     it shouts louder than the words around it.                             */
   border: var(--hairline) solid var(--border-strong);
   border-radius: var(--radius-xs);
   background: var(--surface-raised);
@@ -2085,13 +2088,14 @@ hr {
   border-top: var(--hairline) solid var(--border);
 }
 
-/* ── Фокус ────────────────────────────────────────────────────────────────
-   Одно кольцо, везде, только с клавиатуры. Отступ важен: кольцо впритык к
-   контролу читается как изменение рамки, а не как фокус.
+/* ── Focus ────────────────────────────────────────────────────────────────
+   One ring, everywhere, keyboard only. The offset matters: a ring flush
+   against a control reads as a change of border rather than as focus.
 
-   Радиус здесь НЕ задаётся: border-radius в этом правиле менял бы форму
-   самого элемента, а не обводки. Современная обводка и так следует радиусу
-   элемента — задавать его отдельно и незачем, и вредно.                    */
+   The radius is NOT set here: border-radius in this rule would change the
+   shape of the element itself, not of the outline. A modern outline already
+   follows the element's radius — setting it separately is both pointless and
+   harmful.                                                                 */
 
 :focus { outline: none; }
 
@@ -2104,9 +2108,9 @@ hr {
   background: color-mix(in oklab, var(--accent-solid) 22%, transparent);
 }
 
-/* ── Скроллбары ───────────────────────────────────────────────────────────
-   Тонкие и нейтральные. Скроллбар — это хром; он не должен быть самым
-   контрастным элементом на панели приглушённого текста.                   */
+/* ── Scrollbars ───────────────────────────────────────────────────────────
+   Thin and neutral. A scrollbar is chrome; it must not be the highest
+   contrast thing on a panel of muted text.                                */
 
 * {
   scrollbar-width: thin;
@@ -2124,26 +2128,19 @@ hr {
   &:hover { background: var(--text-faint); background-clip: content-box; }
 }
 
-/* ── Утилиты ──────────────────────────────────────────────────────────────
-   Нарочно крошечный набор. Это не утилитарный фреймворк; если понадобилась
-   пятая утилита — ответ обычно «компонент».                               */
+/* ── Utilities ────────────────────────────────────────────────────────────
+   A deliberately tiny set. This is not a utility framework; if a fifth
+   utility is wanted, the answer is usually "a component".                 */
 
-/* Прижата к началу содержащего блока, и это обязательно, а не косметика.
-   Без inset абсолютный элемент встаёт на своё СТАТИЧЕСКОЕ место, а содержащим
-   блоком берёт ближайшего позиционированного предка — или корень документа,
-   если такого нет. Из корня его не обрезает прокручиваемая область: элемент
-   расширяет прокрутку ВСЕГО документа до своей координаты. Видно при этом
-   ничего: он размером в пиксель и под clip-path.
-
-   Так и получается вторая полоса прокрутки рядом с областью, у которой она
-   своя, — дефект, который ищется часами, потому что искать нечего.          */
-/* Спрайт иконок.
+/* The icon sprite.
  *
- * <use href="#i-..."> ищет символ в ТОМ ЖЕ документе, поэтому спрайт стоит в
- * теле страницы. Без этого правила он остаётся видимым блоком в 150 пикселей
- * — умолчание SVG без размеров — и толкает вниз всю раскладку.
+ * <use href="#i-..."> looks for the symbol in the SAME document, so the sprite
+ * stands in the body of the page. Without this rule it stays a visible block
+ * 150 pixels tall — the default for an SVG with no dimensions — and shoves the
+ * whole layout down.
  *
- * Правило принадлежит киту, а не приложению: спрайт требует кит. */
+ * The rule belongs to the kit, not to the application: the kit is what asks
+ * for the sprite. */
 .inst-sprite {
   position: absolute;
   inline-size: 0;
@@ -2151,6 +2148,17 @@ hr {
   overflow: hidden;
 }
 
+/* Pinned to the start of its containing block, and that is mandatory rather
+   than cosmetic. Without the inset an absolutely positioned element sits at
+   its STATIC position and takes the nearest positioned ancestor as its
+   containing block — or the document root, if there is none. From the root no
+   scrollable region clips it: the element extends the scroll of the WHOLE
+   document out to its own coordinate. Nothing is visible while it does: it is
+   one pixel across and under a clip-path.
+
+   That is how a second scrollbar appears beside a region that already has one
+   of its own — a defect that takes hours to find, because there is nothing to
+   look at.                                                                 */
 .inst-u-visually-hidden {
   position: absolute;
   inset-block-start: 0;
@@ -3933,21 +3941,21 @@ hr {
 /* ── surfaces.css → kit.components ─────────────────────────────── */
 @layer kit.components {
 /* ==========================================================================
-   instrument — поверхности
+   instrument — surfaces
 
-   Панель, карточка, метрика. То, на чём стоит остальное.
+   The panel, the card, the metric. What everything else stands on.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Поверхности: панель и карточка
+   Surfaces: panel and card
 
-   Панель — область приложения (есть шапка, занимает своё место).
-   Карточка — ограниченный объект (то, что можно было бы перетащить).
-   Ни та, ни другая не получает тени. Тень означает «временное и сверху».
+   A panel is a REGION of the application (it has a header and holds its
+   place). A card is a BOUNDED OBJECT (the sort of thing one could drag).
+   Neither gets a shadow. A shadow means "temporary and above".
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-panel {
@@ -3957,13 +3965,13 @@ hr {
   background: var(--surface-raised);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-lg);
-  /* Панель — единица, которая перестраивается: компоненты внутри отвечают
-     на ЕЁ ширину, а не на ширину окна. Ширина к панели всегда приходит
-     снаружи, поэтому inline-size-контейнер здесь безопасен.              */
+  /* A panel is the unit that reflows: the components inside answer to ITS
+     width, not to the width of the window. A panel always receives its width
+     from outside, so an inline-size container is safe here.              */
   container: panel / inline-size;
-  /* ВНИМАНИЕ: обрезка по радиусу срежет поповер, открытый внутри панели.
-     Контракт кита: всплывающее рисуется в top layer (popover / портал), а
-     не внутри потока панели.                                             */
+  /* CAREFUL: clipping to the radius will cut off a popover opened inside the
+     panel. The kit's contract: anything that pops up is drawn in the top
+     layer (popover / portal), not inside the panel's flow.               */
   overflow: hidden;
 }
 
@@ -3975,36 +3983,38 @@ hr {
   padding: var(--pad-block-y) var(--pad-panel);
   border-block-end: var(--hairline) solid var(--border-subtle);
 
-  /* Тулбар сразу под шапкой сам приносит нижнюю линию — вторая была бы
-     двойным правилом на 30 пикселей.                                     */
+  /* A toolbar directly under the header brings its own bottom line — a
+     second one would be a double rule across 30 pixels.                  */
   &:has(+ .inst-toolbar) { border-block-end: none; }
 }
 
 .inst-panel-title {
-  /* КЕГЛЬ БАЗЫ, а иерархию несёт вес.
+  /* THE BASE SIZE, with weight carrying the hierarchy.
 
-     Ступень вверх имя панели не получает намеренно. Панелей на дашборде
-     шесть, и шесть подписей на ступень крупнее данных дают шесть точек, куда
-     тянется глаз, — вместо одной, где данные. Третий закон кита именно об
-     этом: подписи, рамки и шапки обслуживают данные и обязаны быть тише.
+     A panel name deliberately does not get a step up. A dashboard has six
+     panels, and six labels one step larger than the data give six places the
+     eye is pulled to — instead of one, where the data is. The kit's third law
+     is exactly this: labels, borders and headers serve the data and have to
+     be quieter than it.
 
-     Вес --weight-medium при этом остаётся, и его хватает: 600 против 400 —
-     разница заметнее одной ступени кегля и не отбирает у данных место.
-     Ступени размера у кита работают выше — на заголовке раздела и странице,
-     где иерархия действительно между блоками, а не внутри одного.        */
+     --weight-medium stays, and it is enough: 600 against 400 is a bigger
+     difference than one step of size, and it takes no room from the data. The
+     kit's size steps work higher up — on a section heading and on a page,
+     where the hierarchy really is between blocks rather than inside one.  */
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-normal);
-  /* Интерлиньяж СВОЙ, а не унаследованный, и от этого зависит высота шапки.
-     Без него заголовок панели имел три разные высоты: 16.25px как <h3>
-     (1.25 от base.css), 18.2px в приложении (1.4 от body) и 21.45px внутри
-     прозы (1.65) — то есть шапка панели в справочнике была на три пикселя
-     выше, чем она же в любом приложении. Правило кита «компонент не имеет
-     права зависеть от раскладки родителя» записано для точки состояния; к
-     интерлиньяжу оно применяется ровно так же.                           */
+  /* The line height is its OWN, not inherited, and the height of the header
+     depends on that. Without it a panel title has three different heights:
+     16.25px as an <h3> (1.25 from base.css), 18.2px in an application (1.4
+     from body) and 21.45px inside prose (1.65) — that is, a panel header in
+     the reference stands three pixels taller than the same header in any
+     application. The kit's rule that a component has no right to depend on
+     the layout of its parent is written for the state dot; it applies to line
+     height in exactly the same way.                                      */
   line-height: var(--leading-ui);
-  /* Обычное предложение, никогда не капс. Заголовок панели — подпись, а
-     капс делает подпись громче данных, которые она подписывает.          */
+  /* Sentence case, never all caps. A panel title is a label, and all caps
+     makes a label louder than the data it labels.                        */
 }
 
 .inst-panel-actions { margin-inline-start: auto; display: flex; align-items: center; gap: var(--space-2); }
@@ -4019,34 +4029,36 @@ hr {
 .inst-panel-body--flush { --panel-body-pad: 0; }
 .inst-panel-body--list  { --panel-body-pad: var(--gap-row); }
 
-/* СКРУГЛЕНИЕ СНИМАЕТСЯ ВМЕСТЕ С ОТСТУПОМ.
+/* THE RADIUS GOES WHEN THE PADDING GOES.
 
-   Строка задачи и узел дерева нарисованы как ВСТАВЛЕННЫЕ: у них свой радиус
-   и зазор между соседями, потому что подсветка выделения обязана читаться
-   отдельным предметом. В теле `--flush` отступа нет, и обе детали перестают
-   работать разом: скруглённая подсветка упирается в прямой край панели, а её
-   собственные 6px оказываются внутри 12px угла — два радиуса в одной точке.
+   A task row and a tree node are drawn as INSET: they have a radius of their
+   own and a gap between neighbours, because the selection highlight has to
+   read as a separate object. A `--flush` body has no padding, and both
+   details stop working at once: a rounded highlight runs into the square edge
+   of the panel, and its own 6px end up inside a 12px corner — two radii at
+   one point.
 
-   Это тот же класс ошибки, что кит уже назвал поимённо: «скругление на
-   односторонней рамке — всегда баг». Радиус, у которого нет своего поля,
-   рисует не форму, а огрех.
+   This is the class of error the kit already names: a radius on a one-sided
+   border is always a bug. A radius with no padding of its own draws a flaw
+   rather than a shape.
 
-   Поэтому `--flush` не запрещён, а ДОДЕЛАН: подсветка становится честной
-   полосой во всю ширину — приём файлового списка, — и выглядит намеренной.
-   Выбор между вставленной строкой и полосой остаётся за автором разметки, и
-   оба варианта теперь нарисованы правильно.                                */
+   So `--flush` is not banned but FINISHED: the highlight becomes an honest
+   full-width band — the file-list device — and looks deliberate. The choice
+   between an inset row and a band stays with the author of the markup, and
+   both are now drawn correctly.                                            */
 .inst-panel-body--flush :is(.inst-task, .inst-tree-item) {
   border-radius: 0;
   margin-block-start: 0;
 }
 
 .inst-card {
-  /* Колонка с просветом, а не блок. У варианта-ссылки ритм был, у обычной
-     карточки — нет: шапка вплотную упиралась в содержимое, и заголовок
-     читался частью первой строки данных. Одна и та же шапка не может
-     получать воздух в одном варианте и не получать в другом.
-     `align-items` здесь НЕ ставится (в отличие от `--link`): дети карточки
-     обычно обязаны занимать всю ширину — таблица свойств, сетка, поле.   */
+  /* A column with a gap, not a block. The link variant has the rhythm and a
+     plain card does not: its header butts straight into the content, and the
+     title reads as part of the first line of data. One and the same header
+     cannot get air in one variant and none in another.
+     `align-items` is NOT set here (unlike in `--link`): the children of a
+     card usually have to take the full width — a property table, a grid, a
+     field.                                                               */
   display: flex;
   flex-direction: column;
   gap: var(--gap-row);
@@ -4056,31 +4068,33 @@ hr {
   padding: var(--pad-card);
 }
 
-/* КАРТОЧКА ВНУТРИ ПАНЕЛИ ОТСТУПАЕТ, А НЕ ПОДНИМАЕТСЯ.
+/* A CARD INSIDE A PANEL RECEDES, IT DOES NOT RISE.
 
-   Первый закон поверхностей: глубину передаёт порядок светлоты. Панель и
-   карточка обе стояли на --surface-raised, то есть перепад между ними был
-   РОВНО 1.00, и различала их одна волосяная рамка на 1.31:1. На странице
-   «Высота и поверхности», которая этим порядком и объясняется, карточка внутри
-   панели не читалась вовсе — кит опровергал собственную страницу.
+   The first law of surfaces: depth is carried by the order of lightness. On
+   --surface-raised for both, panel and card sit at a step of EXACTLY 1.00
+   apart, and a single hairline at 1.31:1 is all that tells them apart. On the
+   page "Elevation and surfaces", which explains that very order, a card
+   inside a panel would not read at all — the kit refuting its own page.
 
-   Пряталось это за общей блёклостью: при перепаде страница↔панель в 1.05
-   плоской выглядела вся стопка, и одна плоская пара в ней не выделялась.
-   Разведённые поверхности оставили ровно одно место, где порядка светлоты нет.
+   That hides behind general flatness: at a page↔panel step of 1.05 the whole
+   stack looks flat, and one flat pair in it does not stand out. Spreading the
+   surfaces apart leaves exactly one place with no order of lightness left in
+   it.
 
-   Поднять карточку некуда: --surface-raised это чистый белый, потолок рампы.
-   Значит, направление одно — вниз. И это не уступка, а верное описание: панель
-   — ОБЛАСТЬ приложения, карточка внутри неё — ограниченный объект В этой
-   области, а вложенное содержимое от своей области отступает. Ровно так же
-   устроен врез под ввод, и ровно так ведут себя вложенные блоки в любом
-   редакторе: на белой странице выделенный кусок серый, а не белее белого.
+   There is nowhere to raise the card to: --surface-raised is pure white, the
+   ceiling of the ramp. So there is one direction, down. And that is not a
+   concession but the right description: a panel is a REGION of the
+   application, a card inside it is a bounded object IN that region, and
+   nested content recedes from the region that holds it. The input well is
+   built the same way, and nested blocks behave the same way in any editor: on
+   a white page the selected piece is grey, not whiter than white.
 
-   На СТРАНИЦЕ карточка по-прежнему приподнята: там потолок свободен, и объект
-   на пустом месте обязан быть выше него.
+   On a PAGE the card is still raised: there the ceiling is free, and an
+   object standing on empty ground has to be above it.
 
-   Через переменную, а не переопределением background: базовое правило читает
-   --card-surface, поэтому вариант остаётся одной строкой и не спорит с
-   .inst-card--link и прочими.                                               */
+   Through a variable rather than by overriding background: the base rule
+   reads --card-surface, so the variant stays one line and does not argue with
+   .inst-card--link and the rest.                                            */
 .inst-panel .inst-card { --card-surface: var(--surface-sunken); }
 
 .inst-card--interactive {
@@ -4089,33 +4103,33 @@ hr {
   &:hover { border-color: var(--border-strong); background: var(--surface-hover); }
 }
 
-/* Карточка, которая ЦЕЛИКОМ является ссылкой.
+/* A card that is ENTIRELY a link.
 
-   Цвет ссылка теперь наследует сама, поэтому от `color` вариант избавлен; а
-   вот подчёркивание под курсором ему пришлось бы протянуть через всё
-   содержимое карточки, и это не то, что показывает нажимаемость объекта
-   размером с карточку, — её показывает рамка и поверхность.
+   A link now inherits its colour, so the variant is free of `color`; the
+   hover underline, on the other hand, would have to be dragged through the
+   whole content of the card, and that is not what shows an object the size of
+   a card to be pressable — the border and the surface show that.
 
-   Обёртывать содержимое в ссылку ВНУТРИ карточки — хуже: цель нажатия
-   сжимается до строки заголовка, хотя нажимают по всей карточке. Ссылкой
-   должна быть сама карточка, и тогда цель равна ей.                        */
+   Wrapping the content in a link INSIDE the card is worse: the tap target
+   shrinks to the title line while people press anywhere on the card. The card
+   itself should be the link, and then the target equals it.                */
 .inst-card--link {
-  /* align-items обязателен — тот же капкан, что у .inst-stack: колоночный
-     флекс по умолчанию тянет детей на всю ширину, и ряд точек в 120px
-     становился боксом в 768. Видно это только замером: точки сами не
-     растягиваются и остаются у начала.                                    */
+  /* align-items is mandatory — the same trap as in .inst-stack: a column
+     flex stretches its children to the full width by default, and a 120px row
+     of dots becomes a 768px box. Only a measurement shows it: the dots
+     themselves do not stretch and stay at the start.                      */
   align-items: start;
   color: inherit;
   text-decoration: none;
 }
 
-/* Шапка карточки: заголовок и уходящий к дальнему краю значок перехода.
-   Значок декоративен — имя ссылке даёт заголовок.                        */
+/* The head of a card: the title and the go-to glyph pushed to the far edge.
+   The glyph is decorative — the title is what names the link.            */
 .inst-card-head {
   display: flex;
   align-items: center;
   gap: var(--gap-inline);
-  /* Шапке ширина нужна вся: значок перехода уходит к дальнему краю. */
+  /* The head needs the full width: the go-to glyph runs to the far edge. */
   align-self: stretch;
 
   & > .inst-icon:last-child {
@@ -4147,34 +4161,35 @@ hr {
 .inst-toolbar-spacer { margin-inline-start: auto; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Метрика
+   Metric
 
-   БЕЗ РАМКИ И БЕЗ ЗАЛИВКИ. Ряд метрик — одна группа, и разделяет числа в ней
-   воздух, а не оболочка.
+   NO BORDER. A row of metrics is one group, and what separates the numbers in
+   it is air and a change of ground — not an outline around each.
 
-   Правило было записано только про рамку — «рамка вокруг каждой превращает
-   четыре числа в четыре объекта», — а компонент при этом давал каждой метрике
-   заливку, радиус и внутренний отступ. Это соблюдение буквы против смысла:
-   заполненный скруглённый прямоугольник — БОЛЬШЕ объект, чем волосяной
-   контур, а не меньше. Четыре плитки читались четырьмя карточками ровно так
-   же, как читались бы четыре обведённые рамки.
+   The rule is about the border: an outline around every metric turns four
+   numbers into four objects, because outlines in a row add up into a grid.
+   Four tiles then read as four cards.
 
-   Заметно это стало после разводки светлых поверхностей: пока перепад
-   страница↔углубление был 1.05, плитка почти не проявлялась, и нарушение
-   пряталось за собственным дефектом палитры. На 1.08 плитки проступили.
+   A recessed fill is not the same offence, and the difference is the line. A
+   fill has no edge, so neighbouring tiles are parted by air rather than by a
+   boundary; each number keeps a ground of its own to be compared against. One
+   fill across the whole row erases that ground completely — checked on
+   screen, the row turns into a single seamless band in which the numbers stop
+   reading as separate quantities.
 
-   Числа в ряду сравнивают между собой, и сравнению мешает всё, что рисует
-   между ними границу. Поэтому здесь нет ни фона, ни рамки, ни радиуса —
-   только вертикальный ритм внутри самой метрики и зазор ряда снаружи.
+   How visible any of this is depends on the palette: at a page↔recess step of
+   1.05 a tile barely showed at all, and at 1.08 the tiles come through. That
+   is why the question is settled by measurement and not by taste.
 
-   Панель, в которой ряд стоит, оболочку уже дала. Второй оболочки не нужно. */
+   The panel the row stands in has already given the enclosure. A second one
+   is not wanted.                                                          */
 
 .inst-metric {
   padding: var(--pad-panel);
   border-radius: var(--radius-md);
-  /* Относительное: плитка лежит и на странице, и в панели, и в сетке внутри
-     карточки. Абсолютная ступень знала одну глубину и на приподнятом
-     контейнере проваливалась вдвое. */
+  /* Relative: a tile lies on a page, in a panel and in a grid inside a card
+     alike. An absolute step knows one depth only and sinks twice as deep on a
+     raised container. */
   background: var(--surface-recessed);
 }
 
@@ -4188,7 +4203,7 @@ hr {
   line-height: 1.1;
 }
 
-/* Единица — часть числа, поэтому она не имеет права с ним соревноваться. */
+/* The unit is part of the number, so it has no right to compete with it. */
 .inst-metric-unit {
   font-size: var(--text-md);
   color: var(--text-secondary);
@@ -4196,19 +4211,19 @@ hr {
   letter-spacing: var(--tracking-normal);
 }
 
-/* НАПРАВЛЕНИЕ и ОЦЕНКА — два разных факта, поэтому два атрибута.
-   Один класс на оба смысла не работает: «↓ 18%» времени это хорошо, «↑ 5
-   новых» предупреждений это плохо. Класс, названный стрелкой и означающий
-   оценку, — гарантированная ошибка применения.
+/* DIRECTION and JUDGEMENT are two different facts, hence two attributes.
+   One class for both meanings does not work: "↓ 18%" of time is good, "↑ 5
+   new" warnings is bad. A class named after an arrow and meaning a judgement
+   is a guaranteed misuse.
 
-   Оценку несёт data-tone, а не собственный data-polarity. Полярность была
-   третьим именем для тех же трёх цветов: good/bad/warn против ok/error/warn,
-   причём warn совпадал буквально. Два способа получить один и тот же
-   --warn-text — это два места, где он однажды разойдётся.
+   The judgement is carried by data-tone rather than by a data-polarity of its
+   own. Polarity would be a third name for the same three colours:
+   good/bad/warn against ok/error/warn, with warn matching literally. Two ways
+   to arrive at one --warn-text are two places for it to diverge one day.
 
-   Отсюда и одна строка вместо трёх правил: дельта просто читает --tone-ink,
-   который тон уже проставил. Побочно она получила neutral и running, до
-   которых у полярности слов не было.                                      */
+   Hence one line instead of three rules: the delta simply reads --tone-ink,
+   which the tone has already set. As a side effect it gains neutral and
+   running, which polarity had no words for.                                */
 .inst-metric-delta {
   margin-block-start: var(--space-2);
   font-size: var(--text-xs);
@@ -4233,16 +4248,8 @@ hr {
   }
 }
 
-/* Плитка на метрику, а не одна заливка на ряд.
-
-   Правило «четыре числа это одна группа» запрещает РАМКУ вокруг каждого, и
-   запрет остаётся: контуры в ряду складываются в решётку. Заливка так не
-   работает — у неё нет линии, и соседние плитки разделяет воздух, а не грань.
-
-   Общая заливка на весь ряд эту границу стирает совсем, и проверено это было
-   на экране: ряд превращается в одну бесшовную полосу, в которой числа больше
-   не читаются как отдельные величины. Сравнивают их именно поштучно, и каждой
-   нужна своя опора.                                                         */
+/* A tile per metric, not one fill across the row. The reasoning is in the
+   section header above; here it is only the grid that carries it out.      */
 .inst-metric-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -4254,25 +4261,26 @@ hr {
 /* ── status.css → kit.components ─────────────────────────────── */
 @layer kit.components {
 /* ==========================================================================
-   instrument — состояние
+   instrument — state
 
-   Бейдж, точка, спиннер, каретка, мера. Всё, что показывает, чем занята
-   машина.
+   The badge, the dot, the spinner, the caret, the meter. Everything that
+   shows what the machine is busy with.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Состояние: бейдж, точка, спиннер, каретка
+   State: badge, dot, spinner, caret
 
-   Каждое состояние ходит с точкой И со словом: цвет в одиночку не работает
-   примерно для 8% мужчин и вообще ни для одного распечатанного скриншота.
+   Every state travels with a dot AND a word: colour alone does not work for
+   roughly 8% of men, and for no printed screenshot at all.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-badge {
-  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  /* Sized by its content: it does not stretch in a column and centres in a
+     row. */
   align-self: var(--flow-self, center);
   display: inline-flex;
   align-items: center;
@@ -4280,9 +4288,9 @@ hr {
   min-block-size: var(--control-h-xs);
   padding-inline: var(--space-3);
   border-radius: var(--radius-xs);
-  /* Запасная заливка утоплена ОТНОСИТЕЛЬНО — как у тега и у умолчания
-     кнопки. Тон, когда он задан, остаётся собственным цветом: у него своя
-     работа, и глубина ему не нужна.                                      */
+  /* The fallback fill is RECESSED — as on a tag and on the default button.
+     A tone, when one is set, stays its own colour: it has its own job, and
+     depth is not part of it.                                             */
   background: var(--tone-bg, var(--surface-recessed));
   color: var(--tone-ink, var(--text-secondary));
   font-size: var(--text-2xs);
@@ -4291,59 +4299,65 @@ hr {
   white-space: nowrap;
 }
 
-/* Точка внутри бейджа наследует тон от бейджа — атрибут проставляется один
-   раз на группу, а не дублируется в разметке.
+/* A dot inside a badge inherits the badge's tone — the attribute is written
+   once on the group instead of being repeated in the markup.
 
-   display обязателен. Без него точка живёт только внутри флекс- или
-   грид-родителя, где display заменяется на блочный автоматически; в ячейке
-   таблицы, в абзаце и в любом обычном контейнере это был инлайновый span,
-   к которому inline-size и block-size НЕ ПРИМЕНЯЮТСЯ, — точка занимала 0×0 и
-   не рисовалась вовсе. Компонент не имеет права зависеть от раскладки
-   родителя.                                                              */
+   display is mandatory. Without it the dot only works inside a flex or grid
+   parent, where display is blockified automatically; in a table cell, in a
+   paragraph and in any ordinary container it is an inline span, and
+   inline-size and block-size DO NOT APPLY to one — the dot takes 0×0 and is
+   not drawn at all. A component has no right to depend on the layout of its
+   parent.                                                                 */
 .inst-dot {
   display: inline-block;
   flex: none;
   inline-size: var(--size-dot);
   block-size: var(--size-dot);
-  /* Скруглённый квадрат, а не круг. Круг в ките уже НАГРУЖЕН: в списке
-     последствий им помечен обратимый пункт, а квадратом — необратимый, и это
-     носитель наравне с тоном. Точка состояния к той оси отношения не имеет и
-     чужую форму занимать не должна.
+  /* A rounded square, not a circle. The circle is already LOADED in this
+     kit: in a list of consequences it marks a reversible item and a square
+     marks an irreversible one, and that is a carrier on equal footing with
+     tone. A state dot has nothing to do with that axis and must not borrow
+     somebody else's shape.
 
-     .inst-dots свою пару круг/квадрат сохраняет: там форма работает, здесь
-     она свободна. Два компонента, две работы. */
+     .inst-dots keeps its circle/square pair: there the shape does work, here
+     it is free. Two components, two jobs. */
   border-radius: var(--radius-2xs);
   background: var(--tone-mark, var(--text-faint));
 }
 
-/* Контурный вариант: тон несёт РАМКА, а заливки нет вовсе.
+/* The outline variant: the tone is carried by the BORDER, with no fill at
+   all.
 
-   Заведён потому, что заливка бейджа — это плашка, и на светлой поверхности
-   она читается как объект. Там, где бейдж стоит в ряду инструментов рядом со
-   значками, плашка тяжелее всего ряда: она единственная с фоном. Контур даёт
-   тот же смысл тише.
+   It exists because a badge fill is a plate, and on a light surface a plate
+   reads as an object. Where a badge stands in a toolbar beside glyphs, the
+   plate is the heaviest thing in the row: it is the only one with a
+   background. An outline says the same thing more quietly.
 
-   Тон берётся из того же словаря, что у сплошного, — общий --tone-ink, а не
-   свой набор: два способа получить один и тот же цвет однажды разойдутся.
-   Рамка полупрозрачна от него же, поэтому тон остаётся один, а не два. */
+   The tone comes from the same vocabulary as the solid one — the shared
+   --tone-ink, not a set of its own: two ways to arrive at one colour will
+   diverge one day. The border is a translucent mix of that same value, so the
+   tone stays one thing rather than two. */
 .inst-badge--outline {
   background: none;
   border: var(--hairline) solid color-mix(in oklab, var(--tone-ink, var(--text-secondary)) 40%, transparent);
 }
 
-/* Счётчик — НАКЛАДКА на значок, а не чип в строке.
+/* A count is an OVERLAY on a glyph, not a chip in a row.
 
-   Бейдж по устройству чип: у него горизонтальный отступ под слово и прямой
-   угол. Поверх значка он выходит 26×20 на коробке 32×32, то есть закрывает то,
-   что подписывает. Счётчику нужно другое: круг размером с цифру, который
-   садится в угол глифа и оставляет глиф читаемым.
+   A badge is a chip by construction: horizontal padding for a word and a
+   square corner. Over a glyph it comes out 26×20 on a 32×32 box, which is to
+   say it covers the thing it annotates. A count needs something else: a
+   circle the size of a digit that sits in the corner of the glyph and leaves
+   the glyph legible.
 
-   Отсюда три отличия и ни одного лишнего: отступ снимается, угол становится
-   полным, ширина не меньше высоты — иначе однозначное число даёт овал.
+   Hence three differences and not one more: the padding goes, the corner goes
+   full, and the width is never less than the height — otherwise a
+   single-digit number gives an oval.
 
-   Заливка сплошная, а не тоновая: счётчик читают издалека и мельком, и
-   тонированный фон на этом размере не отличить от чипа рядом. Подпись на
-   заливке берёт --accent-on, как у сплошной кнопки. */
+   The fill is solid rather than toned: a count is read from a distance and in
+   passing, and at this size a tinted background is indistinguishable from the
+   chip next to it. The label on the fill takes --accent-on, as on a solid
+   button. */
 .inst-badge--count {
   min-inline-size: var(--control-h-xs);
   padding-inline: var(--space-1);
@@ -4362,15 +4376,16 @@ hr {
   50% { opacity: 0.35; }
 }
 
-/* Спиннер — SVG, а не рамка на div.
+/* The spinner is SVG, not a border on a div.
 
-   Круг из border-radius на боксе в 13px при дробном DPR растрируется с
-   центром на полупикселе, и на вращении это видно как биение. У SVG центр
-   задан в системе координат viewBox, поворот применяется к боксу целиком,
-   растеризация происходит после — биения нет ни при каком DPR.
+   A circle made of border-radius on a 13px box rasterises with its centre on
+   a half-pixel at fractional DPR, and under rotation that shows as wobble. In
+   SVG the centre is stated in the viewBox coordinate system, the rotation
+   applies to the whole box and rasterisation happens after — there is no
+   wobble at any DPR.
 
-   Разметка: <svg class="spinner"><circle class="spinner-track"/><circle
-   class="spinner-arc"/></svg> с viewBox="0 0 16 16".                      */
+   Markup: <svg class="spinner"><circle class="spinner-track"/><circle
+   class="spinner-arc"/></svg> with viewBox="0 0 16 16".                   */
 .inst-spinner {
   flex: none;
   inline-size: var(--size-spinner);
@@ -4383,20 +4398,20 @@ hr {
   & > .inst-spinner-track { stroke: var(--border-control); }
   & > .inst-spinner-arc {
     stroke: var(--accent-mark);
-    /* Длина окружности при r=6.5 — примерно 40.8. Четверть на дугу. */
+    /* The circumference at r=6.5 is about 40.8. A quarter of it is the arc. */
     stroke-dasharray: 11 30;
   }
 }
 
 @keyframes inst-spin { to { rotate: 360deg; } }
 
-/* Каретка, отмечающая ещё поступающий текст. Это курсор терминала: он и
-   должен стоять вплотную к последнему знаку, потому что показывает точку,
-   куда придёт следующий символ. Отбивка — ровно на просвет, чтобы он не
-   слипался с буквой.
+/* The caret that marks text still arriving. It is a terminal cursor, and it
+   belongs right against the last character, because it shows the point the
+   next one will land on. The offset is exactly one hairline of air, so that
+   it does not fuse with the letter.
 
-   Ступенями, а не плавно: затухающая каретка читается как артефакт
-   отрисовки, а не как активность.                                        */
+   In steps, not smoothly: a fading caret reads as a rendering artefact
+   rather than as activity.                                               */
 .inst-caret {
   display: inline-block;
   inline-size: 0.45em;
@@ -4410,24 +4425,24 @@ hr {
 @keyframes inst-blink { 50% { opacity: 0; } }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Мера
+   Meter
 
-   Один тон, потому что сравнивается одна величина. Определённая заполняется,
-   неопределённая метётся. Никогда не изображать прогресс определённой
-   полосой, застрявшей на 90%.
+   One tone, because one quantity is being compared. A determinate meter
+   fills, an indeterminate one sweeps. Never portray progress with a
+   determinate bar stuck at 90%.
 
-   Разметка обязана нести role="progressbar" и aria-valuenow/min/max —
-   иначе значение существует только в пикселях ширины и недоступно ни
-   скринридеру, ни тесту.
+   The markup has to carry role="progressbar" and aria-valuenow/min/max —
+   otherwise the value exists only in pixels of width and is available neither
+   to a screen reader nor to a test.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-meter {
   block-size: var(--size-meter);
   border-radius: var(--radius-xs);
   background: var(--track);
-  /* Протяжённость дорожки показывает хайрлайн, а не её собственный цвет:
-     так дорожка может остаться достаточно светлой, чтобы заливка на ней
-     держала 3:1.                                                          */
+  /* The extent of the track is shown by a hairline rather than by the
+     track's own colour: that way the track can stay light enough for the
+     fill on it to hold 3:1.                                               */
   box-shadow: inset 0 0 0 var(--hairline) var(--border);
   overflow: hidden;
 }
@@ -4465,22 +4480,22 @@ hr {
 /* ── table.css → kit.components ─────────────────────────────── */
 @layer kit.components {
 /* ==========================================================================
-   instrument — таблица и пары
+   instrument — table and pairs
 
-   Таблица со всей обвязкой — сортировка, выбор, действия строки, итоги, —
-   список пар ключ-значение и строка свойства.
+   The table with all of its harness — sorting, selection, row actions,
+   totals — the key–value list and the property row.
 
-   Обвязка таблицы стояла в конце components.css, отдельно от самой
-   таблицы, и переехала сюда. Перестановка безопасна и проверена: у её
-   правил нет ни одного общего корневого класса с тем, что лежало между.
+   The harness sits next to the table it belongs to. Moving it here is safe
+   and was checked: none of its rules share a root class with anything that
+   used to lie in between.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Таблица
+   Table
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-table {
@@ -4508,36 +4523,37 @@ hr {
   & tbody tr:last-child td { border-block-end: none; }
   & tbody tr:hover td { background: var(--surface-hover); }
 
-  /* Выделение строки — тот же язык, что у строки задачи и узла дерева. */
+  /* Row selection speaks the same language as a task row and a tree node. */
   & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
 
-  /* Числа выравниваются вправо и остаются табличными — величина читается
-     как форма колонки, без чтения цифр.
+  /* Numbers align to the trailing edge and stay tabular — magnitude reads as
+     the shape of the column, without reading the digits.
 
-     И не переносятся. Заголовок колонки перенос уже не допускает, а ячейка
-     под ним допускала: в узком окне «4 of 20» ломалось на «4 of» и «20» —
-     две строки, которые глаз складывает обратно вручную, и колонка чисел
-     перестаёт быть формой.                                               */
+     And they do not wrap. A column header already refuses to wrap, while the
+     cell under it would: in a narrow window "4 of 20" breaks into "4 of" and
+     "20" — two lines the eye has to reassemble by hand, and a column of
+     numbers stops being a shape.                                         */
   & .inst-num { text-align: end; white-space: nowrap; }
 }
 
-/* Ячейка-плитка: каждое значение в своей коробке, между коробками просвет.
+/* The tile cell: every value in a box of its own, with a gap between boxes.
 
-   Линейка отделяет строку от строки и ничего не говорит про КОЛОНКУ: на
-   пятнадцати колонках глаз, идущий вправо, теряет и строку, и границу
-   значения. Плитка держит и то и другое сразу — у каждого значения свой
-   контур, и ряд читается как ряд плиток, а не как поле с линейками.
+   A rule separates row from row and says nothing about the COLUMN: across
+   fifteen columns an eye travelling rightwards loses both the row and the
+   bounds of a value. A tile holds both at once — every value has an outline
+   of its own, and the row reads as a row of tiles rather than as a field with
+   rules drawn through it.
 
-   Шапка плиткой НЕ становится: она не значение, а имя колонки, и коробка
-   вокруг имени сделала бы её равной данным.
+   The header does NOT become a tile: it is not a value but the name of a
+   column, and a box around a name would make it equal to the data.
 
-   border-collapse: separate обязателен — в схлопнутой модели соседи делят
-   одну границу, и просвета между ними не существует.                      */
+   border-collapse: separate is mandatory — in the collapsed model neighbours
+   share one border and there is no gap between them to speak of.          */
 .inst-table--cells {
   border-collapse: separate;
   border-spacing: var(--space-1);
-  /* Просвет ложится и по внешнему краю: отрицательное поле возвращает
-     таблицу на место, иначе она стоит с отступом, которого никто не объявлял. */
+  /* The gap also lands on the outer edge: a negative margin puts the table
+     back, or it stands inset by something nobody declared. */
   margin: calc(var(--space-1) * -1);
 
   & th {
@@ -4546,9 +4562,9 @@ hr {
   }
 
   & td {
-    /* Относительное: у варианта разделённые границы, и сквозь просветы видна
-       подложка таблицы. Отношение ячейки к ней обязано держаться одинаковым,
-       где бы таблица ни стояла. */
+    /* Relative: this variant has separated borders, and the ground of the
+       table shows through the gaps. The relation of a cell to that ground has
+       to hold wherever the table stands. */
     background: var(--surface-recessed);
     border-block-end: none;
     border-radius: var(--radius-xs);
@@ -4558,35 +4574,36 @@ hr {
   & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
 }
 
-/* Полосатый вариант: строку держит ЗАЛИВКА, а не линейка.
+/* The striped variant: a row is held by a FILL, not by a rule.
 
-   Линейка под каждой строкой работает, пока колонок пять. На пятнадцати глаз
-   уезжает по вертикали между колонками, и линейка ему не помогает: она
-   отделяет строку от соседа, но не показывает, ГДЕ ты внутри строки. Заливка
-   через одну показывает — она тянется на всю ширину и никуда не девается при
-   горизонтальной прокрутке.
+   A rule under every row works while there are five columns. At fifteen the
+   eye drifts vertically between columns, and a rule is no help: it separates
+   a row from its neighbour but does not show WHERE inside the row you are.
+   Every other row filled does show it — the fill runs the full width and does
+   not go anywhere under horizontal scrolling.
 
-   ВМЕСТО линеек, а не вместе с ними: заливка и линейка на одной строке дают
-   решётку, то есть ровно то, от чего кит уходит.
+   INSTEAD of the rules, not alongside them: a fill and a rule on one row give
+   a grid, which is exactly what the kit is walking away from.
 
-   Красится ярусом поверхностей, а не тенью и не рамкой: полоса — это
-   поверхность, и заводить ей шестой смысл серого незачем.                 */
+   Painted from the surface tier rather than with a shadow or a border: a
+   stripe is a surface, and there is no call to invent a sixth meaning of
+   grey for it.                                                            */
 .inst-table--zebra {
   & td { border-block-end: none; }
-  /* Полоса зебры относительна ПО ОПРЕДЕЛЕНИЮ: она красит не сама себя, а
-     чередование поверх той поверхности, на которой стоит таблица. Абсолютной
-     ступенью на панели она давала не намёк, а тяжёлую полосатость. */
+  /* A zebra stripe is relative BY DEFINITION: it paints not itself but an
+     alternation over whichever surface the table stands on. As an absolute
+     step it gives heavy banding on a panel instead of a hint. */
   & tbody tr:nth-child(even) td { background: var(--surface-recessed); }
 
-  /* Наведение и выбор повторены здесь намеренно: под чётной строкой уже лежит
-     заливка полосы, и без повтора она перебивала бы их порядком в файле —
-     состояние проиграло бы оформлению. */
+  /* Hover and selection are repeated here on purpose: an even row already has
+     the stripe fill under it, and without the repetition the stripe would
+     beat them by order in the file — state losing to decoration. */
   & tbody tr:hover td { background: var(--surface-hover); }
   & tbody tr[aria-selected="true"] td { background: var(--surface-selected); }
 }
 
-/* Липкая шапка — опция, а не умолчание: в нескроллящемся контексте sticky
-   прилипал бы к вьюпорту, что на длинной странице неожиданно.            */
+/* A sticky header is an option, not a default: in a non-scrolling context
+   sticky would cling to the viewport, which on a long page is a surprise. */
 .inst-table--sticky thead th {
   position: sticky;
   inset-block-start: 0;
@@ -4595,31 +4612,33 @@ hr {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Список пар ключ–значение — для инспекторов и панелей подробностей
+   The key–value list — for inspectors and detail panels
 
-   Колонка подписей — тот же токен, что у инспектора: два почти одинаковых
-   примитива не имеют права разъезжаться по метрике: своими числами они
-   расходятся на десяток пикселей и на типографику.
+   The label column takes the same token as the inspector: two nearly
+   identical primitives have no right to drift apart on metrics — with numbers
+   of their own they part by ten pixels and by typography.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* МЕТРИКА ОБЩАЯ СО СТРОКОЙ СВОЙСТВА, ВСЯ, А НЕ ТОЛЬКО ШИРИНА КОЛОНКИ.
+/* THE METRICS ARE SHARED WITH THE PROPERTY ROW — ALL OF THEM, NOT JUST THE
+   COLUMN WIDTH.
 
-   Обещание «два способа показать пару имя–значение не имеют права разъезжаться»
-   держалось на одном --label-col, и этого не хватало: колонка совпадала, а
-   зазор и горизонтальный отступ — нет. Замер на экране инспектора, где оба
-   примитива стоят друг под другом в одной панели:
+   The promise that two ways of showing a name–value pair may not drift apart
+   cannot rest on --label-col alone: the column matches while the gap and the
+   inline padding do not. Measured on an inspector screen where both
+   primitives stand one under the other in the same panel:
 
-     .inst-prop   подпись от 309px, значение от 421px, зазор 8px
-     .inst-kv     подпись от 301px, значение от 417px, зазор 12px
+     .inst-prop   label from 309px, value from 421px, gap 8px
+     .inst-kv     label from 301px, value from 417px, gap 12px
 
-   Восемь пикселей по левому краю и четыре по колонке значений — ровно столько,
-   чтобы «Полигонов» и «Обновлён» читались выпавшими из списка над ними, хотя
-   каждый примитив по отдельности выровнен безупречно.
+   Eight pixels along the leading edge and four along the value column —
+   exactly enough for "Polygons" and "Updated" to read as having fallen out of
+   the list above them, even though each primitive on its own is aligned
+   perfectly.
 
-   Тон подписи расходился тем же образом: --text-muted против --text-secondary.
-   Имя свойства — это ПОДПИСЬ, а не метаданные, и ступень у неё одна.
+   The label tone parts the same way: --text-muted against --text-secondary. A
+   property name is a LABEL, not metadata, and it has one tier.
 
-   Теперь общее всё, что видно: колонка, зазор, отступ, тон.               */
+   Everything visible is shared now: column, gap, padding, tone.           */
 .inst-kv {
   display: grid;
   grid-template-columns: minmax(0, var(--label-col)) 1fr;
@@ -4632,19 +4651,18 @@ hr {
   & > dd { margin: 0; min-inline-size: 0; }
 }
 
-/* Узкий контейнер: колонка подписей по содержимому, а не общая.
-   Общая колонка — обещание, что строки выровнены МЕЖДУ вложениями, и она
-   стоит своей ширины: в карточке на 235px фиксированные 92px съедали
-   четыре десятых, и значение «1» оказывалось посреди пустоты. Внутри
-   карточки такого обещания нет и не нужно — сравнивают строки внутри неё. */
+/* A narrow container: the label column is sized by content, not shared.
+   A shared column is a promise that rows line up BETWEEN nestings, and it
+   costs its own width: in a 235px card a fixed 92px eats four tenths of it,
+   and a value of "1" ends up in the middle of nowhere. Inside a card there is
+   no such promise and none is wanted — the rows compared are its own.     */
 .inst-kv--tight { grid-template-columns: max-content 1fr; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Строка свойства — примитив инспектора
+   The property row — the primitive of an inspector
 
-   Подпись слева, контрол справа, одна строка, плотно. Колонка подписей —
-   общий токен, поэтому строки выравниваются независимо от глубины
-   вложенности.
+   Label leading, control trailing, one line, tight. The label column is a
+   shared token, so rows line up whatever the depth of nesting.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-props { display: flex; flex-direction: column; }
@@ -4660,8 +4678,8 @@ hr {
   &:hover { background: var(--surface-hover); }
 }
 
-/* Обрезанная подпись обязана иметь title: иначе полное имя свойства
-   прочитать нечем.                                                        */
+/* A truncated label has to carry a title: otherwise there is nothing left to
+   read the full property name from.                                       */
 .inst-prop-label {
   font-size: var(--text-xs);
   color: var(--text-secondary);
@@ -4673,19 +4691,20 @@ hr {
 
 .inst-prop-control { min-inline-size: 0; display: flex; gap: var(--space-2); align-items: center; }
 
-/* Числовое поле: подпись оси служит ручкой перетаскивания, поэтому курсор
-   меняется на ней, а не на отдельном степпере — тянуть будут за букву.
-   Контракт: у input обязан быть aria-label с осью, иначе скринридер
-   прочитает «поле, 128» без указания, чего именно.                       */
+/* The number field: the axis label doubles as the drag handle, so the cursor
+   changes on it rather than on a separate stepper — people will drag by the
+   letter. The contract: the input has to carry an aria-label naming the axis,
+   or a screen reader announces "field, 128" without saying of what.      */
 .inst-num-field {
   display: flex;
   align-items: center;
   min-block-size: var(--control-h-sm);
   min-inline-size: 0;
   border: var(--hairline) solid var(--border-control);
-  /* Высота у поля из лестницы sm — и радиус оттуда же. Постоянные 6px ехали
-     ПРОТИВ остальных: в плотном режиме поле выходило круглее кнопки той же
-     высоты, в свободном — площе. */
+  /* The field takes its height from the sm ladder — and its radius from the
+     same place. A constant 6px rides AGAINST the rest: in compact the field
+     comes out rounder than a button of the same height, in comfortable
+     flatter. */
   border-radius: var(--radius-control-sm);
   background: var(--surface-field);
   overflow: hidden;
@@ -4693,10 +4712,11 @@ hr {
   &:hover { border-color: var(--text-muted); }
   &:focus-within { border-color: var(--accent-border); }
 
-  /* Кольцо обводит ВЕСЬ контрол, а не поле внутри него.
-     Буква оси, ручка перетаскивания и ввод — один контрол на вид и на
-     ощупь; кольцо вокруг одного только <input> обрезало ось и читалось как
-     подсветка чужого элемента. Тот же приём, что у выбираемой карточки. */
+  /* The ring goes round the WHOLE control, not the field inside it.
+     The axis letter, the drag handle and the input are one control to the eye
+     and to the hand; a ring around the <input> alone cuts the axis off and
+     reads as a highlight on somebody else's element. The same device as on a
+     selectable card. */
   &:has(> input:focus-visible) {
     outline: 2px solid var(--focus-ring);
     outline-offset: 1px;
@@ -4725,9 +4745,9 @@ hr {
   }
 }
 
-/* Первый настоящий контейнерный запрос: в узкой панели строка свойства
-   перестаёт быть двухколоночной — подпись встаёт над контролом. Без запроса
-   инспектор в боковой колонке расплющивается.                      */
+/* The first real container query: in a narrow panel the property row stops
+   being two columns — the label moves above the control. Without the query an
+   inspector in a side column is squashed flat.                     */
 @container panel (inline-size < 22rem) {
   .inst-prop {
     grid-template-columns: minmax(0, 1fr);
@@ -4739,19 +4759,21 @@ hr {
 .inst-vec { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--space-2); min-inline-size: 0; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Таблица: сортировка, выбор, действия, итоги
+   Table: sorting, selection, actions, totals
 
-   Всё, без чего таблица админки не таблица. Поведение (сама сортировка,
-   отметка «выбрать всё») — слой приложения; кит отвечает за то, чтобы
-   состояние было видно и озвучено.
+   Everything without which a back-office table is not a table. The behaviour
+   — the sorting itself, the "select all" checkbox — belongs to the
+   application layer; the kit answers for the state being visible and
+   announced.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Заголовок-сортировка — настоящая кнопка внутри th: её надо нажимать с
-   клавиатуры. Направление несёт ЗНАЧОК, а не только позиция: aria-sort
-   озвучивает то же самое.                                                */
-/* Поверхность наведения лежит на ЯЧЕЙКЕ, а не на кнопке внутри неё: кнопка
-   растянута по ширине, но не на отступы ячейки, и заливка на ней оставила бы
-   поля непрокрашенными — подсветка не совпала бы с тем, что нажимается.   */
+/* A sortable header is a real button inside the th: it has to be pressable
+   from the keyboard. The direction is carried by a GLYPH, not by position
+   alone; aria-sort announces the same thing.                              */
+/* The hover surface lies on the CELL, not on the button inside it: the
+   button stretches across the width but not into the cell's padding, and a
+   fill on it would leave those edges unpainted — the highlight would not
+   match what is being pressed.                                            */
 .inst-table th:has(> .inst-sort):hover { background: var(--surface-hover); }
 
 .inst-table th > .inst-sort {
@@ -4776,8 +4798,8 @@ hr {
   }
 }
 
-/* Числовые колонки сортируются от правого края — значок идёт перед
-   подписью, иначе он отрывается от неё на всю ширину ячейки.             */
+/* Numeric columns sort from the trailing edge — the glyph goes before the
+   label, or it is torn away from it by the whole width of the cell.      */
 .inst-table th.inst-num > .inst-sort { justify-content: flex-end; flex-direction: row-reverse; }
 
 .inst-table th[aria-sort] {
@@ -4792,13 +4814,14 @@ hr {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v6.7M3.4 6.6 6 9.2l2.6-2.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
-/* Колонка выбора и колонка действий прижаты к краям и не растягиваются. */
+/* The selection column and the actions column hug the edges and do not
+   stretch. */
 .inst-table .inst-col-select { inline-size: var(--control-h-md); }
 .inst-table .inst-col-actions { inline-size: 1%; white-space: nowrap; text-align: end; }
 
-/* Действия строки появляются на наведении, но с клавиатуры доступны
-   ВСЕГДА: спрятать их от Tab значило бы сделать таблицу неуправляемой без
-   мыши. Поэтому opacity, а не display, и возврат при :focus-within.      */
+/* Row actions appear on hover but are ALWAYS reachable from the keyboard:
+   hiding them from Tab would make the table unusable without a mouse. Hence
+   opacity rather than display, and the return on :focus-within.          */
 .inst-table .inst-row-actions {
   display: inline-flex;
   gap: var(--space-2);
@@ -4809,31 +4832,31 @@ hr {
 .inst-table tbody tr:focus-within .inst-row-actions,
 .inst-table tbody tr[aria-selected="true"] .inst-row-actions { opacity: 1; }
 
-/* Итоги. Верхняя граница плотнее строчной: это черта под данными, а не
-   ещё одна строка.                                                       */
+/* Totals. The top border is heavier than a row border: this is the line
+   under the data, not one more row.                                      */
 .inst-table tfoot td {
   border-block-start: var(--hairline) solid var(--border);
   border-block-end: none;
   font-weight: var(--weight-medium);
 }
 
-/* Липкая первая колонка — для широких таблиц, которые скроллятся вбок.
-   Фон обязателен, иначе под ней просвечивает уезжающее содержимое.
+/* A sticky first column — for wide tables that scroll sideways. The
+   background is mandatory, or the content sliding past shows through it.
 
-   И он обязан быть НЕПРОЗРАЧНЫМ. Ховер и выделение строки объявлены выше и
-   специфичнее (`.inst-table tbody tr:hover td` — 0,2,3 против 0,2,1), поэтому
-   выигрывали, а значения у них полупрозрачные: под выделенной строкой липкая
-   колонка становилась стеклянной ровно там, где её работа — быть стеной.
+   And it has to be OPAQUE. Hover and row selection are declared above and are
+   more specific (`.inst-table tbody tr:hover td` — 0,2,3 against 0,2,1), so
+   they win, and their values are translucent: under a selected row the sticky
+   column turns to glass exactly where its job is to be a wall.
 
-   Отсюда приём: фон колонки остаётся НЕПРОЗРАЧНЫМ всегда, а состояние
-   кладётся поверх него внутренней тенью с огромным разбросом. Это настоящая
-   композиция — полупрозрачный слой ЛОЖИТСЯ на непрозрачный, — в отличие от
-   color-mix, который усредняет и альфу тоже: смесь 14%-цвета с непрозрачным
-   давала 0.57, то есть колонка оставалась стеклянной наполовину.
+   Hence the device: the column background stays OPAQUE always, and the state
+   is laid over it with an inset shadow of enormous spread. That is real
+   compositing — a translucent layer LANDING on an opaque one — unlike
+   color-mix, which averages the alpha as well: a mix of a 14% colour with an
+   opaque one gives 0.57, leaving the column half glass.
 
-   Тень здесь не тень: тем же приёмом в ките нарисованы хайрлайн меры и
-   кольцо свитча. Альфа состояния при этом остаётся какой была — токены
-   менять не нужно, и состояния по-прежнему складываются.                 */
+   The shadow here is not a shadow: the same device draws the hairline of the
+   meter and the ring of the switch. The alpha of the state is left as it was
+   — no token needs changing, and the states still add up.                */
 .inst-table--sticky-col :is(th, td):first-child {
   position: sticky;
   inset-inline-start: 0;
@@ -4855,13 +4878,13 @@ hr {
               inset 0 0 0 100vmax var(--surface-hover);
 }
 
-/* Угол — пересечение двух липких осей, и он обязан быть НАД обеими: число
-   меньше --z-sticky пустило бы заголовки поверх него.                    */
+/* The corner is where two sticky axes cross, and it has to be ABOVE both:
+   anything below --z-sticky would let the headers over it.               */
 .inst-table--sticky-col.inst-table--sticky thead th:first-child {
   z-index: calc(var(--z-sticky) + 1);
 }
 
-/* Строка выбранной подсветкой не должна терять ховер. */
+/* A row carrying the selected highlight must not lose its hover. */
 .inst-table tbody tr[aria-selected="true"]:hover td {
   background: color-mix(in oklab, var(--surface-selected), var(--surface-hover));
 }

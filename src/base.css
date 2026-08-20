@@ -1,32 +1,33 @@
 /* ==========================================================================
    instrument — base
-   Сброс и умолчания элементов. Всё, что здесь есть, иначе повторялось бы в
-   каждом компоненте.
+   The reset and the element defaults. Everything here would otherwise be
+   repeated in every component.
    ========================================================================== */
 
 *, *::before, *::after { box-sizing: border-box; }
 
 * { margin: 0; }
 
-/* Единственный !important во всём ките, и он назван поимённо. Это вопрос
-   корректности, а не оформления: без него любой .row { display: flex }
-   у приложения делает hidden-элемент видимым. Все остальные случаи, где
-   киту нужно перебить компонент, решаются порядком слоёв — см. kit.css. */
+/* The only !important in the whole kit, and it is named here. This is a
+   question of correctness rather than of styling: without it any .row {
+   display: flex } in the application makes a hidden element visible. Every
+   other case where the kit has to beat a component is settled by layer
+   order — see kit.css. */
 [hidden] { display: none !important; }
 
 html {
   -webkit-text-size-adjust: 100%;
-  /* Не smooth по умолчанию: scroll-behavior воюет с навигацией с клавиатуры
-     и делает длинные логи вязкими. Включается точечно, на конкретное
-     взаимодействие.                                                        */
+  /* Not smooth by default: scroll-behavior fights keyboard navigation and
+     makes long logs feel viscous. It is switched on where it is wanted, for
+     a particular interaction.                                              */
 }
 
 body {
   font-family: var(--font-sans);
-  /* База — интерфейс, а не проза. 13/1.4 это частый случай: подписи, ячейки,
-     кнопки, строки задач. Когда базой была проза 15/1.65, каждый компонент
-     был обязан переобъявить размер, а любой div приложения без класса
-     наследовал не тот кегль.                                               */
+  /* The base is interface, not prose. 13/1.4 is the common case: labels,
+     cells, buttons, task rows. With prose 15/1.65 as the base, every
+     component has to redeclare its size, and any classless div in the
+     application inherits the wrong one.                                    */
   font-size: var(--text-sm);
   line-height: var(--leading-ui);
   font-weight: var(--weight-normal);
@@ -34,9 +35,9 @@ body {
   background: var(--surface-page);
 }
 
-/* Цифры табличные везде по умолчанию. В инструментальном интерфейсе почти
-   любое число либо стоит в колонке, либо обновляется на месте, и
-   пропорциональные цифры дёргают оба случая.                              */
+/* Tabular figures everywhere by default. In an instrument interface almost
+   every number either stands in a column or updates in place, and
+   proportional figures make both twitch.                                  */
 body { font-variant-numeric: tabular-nums; }
 
 h1, h2, h3, h4, h5, h6 {
@@ -52,17 +53,17 @@ h2 { font-size: var(--text-xl); }
 h3 { font-size: var(--text-lg); }
 h4, h5, h6 { font-size: var(--text-md); }
 
-/* Единственная дверь, через которую запрещённый вес попадал на экран.
-   Конституция: «Вес 700. В шрифте он есть, здесь его нет». Платформа
-   отдаёт <strong> и <b> весом bolder, то есть 700, а сброса на них не было —
-   и 700 мерялся и в справочнике, и в живом приложении. Кит сбрасывает
-   умолчания элементов (hr, kbd, code, поля ввода); это того же рода, просто
-   пропущенное. */
+/* The one door a banned weight walks through onto the screen. The rule:
+   "Weight 700. The font has it, this kit does not." The platform gives
+   <strong> and <b> a weight of bolder, that is 700, and without a reset here
+   700 is measurable both in the reference and in a live application. The kit
+   resets element defaults (hr, kbd, code, form fields); this is the same
+   kind of reset, and it was simply missing. */
 strong, b { font-weight: var(--weight-medium); }
 
-/* ── Проза ────────────────────────────────────────────────────────────────
-   Опт-ин, а не умолчание. Тело ответа агента, описание, документация — всё,
-   что читают абзацами, а не сканируют глазом.                             */
+/* ── Prose ────────────────────────────────────────────────────────────────
+   Opt-in, not a default. The body of an agent's answer, a description,
+   documentation — everything read in paragraphs rather than scanned.      */
 
 .inst-prose {
   font-size: var(--text-md);
@@ -73,45 +74,47 @@ strong, b { font-weight: var(--weight-medium); }
   & p { text-wrap: pretty; }
   & > * + * { margin-block-start: var(--space-5); }
 
-  /* Заголовку нужен воздух сверху и почти не нужен снизу: он принадлежит
-     тому, что под ним. Пока весь ритм был одним шагом, заголовок висел
-     ровно посередине между своим текстом и чужим — и разделял их поровну,
-     то есть не разделял вовсе. */
+  /* A heading needs air above it and almost none below: it belongs to what
+     comes after. On a single-step rhythm the heading hangs exactly halfway
+     between its own text and somebody else's — separating them equally, that
+     is, not separating them at all. */
   & > * + :is(h2, h3, h4, h5, h6) { margin-block-start: var(--space-8); }
   & > :is(h2, h3, h4, h5, h6) + * { margin-block-start: var(--space-4); }
-  /* Списки прозы — только СВОИ. Компонент, построенный на <ul> или <ol>,
-     несёт класс, и правило его не трогает: без этого ритм прозы доставал до
-     шагов мастера и сдвигал каждый, кроме первого, на четыре пикселя вниз —
-     полоса состояния переставала стоять на одной линии. */
+  /* Prose lists are only its OWN. A component built on <ul> or <ol> carries
+     a class, and the rule leaves it alone: without that the prose rhythm
+     reaches into the steps of a wizard and pushes every one but the first
+     four pixels down — and the status bar stops standing on one line. */
   & :is(ul, ol):not([class]) { padding-inline-start: var(--space-7); }
   & :is(ul, ol):not([class]) > li + li { margin-block-start: var(--space-2); }
 }
 
-/* ── Ссылка ───────────────────────────────────────────────────────────────
-   Ссылка в ИНТЕРФЕЙСЕ и ссылка в ПРОЗЕ — разные вещи, и общее умолчание у
-   них было прозаическим. Это тот же выбор, что уже сделан строкой выше для
-   кегля: «База документа — интерфейс, а не проза».
+/* ── Link ─────────────────────────────────────────────────────────────────
+   A link in the INTERFACE and a link in PROSE are different things, and one
+   default for both can only be the prose one. This is the same choice made a
+   few lines above for type size: the base of the document is interface, not
+   prose.
 
-   Стояло: любая <a> красится акцентом и подчёркивается. Кит после этого
-   ДЕВЯТЬ раз защитно писал `text-decoration: none`, отменяя собственное
-   умолчание, — у кнопки, пункта меню, карточки-ссылки, вкладки, пункта
-   навигации, крошек, пагинации, сегмента и бренда оболочки. Один раз про
-   отмену забыли, и это записано в конституции поимённо.
+   Painting every <a> with the accent and underlining it costs nine defensive
+   `text-decoration: none` declarations across the kit, each cancelling its own
+   default — on the button, the menu item, the link card, the tab, the
+   navigation item, the breadcrumbs, the pagination, the segment and the shell
+   brand. Forget the cancellation once and the tenth place shows it.
 
-   Девять копий одной отмены — по определению самого кита «будущее
-   расхождение», и оно уже наступило. А на экране получалось хуже: в живом
-   приложении семнадцать имён мониторов оказывались синими и подчёркнутыми —
-   акцент, зарезервированный за интеракцией и состоянием «идёт», висел на
-   самом пассивном, что есть в строке, и был самым частым цветом экрана.
+   Nine copies of one cancellation are, by the kit's own definition, a future
+   divergence. On screen it comes out worse still: in a live application
+   seventeen monitor names turn blue and underlined — the accent, reserved for
+   interaction and for the "running" state, hanging on the most passive thing
+   in the row and becoming the most frequent colour on the screen.
 
-   Теперь наоборот. В интерфейсе ссылка наследует цвет и подчёркивается
-   только под курсором: её опознают по месту и форме, как кнопку. Акцент с
-   постоянным подчёркиванием остаётся там, где ссылка стоит СРЕДИ ТЕКСТА и
-   опознать её иначе нечем, — в прозе.
+   So it is the other way round. In the interface a link inherits its colour
+   and underlines only under the cursor: it is recognised by place and shape,
+   the way a button is. The accent with a permanent underline stays where a
+   link stands AMONG TEXT and there is nothing else to recognise it by — in
+   prose.
 
-   Компоненты, которым подчёркивание не нужно никогда, по-прежнему пишут
-   `text-decoration: none`, и это не дубликат: их слои объявлены позже
-   kit.base, поэтому отмена выигрывает порядком слоёв, а не специфичностью. */
+   Components that never want an underline still write `text-decoration: none`,
+   and that is not a duplicate: their layers are declared after kit.base, so
+   the cancellation wins by layer order rather than by specificity. */
 
 a {
   color: inherit;
@@ -123,8 +126,8 @@ a {
   &:hover { text-decoration-line: underline; }
 }
 
-/* Ссылка среди текста: здесь цвет и подчёркивание обязательны — соседний
-   текст выглядит так же, и опознать ссылку больше нечем.                  */
+/* A link among text: here colour and underline are mandatory — the text
+   beside it looks the same, and there is nothing else to know it by.      */
 .inst-prose a {
   color: var(--accent-text);
   text-decoration-line: underline;
@@ -132,30 +135,30 @@ a {
   &:hover { text-decoration-color: currentColor; }
 }
 
-/* Оптическая поправка объявлена ОДИН раз на весь список, включая .inst-u-mono.
-   Когда у утилиты было своё правило, <code class="u-mono"> получал
-   0.925 × 0.925 и уезжал под объявленный пол в 11px.                      */
+/* The optical correction is declared ONCE for the whole list, .inst-u-mono
+   included. With a rule of its own on the utility, <code class="u-mono">
+   takes 0.925 × 0.925 and drops below the declared floor of 11px.         */
 code, kbd, samp, pre, .inst-u-mono {
   font-family: var(--font-mono);
-  font-size: 0.925em;   /* моно оптически крупнее санса на том же кегле */
+  font-size: 0.925em;   /* mono reads larger than sans at the same size */
   font-variant-ligatures: none;
 }
 
-/* Внутри блока кода поправка уже применена контейнером — второй раз не надо. */
+/* Inside a code block the container already applied it — not a second time. */
 .inst-code code, pre code { font-size: inherit; }
 
-/* Инструмент живёт на клавиатуре, поэтому клавиша — элемент интерфейса,
-   а не безымянный моноширинный кусок.                                     */
+/* An instrument lives on the keyboard, so a key is an interface element
+   rather than an anonymous monospaced fragment.                           */
 kbd {
   display: inline-flex;
   align-items: center;
   min-inline-size: 1.6em;
   justify-content: center;
   padding: 1px var(--space-2);
-  /* --border-strong, а не --border-control: клавиша ничего не нажимает, это
-     ИЗОБРАЖЕНИЕ клавиши внутри текста. Несущая рамка положена тому, у чего
-     граница и есть контрол; здесь она рисунок, и на 3.4:1 бросалась в глаза
-     громче слов вокруг.                                                    */
+  /* --border-strong, not --border-control: a key presses nothing, it is a
+     PICTURE of a key inside text. A load-bearing border belongs to something
+     whose edge is the control itself; here the edge is drawing, and at 3.4:1
+     it shouts louder than the words around it.                             */
   border: var(--hairline) solid var(--border-strong);
   border-radius: var(--radius-xs);
   background: var(--surface-raised);
@@ -180,13 +183,14 @@ hr {
   border-top: var(--hairline) solid var(--border);
 }
 
-/* ── Фокус ────────────────────────────────────────────────────────────────
-   Одно кольцо, везде, только с клавиатуры. Отступ важен: кольцо впритык к
-   контролу читается как изменение рамки, а не как фокус.
+/* ── Focus ────────────────────────────────────────────────────────────────
+   One ring, everywhere, keyboard only. The offset matters: a ring flush
+   against a control reads as a change of border rather than as focus.
 
-   Радиус здесь НЕ задаётся: border-radius в этом правиле менял бы форму
-   самого элемента, а не обводки. Современная обводка и так следует радиусу
-   элемента — задавать его отдельно и незачем, и вредно.                    */
+   The radius is NOT set here: border-radius in this rule would change the
+   shape of the element itself, not of the outline. A modern outline already
+   follows the element's radius — setting it separately is both pointless and
+   harmful.                                                                 */
 
 :focus { outline: none; }
 
@@ -199,9 +203,9 @@ hr {
   background: color-mix(in oklab, var(--accent-solid) 22%, transparent);
 }
 
-/* ── Скроллбары ───────────────────────────────────────────────────────────
-   Тонкие и нейтральные. Скроллбар — это хром; он не должен быть самым
-   контрастным элементом на панели приглушённого текста.                   */
+/* ── Scrollbars ───────────────────────────────────────────────────────────
+   Thin and neutral. A scrollbar is chrome; it must not be the highest
+   contrast thing on a panel of muted text.                                */
 
 * {
   scrollbar-width: thin;
@@ -219,26 +223,19 @@ hr {
   &:hover { background: var(--text-faint); background-clip: content-box; }
 }
 
-/* ── Утилиты ──────────────────────────────────────────────────────────────
-   Нарочно крошечный набор. Это не утилитарный фреймворк; если понадобилась
-   пятая утилита — ответ обычно «компонент».                               */
+/* ── Utilities ────────────────────────────────────────────────────────────
+   A deliberately tiny set. This is not a utility framework; if a fifth
+   utility is wanted, the answer is usually "a component".                 */
 
-/* Прижата к началу содержащего блока, и это обязательно, а не косметика.
-   Без inset абсолютный элемент встаёт на своё СТАТИЧЕСКОЕ место, а содержащим
-   блоком берёт ближайшего позиционированного предка — или корень документа,
-   если такого нет. Из корня его не обрезает прокручиваемая область: элемент
-   расширяет прокрутку ВСЕГО документа до своей координаты. Видно при этом
-   ничего: он размером в пиксель и под clip-path.
-
-   Так и получается вторая полоса прокрутки рядом с областью, у которой она
-   своя, — дефект, который ищется часами, потому что искать нечего.          */
-/* Спрайт иконок.
+/* The icon sprite.
  *
- * <use href="#i-..."> ищет символ в ТОМ ЖЕ документе, поэтому спрайт стоит в
- * теле страницы. Без этого правила он остаётся видимым блоком в 150 пикселей
- * — умолчание SVG без размеров — и толкает вниз всю раскладку.
+ * <use href="#i-..."> looks for the symbol in the SAME document, so the sprite
+ * stands in the body of the page. Without this rule it stays a visible block
+ * 150 pixels tall — the default for an SVG with no dimensions — and shoves the
+ * whole layout down.
  *
- * Правило принадлежит киту, а не приложению: спрайт требует кит. */
+ * The rule belongs to the kit, not to the application: the kit is what asks
+ * for the sprite. */
 .inst-sprite {
   position: absolute;
   inline-size: 0;
@@ -246,6 +243,17 @@ hr {
   overflow: hidden;
 }
 
+/* Pinned to the start of its containing block, and that is mandatory rather
+   than cosmetic. Without the inset an absolutely positioned element sits at
+   its STATIC position and takes the nearest positioned ancestor as its
+   containing block — or the document root, if there is none. From the root no
+   scrollable region clips it: the element extends the scroll of the WHOLE
+   document out to its own coordinate. Nothing is visible while it does: it is
+   one pixel across and under a clip-path.
+
+   That is how a second scrollbar appears beside a region that already has one
+   of its own — a defect that takes hours to find, because there is nothing to
+   look at.                                                                 */
 .inst-u-visually-hidden {
   position: absolute;
   inset-block-start: 0;
