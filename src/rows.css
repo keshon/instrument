@@ -1,35 +1,35 @@
 /* ==========================================================================
-   instrument — строки
+   instrument — rows
 
-   Строка очереди и вставки — плоские строки, которые прибывают во время
-   работы.
+   The queue row and the inserts: flat rows that arrive while the work runs.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Строка задачи — примитив очереди
+   Task row — the primitive of the queue
 
-   Фиксированный левый жёлоб, поэтому точки состояний выстраиваются в
-   вертикальную линию, которую можно просканировать, не читая ни слова.
-   Разметка: role="option" внутри role="listbox", иначе aria-selected на
-   голом div невалиден.
+   A fixed left gutter, so the state dots line up into a vertical run that can
+   be scanned without reading a word. Markup: role="option" inside
+   role="listbox", otherwise aria-selected on a bare div is invalid.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-task {
   display: grid;
-  /* minmax, а не фиксированная колонка. Жёлоб задуман под точку состояния
-     (--size-dot, 6px), и токен держит его ширину, чтобы точки соседних строк
-     стояли в одну вертикаль. Но в жёлоб кладут не только точку: список файлов
-     с флажками — мультивыбор, чек-лист, отбор — случай не экзотический, а
-     --size-check (15px) в --size-gutter (14px) НЕ ВЛЕЗАЕТ. Замерено на
-     свёрстанном чужом интерфейсе: флажок вылезал на пиксель.
+  /* minmax, not a fixed column. The gutter is meant for the state dot
+     (--size-dot, 6px), and the token holds its width so that the dots of
+     neighbouring rows stand in one vertical line. But a dot is not the only
+     thing put in the gutter: a file list with checkboxes — multi-select, a
+     checklist, a picker — is no exotic case, and --size-check (15px) DOES NOT
+     FIT into --size-gutter (14px). Measured on somebody else's laid-out
+     interface: the checkbox stuck out by a pixel.
 
-     minmax сохраняет обещание и снимает запрет: колонка никогда не у́же
-     токена, поэтому точки по-прежнему выстроены, но растёт под то, что в неё
-     реально положили. Список однороден, значит выравнивание не страдает. */
+     minmax keeps the promise and lifts the ban: the column is never narrower
+     than the token, so the dots stay lined up, but it grows to whatever was
+     actually put in it. A list is homogeneous, so the alignment does not
+     suffer. */
   grid-template-columns: minmax(var(--size-gutter), auto) 1fr auto;
   align-items: center;
   gap: var(--gap-inline);
@@ -39,8 +39,8 @@
   cursor: default;
 
   &:hover { background: var(--surface-hover); }
-  /* Выделение объявлено ПОСЛЕ ховера и полупрозрачно, поэтому состояния
-     складываются: ховер по выделенной строке остаётся виден.             */
+  /* Selection is declared AFTER hover and is translucent, so the states add
+     up: hovering a selected row stays visible.                           */
   &[aria-selected="true"] { background: var(--surface-selected); }
   &[aria-selected="true"]:hover { background: color-mix(in oklab, var(--surface-selected), var(--surface-hover)); }
 
@@ -50,17 +50,17 @@
   &[data-state="warn"]    { --tone-ink: var(--warn-text); }
   &[data-state="running"] .inst-dot { animation: inst-pulse 1.6s var(--ease-in-out) infinite; }
 
-  /* Завершённые отступают, а не гаснут: история остаётся читаемой, но
-     перестаёт спорить с тем, что идёт сейчас.                            */
+  /* Finished rows step back rather than fade out: the history stays legible
+     but stops arguing with what is running now.                           */
   &[data-state="done"] .inst-task-title { color: var(--text-secondary); }
-  /* Пропущенное — единственный случай прозрачности, и она мягкая: 0.55
-     роняло подпись под порог читаемости.                                 */
+  /* Skipped is the one case of transparency here, and a mild one: at 0.55
+     the label drops below the legibility threshold.                      */
   &[data-state="skipped"] { opacity: 0.7; }
 }
 
-/* Зазор между строками. Он не косметический: без него подсветка выделенной
-   строки смыкается с подсветкой соседней под курсором, и две строки
-   читаются как один блок.                                               */
+/* The gap between rows is not cosmetic: without it the highlight of a
+   selected row meets the highlight of the one under the cursor, and the two
+   read as a single block.                                               */
 .inst-task + .inst-task { margin-block-start: var(--space-1); }
 
 .inst-task-gutter { display: flex; justify-content: center; }
@@ -70,13 +70,15 @@
 .inst-task-sub { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: 1px; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Вставки
+   Inserts
 
-   Ряд подстановок для поля рядом: имена переменных шаблона, ключи события,
-   поля записи. Нажатие кладёт значение в поле — это КНОПКА, а не метка.
+   A row of substitutions for the field beside them: template variable names,
+   event keys, record fields. Pressing one puts its value into the field — so
+   it is a BUTTON, not a label.
 
-   Тише действий намеренно. Их бывает по десятку и больше на одно поле, и в
-   полный голос палитра кричала бы громче того, ради чего страница открыта.
+   Quieter than actions on purpose. There can be a dozen and more per field,
+   and at full voice the palette would shout louder than whatever the page was
+   opened for.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-inserts {
@@ -92,9 +94,9 @@
   padding-inline: var(--space-3);
   border: var(--hairline) solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  /* Относительное: подстановка — инлайновый контрол, она стоит в строке
-     прозы, в поле и в логе. Зарегистрирована в cmd/targets как цель нажатия,
-     то есть заведомо не область. */
+  /* Recessed: an insert is an inline control, it stands in a line of prose,
+     in a field and in a log. It is registered in cmd/targets as a tap target,
+     which settles that it is a control and not a region. */
   background: var(--surface-recessed);
   color: var(--text-secondary);
   font-family: var(--font-mono);

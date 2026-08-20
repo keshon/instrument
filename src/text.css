@@ -1,34 +1,35 @@
 /* ==========================================================================
-   instrument — машинный текст
+   instrument — machine text
 
-   Лог, код и дерево. Моноширинное, плотное, читаемое посимвольно.
+   The log, the code and the tree. Monospaced, dense, read character by
+   character.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Лог и код
+   Log and code
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-log {
   background: var(--surface-sunken);
-  /* Дорожка — контрол размера md, поэтому радиус берёт у него и едет за
-     плотностью. Сегмент внутри получает тот же радиус МИНУС поле дорожки:
-     концентричность здесь считается, а не подбирается парой токенов, и
-     потому держится во всех трёх плотностях. */
+  /* The track is an md-sized control, so its radius comes from there and
+     rides along with density. A segment inside gets that radius MINUS the
+     track's padding: concentricity here is computed, not guessed at with a
+     pair of tokens, and that is why it holds in all three densities. */
   border-radius: var(--radius-control-md);
   padding: var(--pad-block-y) var(--pad-panel);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   line-height: var(--leading-code);
   overflow: auto;
-  /* Место под скроллбар резервируется ТОЛЬКО здесь и в двух других
-     растущих областях (.inst-code, .inst-diff-body). На обычной панели это
-     оборачивалось мёртвой полосой в 10px у правого края, которой нет у
-     шапки и тулбара выше, — содержимое переставало с ними совпадать.
-     Резервировать имеет смысл там, где содержимое реально прибывает.   */
+  /* Room for a scrollbar is reserved ONLY here and in the two other growing
+     regions (.inst-code, .inst-diff-body). On an ordinary panel it turns into
+     a dead 10px strip at the trailing edge that the header and toolbar above
+     do not have — and the content stops lining up with them. Reserving makes
+     sense where content actually arrives.                              */
   scrollbar-gutter: stable;
 }
 
@@ -43,9 +44,9 @@
   &[data-tone="error"] { --level-ink: var(--err-text); color: var(--err-text); }
 }
 
-/* Ширина в ch, а не по контенту. Сетка объявлена на СТРОКЕ, то есть у каждой
-   строки она своя: по содержимому колонка уровня меняла бы ширину от слова к
-   слову, и сообщение уезжало бы на каждом error.                          */
+/* Width in ch, not by content. The grid is declared on the ROW, so every row
+   has its own: sized by content, the level column would change width from
+   word to word, and the message would shift on every error.               */
 .inst-log-time  { inline-size: 8ch; color: var(--text-muted); }
 .inst-log-level { inline-size: 5ch; color: var(--level-ink, var(--text-muted)); }
 
@@ -60,22 +61,22 @@
   scrollbar-gutter: stable;
 }
 
-/* Листинг с номерами строк.
+/* A listing with line numbers.
 
-   У .inst-code нумерации не было вовсе, а у .inst-diff-line она есть — но это
-   ДИФ: две колонки номеров (было и стало) и колонка знака. Обычный листинг
-   такой формой не собрать, и на чужом интерфейсе это пришлось писать местным
-   классом дважды.
+   .inst-code has no numbering of its own, while .inst-diff-line does — but
+   that is a DIFF: two number columns (before and after) and a sign column. An
+   ordinary listing cannot be assembled from that shape, and in somebody
+   else's interface it had to be written twice with a local class.
 
-   Номер берёт --text-muted, а не --text-faint: его ЧИТАЮТ — по нему находят
-   место в файле и на него ссылаются в разговоре. На декоративном ярусе он
-   давал 3.59 при норме 4.5, и это ровно тот промах, что уже был у многоточия
-   пагинации и у прочерка «значения нет».
+   The number takes --text-muted rather than --text-faint: it is READ — people
+   find a place in a file by it and quote it out loud. On the decorative tier
+   it gives 3.59 against a norm of 4.5, the very same miss the pagination
+   ellipsis and the "no value" dash already had.
 
-   Ширина колонки в ch, а не по содержимому: иначе на сотой строке номер
-   становится шире, и весь код уезжает вправо на один знак.
+   Column width in ch, not by content: otherwise at line one hundred the
+   number grows wider and the whole listing shifts by one character.
 
-   Разметка: .inst-code > .inst-code-line > (.inst-code-num + .inst-code-src) */
+   Markup: .inst-code > .inst-code-line > (.inst-code-num + .inst-code-src) */
 .inst-code--numbered {
   padding-inline: 0;
 
@@ -92,21 +93,22 @@
 .inst-code-num {
   color: var(--text-muted);
   text-align: end;
-  /* Номер не выделяется мышью: копируют код, а не разметку страницы. */
+  /* The number is not selectable: people copy the code, not the page. */
   user-select: none;
 }
 
-/* anywhere живёт ТОЛЬКО здесь, на колонке кода. На строке он уменьшил бы её
-   минимальную ширину до знака и схлопнул обе колонки. */
+/* `anywhere` lives ONLY here, on the code column. On the row it would shrink
+   the minimum width to one character and collapse both columns. */
 .inst-code-src { white-space: pre-wrap; overflow-wrap: anywhere; }
 
-/* Чип инлайнового кода — ТОЛЬКО вне <pre>.
+/* The inline-code chip — ONLY outside <pre>.
 
-   Без «:not(pre) >» правило било и по <code> внутри блока кода. Инлайновый
-   элемент получает горизонтальный отступ в начале своего бокса, то есть на
-   ПЕРВОЙ строке, — и весь блок съезжал на пять пикселей одной строкой.
-   Найти это глазами трудно: смещение меньше знака, и заметно оно только
-   если сравнить первую строку с закрывающей. */
+   Without the `:not(pre) >` the rule also hits <code> inside a code block. An
+   inline element takes its horizontal padding at the start of its box, that
+   is on the FIRST line — and the whole block shifts five pixels on one line
+   only. The eye has trouble finding that: the offset is smaller than a
+   character, and it shows only when the first line is compared with the
+   closing one. */
 :not(pre) > code:not(.inst-code) {
   padding: 1px 5px;
   border-radius: var(--radius-xs);
@@ -114,28 +116,29 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Дерево
+   Tree
 
-   Разметка: role="tree" на контейнере, role="treeitem" + aria-level на
-   узлах, roving tabindex — на слое, где есть JS. Без ролей aria-expanded
-   и aria-selected на голых div невалидны.
+   Markup: role="tree" on the container, role="treeitem" + aria-level on the
+   nodes, the roving tabindex on the layer that has JS. Without the roles,
+   aria-expanded and aria-selected on bare divs are invalid.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-tree { font-size: var(--text-sm); }
 
-/* Направляющие вложенности.
+/* Nesting guides.
 
-   Глубину дерево отбивает отступом, и на двух-трёх уровнях этого довольно. На
-   файловом дереве в семь уровней — уже нет: глаз теряет, к какой ветке
-   относится строка, и вынужден считать отступы. Линия делает это за него.
+   A tree marks depth with indentation, and for two or three levels that is
+   enough. For a file tree seven levels deep it is not: the eye loses which
+   branch a row belongs to and has to count indents. The line counts for it.
 
-   Вариантом, а не умолчанием: у дерева задач и у дерева сцены уровней два, и
-   там линии были бы шумом.
+   A variant, not a default: a task tree and a scene tree are two levels deep,
+   and there the lines would be noise.
 
-   Рисуется фоном, а не рамкой у потомка: потомков у строки нет — дерево здесь
-   ПЛОСКИЙ список с --depth, а не вложенные списки, потому что виртуализация
-   плоского списка возможна, а вложенного нет. Позиция линии считается из того
-   же --size-indent, которым набран отступ, поэтому разъехаться они не могут. */
+   Drawn as a background rather than a border on a child: a row has no
+   children — the tree here is a FLAT list with --depth, not nested lists,
+   because a flat list can be virtualised and a nested one cannot. The
+   position of the line is computed from the same --size-indent the
+   indentation is set with, so the two cannot drift apart. */
 .inst-tree--guides > .inst-tree-item {
   background-image: repeating-linear-gradient(
     to right,
@@ -173,6 +176,6 @@
   transition: rotate var(--dur-1) var(--ease-out);
 }
 
-/* Лист: место под завиток сохраняется, чтобы подписи держали колонку. */
+/* A leaf keeps the room for its twist, so the labels hold their column. */
 .inst-tree-item:not([aria-expanded]) > .inst-tree-twist { background: none; }
 .inst-tree-item[aria-expanded="true"] > .inst-tree-twist { rotate: 90deg; }

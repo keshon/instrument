@@ -1,39 +1,41 @@
 /* ==========================================================================
-   instrument — тон и значок
+   instrument — tone and icon
 
-   Не компоненты, а два примитива, которые читают все остальные: словарь
-   смыслового тона и коробка значка. Поэтому файл идёт первым.
+   Not components but two primitives every other file reads: the vocabulary of
+   meaningful tone and the box of an icon. Hence this file goes first.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Тональность
+   Tone
 
-   Общий словарь на пять значений для бейджа, точки, сноски, меры и шага.
-   Один атрибут вместо четырёх наборов модификаторов — и, что важнее, один
-   перечислимый список значений: добавить шестой статус нельзя случайно.
+   One vocabulary of five values, shared by the badge, the dot, the note, the
+   meter and the step. One attribute instead of four sets of modifiers — and,
+   more to the point, one enumerable list of values: a sixth status cannot be
+   added by accident.
 
-   Правило кита: ВАРИАНТ (что выбрал автор разметки) — модификатор `--`,
-   СОСТОЯНИЕ и ТОН (что меняется в течение жизни) — атрибут. Без этой границы
-   в одном файле уживаются .badge--ok, .is-done, [aria-selected] и
-   [data-density] — четыре языка для одной вещи.
+   The kit's rule: a VARIANT (what the author of the markup chose) is a `--`
+   modifier; STATE and TONE (what changes over a lifetime) are attributes.
+   Without that line, .badge--ok, .is-done, [aria-selected] and [data-density]
+   all live in one file — four languages for one thing.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Информационного тона в ките НЕТ намеренно, и это не пробел. Синий занят
-   акцентом — интеракцией и состоянием «идёт», — и третья роль сделала бы его
-   нечитаемым. Информационное сообщение берёт тон neutral: приглушённая
-   заливка и значок ⓘ. Оно и есть info, просто без синевы.
+/* There is deliberately NO info tone in the kit, and that is not a gap. Blue
+   is taken by the accent — interaction and the "running" state — and a third
+   role would make it unreadable. An informational message takes the neutral
+   tone: a muted fill and an ⓘ glyph. It is info, just without the blue.
 
-   У тона два передних плана, а не один:
-     --tone-ink   для ТЕКСТА  — порог 4.5:1
-     --tone-mark  для МЕТКИ   — порог 3:1, но ещё и против дорожки
+   A tone has two foregrounds, not one:
+     --tone-ink   for TEXT  — threshold 4.5:1
+     --tone-mark  for MARKS — threshold 3:1, but also against the track
 
-   У статусов они совпадают: шаг 5 берёт оба порога сразу. У акцента
-   расходятся, и обязаны: текст на белом требует шага 5, а метка рядом с
-   заливкой кнопки требует шага 4, иначе на экране два разных синих. */
+   For the statuses the two coincide: step 5 clears both thresholds at once.
+   For the accent they diverge, and they must: text on white needs step 5,
+   while a mark beside a button fill needs step 4, or the screen carries two
+   different blues. */
 
 [data-tone="neutral"] { --tone-ink: var(--text-secondary); --tone-mark: var(--text-secondary); --tone-bg: var(--surface-sunken); }
 [data-tone="running"] { --tone-ink: var(--accent-text);    --tone-mark: var(--accent-mark);    --tone-bg: var(--accent-bg); }
@@ -42,24 +44,26 @@
 [data-tone="error"]   { --tone-ink: var(--err-text);       --tone-mark: var(--err-mark);       --tone-bg: var(--err-bg); }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Иконка
+   Icon
 
-   Контракт: inline SVG (или <use> из спрайта), обводка currentColor,
-   толщина 1.5, сетка 16. Текстовые глифы вроде ⟳ и ▶ запрещены: у них
-   разные метрики в разных шрифтах и риск подстановки эмодзи.
+   The contract: inline SVG (or <use> from the sprite), currentColor stroke,
+   width 1.5, grid 16. Text glyphs such as ⟳ and ▶ are banned: their metrics
+   differ between fonts, and any of them can be substituted by an emoji.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Размер идёт через ПЕРЕМЕННУЮ, а не через селектор потомка, и это не вкус.
+/* The size arrives through a VARIABLE rather than a descendant selector, and
+   that is not taste.
 
-   Значок живёт в слое kit.components, а рельс и строка состояния — в
-   kit.layout, который объявлен РАНЬШЕ. Поздний слой выигрывает у раннего
-   независимо от специфичности, поэтому `.inst-rail-item > .inst-icon` был
-   мёртв молча: гейт пропорций считает по токенам и видел 24px, а браузер
-   рисовал 18. Поймал обход по пикселям на строке состояния.
+   The icon lives in the kit.components layer, while the rail and the status
+   bar live in kit.layout, which is declared EARLIER. A later layer beats an
+   earlier one whatever the specificity, so `.inst-rail-item > .inst-icon`
+   would be dead silently: the proportion gate computes from tokens and would
+   see 24px while the browser drew 18. The pixel sweep caught it on the status
+   bar.
 
-   Переменная слоями не обрезается: она наследуется от родителя и
-   разрешается на самом значке уже внутри его слоя. Поэтому раскладка задаёт
-   размер, ничего не зная про порядок слоёв. */
+   A variable is not cut off by layers: it is inherited from the parent and
+   resolved on the icon itself, inside the icon's own layer. So layout sets
+   the size while knowing nothing about layer order. */
 .inst-icon {
   flex: none;
   inline-size: var(--icon-size, var(--size-icon));

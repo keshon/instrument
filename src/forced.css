@@ -1,25 +1,26 @@
 /* ==========================================================================
-   instrument — принудительные цвета (Windows High Contrast)
+   instrument — forced colours (Windows High Contrast)
 
-   Отдельный файл, потому что отдельный СЛОЙ, и слой здесь — вся суть, ровно
-   как у motion.css.
+   A file of its own because a LAYER of its own, and the layer is the whole
+   point here, exactly as in motion.css.
 
-   Целевая платформа — Windows, а весь кит построен на «хайрлайн плюс перепад
-   поверхностей». В forced-colors фоны и альфа-рамки сбрасываются на системные,
-   и без этих правил панели, поля, карточки и выделение схлопываются в одну
-   плоскость.
+   The platform in question is Windows, and the entire kit is built on
+   "hairline plus a step between surfaces". Under forced-colors the fills and
+   the alpha borders are reset to system ones, and without these rules the
+   panels, fields, cards and the selection collapse into one flat plane.
 
-   Значит правила обязаны перебивать компоненты — а специфичность у них ниже,
-   чем у `.inst-table tbody tr[aria-selected="true"] td`. Через !important это
-   решается и ломает обещание «стили приложения выигрывают без !important»:
-   важное объявление внутри слоя бьёт и неважное объявление приложения вне
-   слоёв. Порядок слоёв даёт нужное бесплатно: kit.forced объявлен после
-   компонентов и оверлеев, но раньше движения и печати.
+   So the rules have to beat the components — and their specificity is lower
+   than `.inst-table tbody tr[aria-selected="true"] td`. Through !important
+   that works, and it breaks the promise that application styles win without
+   !important: an important declaration inside a layer beats an unimportant
+   declaration the application made outside every layer. Layer order gives
+   what is needed for free: kit.forced is declared after the components and
+   the overlays, and before motion and print.
 
-   Своего файла у блока не было, и лежал он в конце agent.css — не потому что
-   относится к агентному слою, а потому что kit.agent последний из слоёв, откуда
-   можно перебить всё разом. Сквозная забота внутри тематического файла
-   находится не там, где её ищут.
+   A cross-cutting concern kept inside a thematic file is not where anyone
+   looks for it. This one belongs to no component: it is the answer the whole
+   kit gives to one system setting, and the only place that answer can be
+   given from is a layer that outranks every component at once.
    ========================================================================== */
 
 @media (forced-colors: active) {
@@ -32,7 +33,7 @@
     border: var(--stroke) solid CanvasText;
   }
 
-  /* Заливки, которые несут значение, обязаны пережить сброс. */
+  /* A fill that carries meaning has to survive the reset. */
   .inst-meter-fill, .inst-lane-span, .inst-switch > input:checked, .inst-dot {
     forced-color-adjust: none;
     background: Highlight;
@@ -44,18 +45,18 @@
     color: HighlightText;
   }
 
-  /* Кольцо занятой кнопки. Без этого правила forced-colors красит ВСЕ
-     четыре рамки в CanvasText, кольцо становится равномерным — и вращение
-     перестаёт быть видно вовсе. Дуга обязана отличаться от дорожки, иначе
-     индикатор не индицирует.                                             */
+  /* The ring of a busy button. Without this rule forced-colors paints ALL
+     four borders CanvasText, the ring turns even — and the spin stops being
+     visible at all. The arc has to differ from the track, or the indicator
+     indicates nothing.                                                    */
   .inst-btn[aria-busy="true"]::after {
     forced-color-adjust: none;
     border-color: ButtonFace;
     border-block-start-color: ButtonText;
   }
 
-  /* Маскированные глифы в forced-colors теряют цвет фона — переводим их
-     на системный текст.                                                  */
+  /* Masked glyphs lose their background colour under forced-colors, so they
+     move to the system text colour.                                       */
   .inst-tree-twist, .inst-step-twist, .inst-select-wrap::after,
   .inst-note::before, .inst-approval-head::before, .inst-failure-head::before {
     background: CanvasText;

@@ -1,25 +1,25 @@
-/* instrument — единая точка входа. Без сборки.
+/* instrument — the single entry point. No build step.
 
-   Порядок слоёв объявлен первым, поэтому он фиксирован независимо от
-   порядка импортов, а стили приложения — они лежат ВНЕ слоёв — всегда
-   выигрывают без !important.
+   The layer order is declared first, so it holds whatever order the imports
+   arrive in, and application styles — which live OUTSIDE every layer — always
+   win without !important.
 
-   kit.motion идёт последним намеренно. Правило prefers-reduced-motion
-   обязано перебивать компоненты (у .inst-btn специфичность выше, чем у *) и при
-   этом не перебивать приложение. Порядок слоёв даёт ровно это: позднейший
-   слой выигрывает у более раннего независимо от специфичности, а любое
-   неслойное объявление выигрывает у всех слоёв. Та же задача
-   решалась через !important — и ломала обещание про приложение. */
+   kit.motion comes last on purpose. The prefers-reduced-motion rule has to
+   beat the components (.inst-btn outranks * on specificity) and must not beat
+   the application. Layer order gives exactly that: a later layer wins over an
+   earlier one whatever the specificity, and any unlayered declaration wins
+   over every layer. Through !important the same thing also works — and breaks
+   the promise made to the application. */
 
 @layer kit.tokens, kit.base, kit.layout, kit.components, kit.overlay, kit.agent, kit.forced, kit.motion, kit.print;
 
 @import url("./tokens.css")     layer(kit.tokens);
 @import url("./base.css")       layer(kit.base);
 @import url("./layout.css")     layer(kit.layout);
-/* Компоненты разложены по восьми файлам и все восемь идут в ОДИН слой:
-   разбиение про то, чтобы правило находилось, а не про каскад. Порядок
-   импортов повторяет прежний порядок разделов внутри components.css, поэтому
-   поток правил не изменился ни на знак. */
+/* The components are spread over ten files and all ten land in ONE layer:
+   the split is about finding a rule, not about the cascade. The import order
+   follows the order the sections had inside components.css, so the flow of
+   rules is the same down to the character. */
 @import url("./tone.css")       layer(kit.components);
 @import url("./actions.css")    layer(kit.components);
 @import url("./surfaces.css")   layer(kit.components);

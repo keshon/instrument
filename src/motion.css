@@ -1,60 +1,63 @@
 /* ==========================================================================
-   instrument — движение при prefers-reduced-motion
+   instrument — motion under prefers-reduced-motion
 
-   Отдельный файл, потому что отдельный СЛОЙ, и слой здесь — вся суть.
+   A file of its own because a LAYER of its own, and the layer is the whole
+   point.
 
-   Правило должно перебивать компоненты (у .inst-btn специфичность выше, чем у *)
-   и при этом не перебивать приложение. Через !important это решается, но
-   !important внутри слоя выигрывает и у неважных объявлений приложения вне
-   слоёв — то есть кит нарушал собственное обещание «стили приложения всегда
-   выигрывают без !important».
+   The rule has to beat the components (.inst-btn outranks * on specificity)
+   and must not beat the application. Through !important that works, but
+   !important inside a layer also beats the unimportant declarations the
+   application made outside every layer — that is the kit breaking its own
+   promise that application styles always win without !important.
 
-   Каскадные слои дают ровно нужное поведение бесплатно: kit.motion объявлен
-   последним, поэтому выигрывает у kit.components независимо от
-   специфичности, а любое неслойное объявление приложения выигрывает у него.
+   Cascade layers give exactly the behaviour wanted, for free: kit.motion is
+   declared last, so it wins over kit.components whatever the specificity, and
+   any unlayered declaration by the application wins over it.
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
-  /* Переходы схлопываются, а не выключаются: машины состояний, слушающие
-     transitionend, продолжают работать.                                   */
+  /* Transitions collapse rather than switch off: a state machine listening
+     for transitionend keeps working.                                      */
   *, *::before, *::after {
     transition-duration: 0.01ms;
     animation-delay: 0ms;
     scroll-behavior: auto;
   }
 
-  /* А вот бесконечные индикаторы активности схлопывать НЕЛЬЗЯ. Сжатая до
-     0.01ms анимация с одной итерацией — это не «сжатие длительности», это
-     остановка: спиннер замирает в случайной фазе, точка перестаёт
-     пульсировать, каретка застывает. Кит, вся работа которого — показывать,
-     что машина занята, переставал показывать, что машина занята.
+  /* Endless activity indicators, though, must NOT be collapsed. An animation
+     squeezed to 0.01ms is not a shortened duration, it is a stop: the spinner
+     freezes at a random phase, the dot stops pulsing, the caret goes still. A
+     kit whose entire job is to show that the machine is busy would stop
+     showing that the machine is busy.
 
-     Поэтому здесь они замедляются до частоты, которая читается как «идёт»,
-     но не дёргает периферийное зрение. Движение, от которого укачивает, —
-     это амплитуда и частота, а не сам факт движения.                      */
+     So here they slow down to a rate that still reads as "running" without
+     tugging at peripheral vision. What makes motion sickening is amplitude
+     and frequency, not the fact of moving.                                */
 
   .inst-spinner { animation-duration: 2.4s; }
-  /* Кольцо занятой кнопки крутится теми же кадрами, значит и замедляется
-     вместе со спиннером. Оно тут не для красоты: пока оно вращается,
-     подпись кнопки погашена, и остановленное кольцо превращает кнопку в
-     пустой прямоугольник без единого признака, что что-то происходит. */
+  /* The ring of a busy button spins on the same keyframes, so it slows down
+     together with the spinner. It is not decoration: while it turns, the
+     button label is dimmed, and a stopped ring turns the button into an empty
+     rectangle with no sign that anything is happening at all. */
   .inst-btn[aria-busy="true"]::after { animation-duration: 2.4s; }
   .inst-skeleton { animation-duration: 3s; }
   .inst-meter[data-state="indeterminate"] > .inst-meter-fill { animation-duration: 3s; }
 
-  /* Все точки, которые пульсируют: собственный тон, тон родителя-бейджа,
-     состояние строки очереди и состояние шага.
+  /* Every dot that pulses: its own tone, the tone of a badge around it, the
+     state of a queue row and the state of a step.
 
-     Список обязан совпадать с тем, что заводит inst-pulse, и держалось это
-     на памяти. Теперь сторожит cmd/registry, и сторожит выводом, а не
-     объявлением: замедлять надо ровно то, у чего бесконечная анимация. */
+     The list has to match whatever starts inst-pulse, and nothing but memory
+     could hold it to that. cmd/registry guards it now, and guards it by
+     OUTPUT rather than by declaration: what must be slowed is exactly what
+     has an endless animation. */
   [data-tone="running"] .inst-dot,
   .inst-dot[data-tone="running"],
   .inst-task[data-state="running"] .inst-dot,
   .inst-step[data-state="running"] .inst-dot { animation-duration: 3s; }
 
-  /* Каретка — исключение из исключения: мигание не несёт информации о
-     скорости, только о факте. Гасим мигание, оставляем саму каретку.      */
+  /* The caret is the exception to the exception: its blink carries no
+     information about rate, only about the fact. The blink goes, the caret
+     stays.                                                                */
   .inst-caret { animation: none; opacity: 1; }
 }

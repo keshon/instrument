@@ -1,20 +1,20 @@
 /* ==========================================================================
-   instrument — сообщения
+   instrument — messages
 
-   Сноска, пустое состояние, баннер, аккордеон. То, чем интерфейс отвечает
-   человеку.
+   The note, the empty state, the banner, the accordion. What the interface
+   answers a human with.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Сноска — врезка в поток. Только левая граница, поэтому углы прямые.
+   Note — an aside inside the flow. Only a leading border, so square corners.
 
-   Тон несёт ИКОНКУ, а не только цвет полоски: без значка warn и error
-   отличаются друг от друга исключительно цветом — прямое нарушение
-   собственного закона «цвет не может быть единственным носителем».
+   A tone carries an ICON, not just the colour of the bar: without the glyph,
+   warn and error differ by colour and nothing else — a direct breach of the
+   kit's own law that colour may never be the only carrier.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-note {
@@ -33,9 +33,10 @@
     flex: none;
     inline-size: var(--size-icon);
     block-size: var(--size-icon);
-    /* Центрируется по ПЕРВОЙ СТРОКЕ текста, а не по верху блока: 1lh — это
-       реальная высота строки, поэтому формула сама подстраивается под кегль
-       и плотность. Ручной сдвиг на -1px задирал значок на 2.1px вверх. */
+    /* Centred on the FIRST LINE of the text rather than on the top of the
+       block: 1lh is the real line height, so the formula adapts to type size
+       and density by itself. A hand-tuned -1px lifts the glyph 2.1px too
+       high. */
     margin-block-start: calc((1lh - var(--size-icon)) / 2);
     background: var(--tone-ink);
   }
@@ -43,9 +44,9 @@
 
 }
 
-/* Иконки тона — общие для сноски и баннера. Один набор масок на два
-   компонента: дублировать data-URI значило бы завести второй источник
-   истины для формы значка.                                              */
+/* Tone glyphs, shared by the note and the banner. One set of masks for two
+   components: duplicating the data-URI would create a second source of truth
+   for the shape.                                                          */
 :is(.inst-note, .inst-banner)[data-tone="running"]::before, :is(.inst-note, .inst-banner)[data-tone="neutral"]::before {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M8 7.4v3.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='5.2' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
 }
@@ -60,7 +61,7 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Пустое состояние
+   Empty state
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-empty {
@@ -78,15 +79,16 @@
 .inst-empty-desc  { font-size: var(--text-xs); line-height: var(--leading-ui); max-inline-size: 44ch; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Баннер — сообщение уровня страницы
+   Banner — a page-level message
 
-   Это НЕ сноска. Сноска (.inst-note) — врезка в поток, она поясняет то, рядом с
-   чем стоит, и несёт только полосу у края. Баннер относится ко всему
-   экрану, поэтому у него заливка, рамка и место под действие: «доступ
-   истекает через три дня», «идёт обслуживание», «изменения не сохранены».
+   This is NOT a note. A note (.inst-note) is an aside inside the flow: it
+   explains whatever it stands next to and carries only a bar at its edge. A
+   banner is about the whole screen, so it has a fill, a border and room for
+   an action: "access expires in three days", "maintenance under way",
+   "changes not saved".
 
-   Тон несёт иконку — тот же общий набор масок, что у сноски.
-   Закрытие баннера — это JS: без него он остаётся на месте и не мешает.
+   The tone carries a glyph — the same shared set of masks as the note.
+   Dismissing a banner is JS; without it the banner stays put and is harmless.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-banner {
@@ -106,32 +108,34 @@
     flex: none;
     inline-size: var(--size-icon);
     block-size: var(--size-icon);
-    /* Центрируется по ПЕРВОЙ СТРОКЕ текста, а не по верху блока: 1lh — это
-       реальная высота строки, поэтому формула сама подстраивается под кегль
-       и плотность. Ручной сдвиг на -1px задирал значок на 2.1px вверх. */
+    /* Centred on the FIRST LINE of the text rather than on the top of the
+       block: 1lh is the real line height, so the formula adapts to type size
+       and density by itself. A hand-tuned -1px lifts the glyph 2.1px too
+       high. */
     margin-block-start: calc((1lh - var(--size-icon)) / 2);
     background: var(--tone-ink, var(--text-secondary));
   }
   &:not([data-tone])::before { content: none; }
 }
 
-/* Мера обрезает ТЕЛО, а не сам баннер: подложка сообщения уровня страницы
-   обязана идти во всю ширину, а текст на ней — нет. Без этого на широком
-   дашборде строка доходила до 105 знаков при норме 45–75. */
+/* The measure clips the BODY, not the banner: the ground of a page-level
+   message has to run the full width, and the text on it does not. Without
+   this a wide dashboard stretches a line to 105 characters against a norm of
+   45–75. */
 .inst-banner-body { min-inline-size: 0; max-inline-size: var(--measure); }
 .inst-banner-title { font-weight: var(--weight-medium); }
 .inst-banner-text { color: var(--text-secondary); }
 .inst-banner-actions { flex: none; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Аккордеон
+   Accordion
 
-   На <details>, поэтому раскрытие, клавиатура и роль достаются от
-   платформы. Атрибут name на элементах делает группу взаимоисключающей —
-   открытой остаётся ровно одна секция, и тоже без единой строки JS.
+   Built on <details>, so disclosure, keyboard and role all come from the
+   platform. A name attribute on the items makes the group mutually
+   exclusive — exactly one section stays open, and again without a line of JS.
 
-   Это не .inst-step: шаг — строка вызова инструмента с телом, аккордеон —
-   раздел содержимого. Разные работы.
+   This is not .inst-step: a step is the row of a tool call with a body, an
+   accordion is a section of content. Different jobs.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-accordion { display: flex; flex-direction: column; gap: var(--space-1); }
@@ -176,23 +180,24 @@
 
 .inst-accordion-body { padding: var(--pad-panel) var(--pad-cell-x); }
 
-/* Раскрывашка ВНУТРИ чужой рамки: панели, карточки, поля примера.
+/* A disclosure INSIDE somebody else's frame: a panel, a card, an example
+   field.
 
-   Своя рамка была бы второй в пикселе от первой, а своё скругление —
-   скруглением внутри скругления, которое ни с чем не концентрично. Остаётся
-   только шов сверху: раскрывашка продолжает то, под чем стоит, а не
-   объявляет себя отдельным блоком.                                        */
+   A border of its own would be a second one a pixel from the first, and a
+   corner radius of its own would be a rounding inside a rounding, concentric
+   with nothing. Only the seam above remains: the disclosure continues
+   whatever it stands under instead of declaring itself a separate block. */
 .inst-accordion-item--flush {
   border: 0;
   border-radius: 0;
   background: none;
   border-block-start: var(--hairline) solid var(--border-subtle);
 
-  /* Отступ по краю берётся у ПАНЕЛИ, а не у ячейки. Отдельно стоящий
-     аккордеон отбивает заголовок как строку списка (--pad-cell-x), но внутри
-     рамы это чужая мера: подпись панели стоит на --pad-panel, и ручка внизу
-     обязана встать по той же вертикали. Иначе у одной рамы два разных края —
-     8 и 6 в плотном, 16 и 12 в свободном. */
+  /* The edge padding comes from the PANEL, not from the cell. A free-standing
+     accordion sets its head off like a list row (--pad-cell-x), but inside a
+     frame that is the wrong measure: the panel title sits on --pad-panel, and
+     the handle below has to stand on the same vertical. Otherwise one frame
+     has two different edges — 8 and 6 in compact, 16 and 12 in comfortable. */
   & > .inst-accordion-head,
   & > .inst-accordion-body { padding-inline: var(--pad-panel); }
 }

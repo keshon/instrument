@@ -264,6 +264,10 @@ var mutations = []mutation{
 		"<!-- The mark: a vertical run",
 		"<!-- Знак: вертикальный ряд",
 		"файл уезжает в пакет вместе с комментариями внутри"},
+	{"русский вернулся в переведённый файл", "lang", "src/motion.css",
+		"  /* Transitions collapse rather than switch off",
+		"  /* Переходы схлопываются, а не выключаются",
+		"шаг 2 идёт двадцать сеансов, и всё это время файл держится только на памяти"},
 
 	{"два бегущих tabindex на переведённой странице", "registry", "docs/components/actions/segmented.en.md",
 		"",

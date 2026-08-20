@@ -1,32 +1,33 @@
 /* ==========================================================================
-   instrument — печать
+   instrument — print
 
-   Отдельный файл, потому что отдельный СЛОЙ, и он объявлен последним:
-   печатным правилам надо перебивать компоненты, и порядок слоёв делает это
-   без единого !important — ровно так же, как с prefers-reduced-motion.
+   A file of its own because a LAYER of its own, and it is declared last:
+   print rules have to beat the components, and layer order does that without
+   a single !important — exactly as with prefers-reduced-motion.
 
-   Админки печатают и выгружают в PDF отчёты, таблицы и списки задач. Без
-   этих правил на бумагу уходили бы тёмные поверхности, обрезанные области
-   прокрутки и колонка навигации на треть листа.
+   Back offices print reports, tables and task lists, and export them to PDF.
+   Without these rules the paper would carry dark surfaces, clipped scroll
+   regions and a navigation column taking a third of the sheet.
    ========================================================================== */
 
 @media print {
 
-  /* Главное правило: печатается СВЕТЛАЯ тема, какая бы ни стояла на экране.
-     Смены color-scheme ДЛЯ ЭТОГО НЕ ХВАТАЕТ, и это стоило белого текста на
-     белой бумаге в тёмных темах.
+  /* The first rule: paper gets the LIGHT theme, whatever is set on screen.
+     Switching color-scheme IS NOT ENOUGH for that, and the shortfall costs
+     white text on white paper in the dark themes.
 
-     light-dark() действительно переключается вместе со схемой — но «серая»
-     задаёт поверхности НЕ через light-dark(), а прямым присвоением шага
-     рампы (tokens.css, ручка глубины). Прямое присвоение про схему ничего
-     не знает: на печати оставались surface на
-     --n-10…--n-13 и --text-primary на --n-1, то есть белое по тёмному, а с
-     выключенной печатью фонов — белое по белому.
+     light-dark() does switch along with the scheme — but the "soft" theme
+     sets its surfaces NOT through light-dark(), by assigning a ramp step
+     directly (tokens.css, the depth knob). A direct assignment knows nothing
+     about the scheme: printing would keep surface on --n-10…--n-13 and
+     --text-primary on --n-1, that is white on dark — and with background
+     printing off, white on white.
 
-     Поэтому здесь возвращается ВСЁ, что задано прямым присвоением: пять
-     поверхностей и четыре подписи статусов. Дорожки тут нет — она объявлена
-     через light-dark() и переключается сама. Селектор [data-theme]
-     без значения — любая заданная тема, включая ещё не написанную шестую.  */
+     So everything set by direct assignment is restored here: five surfaces
+     and four status labels. The track is not among them — it is declared
+     through light-dark() and switches by itself. The selector [data-theme]
+     with no value means any theme that is set, including a sixth nobody has
+     written yet.                                                          */
   :root, [data-theme] {
     color-scheme: light;
 
@@ -44,7 +45,7 @@
 
   body { background: none; }
 
-  /* Хром приложения на бумаге не нужен: он не данные. */
+  /* The application chrome is not wanted on paper: it is not data. */
   .inst-shell-aside,
   .inst-page-actions,
   .inst-form-actions,
@@ -54,15 +55,15 @@
   .inst-copy,
   .inst-segmented { display: none; }
 
-  /* Оболочка разворачивается в обычный поток: три независимо
-     прокручиваемые области на листе не имеют смысла.                     */
+  /* The shell unfolds into ordinary flow: three independently scrollable
+     regions make no sense on a sheet.                                    */
   .inst-shell {
     display: block;
     block-size: auto;
   }
 
-  /* Всё, что на экране прокручивалось, на бумаге печатается целиком.
-     Иначе лог обрывается на первом экране и молча теряет остальное.      */
+  /* Whatever scrolled on screen prints in full on paper. Otherwise the log
+     breaks off at the first screenful and silently loses the rest.       */
   .inst-shell-main,
   .inst-panel-body,
   .inst-log,
@@ -74,49 +75,51 @@
     max-block-size: none;
   }
 
-  /* Свёрнутый вывод на печати разворачивается: обрезка была экранной
-     экономией места, а на листе она превращается в потерю данных.        */
+  /* Collapsed output unfolds when printed: the clipping saves screen space,
+     and on a sheet the same clipping is lost data.                       */
   .inst-output[data-truncated="true"] > .inst-output-body { mask-image: none; }
   .inst-output-more { display: none; }
 
-  /* Раскрыть все свёрнутые шаги: закрытый <details> на бумаге —
-     невосстановимо потерянное содержимое.
+  /* Open every collapsed step: a closed <details> on paper is content lost
+     beyond recovery.
 
-     Через display это не делается: браузер закрытый <details> прячет не им —
-     содержимое лежит в слоте с content-visibility: hidden, и `display:
-     revert` на нём не меняет ничего. Замерено: высота блока с таким правилом
-     33px, без него 33px, у открытого 135px.
+     display cannot do it. A browser does not hide a closed <details> with
+     display — the content sits in a slot with content-visibility: hidden, and
+     `display: revert` on it changes nothing. Measured: the block is 33px high
+     with that rule, 33px without it, and 135px when open.
 
-     Правильная ручка — псевдоэлемент ::details-content. Правило через display
-     оставлено запасным для движков, которые всё ещё прячут через display.  */
+     The handle that works is the ::details-content pseudo-element. The
+     display rule stays as a fallback for engines that still hide through
+     display.                                                              */
   details { display: block; }
   details > summary { list-style: none; }
   details:not([open]) > :not(summary) { display: revert; }
   details::details-content { content-visibility: visible; }
 
-  /* Блоки не рвутся между листами. */
+  /* Blocks do not tear across sheets. */
   .inst-panel, .inst-card, .inst-metric, .inst-approval, .inst-failure, .inst-diff, .inst-banner { break-inside: avoid; }
   tr, .inst-task, .inst-step, .inst-log-line, .inst-prop { break-inside: avoid; }
   h1, h2, h3, .inst-page-title, .inst-section-title, .inst-panel-title { break-after: avoid; }
 
-  /* Шапка таблицы повторяется на каждом листе. */
+  /* A table head repeats on every sheet. */
   .inst-table thead { display: table-header-group; }
   .inst-table tfoot { display: table-footer-group; }
 
-  /* Тени на бумаге не воспроизводятся, но съедают тонер по краям. */
+  /* Shadows do not reproduce on paper, but they do eat toner at the edges. */
   .inst-panel, .inst-card, .inst-dialog, .inst-popover { box-shadow: none; }
 
-  /* Оверлеи печатать нечего: они по определению временные. */
+  /* There is nothing to print in an overlay: it is temporary by definition. */
   .inst-popover, .inst-tooltip-text, .inst-toasts, dialog { display: none; }
 
-  /* Адрес ссылки виден только на экране — на бумаге его надо написать. */
+  /* A link address is visible only on screen — on paper it has to be
+     written out. */
   .inst-prose a[href^="http"]::after {
     content: " (" attr(href) ")";
     font-size: 0.85em;
     color: var(--text-muted);
   }
 
-  /* Индикаторы активности на листе бессмысленны: печать статична. */
+  /* Activity indicators mean nothing on a sheet: print is still. */
   .inst-spinner, .inst-caret, .inst-skeleton { display: none; }
   .inst-meter[data-state="indeterminate"] > .inst-meter-fill { display: none; }
 }

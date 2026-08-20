@@ -3154,41 +3154,43 @@ hr {
 /* ── tone.css → kit.components ─────────────────────────────── */
 @layer kit.components {
 /* ==========================================================================
-   instrument — тон и значок
+   instrument — tone and icon
 
-   Не компоненты, а два примитива, которые читают все остальные: словарь
-   смыслового тона и коробка значка. Поэтому файл идёт первым.
+   Not components but two primitives every other file reads: the vocabulary of
+   meaningful tone and the box of an icon. Hence this file goes first.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Тональность
+   Tone
 
-   Общий словарь на пять значений для бейджа, точки, сноски, меры и шага.
-   Один атрибут вместо четырёх наборов модификаторов — и, что важнее, один
-   перечислимый список значений: добавить шестой статус нельзя случайно.
+   One vocabulary of five values, shared by the badge, the dot, the note, the
+   meter and the step. One attribute instead of four sets of modifiers — and,
+   more to the point, one enumerable list of values: a sixth status cannot be
+   added by accident.
 
-   Правило кита: ВАРИАНТ (что выбрал автор разметки) — модификатор `--`,
-   СОСТОЯНИЕ и ТОН (что меняется в течение жизни) — атрибут. Без этой границы
-   в одном файле уживаются .badge--ok, .is-done, [aria-selected] и
-   [data-density] — четыре языка для одной вещи.
+   The kit's rule: a VARIANT (what the author of the markup chose) is a `--`
+   modifier; STATE and TONE (what changes over a lifetime) are attributes.
+   Without that line, .badge--ok, .is-done, [aria-selected] and [data-density]
+   all live in one file — four languages for one thing.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Информационного тона в ките НЕТ намеренно, и это не пробел. Синий занят
-   акцентом — интеракцией и состоянием «идёт», — и третья роль сделала бы его
-   нечитаемым. Информационное сообщение берёт тон neutral: приглушённая
-   заливка и значок ⓘ. Оно и есть info, просто без синевы.
+/* There is deliberately NO info tone in the kit, and that is not a gap. Blue
+   is taken by the accent — interaction and the "running" state — and a third
+   role would make it unreadable. An informational message takes the neutral
+   tone: a muted fill and an ⓘ glyph. It is info, just without the blue.
 
-   У тона два передних плана, а не один:
-     --tone-ink   для ТЕКСТА  — порог 4.5:1
-     --tone-mark  для МЕТКИ   — порог 3:1, но ещё и против дорожки
+   A tone has two foregrounds, not one:
+     --tone-ink   for TEXT  — threshold 4.5:1
+     --tone-mark  for MARKS — threshold 3:1, but also against the track
 
-   У статусов они совпадают: шаг 5 берёт оба порога сразу. У акцента
-   расходятся, и обязаны: текст на белом требует шага 5, а метка рядом с
-   заливкой кнопки требует шага 4, иначе на экране два разных синих. */
+   For the statuses the two coincide: step 5 clears both thresholds at once.
+   For the accent they diverge, and they must: text on white needs step 5,
+   while a mark beside a button fill needs step 4, or the screen carries two
+   different blues. */
 
 [data-tone="neutral"] { --tone-ink: var(--text-secondary); --tone-mark: var(--text-secondary); --tone-bg: var(--surface-sunken); }
 [data-tone="running"] { --tone-ink: var(--accent-text);    --tone-mark: var(--accent-mark);    --tone-bg: var(--accent-bg); }
@@ -3197,24 +3199,26 @@ hr {
 [data-tone="error"]   { --tone-ink: var(--err-text);       --tone-mark: var(--err-mark);       --tone-bg: var(--err-bg); }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Иконка
+   Icon
 
-   Контракт: inline SVG (или <use> из спрайта), обводка currentColor,
-   толщина 1.5, сетка 16. Текстовые глифы вроде ⟳ и ▶ запрещены: у них
-   разные метрики в разных шрифтах и риск подстановки эмодзи.
+   The contract: inline SVG (or <use> from the sprite), currentColor stroke,
+   width 1.5, grid 16. Text glyphs such as ⟳ and ▶ are banned: their metrics
+   differ between fonts, and any of them can be substituted by an emoji.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Размер идёт через ПЕРЕМЕННУЮ, а не через селектор потомка, и это не вкус.
+/* The size arrives through a VARIABLE rather than a descendant selector, and
+   that is not taste.
 
-   Значок живёт в слое kit.components, а рельс и строка состояния — в
-   kit.layout, который объявлен РАНЬШЕ. Поздний слой выигрывает у раннего
-   независимо от специфичности, поэтому `.inst-rail-item > .inst-icon` был
-   мёртв молча: гейт пропорций считает по токенам и видел 24px, а браузер
-   рисовал 18. Поймал обход по пикселям на строке состояния.
+   The icon lives in the kit.components layer, while the rail and the status
+   bar live in kit.layout, which is declared EARLIER. A later layer beats an
+   earlier one whatever the specificity, so `.inst-rail-item > .inst-icon`
+   would be dead silently: the proportion gate computes from tokens and would
+   see 24px while the browser drew 18. The pixel sweep caught it on the status
+   bar.
 
-   Переменная слоями не обрезается: она наследуется от родителя и
-   разрешается на самом значке уже внутри его слоя. Поэтому раскладка задаёт
-   размер, ничего не зная про порядок слоёв. */
+   A variable is not cut off by layers: it is inherited from the parent and
+   resolved on the icon itself, inside the icon's own layer. So layout sets
+   the size while knowing nothing about layer order. */
 .inst-icon {
   flex: none;
   inline-size: var(--icon-size, var(--size-icon));
@@ -4867,37 +4871,37 @@ hr {
 /* ── rows.css → kit.components ─────────────────────────────── */
 @layer kit.components {
 /* ==========================================================================
-   instrument — строки
+   instrument — rows
 
-   Строка очереди и вставки — плоские строки, которые прибывают во время
-   работы.
+   The queue row and the inserts: flat rows that arrive while the work runs.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Строка задачи — примитив очереди
+   Task row — the primitive of the queue
 
-   Фиксированный левый жёлоб, поэтому точки состояний выстраиваются в
-   вертикальную линию, которую можно просканировать, не читая ни слова.
-   Разметка: role="option" внутри role="listbox", иначе aria-selected на
-   голом div невалиден.
+   A fixed left gutter, so the state dots line up into a vertical run that can
+   be scanned without reading a word. Markup: role="option" inside
+   role="listbox", otherwise aria-selected on a bare div is invalid.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-task {
   display: grid;
-  /* minmax, а не фиксированная колонка. Жёлоб задуман под точку состояния
-     (--size-dot, 6px), и токен держит его ширину, чтобы точки соседних строк
-     стояли в одну вертикаль. Но в жёлоб кладут не только точку: список файлов
-     с флажками — мультивыбор, чек-лист, отбор — случай не экзотический, а
-     --size-check (15px) в --size-gutter (14px) НЕ ВЛЕЗАЕТ. Замерено на
-     свёрстанном чужом интерфейсе: флажок вылезал на пиксель.
+  /* minmax, not a fixed column. The gutter is meant for the state dot
+     (--size-dot, 6px), and the token holds its width so that the dots of
+     neighbouring rows stand in one vertical line. But a dot is not the only
+     thing put in the gutter: a file list with checkboxes — multi-select, a
+     checklist, a picker — is no exotic case, and --size-check (15px) DOES NOT
+     FIT into --size-gutter (14px). Measured on somebody else's laid-out
+     interface: the checkbox stuck out by a pixel.
 
-     minmax сохраняет обещание и снимает запрет: колонка никогда не у́же
-     токена, поэтому точки по-прежнему выстроены, но растёт под то, что в неё
-     реально положили. Список однороден, значит выравнивание не страдает. */
+     minmax keeps the promise and lifts the ban: the column is never narrower
+     than the token, so the dots stay lined up, but it grows to whatever was
+     actually put in it. A list is homogeneous, so the alignment does not
+     suffer. */
   grid-template-columns: minmax(var(--size-gutter), auto) 1fr auto;
   align-items: center;
   gap: var(--gap-inline);
@@ -4907,8 +4911,8 @@ hr {
   cursor: default;
 
   &:hover { background: var(--surface-hover); }
-  /* Выделение объявлено ПОСЛЕ ховера и полупрозрачно, поэтому состояния
-     складываются: ховер по выделенной строке остаётся виден.             */
+  /* Selection is declared AFTER hover and is translucent, so the states add
+     up: hovering a selected row stays visible.                           */
   &[aria-selected="true"] { background: var(--surface-selected); }
   &[aria-selected="true"]:hover { background: color-mix(in oklab, var(--surface-selected), var(--surface-hover)); }
 
@@ -4918,17 +4922,17 @@ hr {
   &[data-state="warn"]    { --tone-ink: var(--warn-text); }
   &[data-state="running"] .inst-dot { animation: inst-pulse 1.6s var(--ease-in-out) infinite; }
 
-  /* Завершённые отступают, а не гаснут: история остаётся читаемой, но
-     перестаёт спорить с тем, что идёт сейчас.                            */
+  /* Finished rows step back rather than fade out: the history stays legible
+     but stops arguing with what is running now.                           */
   &[data-state="done"] .inst-task-title { color: var(--text-secondary); }
-  /* Пропущенное — единственный случай прозрачности, и она мягкая: 0.55
-     роняло подпись под порог читаемости.                                 */
+  /* Skipped is the one case of transparency here, and a mild one: at 0.55
+     the label drops below the legibility threshold.                      */
   &[data-state="skipped"] { opacity: 0.7; }
 }
 
-/* Зазор между строками. Он не косметический: без него подсветка выделенной
-   строки смыкается с подсветкой соседней под курсором, и две строки
-   читаются как один блок.                                               */
+/* The gap between rows is not cosmetic: without it the highlight of a
+   selected row meets the highlight of the one under the cursor, and the two
+   read as a single block.                                               */
 .inst-task + .inst-task { margin-block-start: var(--space-1); }
 
 .inst-task-gutter { display: flex; justify-content: center; }
@@ -4938,13 +4942,15 @@ hr {
 .inst-task-sub { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: 1px; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Вставки
+   Inserts
 
-   Ряд подстановок для поля рядом: имена переменных шаблона, ключи события,
-   поля записи. Нажатие кладёт значение в поле — это КНОПКА, а не метка.
+   A row of substitutions for the field beside them: template variable names,
+   event keys, record fields. Pressing one puts its value into the field — so
+   it is a BUTTON, not a label.
 
-   Тише действий намеренно. Их бывает по десятку и больше на одно поле, и в
-   полный голос палитра кричала бы громче того, ради чего страница открыта.
+   Quieter than actions on purpose. There can be a dozen and more per field,
+   and at full voice the palette would shout louder than whatever the page was
+   opened for.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-inserts {
@@ -4960,9 +4966,9 @@ hr {
   padding-inline: var(--space-3);
   border: var(--hairline) solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  /* Относительное: подстановка — инлайновый контрол, она стоит в строке
-     прозы, в поле и в логе. Зарегистрирована в cmd/targets как цель нажатия,
-     то есть заведомо не область. */
+  /* Recessed: an insert is an inline control, it stands in a line of prose,
+     in a field and in a log. It is registered in cmd/targets as a tap target,
+     which settles that it is a control and not a region. */
   background: var(--surface-recessed);
   color: var(--text-secondary);
   font-family: var(--font-mono);
@@ -4980,36 +4986,37 @@ hr {
 /* ── text.css → kit.components ─────────────────────────────── */
 @layer kit.components {
 /* ==========================================================================
-   instrument — машинный текст
+   instrument — machine text
 
-   Лог, код и дерево. Моноширинное, плотное, читаемое посимвольно.
+   The log, the code and the tree. Monospaced, dense, read character by
+   character.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Лог и код
+   Log and code
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-log {
   background: var(--surface-sunken);
-  /* Дорожка — контрол размера md, поэтому радиус берёт у него и едет за
-     плотностью. Сегмент внутри получает тот же радиус МИНУС поле дорожки:
-     концентричность здесь считается, а не подбирается парой токенов, и
-     потому держится во всех трёх плотностях. */
+  /* The track is an md-sized control, so its radius comes from there and
+     rides along with density. A segment inside gets that radius MINUS the
+     track's padding: concentricity here is computed, not guessed at with a
+     pair of tokens, and that is why it holds in all three densities. */
   border-radius: var(--radius-control-md);
   padding: var(--pad-block-y) var(--pad-panel);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   line-height: var(--leading-code);
   overflow: auto;
-  /* Место под скроллбар резервируется ТОЛЬКО здесь и в двух других
-     растущих областях (.inst-code, .inst-diff-body). На обычной панели это
-     оборачивалось мёртвой полосой в 10px у правого края, которой нет у
-     шапки и тулбара выше, — содержимое переставало с ними совпадать.
-     Резервировать имеет смысл там, где содержимое реально прибывает.   */
+  /* Room for a scrollbar is reserved ONLY here and in the two other growing
+     regions (.inst-code, .inst-diff-body). On an ordinary panel it turns into
+     a dead 10px strip at the trailing edge that the header and toolbar above
+     do not have — and the content stops lining up with them. Reserving makes
+     sense where content actually arrives.                              */
   scrollbar-gutter: stable;
 }
 
@@ -5024,9 +5031,9 @@ hr {
   &[data-tone="error"] { --level-ink: var(--err-text); color: var(--err-text); }
 }
 
-/* Ширина в ch, а не по контенту. Сетка объявлена на СТРОКЕ, то есть у каждой
-   строки она своя: по содержимому колонка уровня меняла бы ширину от слова к
-   слову, и сообщение уезжало бы на каждом error.                          */
+/* Width in ch, not by content. The grid is declared on the ROW, so every row
+   has its own: sized by content, the level column would change width from
+   word to word, and the message would shift on every error.               */
 .inst-log-time  { inline-size: 8ch; color: var(--text-muted); }
 .inst-log-level { inline-size: 5ch; color: var(--level-ink, var(--text-muted)); }
 
@@ -5041,22 +5048,22 @@ hr {
   scrollbar-gutter: stable;
 }
 
-/* Листинг с номерами строк.
+/* A listing with line numbers.
 
-   У .inst-code нумерации не было вовсе, а у .inst-diff-line она есть — но это
-   ДИФ: две колонки номеров (было и стало) и колонка знака. Обычный листинг
-   такой формой не собрать, и на чужом интерфейсе это пришлось писать местным
-   классом дважды.
+   .inst-code has no numbering of its own, while .inst-diff-line does — but
+   that is a DIFF: two number columns (before and after) and a sign column. An
+   ordinary listing cannot be assembled from that shape, and in somebody
+   else's interface it had to be written twice with a local class.
 
-   Номер берёт --text-muted, а не --text-faint: его ЧИТАЮТ — по нему находят
-   место в файле и на него ссылаются в разговоре. На декоративном ярусе он
-   давал 3.59 при норме 4.5, и это ровно тот промах, что уже был у многоточия
-   пагинации и у прочерка «значения нет».
+   The number takes --text-muted rather than --text-faint: it is READ — people
+   find a place in a file by it and quote it out loud. On the decorative tier
+   it gives 3.59 against a norm of 4.5, the very same miss the pagination
+   ellipsis and the "no value" dash already had.
 
-   Ширина колонки в ch, а не по содержимому: иначе на сотой строке номер
-   становится шире, и весь код уезжает вправо на один знак.
+   Column width in ch, not by content: otherwise at line one hundred the
+   number grows wider and the whole listing shifts by one character.
 
-   Разметка: .inst-code > .inst-code-line > (.inst-code-num + .inst-code-src) */
+   Markup: .inst-code > .inst-code-line > (.inst-code-num + .inst-code-src) */
 .inst-code--numbered {
   padding-inline: 0;
 
@@ -5073,21 +5080,22 @@ hr {
 .inst-code-num {
   color: var(--text-muted);
   text-align: end;
-  /* Номер не выделяется мышью: копируют код, а не разметку страницы. */
+  /* The number is not selectable: people copy the code, not the page. */
   user-select: none;
 }
 
-/* anywhere живёт ТОЛЬКО здесь, на колонке кода. На строке он уменьшил бы её
-   минимальную ширину до знака и схлопнул обе колонки. */
+/* `anywhere` lives ONLY here, on the code column. On the row it would shrink
+   the minimum width to one character and collapse both columns. */
 .inst-code-src { white-space: pre-wrap; overflow-wrap: anywhere; }
 
-/* Чип инлайнового кода — ТОЛЬКО вне <pre>.
+/* The inline-code chip — ONLY outside <pre>.
 
-   Без «:not(pre) >» правило било и по <code> внутри блока кода. Инлайновый
-   элемент получает горизонтальный отступ в начале своего бокса, то есть на
-   ПЕРВОЙ строке, — и весь блок съезжал на пять пикселей одной строкой.
-   Найти это глазами трудно: смещение меньше знака, и заметно оно только
-   если сравнить первую строку с закрывающей. */
+   Without the `:not(pre) >` the rule also hits <code> inside a code block. An
+   inline element takes its horizontal padding at the start of its box, that
+   is on the FIRST line — and the whole block shifts five pixels on one line
+   only. The eye has trouble finding that: the offset is smaller than a
+   character, and it shows only when the first line is compared with the
+   closing one. */
 :not(pre) > code:not(.inst-code) {
   padding: 1px 5px;
   border-radius: var(--radius-xs);
@@ -5095,28 +5103,29 @@ hr {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Дерево
+   Tree
 
-   Разметка: role="tree" на контейнере, role="treeitem" + aria-level на
-   узлах, roving tabindex — на слое, где есть JS. Без ролей aria-expanded
-   и aria-selected на голых div невалидны.
+   Markup: role="tree" on the container, role="treeitem" + aria-level on the
+   nodes, the roving tabindex on the layer that has JS. Without the roles,
+   aria-expanded and aria-selected on bare divs are invalid.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-tree { font-size: var(--text-sm); }
 
-/* Направляющие вложенности.
+/* Nesting guides.
 
-   Глубину дерево отбивает отступом, и на двух-трёх уровнях этого довольно. На
-   файловом дереве в семь уровней — уже нет: глаз теряет, к какой ветке
-   относится строка, и вынужден считать отступы. Линия делает это за него.
+   A tree marks depth with indentation, and for two or three levels that is
+   enough. For a file tree seven levels deep it is not: the eye loses which
+   branch a row belongs to and has to count indents. The line counts for it.
 
-   Вариантом, а не умолчанием: у дерева задач и у дерева сцены уровней два, и
-   там линии были бы шумом.
+   A variant, not a default: a task tree and a scene tree are two levels deep,
+   and there the lines would be noise.
 
-   Рисуется фоном, а не рамкой у потомка: потомков у строки нет — дерево здесь
-   ПЛОСКИЙ список с --depth, а не вложенные списки, потому что виртуализация
-   плоского списка возможна, а вложенного нет. Позиция линии считается из того
-   же --size-indent, которым набран отступ, поэтому разъехаться они не могут. */
+   Drawn as a background rather than a border on a child: a row has no
+   children — the tree here is a FLAT list with --depth, not nested lists,
+   because a flat list can be virtualised and a nested one cannot. The
+   position of the line is computed from the same --size-indent the
+   indentation is set with, so the two cannot drift apart. */
 .inst-tree--guides > .inst-tree-item {
   background-image: repeating-linear-gradient(
     to right,
@@ -5154,7 +5163,7 @@ hr {
   transition: rotate var(--dur-1) var(--ease-out);
 }
 
-/* Лист: место под завиток сохраняется, чтобы подписи держали колонку. */
+/* A leaf keeps the room for its twist, so the labels hold their column. */
 .inst-tree-item:not([aria-expanded]) > .inst-tree-twist { background: none; }
 .inst-tree-item[aria-expanded="true"] > .inst-tree-twist { rotate: 90deg; }
 
@@ -5163,22 +5172,22 @@ hr {
 /* ── feedback.css → kit.components ─────────────────────────────── */
 @layer kit.components {
 /* ==========================================================================
-   instrument — сообщения
+   instrument — messages
 
-   Сноска, пустое состояние, баннер, аккордеон. То, чем интерфейс отвечает
-   человеку.
+   The note, the empty state, the banner, the accordion. What the interface
+   answers a human with.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Сноска — врезка в поток. Только левая граница, поэтому углы прямые.
+   Note — an aside inside the flow. Only a leading border, so square corners.
 
-   Тон несёт ИКОНКУ, а не только цвет полоски: без значка warn и error
-   отличаются друг от друга исключительно цветом — прямое нарушение
-   собственного закона «цвет не может быть единственным носителем».
+   A tone carries an ICON, not just the colour of the bar: without the glyph,
+   warn and error differ by colour and nothing else — a direct breach of the
+   kit's own law that colour may never be the only carrier.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-note {
@@ -5197,9 +5206,10 @@ hr {
     flex: none;
     inline-size: var(--size-icon);
     block-size: var(--size-icon);
-    /* Центрируется по ПЕРВОЙ СТРОКЕ текста, а не по верху блока: 1lh — это
-       реальная высота строки, поэтому формула сама подстраивается под кегль
-       и плотность. Ручной сдвиг на -1px задирал значок на 2.1px вверх. */
+    /* Centred on the FIRST LINE of the text rather than on the top of the
+       block: 1lh is the real line height, so the formula adapts to type size
+       and density by itself. A hand-tuned -1px lifts the glyph 2.1px too
+       high. */
     margin-block-start: calc((1lh - var(--size-icon)) / 2);
     background: var(--tone-ink);
   }
@@ -5207,9 +5217,9 @@ hr {
 
 }
 
-/* Иконки тона — общие для сноски и баннера. Один набор масок на два
-   компонента: дублировать data-URI значило бы завести второй источник
-   истины для формы значка.                                              */
+/* Tone glyphs, shared by the note and the banner. One set of masks for two
+   components: duplicating the data-URI would create a second source of truth
+   for the shape.                                                          */
 :is(.inst-note, .inst-banner)[data-tone="running"]::before, :is(.inst-note, .inst-banner)[data-tone="neutral"]::before {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M8 7.4v3.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='5.2' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
 }
@@ -5224,7 +5234,7 @@ hr {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Пустое состояние
+   Empty state
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-empty {
@@ -5242,15 +5252,16 @@ hr {
 .inst-empty-desc  { font-size: var(--text-xs); line-height: var(--leading-ui); max-inline-size: 44ch; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Баннер — сообщение уровня страницы
+   Banner — a page-level message
 
-   Это НЕ сноска. Сноска (.inst-note) — врезка в поток, она поясняет то, рядом с
-   чем стоит, и несёт только полосу у края. Баннер относится ко всему
-   экрану, поэтому у него заливка, рамка и место под действие: «доступ
-   истекает через три дня», «идёт обслуживание», «изменения не сохранены».
+   This is NOT a note. A note (.inst-note) is an aside inside the flow: it
+   explains whatever it stands next to and carries only a bar at its edge. A
+   banner is about the whole screen, so it has a fill, a border and room for
+   an action: "access expires in three days", "maintenance under way",
+   "changes not saved".
 
-   Тон несёт иконку — тот же общий набор масок, что у сноски.
-   Закрытие баннера — это JS: без него он остаётся на месте и не мешает.
+   The tone carries a glyph — the same shared set of masks as the note.
+   Dismissing a banner is JS; without it the banner stays put and is harmless.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-banner {
@@ -5270,32 +5281,34 @@ hr {
     flex: none;
     inline-size: var(--size-icon);
     block-size: var(--size-icon);
-    /* Центрируется по ПЕРВОЙ СТРОКЕ текста, а не по верху блока: 1lh — это
-       реальная высота строки, поэтому формула сама подстраивается под кегль
-       и плотность. Ручной сдвиг на -1px задирал значок на 2.1px вверх. */
+    /* Centred on the FIRST LINE of the text rather than on the top of the
+       block: 1lh is the real line height, so the formula adapts to type size
+       and density by itself. A hand-tuned -1px lifts the glyph 2.1px too
+       high. */
     margin-block-start: calc((1lh - var(--size-icon)) / 2);
     background: var(--tone-ink, var(--text-secondary));
   }
   &:not([data-tone])::before { content: none; }
 }
 
-/* Мера обрезает ТЕЛО, а не сам баннер: подложка сообщения уровня страницы
-   обязана идти во всю ширину, а текст на ней — нет. Без этого на широком
-   дашборде строка доходила до 105 знаков при норме 45–75. */
+/* The measure clips the BODY, not the banner: the ground of a page-level
+   message has to run the full width, and the text on it does not. Without
+   this a wide dashboard stretches a line to 105 characters against a norm of
+   45–75. */
 .inst-banner-body { min-inline-size: 0; max-inline-size: var(--measure); }
 .inst-banner-title { font-weight: var(--weight-medium); }
 .inst-banner-text { color: var(--text-secondary); }
 .inst-banner-actions { flex: none; display: flex; flex-wrap: wrap; gap: var(--space-3); margin-inline-start: auto; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Аккордеон
+   Accordion
 
-   На <details>, поэтому раскрытие, клавиатура и роль достаются от
-   платформы. Атрибут name на элементах делает группу взаимоисключающей —
-   открытой остаётся ровно одна секция, и тоже без единой строки JS.
+   Built on <details>, so disclosure, keyboard and role all come from the
+   platform. A name attribute on the items makes the group mutually
+   exclusive — exactly one section stays open, and again without a line of JS.
 
-   Это не .inst-step: шаг — строка вызова инструмента с телом, аккордеон —
-   раздел содержимого. Разные работы.
+   This is not .inst-step: a step is the row of a tool call with a body, an
+   accordion is a section of content. Different jobs.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-accordion { display: flex; flex-direction: column; gap: var(--space-1); }
@@ -5340,23 +5353,24 @@ hr {
 
 .inst-accordion-body { padding: var(--pad-panel) var(--pad-cell-x); }
 
-/* Раскрывашка ВНУТРИ чужой рамки: панели, карточки, поля примера.
+/* A disclosure INSIDE somebody else's frame: a panel, a card, an example
+   field.
 
-   Своя рамка была бы второй в пикселе от первой, а своё скругление —
-   скруглением внутри скругления, которое ни с чем не концентрично. Остаётся
-   только шов сверху: раскрывашка продолжает то, под чем стоит, а не
-   объявляет себя отдельным блоком.                                        */
+   A border of its own would be a second one a pixel from the first, and a
+   corner radius of its own would be a rounding inside a rounding, concentric
+   with nothing. Only the seam above remains: the disclosure continues
+   whatever it stands under instead of declaring itself a separate block. */
 .inst-accordion-item--flush {
   border: 0;
   border-radius: 0;
   background: none;
   border-block-start: var(--hairline) solid var(--border-subtle);
 
-  /* Отступ по краю берётся у ПАНЕЛИ, а не у ячейки. Отдельно стоящий
-     аккордеон отбивает заголовок как строку списка (--pad-cell-x), но внутри
-     рамы это чужая мера: подпись панели стоит на --pad-panel, и ручка внизу
-     обязана встать по той же вертикали. Иначе у одной рамы два разных края —
-     8 и 6 в плотном, 16 и 12 в свободном. */
+  /* The edge padding comes from the PANEL, not from the cell. A free-standing
+     accordion sets its head off like a list row (--pad-cell-x), but inside a
+     frame that is the wrong measure: the panel title sits on --pad-panel, and
+     the handle below has to stand on the same vertical. Otherwise one frame
+     has two different edges — 8 and 6 in compact, 16 and 12 in comfortable. */
   & > .inst-accordion-head,
   & > .inst-accordion-body { padding-inline: var(--pad-panel); }
 }
@@ -7934,27 +7948,28 @@ html:has(dialog:modal) { overflow: hidden; }
 /* ── forced.css → kit.forced ─────────────────────────────── */
 @layer kit.forced {
 /* ==========================================================================
-   instrument — принудительные цвета (Windows High Contrast)
+   instrument — forced colours (Windows High Contrast)
 
-   Отдельный файл, потому что отдельный СЛОЙ, и слой здесь — вся суть, ровно
-   как у motion.css.
+   A file of its own because a LAYER of its own, and the layer is the whole
+   point here, exactly as in motion.css.
 
-   Целевая платформа — Windows, а весь кит построен на «хайрлайн плюс перепад
-   поверхностей». В forced-colors фоны и альфа-рамки сбрасываются на системные,
-   и без этих правил панели, поля, карточки и выделение схлопываются в одну
-   плоскость.
+   The platform in question is Windows, and the entire kit is built on
+   "hairline plus a step between surfaces". Under forced-colors the fills and
+   the alpha borders are reset to system ones, and without these rules the
+   panels, fields, cards and the selection collapse into one flat plane.
 
-   Значит правила обязаны перебивать компоненты — а специфичность у них ниже,
-   чем у `.inst-table tbody tr[aria-selected="true"] td`. Через !important это
-   решается и ломает обещание «стили приложения выигрывают без !important»:
-   важное объявление внутри слоя бьёт и неважное объявление приложения вне
-   слоёв. Порядок слоёв даёт нужное бесплатно: kit.forced объявлен после
-   компонентов и оверлеев, но раньше движения и печати.
+   So the rules have to beat the components — and their specificity is lower
+   than `.inst-table tbody tr[aria-selected="true"] td`. Through !important
+   that works, and it breaks the promise that application styles win without
+   !important: an important declaration inside a layer beats an unimportant
+   declaration the application made outside every layer. Layer order gives
+   what is needed for free: kit.forced is declared after the components and
+   the overlays, and before motion and print.
 
-   Своего файла у блока не было, и лежал он в конце agent.css — не потому что
-   относится к агентному слою, а потому что kit.agent последний из слоёв, откуда
-   можно перебить всё разом. Сквозная забота внутри тематического файла
-   находится не там, где её ищут.
+   A cross-cutting concern kept inside a thematic file is not where anyone
+   looks for it. This one belongs to no component: it is the answer the whole
+   kit gives to one system setting, and the only place that answer can be
+   given from is a layer that outranks every component at once.
    ========================================================================== */
 
 @media (forced-colors: active) {
@@ -7967,7 +7982,7 @@ html:has(dialog:modal) { overflow: hidden; }
     border: var(--stroke) solid CanvasText;
   }
 
-  /* Заливки, которые несут значение, обязаны пережить сброс. */
+  /* A fill that carries meaning has to survive the reset. */
   .inst-meter-fill, .inst-lane-span, .inst-switch > input:checked, .inst-dot {
     forced-color-adjust: none;
     background: Highlight;
@@ -7979,18 +7994,18 @@ html:has(dialog:modal) { overflow: hidden; }
     color: HighlightText;
   }
 
-  /* Кольцо занятой кнопки. Без этого правила forced-colors красит ВСЕ
-     четыре рамки в CanvasText, кольцо становится равномерным — и вращение
-     перестаёт быть видно вовсе. Дуга обязана отличаться от дорожки, иначе
-     индикатор не индицирует.                                             */
+  /* The ring of a busy button. Without this rule forced-colors paints ALL
+     four borders CanvasText, the ring turns even — and the spin stops being
+     visible at all. The arc has to differ from the track, or the indicator
+     indicates nothing.                                                    */
   .inst-btn[aria-busy="true"]::after {
     forced-color-adjust: none;
     border-color: ButtonFace;
     border-block-start-color: ButtonText;
   }
 
-  /* Маскированные глифы в forced-colors теряют цвет фона — переводим их
-     на системный текст.                                                  */
+  /* Masked glyphs lose their background colour under forced-colors, so they
+     move to the system text colour.                                       */
   .inst-tree-twist, .inst-step-twist, .inst-select-wrap::after,
   .inst-note::before, .inst-approval-head::before, .inst-failure-head::before {
     background: CanvasText;
@@ -8002,63 +8017,66 @@ html:has(dialog:modal) { overflow: hidden; }
 /* ── motion.css → kit.motion ─────────────────────────────── */
 @layer kit.motion {
 /* ==========================================================================
-   instrument — движение при prefers-reduced-motion
+   instrument — motion under prefers-reduced-motion
 
-   Отдельный файл, потому что отдельный СЛОЙ, и слой здесь — вся суть.
+   A file of its own because a LAYER of its own, and the layer is the whole
+   point.
 
-   Правило должно перебивать компоненты (у .inst-btn специфичность выше, чем у *)
-   и при этом не перебивать приложение. Через !important это решается, но
-   !important внутри слоя выигрывает и у неважных объявлений приложения вне
-   слоёв — то есть кит нарушал собственное обещание «стили приложения всегда
-   выигрывают без !important».
+   The rule has to beat the components (.inst-btn outranks * on specificity)
+   and must not beat the application. Through !important that works, but
+   !important inside a layer also beats the unimportant declarations the
+   application made outside every layer — that is the kit breaking its own
+   promise that application styles always win without !important.
 
-   Каскадные слои дают ровно нужное поведение бесплатно: kit.motion объявлен
-   последним, поэтому выигрывает у kit.components независимо от
-   специфичности, а любое неслойное объявление приложения выигрывает у него.
+   Cascade layers give exactly the behaviour wanted, for free: kit.motion is
+   declared last, so it wins over kit.components whatever the specificity, and
+   any unlayered declaration by the application wins over it.
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
-  /* Переходы схлопываются, а не выключаются: машины состояний, слушающие
-     transitionend, продолжают работать.                                   */
+  /* Transitions collapse rather than switch off: a state machine listening
+     for transitionend keeps working.                                      */
   *, *::before, *::after {
     transition-duration: 0.01ms;
     animation-delay: 0ms;
     scroll-behavior: auto;
   }
 
-  /* А вот бесконечные индикаторы активности схлопывать НЕЛЬЗЯ. Сжатая до
-     0.01ms анимация с одной итерацией — это не «сжатие длительности», это
-     остановка: спиннер замирает в случайной фазе, точка перестаёт
-     пульсировать, каретка застывает. Кит, вся работа которого — показывать,
-     что машина занята, переставал показывать, что машина занята.
+  /* Endless activity indicators, though, must NOT be collapsed. An animation
+     squeezed to 0.01ms is not a shortened duration, it is a stop: the spinner
+     freezes at a random phase, the dot stops pulsing, the caret goes still. A
+     kit whose entire job is to show that the machine is busy would stop
+     showing that the machine is busy.
 
-     Поэтому здесь они замедляются до частоты, которая читается как «идёт»,
-     но не дёргает периферийное зрение. Движение, от которого укачивает, —
-     это амплитуда и частота, а не сам факт движения.                      */
+     So here they slow down to a rate that still reads as "running" without
+     tugging at peripheral vision. What makes motion sickening is amplitude
+     and frequency, not the fact of moving.                                */
 
   .inst-spinner { animation-duration: 2.4s; }
-  /* Кольцо занятой кнопки крутится теми же кадрами, значит и замедляется
-     вместе со спиннером. Оно тут не для красоты: пока оно вращается,
-     подпись кнопки погашена, и остановленное кольцо превращает кнопку в
-     пустой прямоугольник без единого признака, что что-то происходит. */
+  /* The ring of a busy button spins on the same keyframes, so it slows down
+     together with the spinner. It is not decoration: while it turns, the
+     button label is dimmed, and a stopped ring turns the button into an empty
+     rectangle with no sign that anything is happening at all. */
   .inst-btn[aria-busy="true"]::after { animation-duration: 2.4s; }
   .inst-skeleton { animation-duration: 3s; }
   .inst-meter[data-state="indeterminate"] > .inst-meter-fill { animation-duration: 3s; }
 
-  /* Все точки, которые пульсируют: собственный тон, тон родителя-бейджа,
-     состояние строки очереди и состояние шага.
+  /* Every dot that pulses: its own tone, the tone of a badge around it, the
+     state of a queue row and the state of a step.
 
-     Список обязан совпадать с тем, что заводит inst-pulse, и держалось это
-     на памяти. Теперь сторожит cmd/registry, и сторожит выводом, а не
-     объявлением: замедлять надо ровно то, у чего бесконечная анимация. */
+     The list has to match whatever starts inst-pulse, and nothing but memory
+     could hold it to that. cmd/registry guards it now, and guards it by
+     OUTPUT rather than by declaration: what must be slowed is exactly what
+     has an endless animation. */
   [data-tone="running"] .inst-dot,
   .inst-dot[data-tone="running"],
   .inst-task[data-state="running"] .inst-dot,
   .inst-step[data-state="running"] .inst-dot { animation-duration: 3s; }
 
-  /* Каретка — исключение из исключения: мигание не несёт информации о
-     скорости, только о факте. Гасим мигание, оставляем саму каретку.      */
+  /* The caret is the exception to the exception: its blink carries no
+     information about rate, only about the fact. The blink goes, the caret
+     stays.                                                                */
   .inst-caret { animation: none; opacity: 1; }
 }
 
@@ -8067,34 +8085,35 @@ html:has(dialog:modal) { overflow: hidden; }
 /* ── print.css → kit.print ─────────────────────────────── */
 @layer kit.print {
 /* ==========================================================================
-   instrument — печать
+   instrument — print
 
-   Отдельный файл, потому что отдельный СЛОЙ, и он объявлен последним:
-   печатным правилам надо перебивать компоненты, и порядок слоёв делает это
-   без единого !important — ровно так же, как с prefers-reduced-motion.
+   A file of its own because a LAYER of its own, and it is declared last:
+   print rules have to beat the components, and layer order does that without
+   a single !important — exactly as with prefers-reduced-motion.
 
-   Админки печатают и выгружают в PDF отчёты, таблицы и списки задач. Без
-   этих правил на бумагу уходили бы тёмные поверхности, обрезанные области
-   прокрутки и колонка навигации на треть листа.
+   Back offices print reports, tables and task lists, and export them to PDF.
+   Without these rules the paper would carry dark surfaces, clipped scroll
+   regions and a navigation column taking a third of the sheet.
    ========================================================================== */
 
 @media print {
 
-  /* Главное правило: печатается СВЕТЛАЯ тема, какая бы ни стояла на экране.
-     Смены color-scheme ДЛЯ ЭТОГО НЕ ХВАТАЕТ, и это стоило белого текста на
-     белой бумаге в тёмных темах.
+  /* The first rule: paper gets the LIGHT theme, whatever is set on screen.
+     Switching color-scheme IS NOT ENOUGH for that, and the shortfall costs
+     white text on white paper in the dark themes.
 
-     light-dark() действительно переключается вместе со схемой — но «серая»
-     задаёт поверхности НЕ через light-dark(), а прямым присвоением шага
-     рампы (tokens.css, ручка глубины). Прямое присвоение про схему ничего
-     не знает: на печати оставались surface на
-     --n-10…--n-13 и --text-primary на --n-1, то есть белое по тёмному, а с
-     выключенной печатью фонов — белое по белому.
+     light-dark() does switch along with the scheme — but the "soft" theme
+     sets its surfaces NOT through light-dark(), by assigning a ramp step
+     directly (tokens.css, the depth knob). A direct assignment knows nothing
+     about the scheme: printing would keep surface on --n-10…--n-13 and
+     --text-primary on --n-1, that is white on dark — and with background
+     printing off, white on white.
 
-     Поэтому здесь возвращается ВСЁ, что задано прямым присвоением: пять
-     поверхностей и четыре подписи статусов. Дорожки тут нет — она объявлена
-     через light-dark() и переключается сама. Селектор [data-theme]
-     без значения — любая заданная тема, включая ещё не написанную шестую.  */
+     So everything set by direct assignment is restored here: five surfaces
+     and four status labels. The track is not among them — it is declared
+     through light-dark() and switches by itself. The selector [data-theme]
+     with no value means any theme that is set, including a sixth nobody has
+     written yet.                                                          */
   :root, [data-theme] {
     color-scheme: light;
 
@@ -8112,7 +8131,7 @@ html:has(dialog:modal) { overflow: hidden; }
 
   body { background: none; }
 
-  /* Хром приложения на бумаге не нужен: он не данные. */
+  /* The application chrome is not wanted on paper: it is not data. */
   .inst-shell-aside,
   .inst-page-actions,
   .inst-form-actions,
@@ -8122,15 +8141,15 @@ html:has(dialog:modal) { overflow: hidden; }
   .inst-copy,
   .inst-segmented { display: none; }
 
-  /* Оболочка разворачивается в обычный поток: три независимо
-     прокручиваемые области на листе не имеют смысла.                     */
+  /* The shell unfolds into ordinary flow: three independently scrollable
+     regions make no sense on a sheet.                                    */
   .inst-shell {
     display: block;
     block-size: auto;
   }
 
-  /* Всё, что на экране прокручивалось, на бумаге печатается целиком.
-     Иначе лог обрывается на первом экране и молча теряет остальное.      */
+  /* Whatever scrolled on screen prints in full on paper. Otherwise the log
+     breaks off at the first screenful and silently loses the rest.       */
   .inst-shell-main,
   .inst-panel-body,
   .inst-log,
@@ -8142,49 +8161,51 @@ html:has(dialog:modal) { overflow: hidden; }
     max-block-size: none;
   }
 
-  /* Свёрнутый вывод на печати разворачивается: обрезка была экранной
-     экономией места, а на листе она превращается в потерю данных.        */
+  /* Collapsed output unfolds when printed: the clipping saves screen space,
+     and on a sheet the same clipping is lost data.                       */
   .inst-output[data-truncated="true"] > .inst-output-body { mask-image: none; }
   .inst-output-more { display: none; }
 
-  /* Раскрыть все свёрнутые шаги: закрытый <details> на бумаге —
-     невосстановимо потерянное содержимое.
+  /* Open every collapsed step: a closed <details> on paper is content lost
+     beyond recovery.
 
-     Через display это не делается: браузер закрытый <details> прячет не им —
-     содержимое лежит в слоте с content-visibility: hidden, и `display:
-     revert` на нём не меняет ничего. Замерено: высота блока с таким правилом
-     33px, без него 33px, у открытого 135px.
+     display cannot do it. A browser does not hide a closed <details> with
+     display — the content sits in a slot with content-visibility: hidden, and
+     `display: revert` on it changes nothing. Measured: the block is 33px high
+     with that rule, 33px without it, and 135px when open.
 
-     Правильная ручка — псевдоэлемент ::details-content. Правило через display
-     оставлено запасным для движков, которые всё ещё прячут через display.  */
+     The handle that works is the ::details-content pseudo-element. The
+     display rule stays as a fallback for engines that still hide through
+     display.                                                              */
   details { display: block; }
   details > summary { list-style: none; }
   details:not([open]) > :not(summary) { display: revert; }
   details::details-content { content-visibility: visible; }
 
-  /* Блоки не рвутся между листами. */
+  /* Blocks do not tear across sheets. */
   .inst-panel, .inst-card, .inst-metric, .inst-approval, .inst-failure, .inst-diff, .inst-banner { break-inside: avoid; }
   tr, .inst-task, .inst-step, .inst-log-line, .inst-prop { break-inside: avoid; }
   h1, h2, h3, .inst-page-title, .inst-section-title, .inst-panel-title { break-after: avoid; }
 
-  /* Шапка таблицы повторяется на каждом листе. */
+  /* A table head repeats on every sheet. */
   .inst-table thead { display: table-header-group; }
   .inst-table tfoot { display: table-footer-group; }
 
-  /* Тени на бумаге не воспроизводятся, но съедают тонер по краям. */
+  /* Shadows do not reproduce on paper, but they do eat toner at the edges. */
   .inst-panel, .inst-card, .inst-dialog, .inst-popover { box-shadow: none; }
 
-  /* Оверлеи печатать нечего: они по определению временные. */
+  /* There is nothing to print in an overlay: it is temporary by definition. */
   .inst-popover, .inst-tooltip-text, .inst-toasts, dialog { display: none; }
 
-  /* Адрес ссылки виден только на экране — на бумаге его надо написать. */
+  /* A link address is visible only on screen — on paper it has to be
+     written out. */
   .inst-prose a[href^="http"]::after {
     content: " (" attr(href) ")";
     font-size: 0.85em;
     color: var(--text-muted);
   }
 
-  /* Индикаторы активности на листе бессмысленны: печать статична. */
+  /* Activity indicators mean nothing on a sheet: print is still. */
   .inst-spinner, .inst-caret, .inst-skeleton { display: none; }
   .inst-meter[data-state="indeterminate"] > .inst-meter-fill { display: none; }
 }
