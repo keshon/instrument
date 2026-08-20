@@ -152,31 +152,22 @@ async function inPage(url, expr, swap) {
       await withTimeout(loaded, CMD_TIMEOUT, 'page did not load');
     }
 
-    /* The load event is not proof that THIS page loaded.
+    /* The page is asked who it is before a word is measured.
      *
-     * The tab starts at about:blank, and about:blank fires a load of its own.
-     * On a warm run that has happened before the listener exists; on a cold
-     * one it arrives just after, gets taken for the navigation, and the page
-     * is measured while it is still blank. The result is not an error — it is
-     * four sections reporting 0/0 and a run that says "clean" while checking
-     * five things fewer than the run before it.
-     *
-/* The page is asked who it is before a word is measured.
-     *
-     * Address and readyState are not enough on their own. A 404 answers both:
-     * right URL, parsing finished, nineteen bytes of "404 page not found" and
-     * no page at all. That is not hypothetical — a second build writing into
-     * site/dist under a running server produces exactly it for a few seconds,
-     * and the run before this check existed reported four sections of 0/0 and
-     * the word "clean".
+     * A load event is not proof that the page arrived, and neither are the
+     * address and readyState: a 404 answers all three. Right URL, parsing
+     * finished, nineteen bytes of "404 page not found" and no page at all —
+     * which reads as four sections of 0/0, zero violations and the word
+     * "clean". Not hypothetical: a second build writing into site/dist under
+     * a running server serves exactly that for a few seconds.
      *
      * So the last condition is the one this gate actually depends on: the
-     * module tag it imports the kit from. A page without it is not a page this
-     * check can say anything about, and saying nothing quietly is the failure
-     * being guarded against.
+     * module tag it imports the kit from. A page without it is not a page
+     * this check can say anything about, and saying nothing quietly is the
+     * failure being guarded against.
      *
-     * `roots` is the tell that found this: it builds its own probes, so it
-     * cannot legitimately report 0/0 on any real page. */
+     * `roots` is the tell that found it: that section builds its own probes,
+     * so it cannot honestly report 0/0 on any real page. */
     let ready = null;
     for (let i = 0; i < 100; i++) {
       const at = await send('Runtime.evaluate', {
@@ -254,6 +245,38 @@ const MUTATIONS = [
     from: '    observers.get(root)?.disconnect();',
     to: '    observers.get([...observers.keys()][0])?.disconnect();',
     why: 'one root stops updating silently, and stop() can no longer reach the orphan',
+  },
+  {
+    name: 'a disabled item is dropped from the group',
+    section: 'disabled',
+    page: '/components/overlays/menu/',
+    from: '      el.closest(GROUP_SELECTOR) === group &&\n      !el.disabled &&',
+    to: "      el.closest(GROUP_SELECTOR) === group &&\n      el.getAttribute('aria-disabled') !== 'true' &&\n      !el.disabled &&",
+    why: 'never written to, the native button keeps tabIndex 0 — arrows skip it and Tab stops on it',
+  },
+  {
+    name: 'a disabled item still selects',
+    section: 'disabled',
+    page: '/components/actions/chip/',
+    from: '  if (isDisabled(to)) return;',
+    to: '  if (false) return;',
+    why: 'the kit answers a press on "you cannot" by calling the application',
+  },
+  {
+    name: 'Enter presses a disabled item anyway',
+    section: 'disabled',
+    page: '/components/overlays/menu/',
+    from: '      if (!isDisabled(item)) item.click();',
+    to: '      item.click();',
+    why: 'the kit answers a press on "you cannot" by calling the application on the human behalf',
+  },
+  {
+    name: 'the twist is drawn pressable and does nothing',
+    section: 'expand',
+    page: '/agent/tree/',
+    from: "  const twist = e.target.closest?.('.inst-tree-twist');",
+    to: "  const twist = null && e.target.closest?.('.inst-tree-twist');",
+    why: 'cursor: pointer and a ninety-degree turn promise a control the mouse cannot use',
   },
 ];
 

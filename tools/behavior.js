@@ -18,6 +18,8 @@
  *   collapse  collapsing a tree node keeps the tree reachable
  *   popover   opening a popover gives its group a roving tabindex
  *   roots     two roots keep two live observers
+ *   disabled  an aria-disabled item is walked to and cannot be acted on
+ *   expand    clicking a tree twist opens the node it is drawn on
  *
  * Paste it into the console on any page of the reference and call
  * `kitBehavior.run()`. tools/behavior-run.mjs does the same over every page.
@@ -52,19 +54,21 @@
 
   /* Items of a group, as the kit counts them.
    *
-   * aria-disabled items are excluded here for one reason only: the kit
-   * excludes them. Whether that is right is an open question about the kit,
-   * not about this file, and answering it here would hide it. */
+   * aria-disabled is NOT a reason to leave an item out: a disabled item stays
+   * discoverable by arrow, so it takes part in the roving tabindex like any
+   * other. `disabled` is, because the platform removes it from the tab order
+   * itself. */
   function itemsOf(group, { withHidden = false } = {}) {
     const sel = GROUPS[group.getAttribute('role')];
     return [...group.querySelectorAll(sel)].filter(
       (el) =>
         el.closest(GROUP_SELECTOR) === group &&
-        el.getAttribute('aria-disabled') !== 'true' &&
         !el.disabled &&
         (withHidden || el.offsetParent !== null),
     );
   }
+
+  const isDisabled = (el) => el.getAttribute('aria-disabled') === 'true';
 
   const owned = (group) => group.dataset.roving !== 'manual';
 
@@ -172,7 +176,14 @@
      Focus is what hides this: the first Tab into a menu repairs it, so by the
      time anyone looks, it looks right. The check therefore opens the popover
      and reads the group WITHOUT focusing anything. */
-  async function checkPopover() {
+  /* Open popovers are handed to `disabled` on the way past.
+   *
+   * Every aria-disabled item in the reference lives in a menu, every menu
+   * lives in a popover, and a closed popover is not rendered — so a `disabled`
+   * section that only ever read the document reported 0/0 on the one page
+   * built to exercise it. Opening popovers is work this section already does;
+   * doing it twice would double the slowest part of the run. */
+  async function checkPopover(disabled) {
     const s = section();
     for (const pop of document.querySelectorAll('[popover]')) {
       const groups = [...pop.querySelectorAll(GROUP_SELECTOR)].filter(owned);
@@ -225,6 +236,7 @@
           fail(s, where(group) + ' in an open popover', '1 tab stop', `${stops} of ${items.length}`);
         }
       }
+      checkDisabled(pop, disabled);
       try { pop.hidePopover(); } catch {}
       await frames(1);
     }
@@ -316,6 +328,103 @@
     return s;
   }
 
+  /* ── disabled ────────────────────────────────────────────────────────────
+     An aria-disabled item is a promise with two halves, and the halves pull
+     against each other: it must stay reachable, so the arrows still walk to
+     it and the roving tabindex still writes to it; and it must do nothing, so
+     neither a click nor Enter may move the group's selection.
+
+     Leaving it out of the group satisfies neither half. The item then never
+     receives -1, the native button keeps 0, and the result is the exact
+     inverse of what was promised: arrows skip it, Tab stops on it. */
+  function checkDisabled(root, s) {
+    for (const group of root.querySelectorAll(GROUP_SELECTOR)) {
+      if (!owned(group) || !rendered(group)) continue;
+      const items = itemsOf(group);
+      const off = items.filter(isDisabled);
+      if (!off.length) continue;
+
+      for (const el of off) {
+        // Half one: written to, therefore counted. An item the kit never
+        // touches keeps the tabIndex the platform gave it.
+        s.checked++;
+        if (!el.hasAttribute('tabindex')) {
+          fail(s, where(group) + ' disabled item', 'a roving tabindex', 'no tabindex attribute at all');
+          continue;
+        }
+
+        /* Half two: acted on, therefore inert.
+         *
+         * Watched through inst:select rather than through the state
+         * attribute. A menu has no state attribute at all — its items are
+         * actions, not choices — and that is exactly where aria-disabled is
+         * used most, so a check that read attributes would have skipped its
+         * whole population and reported the halves it did measure as if they
+         * were the promise. */
+        s.checked++;
+        let fired = false;
+        const spy = () => { fired = true; };
+        group.addEventListener('inst:select', spy);
+        el.click();
+        group.removeEventListener('inst:select', spy);
+        if (fired) {
+          fail(s, where(group) + ' disabled item', 'a click does nothing', 'inst:select was emitted');
+        }
+
+        /* Half three: Enter must not be answered with a synthesised click.
+         *
+         * For a MENU this is the whole promise and the only half there is.
+         * Its items are actions rather than choices, so no state moves and
+         * inst:select is emitted for nobody — which means half two can never
+         * fail there, and a check that stopped at half two would leave the
+         * component where aria-disabled is used most entirely unguarded while
+         * reporting a number. */
+        s.checked++;
+        let clicked = false;
+        const watch = () => { clicked = true; };
+        el.addEventListener('click', watch);
+        el.focus();
+        el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        el.removeEventListener('click', watch);
+        if (clicked) {
+          fail(s, where(group) + ' disabled item', 'Enter does nothing', 'it synthesised a click');
+        }
+      }
+    }
+  }
+
+  /* ── expand ──────────────────────────────────────────────────────────────
+     The twist carries cursor: pointer and turns ninety degrees on
+     aria-expanded. That is a control, drawn. A drawn control that does
+     nothing under the mouse is the kit lying about itself in the one language
+     a reader cannot help but read. */
+  async function checkExpand() {
+    const s = section();
+    for (const tree of document.querySelectorAll('[role="tree"]')) {
+      if (!owned(tree) || !rendered(tree)) continue;
+      for (const node of tree.querySelectorAll('[role="treeitem"][aria-expanded]')) {
+        const twist = node.querySelector('.inst-tree-twist');
+        if (!twist || !rendered(twist)) continue;
+
+        const before = node.getAttribute('aria-expanded');
+        s.checked++;
+        twist.click();
+        await sleep(0);
+        const after = node.getAttribute('aria-expanded');
+        if (after === before) {
+          fail(s, where(tree) + ' twist', `aria-expanded flips from ${before}`, 'unchanged');
+        }
+
+        // Put it back, whichever way it went.
+        if (after !== before) {
+          twist.click();
+          await sleep(0);
+        }
+      }
+    }
+    return s;
+  }
+
   /* The page names its own module, so the same file works against a served
      site, a local build and an intercepted one. Guessing the path here would
      make the check pass against a kit that is not the one under test. */
@@ -335,10 +444,14 @@
       await frames(2);
 
       const url = moduleURL();
+      const disabled = section();
+      checkDisabled(document, disabled);
       const out = {
         roving: checkRoving(),
         collapse: await checkCollapse(),
-        popover: await checkPopover(),
+        popover: await checkPopover(disabled),
+        disabled,
+        expand: await checkExpand(),
         // Last on purpose: it calls start() on roots of its own, and until the
         // observer is per-root that call takes the document's observer with it.
         //

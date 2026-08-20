@@ -8,7 +8,7 @@ api:
   - { name: "inst-tree", kind: "класс", doc: "Контейнер" }
   - { name: "inst-tree--guides", kind: "модификатор", doc: "Вертикальные направляющие вложенности. Нужны от четырёх уровней; на двух были бы шумом" }
   - { name: "inst-tree-item", kind: "класс", doc: "Узел" }
-  - { name: "inst-tree-twist", kind: "класс", doc: "Треугольник раскрытия. Поворачивается по `aria-expanded`" }
+  - { name: "inst-tree-twist", kind: "класс", doc: "Треугольник раскрытия. Поворачивается по `aria-expanded`; щелчок по нему раскрывает узел и не переносит выбор" }
   - { name: "aria-expanded", kind: "атрибут", doc: "`true` · `false`. Только у узлов с детьми" }
   - { name: "aria-selected", kind: "атрибут", doc: "`true` · `false`" }
   - { name: "aria-level", kind: "атрибут", doc: "целое, с 1" }
@@ -106,10 +106,23 @@ group-en: "Agent layer"
 tree.addEventListener('inst:select', (e) => open(e.detail.value));
 ```
 
+Раскрытие: `←` и `→` с клавиатуры, щелчок по завитку мышью. Щелчок по самой
+строке выбирает узел и раскрытия не трогает — завиток и строка две разные
+цели, и то, что они соседи, не повод склеивать их смысл.
+
+```js
+tree.addEventListener('inst:expand', (e) => {
+  if (!e.detail.open) return;
+  e.preventDefault();          // строки снимет и покажет приложение
+  loadChildren(e.target);
+});
+```
+
 ### Что остаётся приложению
 
 Ленивая подгрузка детей. `instrument.js` переключил `aria-expanded` — приложение решает,
-надо ли идти за данными.
+надо ли идти за данными. Событие `inst:expand` отменяемо: приложение, которое
+рисует дерево из данных, снимет и покажет строки само.
 
 ## Правила
 
