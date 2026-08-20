@@ -356,9 +356,16 @@ var mutations = []mutation{
 	// the missing markup contract and the sections shape 2 no longer keeps —
 	// and that is honest while no page has migrated yet. The half that
 	// separates them lands together with the first migrated page.
-	{"a page declares shape 2 without moving to it", "site", "docs/components/actions/button.md",
-		"layout: component\nsource: src/actions.css",
-		"layout: component\nshape: 2\nsource: src/actions.css",
+	// The page has to be one still in shape 1, and it is picked from a section
+	// that has no index yet: such a section cannot migrate at all until the
+	// index exists, so the anchor will not move out from under the harness on
+	// the next migrated page.
+	//
+	// When the last page moves to shape 2 this mutation goes with it: it tests
+	// the transition, and the transition will be over.
+	{"a page declares shape 2 without moving to it", "site", "docs/components/display/tag.md",
+		"layout: component\nsource: src/data.css",
+		"layout: component\nshape: 2\nsource: src/data.css",
 		"a half-migrated page passes neither dictionary, and the gate has to name which one it fails"},
 	// The two halves of the new rule, each on its own, now that a migrated page
 	// exists to break. The mutation above fires on both at once and cannot tell
