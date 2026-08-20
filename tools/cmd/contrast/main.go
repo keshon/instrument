@@ -1,18 +1,18 @@
-// Команда contrast проверяет контраст токенов кита против порогов WCAG.
+// The contrast command checks the kit's token contrast against WCAG thresholds.
 //
-// Читает НАСТОЯЩИЙ src/tokens.css и резолвит семантику так же, как браузер:
-// var() рекурсивно, light-dark() по режиму, color-mix(… transparent) в альфу,
-// oklch() в sRGB. Поэтому проверка не может разойтись с китом — она не
-// дублирует значения, она их вычисляет.
+// It reads the ACTUAL src/tokens.css and resolves semantics the same way the
+// browser does: var() recursively, light-dark() by scheme,
+// color-mix(… transparent) into alpha, oklch() into sRGB. Therefore the check
+// cannot diverge from the kit — it does not duplicate values, it computes them.
 //
-// Правило приёмки:
+// Acceptance rule:
 //
-//	текст  < 18px   — 4.5:1  (WCAG 1.4.3)
-//	текст ≥ 18px    — 3.0:1
-//	несущая граница — 3.0:1  (WCAG 1.4.11): чекбокс, поле, дорожка свитча,
-//	                  индикатор состояния. Декоративная рамка, у которой
-//	                  рядом есть перепад поверхностей, сюда не входит и
-//	                  намеренно тише.
+//	text  < 18px   — 4.5:1  (WCAG 1.4.3)
+//	text ≥ 18px    — 3.0:1
+//	non-decorative border — 3.0:1  (WCAG 1.4.11): checkbox, field, switch
+//	                         track, state indicator. A decorative frame with
+//	                         a nearby surface change is not included and is
+//	                         intentionally quieter.
 //
 //	go run ./cmd/contrast
 package main
@@ -32,327 +32,342 @@ import (
 
 const (
 	text  = 4.5 // < 18px
-	large = 3.0 // ≥ 18px, а также несущие границы и индикаторы
+	large = 3.0 // ≥ 18px, as well as non-decorative borders and indicators
 
-	// Порог РАЗЛИЧИМОСТИ, а не доступности, и единственный в этом файле.
+	// The DISTINGUISHABILITY threshold, not the accessibility threshold, and
+	// the only one in this file.
 	//
-	// Нужен там, где два элемента лежат вплотную и обязаны читаться разными,
-	// но доступность про эту пару ничего не говорит. Случай ровно один:
-	// кольцо фокуса вокруг СПЛОШНОЙ заливки. По букве WCAG соседний к кольцу
-	// цвет — это поверхность в зазоре отступа, и она проверена тремя парами
-	// ниже; заливка кольца не касается. По рисунку же кольцо цвета заливки —
-	// это не фокус, а «кнопка стала толще».
+	// It is needed where two elements sit flush together and must read as
+	// different, but accessibility says nothing about this pair. There is
+	// exactly one case: the focus ring around a SOLID fill. By the letter of
+	// WCAG, the color adjacent to the ring is the surface in the gap around
+	// it, and that is checked by the three pairs below; the ring's fill is not
+	// touching it. Visually, though, a ring matching the fill is not focus, but
+	// "the button became thicker."
 	//
-	// 3.0 сюда поставить нельзя: самый дальний шаг акцента даёт против заливки
-	// 2.63, то есть порог был бы недостижим для любого акцентного кольца и
-	// требовал бы нейтрального. 1.5 — это уверенная ступень светлоты; кольцо,
-	// совпавшее с заливкой (так было: ровно 1.00), её не берёт.
+	// 3.0 cannot go here: the farthest accent step gives 2.63 against the fill,
+	// so the threshold would be unreachable for any accent ring and would
+	// require a neutral one. 1.5 is a confident lightness step; a ring matching
+	// the fill (that was: exactly 1.00) does not reach it.
 	distinct = 1.5
 
-	// Порог СТУПЕНИ стопки поверхностей — и мера у него своя.
+	// The SURFACE STACK STEP threshold — and it has its own measure.
 	//
-	// Первый закон поверхностей кита («глубину передаёт порядок светлоты») до
-	// сих пор не проверялся ничем: каждый случай выше — это ПЕРЕДНИЙ ПЛАН на
-	// ФОНЕ, а поверхность против поверхности не спрашивал никто. Цена: панель и
-	// карточка обе стояли на --surface-raised, перепад ровно 1.00, и на
-	// странице «Высота и поверхности» карточка внутри панели не читалась.
+	// The kit's first surface law ("depth is conveyed by lightness order") has
+	// never been checked by anything: every case above is a FOREGROUND on a
+	// BACKGROUND, while surface against surface was never asked. The cost:
+	// panel and card both sat on --surface-raised, the difference was exactly
+	// 1.00, and on the "Height and surfaces" page the card inside the panel was
+	// not readable.
 	//
-	// Отношением контраста это не измерить. В формуле WCAG есть слагаемое 0.05
-	// — модель бликов, — и у дна светлоты оно сжимает все отношения к единице:
-	// один и тот же шаг в 0.035 даёт 1.10 у белого конца рампы и 1.04 у
-	// чёрного. Порог по светлому концу объявил бы сломанными тёмные темы,
-	// порог по тёмному перестал бы ловить что-либо в светлых.
+	// Contrast ratio cannot measure this. The WCAG formula has a 0.05 term —
+	// a highlight model — and at the lightness floor it compresses all ratios
+	// toward one: the same 0.035 step gives 1.10 at the white end of the ramp
+	// and 1.04 at the black end. A threshold based on the light end would
+	// declare dark themes broken, while a threshold based on the dark end would
+	// stop catching anything in light themes.
 	//
-	// Поэтому ступень меряется РАЗНИЦЕЙ СВЕТЛОТЫ В OKLCH — той же осью, которой
-	// набрана рампа, и перцептивно равномерной по построению. Один порог
-	// работает во всех пяти темах.
+	// Therefore the step is measured as OKLCH LIGHTNESS DIFFERENCE — the same
+	// axis used to build the ramp, and perceptually uniform by construction.
+	// One threshold works across all five themes.
 	//
-	// 0.022 — чуть ниже самой тесной ступени кита (светлый конец, 0.024).
-	// Запас намеренно мал: порог, проходящий вдвое, не ловит ничего.
+	// 0.022 is just below the kit's tightest step (light end, 0.024). The margin
+	// is intentionally small: a threshold that passes by twice catches nothing.
 	step = 0.022
 )
 
-// Случай проверки: описание, токен переднего плана, стопка фона, порог.
+// A check case: description, foreground token, background stack, threshold.
 type kase struct {
 	label string
 	fg    string
 	bg    []string
 	min   float64
 
-	// alt — ВТОРАЯ стопка, с которой сравнивается первая, и сравнение это
-	// НАПРАВЛЕННОЕ: fg обязан быть ТИШЕ alt на подложке bg, а не просто
-	// отличаться от него.
+	// alt is the SECOND stack against which the first is compared, and this
+	// comparison is DIRECTIONAL: fg must be QUIETER than alt on background bg,
+	// not merely different from it.
 	//
-	// Нужна там, где два состояния — альтернативы, а не слои. Мягкий вес
-	// кнопки ЗАМЕНЯЕТ заливку умолчания (`--btn-bg` переприсваивается), а не
-	// ложится поверх неё, и вопрос стоит так: отличается ли мягкая кнопка от
-	// умолчания на одной и той же подложке — и в правильную ли сторону.
+	// It is needed where two states are alternatives, not layers. The soft
+	// button weight REPLACES the default fill (`--btn-bg` is reassigned), rather
+	// than sitting on top of it, so the question is: does the soft button differ
+	// from the default on the same background — and in the correct direction?
 	//
-	// Направление важнее величины, и это стоило регресса. Модуль разницы
-	// пропускает ПЕРЕВЁРНУТУЮ лестницу: мягкий вес, ставший громче умолчания,
-	// отличается от него ровно так же сильно, как положено, и гейт молчит.
-	// На экране при этом третья ступень звучит громче второй, и заметить это
-	// может только глаз.
+	// Direction matters, and it cost a regression. The absolute difference
+	// allows a REVERSED ladder: a soft weight that becomes louder than the
+	// default differs from it by exactly as much as required, and the gate stays
+	// silent. On screen, the third step is then louder than the second, and only
+	// the eye can notice it.
 	//
-	// Громкость меряется присутствием — модулем перепада к подложке. Знак
-	// плёнки в него не входит: в светлых темах контрол утоплен, в тёмных
-	// приподнят, а тише он должен быть в обеих.
+	// Loudness is measured by presence — the absolute step against the
+	// background. The sign of the film is not part of it: in light themes the
+	// control is recessed, in dark themes it is raised, and it must be quieter
+	// in both.
 	alt []string
 }
 
-// МЕРА выводится из порога, а не хранится отдельным полем.
+// The MEASURE is derived from the threshold, rather than stored as a separate
+// field.
 //
-// Отношение контраста по определению не бывает меньше единицы: это частное
-// большей светимости на меньшую. Значит, порог ниже единицы не может быть
-// отношением — и остаётся ровно один случай, для которого он заведён: ступень
-// стопки поверхностей, меряемая разницей светлоты в OKLCH.
+// A contrast ratio by definition cannot be less than one: it is the quotient
+// of greater luminance by lesser. Therefore a threshold below one cannot be a
+// ratio — and exactly one case remains for which it exists: the surface stack
+// step, measured as an OKLCH lightness difference.
 //
-// Пятое поле в структуре сказало бы то же самое, но потребовало бы дописать
-// его в каждый из восьмидесяти восьми существующих случаев — и завести
-// возможность рассогласовать флаг с порогом.
+// A fifth field in the struct would say the same thing, but would require
+// adding it to each of the eighty-eight existing cases — and would create the
+// possibility of the flag becoming inconsistent with the threshold.
 func (c kase) isStep() bool { return c.min < 1 }
 
 var cases = []kase{
-	// Текст на трёх поверхностях. Каждая ступень проверяется везде, где может
-	// оказаться, — именно это правило и не выполнялось раньше.
-	{label: "текст: primary на панели", fg: "--text-primary", bg: []string{"--surface-raised"}, min: text},
-	{label: "текст: primary на странице", fg: "--text-primary", bg: []string{"--surface-page"}, min: text},
-	{label: "текст: primary во врезе", fg: "--text-primary", bg: []string{"--surface-sunken"}, min: text},
-	{label: "текст: secondary на панели", fg: "--text-secondary", bg: []string{"--surface-raised"}, min: text},
-	{label: "текст: secondary во врезе", fg: "--text-secondary", bg: []string{"--surface-sunken"}, min: text},
-	{label: "текст: muted на панели", fg: "--text-muted", bg: []string{"--surface-raised"}, min: text},
-	{label: "текст: muted на странице", fg: "--text-muted", bg: []string{"--surface-page"}, min: text},
-	{label: "текст: muted во врезе (лог)", fg: "--text-muted", bg: []string{"--surface-sunken"}, min: text},
-	// Утопленные поверхности полупрозрачны и потому объявляются СТОПКОЙ:
-	// первым идёт подложка, вторым — сама заливка. Flatten их складывает.
-	// Одним слоем такую пару объявить нельзя — гейт прочитает альфу как
-	// непрозрачный цвет и померяет контраст с чёрным.
-	{label: "текст: primary в поле на панели", fg: "--text-primary", bg: []string{"--surface-raised", "--surface-field"}, min: text},
-	{label: "текст: primary в поле на странице", fg: "--text-primary", bg: []string{"--surface-page", "--surface-field"}, min: text},
-	{label: "текст: подпись кнопки", fg: "--text-primary", bg: []string{"--surface-raised", "--surface-recessed"}, min: text},
-	{label: "текст: подпись кнопки под курсором", fg: "--text-primary", bg: []string{"--surface-raised", "--surface-recessed-hover"}, min: text},
-	{label: "текст: тег на панели", fg: "--text-secondary", bg: []string{"--surface-raised", "--surface-recessed"}, min: text},
-	{label: "текст: чип выбранный", fg: "--accent-text", bg: []string{"--surface-raised", "--surface-recessed"}, min: text},
+	// Text on three surfaces. Each step is checked everywhere it can appear —
+	// this exact rule was not being enforced before.
+	{label: "text: primary on panel", fg: "--text-primary", bg: []string{"--surface-raised"}, min: text},
+	{label: "text: primary on page", fg: "--text-primary", bg: []string{"--surface-page"}, min: text},
+	{label: "text: primary in inset", fg: "--text-primary", bg: []string{"--surface-sunken"}, min: text},
+	{label: "text: secondary on panel", fg: "--text-secondary", bg: []string{"--surface-raised"}, min: text},
+	{label: "text: secondary in inset", fg: "--text-secondary", bg: []string{"--surface-sunken"}, min: text},
+	{label: "text: muted on panel", fg: "--text-muted", bg: []string{"--surface-raised"}, min: text},
+	{label: "text: muted on page", fg: "--text-muted", bg: []string{"--surface-page"}, min: text},
+	{label: "text: muted in inset (log)", fg: "--text-muted", bg: []string{"--surface-sunken"}, min: text},
+	// Recessed surfaces are translucent and therefore declared as a STACK:
+	// the background comes first, the fill second. Flatten combines them.
+	// This pair cannot be declared as one layer — the gate would read the alpha
+	// as an opaque color and measure contrast against black.
+	{label: "text: primary in field on panel", fg: "--text-primary", bg: []string{"--surface-raised", "--surface-field"}, min: text},
+	{label: "text: primary in field on page", fg: "--text-primary", bg: []string{"--surface-page", "--surface-field"}, min: text},
+	{label: "text: button label", fg: "--text-primary", bg: []string{"--surface-raised", "--surface-recessed"}, min: text},
+	{label: "text: button label on hover", fg: "--text-primary", bg: []string{"--surface-raised", "--surface-recessed-hover"}, min: text},
+	{label: "text: tag on panel", fg: "--text-secondary", bg: []string{"--surface-raised", "--surface-recessed"}, min: text},
+	{label: "text: selected chip", fg: "--accent-text", bg: []string{"--surface-raised", "--surface-recessed"}, min: text},
 
-	// faint — порог декорации, а не чтения. Читаемому тексту он запрещён.
-	{label: "декор: faint на панели", fg: "--text-faint", bg: []string{"--surface-raised"}, min: large},
-	{label: "декор: faint во врезе", fg: "--text-faint", bg: []string{"--surface-sunken"}, min: large},
+	// faint — a decoration threshold, not a reading threshold. It is forbidden
+	// for readable text.
+	{label: "decor: faint on panel", fg: "--text-faint", bg: []string{"--surface-raised"}, min: large},
+	{label: "decor: faint in inset", fg: "--text-faint", bg: []string{"--surface-sunken"}, min: large},
 
-	// Бейджи: 11px, значит полный текстовый порог.
-	{label: "бейдж: accent на своём фоне", fg: "--accent-text", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
-	{label: "бейдж: ok на своём фоне", fg: "--ok-text", bg: []string{"--surface-raised", "--ok-bg"}, min: text},
-	{label: "бейдж: warn на своём фоне", fg: "--warn-text", bg: []string{"--surface-raised", "--warn-bg"}, min: text},
-	{label: "бейдж: err на своём фоне", fg: "--err-text", bg: []string{"--surface-raised", "--err-bg"}, min: text},
-	{label: "бейдж: нейтральный во врезе", fg: "--text-secondary", bg: []string{"--surface-sunken"}, min: text},
+	// Badges: 11px, so the full text threshold applies.
+	{label: "badge: accent on own background", fg: "--accent-text", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
+	{label: "badge: ok on own background", fg: "--ok-text", bg: []string{"--surface-raised", "--ok-bg"}, min: text},
+	{label: "badge: warn on own background", fg: "--warn-text", bg: []string{"--surface-raised", "--warn-bg"}, min: text},
+	{label: "badge: err on own background", fg: "--err-text", bg: []string{"--surface-raised", "--err-bg"}, min: text},
+	{label: "badge: neutral in inset", fg: "--text-secondary", bg: []string{"--surface-sunken"}, min: text},
 
-	// Статусный текст живёт и вне бейджа — дельта метрики, ошибка поля, сноска.
-	{label: "статус: ok-text на панели", fg: "--ok-text", bg: []string{"--surface-raised"}, min: text},
-	{label: "статус: warn-text на панели", fg: "--warn-text", bg: []string{"--surface-raised"}, min: text},
-	{label: "статус: err-text на панели", fg: "--err-text", bg: []string{"--surface-raised"}, min: text},
-	{label: "статус: ok-text во врезе", fg: "--ok-text", bg: []string{"--surface-sunken"}, min: text},
-	{label: "статус: warn-text во врезе", fg: "--warn-text", bg: []string{"--surface-sunken"}, min: text},
-	{label: "статус: err-text во врезе", fg: "--err-text", bg: []string{"--surface-sunken"}, min: text},
+	// Status text also lives outside badges — metric delta, field error, footnote.
+	{label: "status: ok-text on panel", fg: "--ok-text", bg: []string{"--surface-raised"}, min: text},
+	{label: "status: warn-text on panel", fg: "--warn-text", bg: []string{"--surface-raised"}, min: text},
+	{label: "status: err-text on panel", fg: "--err-text", bg: []string{"--surface-raised"}, min: text},
+	{label: "status: ok-text in inset", fg: "--ok-text", bg: []string{"--surface-sunken"}, min: text},
+	{label: "status: warn-text in inset", fg: "--warn-text", bg: []string{"--surface-sunken"}, min: text},
+	{label: "status: err-text in inset", fg: "--err-text", bg: []string{"--surface-sunken"}, min: text},
 
-	// Сплошная кнопка. Ховер обязан УВЕЛИЧИВАТЬ контраст подписи, а не ронять.
-	{label: "кнопка: подпись на accent-solid", fg: "--accent-on", bg: []string{"--accent-solid"}, min: text},
-	{label: "кнопка: подпись на accent-hover", fg: "--accent-on", bg: []string{"--accent-hover"}, min: text},
-	{label: "ссылка: accent-text на странице", fg: "--accent-text", bg: []string{"--surface-page"}, min: text},
+	// Solid button. Hover must INCREASE label contrast, not reduce it.
+	{label: "button: label on accent-solid", fg: "--accent-on", bg: []string{"--accent-solid"}, min: text},
+	{label: "button: label on accent-hover", fg: "--accent-on", bg: []string{"--accent-hover"}, min: text},
+	{label: "link: accent-text on page", fg: "--accent-text", bg: []string{"--surface-page"}, min: text},
 
-	// Индикаторы состояния — нетекстовые, но несущие: 3:1. Меряются тем же
-	// токеном, которым красятся: точка, заливка меры и штрих истории берут
-	// --*-mark, а не текстовую ступень.
-	{label: "метка: ok на панели", fg: "--ok-mark", bg: []string{"--surface-raised"}, min: large},
-	{label: "метка: ok во врезе", fg: "--ok-mark", bg: []string{"--surface-sunken"}, min: large},
-	{label: "метка: ok на дорожке", fg: "--ok-mark", bg: []string{"--surface-raised", "--track"}, min: large},
-	{label: "метка: warn на панели", fg: "--warn-mark", bg: []string{"--surface-raised"}, min: large},
-	{label: "метка: warn во врезе", fg: "--warn-mark", bg: []string{"--surface-sunken"}, min: large},
-	{label: "метка: err на панели", fg: "--err-mark", bg: []string{"--surface-raised"}, min: large},
-	{label: "метка: err во врезе", fg: "--err-mark", bg: []string{"--surface-sunken"}, min: large},
-	{label: "метка: err на дорожке", fg: "--err-mark", bg: []string{"--surface-raised", "--track"}, min: large},
-	{label: "точка: running на панели", fg: "--accent-mark", bg: []string{"--surface-raised"}, min: large},
-	{label: "точка: running во врезе", fg: "--accent-mark", bg: []string{"--surface-sunken"}, min: large},
-	{label: "каретка на панели", fg: "--accent-mark", bg: []string{"--surface-raised"}, min: large},
-	{label: "бегунок на дорожке", fg: "--accent-mark", bg: []string{"--surface-raised", "--track"}, min: large},
+	// State indicators — non-text, but non-decorative: 3:1. They are measured
+	// with the same token they are painted with: the dot, measure fill, and
+	// history stroke use --*-mark, not the text step.
+	{label: "mark: ok on panel", fg: "--ok-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "mark: ok in inset", fg: "--ok-mark", bg: []string{"--surface-sunken"}, min: large},
+	{label: "mark: ok on track", fg: "--ok-mark", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "mark: warn on panel", fg: "--warn-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "mark: warn in inset", fg: "--warn-mark", bg: []string{"--surface-sunken"}, min: large},
+	{label: "mark: err on panel", fg: "--err-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "mark: err in inset", fg: "--err-mark", bg: []string{"--surface-sunken"}, min: large},
+	{label: "mark: err on track", fg: "--err-mark", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "dot: running on panel", fg: "--accent-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "dot: running in inset", fg: "--accent-mark", bg: []string{"--surface-sunken"}, min: large},
+	{label: "caret on panel", fg: "--accent-mark", bg: []string{"--surface-raised"}, min: large},
+	{label: "slider on track", fg: "--accent-mark", bg: []string{"--surface-raised", "--track"}, min: large},
 
-	// Несущие границы: граница И ЕСТЬ контрол.
-	{label: "граница контрола на панели", fg: "--border-control", bg: []string{"--surface-raised"}, min: large},
-	{label: "граница контрола на странице", fg: "--border-control", bg: []string{"--surface-page"}, min: large},
-	{label: "граница контрола во врезе", fg: "--border-control", bg: []string{"--surface-raised", "--surface-field"}, min: large},
+	// Non-decorative borders: the border IS the control.
+	{label: "control border on panel", fg: "--border-control", bg: []string{"--surface-raised"}, min: large},
+	{label: "control border on page", fg: "--border-control", bg: []string{"--surface-page"}, min: large},
+	{label: "control border in inset", fg: "--border-control", bg: []string{"--surface-raised", "--surface-field"}, min: large},
 
-	// Заполнение меры относительно собственной дорожки, и дорожки — на всех
-	// поверхностях, где мера может стоять.
-	{label: "мера: заливка на дорожке (панель)", fg: "--accent-mark", bg: []string{"--surface-raised", "--track"}, min: large},
-	{label: "мера: заливка на дорожке (врез)", fg: "--accent-mark", bg: []string{"--surface-sunken", "--track"}, min: large},
-	{label: "мера: ok на дорожке", fg: "--ok-text", bg: []string{"--surface-raised", "--track"}, min: large},
-	{label: "мера: warn на дорожке", fg: "--warn-text", bg: []string{"--surface-raised", "--track"}, min: large},
-	{label: "мера: err на дорожке", fg: "--err-text", bg: []string{"--surface-raised", "--track"}, min: large},
+	// Measure fill against its own track, and the track on every surface where
+	// the measure can sit.
+	{label: "measure: fill on track (panel)", fg: "--accent-mark", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "measure: fill on track (inset)", fg: "--accent-mark", bg: []string{"--surface-sunken", "--track"}, min: large},
+	{label: "measure: ok on track", fg: "--ok-text", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "measure: warn on track", fg: "--warn-text", bg: []string{"--surface-raised", "--track"}, min: large},
+	{label: "measure: err on track", fg: "--err-text", bg: []string{"--surface-raised", "--track"}, min: large},
 
-	// Категориальная палитра: каждый ряд обязан отделяться от поверхности.
-	{label: "график: ряд 1 на панели", fg: "--chart-1", bg: []string{"--surface-raised"}, min: large},
-	{label: "график: ряд 1 на странице", fg: "--chart-1", bg: []string{"--surface-page"}, min: large},
-	{label: "график: ряд 2 на панели", fg: "--chart-2", bg: []string{"--surface-raised"}, min: large},
-	{label: "график: ряд 2 на странице", fg: "--chart-2", bg: []string{"--surface-page"}, min: large},
-	{label: "график: ряд 3 на панели", fg: "--chart-3", bg: []string{"--surface-raised"}, min: large},
-	{label: "график: ряд 3 на странице", fg: "--chart-3", bg: []string{"--surface-page"}, min: large},
-	{label: "график: ряд 4 на панели", fg: "--chart-4", bg: []string{"--surface-raised"}, min: large},
-	{label: "график: ряд 4 на странице", fg: "--chart-4", bg: []string{"--surface-page"}, min: large},
-	{label: "график: ряд 5 на панели", fg: "--chart-5", bg: []string{"--surface-raised"}, min: large},
-	{label: "график: ряд 5 на странице", fg: "--chart-5", bg: []string{"--surface-page"}, min: large},
-	{label: "график: ряд 6 на панели", fg: "--chart-6", bg: []string{"--surface-raised"}, min: large},
-	{label: "график: ряд 6 на странице", fg: "--chart-6", bg: []string{"--surface-page"}, min: large},
+	// Categorical palette: every series must separate from the surface.
+	{label: "chart: series 1 on panel", fg: "--chart-1", bg: []string{"--surface-raised"}, min: large},
+	{label: "chart: series 1 on page", fg: "--chart-1", bg: []string{"--surface-page"}, min: large},
+	{label: "chart: series 2 on panel", fg: "--chart-2", bg: []string{"--surface-raised"}, min: large},
+	{label: "chart: series 2 on page", fg: "--chart-2", bg: []string{"--surface-page"}, min: large},
+	{label: "chart: series 3 on panel", fg: "--chart-3", bg: []string{"--surface-raised"}, min: large},
+	{label: "chart: series 3 on page", fg: "--chart-3", bg: []string{"--surface-page"}, min: large},
+	{label: "chart: series 4 on panel", fg: "--chart-4", bg: []string{"--surface-raised"}, min: large},
+	{label: "chart: series 4 on page", fg: "--chart-4", bg: []string{"--surface-page"}, min: large},
+	{label: "chart: series 5 on panel", fg: "--chart-5", bg: []string{"--surface-raised"}, min: large},
+	{label: "chart: series 5 on page", fg: "--chart-5", bg: []string{"--surface-page"}, min: large},
+	{label: "chart: series 6 on panel", fg: "--chart-6", bg: []string{"--surface-raised"}, min: large},
+	{label: "chart: series 6 on page", fg: "--chart-6", bg: []string{"--surface-page"}, min: large},
 
-	// Оверлеи: всё, что лежит на --surface-overlay.
-	{label: "поповер: текст", fg: "--text-primary", bg: []string{"--surface-overlay"}, min: text},
-	{label: "меню: горячая клавиша", fg: "--text-muted", bg: []string{"--surface-overlay"}, min: text},
-	{label: "меню: опасный пункт", fg: "--err-text", bg: []string{"--surface-overlay"}, min: text},
-	{label: "меню: отмеченный пункт", fg: "--accent-text", bg: []string{"--surface-overlay"}, min: text},
-	{label: "тултип: текст", fg: "--text-primary", bg: []string{"--surface-overlay"}, min: text},
+	// Overlays: everything that sits on --surface-overlay.
+	{label: "popover: text", fg: "--text-primary", bg: []string{"--surface-overlay"}, min: text},
+	{label: "menu: keyboard shortcut", fg: "--text-muted", bg: []string{"--surface-overlay"}, min: text},
+	{label: "menu: dangerous item", fg: "--err-text", bg: []string{"--surface-overlay"}, min: text},
+	{label: "menu: marked item", fg: "--accent-text", bg: []string{"--surface-overlay"}, min: text},
+	{label: "tooltip: text", fg: "--text-primary", bg: []string{"--surface-overlay"}, min: text},
 
-	// Баннер: текст поверх тонированной заливки.
-	{label: "баннер ok: заголовок", fg: "--text-primary", bg: []string{"--surface-page", "--ok-bg"}, min: text},
-	{label: "баннер warn: заголовок", fg: "--text-primary", bg: []string{"--surface-page", "--warn-bg"}, min: text},
-	{label: "баннер error: заголовок", fg: "--text-primary", bg: []string{"--surface-page", "--err-bg"}, min: text},
-	{label: "баннер warn: пояснение", fg: "--text-secondary", bg: []string{"--surface-page", "--warn-bg"}, min: text},
-	{label: "баннер warn: значок", fg: "--warn-text", bg: []string{"--surface-page", "--warn-bg"}, min: large},
+	// Banner: text over a tinted fill.
+	{label: "banner ok: heading", fg: "--text-primary", bg: []string{"--surface-page", "--ok-bg"}, min: text},
+	{label: "banner warn: heading", fg: "--text-primary", bg: []string{"--surface-page", "--warn-bg"}, min: text},
+	{label: "banner error: heading", fg: "--text-primary", bg: []string{"--surface-page", "--err-bg"}, min: text},
+	{label: "banner warn: explanation", fg: "--text-secondary", bg: []string{"--surface-page", "--warn-bg"}, min: text},
+	{label: "banner warn: icon", fg: "--warn-text", bg: []string{"--surface-page", "--warn-bg"}, min: large},
 
-	// Формы.
-	{label: "карточка выбора: заголовок", fg: "--text-primary", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
-	{label: "карточка выбора: описание", fg: "--text-secondary", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
-	{label: "множественный выбор: выбранный пункт", fg: "--accent-text", bg: []string{"--surface-raised", "--surface-field", "--surface-selected"}, min: text},
-	{label: "приставка поля", fg: "--text-muted", bg: []string{"--surface-sunken"}, min: text},
-	{label: "readonly: текст на врезе", fg: "--text-primary", bg: []string{"--surface-sunken"}, min: text},
-	{label: "пунктир зоны файла", fg: "--border-control", bg: []string{"--surface-raised", "--surface-field"}, min: large},
-	{label: "обязательность", fg: "--err-text", bg: []string{"--surface-raised"}, min: text},
+	// Forms.
+	{label: "choice card: heading", fg: "--text-primary", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
+	{label: "choice card: description", fg: "--text-secondary", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
+	{label: "multi-select: selected item", fg: "--accent-text", bg: []string{"--surface-raised", "--surface-field", "--surface-selected"}, min: text},
+	{label: "field prefix", fg: "--text-muted", bg: []string{"--surface-sunken"}, min: text},
+	{label: "readonly: text in inset", fg: "--text-primary", bg: []string{"--surface-sunken"}, min: text},
+	{label: "file zone dashed border", fg: "--border-control", bg: []string{"--surface-raised", "--surface-field"}, min: large},
+	{label: "required marker", fg: "--err-text", bg: []string{"--surface-raised"}, min: text},
 
-	// Раскладка и навигация.
-	{label: "текст на боковой колонке", fg: "--text-secondary", bg: []string{"--surface-sunken"}, min: text},
-	{label: "навигация: текущий пункт", fg: "--accent-text", bg: []string{"--surface-sunken", "--surface-selected"}, min: text},
-	{label: "навигация: метка у края", fg: "--accent-solid", bg: []string{"--surface-sunken", "--surface-selected"}, min: large},
-	{label: "вкладка: подчёркивание", fg: "--accent-solid", bg: []string{"--surface-page"}, min: large},
-	{label: "крошки: разделитель", fg: "--text-faint", bg: []string{"--surface-page"}, min: large},
-	{label: "пагинация: текущая страница", fg: "--accent-text", bg: []string{"--surface-page", "--surface-selected"}, min: text},
-	{label: "шаги: полоса пройденного", fg: "--accent-mark", bg: []string{"--surface-page", "--track"}, min: large},
+	// Layout and navigation.
+	{label: "text on sidebar", fg: "--text-secondary", bg: []string{"--surface-sunken"}, min: text},
+	{label: "navigation: current item", fg: "--accent-text", bg: []string{"--surface-sunken", "--surface-selected"}, min: text},
+	{label: "navigation: edge marker", fg: "--accent-solid", bg: []string{"--surface-sunken", "--surface-selected"}, min: large},
+	{label: "tab: underline", fg: "--accent-solid", bg: []string{"--surface-page"}, min: large},
+	{label: "breadcrumbs: separator", fg: "--text-faint", bg: []string{"--surface-page"}, min: large},
+	{label: "pagination: current page", fg: "--accent-text", bg: []string{"--surface-page", "--surface-selected"}, min: text},
+	{label: "steps: completed bar", fg: "--accent-mark", bg: []string{"--surface-page", "--track"}, min: large},
 
-	// Инверсная плашка: тултип и всё, что поясняет интерфейс, не будучи им.
-	// Пара своя, потому что ни одна ступень текста на ней не лежит: там свой
-	// передний план, и проверять его больше некому.
-	{label: "аннотация: текст на инверсии", fg: "--text-on-inverse", bg: []string{"--surface-inverse"}, min: text},
-	// …и сама плашка обязана отделяться от того, над чем висит, иначе смысл
-	// «это не содержимое» теряется на первой же тёмной теме.
-	{label: "аннотация: плашка на странице", fg: "--surface-inverse", bg: []string{"--surface-page"}, min: large},
-	{label: "аннотация: плашка на панели", fg: "--surface-inverse", bg: []string{"--surface-raised"}, min: large},
+	// Inverse plate: tooltip and everything that explains the interface without
+	// being the interface itself.
+	// The pair is its own because no text step sits on it: it has its own
+	// foreground, and nothing else checks it.
+	{label: "annotation: text on inverse", fg: "--text-on-inverse", bg: []string{"--surface-inverse"}, min: text},
+	// ...and the plate itself must separate from what it floats over, otherwise
+	// the meaning of "this is not content" is lost in the first dark theme.
+	{label: "annotation: plate on page", fg: "--surface-inverse", bg: []string{"--surface-page"}, min: large},
+	{label: "annotation: plate on panel", fg: "--surface-inverse", bg: []string{"--surface-raised"}, min: large},
 
-	// Кольцо фокуса — против того, что под ним.
-	{label: "фокус: кольцо на странице", fg: "--focus-ring", bg: []string{"--surface-page"}, min: large},
-	{label: "фокус: кольцо на панели", fg: "--focus-ring", bg: []string{"--surface-raised"}, min: large},
-	{label: "фокус: кольцо во врезе", fg: "--focus-ring", bg: []string{"--surface-sunken"}, min: large},
-	// …и против того, что оно ОБВОДИТ. Этой пары здесь не было, и потому
-	// гейт годами оставался зелёным, пока в светлых темах --focus-ring и
-	// --accent-solid были одним и тем же цветом: контраст 1.00 на главной
-	// кнопке экрана. Порог — различимость, см. константу.
-	{label: "фокус: кольцо вокруг заливки primary", fg: "--focus-ring", bg: []string{"--accent-solid"}, min: distinct},
+	// Focus ring — against what is underneath it.
+	{label: "focus: ring on page", fg: "--focus-ring", bg: []string{"--surface-page"}, min: large},
+	{label: "focus: ring on panel", fg: "--focus-ring", bg: []string{"--surface-raised"}, min: large},
+	{label: "focus: ring in inset", fg: "--focus-ring", bg: []string{"--surface-sunken"}, min: large},
+	// ...and against what it OUTLINES. This pair was not here, so the gate
+	// stayed green for years while in light themes --focus-ring and
+	// --accent-solid were the same color: contrast 1.00 on the main
+	// screen button. The threshold is distinguishability; see the constant.
+	{label: "focus: ring around primary fill", fg: "--focus-ring", bg: []string{"--accent-solid"}, min: distinct},
 
-	// ── СТУПЕНИ СТОПКИ ПОВЕРХНОСТЕЙ ────────────────────────────────────────
+	// ── SURFACE STACK STEPS ─────────────────────────────────────────────────
 	//
-	// Этих пар здесь не было, и дыра прямо следовала из устройства проверки:
-	// каждый случай — это ПЕРЕДНИЙ ПЛАН на ФОНЕ, то есть текст или метка на
-	// поверхности. Поверхность против ПОВЕРХНОСТИ не проверял никто.
+	// These pairs were not here, and the gap followed directly from the design
+	// of the check: every case is a FOREGROUND on a BACKGROUND, meaning text or
+	// a marker on a surface. Surface against SURFACE was never checked.
 	//
-	// Цена: панель и карточка обе стояли на --surface-raised, перепад ровно
-	// 1.00, и на странице «Высота и поверхности» карточка внутри панели не
-	// читалась. Гейт был зелёным — все его пары честно проходили, потому что
-	// ни одна из них не спрашивала «а различимы ли два соседних яруса».
+	// The cost: panel and card both sat on --surface-raised, the difference was
+	// exactly 1.00, and on the "Height and surfaces" page the card inside the
+	// panel was not readable. The gate was green — all its pairs honestly
+	// passed, because none of them asked "are two neighboring tiers
+	// distinguishable?"
 	//
-	// Первый закон поверхностей кита — «глубину передаёт порядок светлоты» —
-	// до сих пор не был выражен ни одной проверкой. Теперь выражен.
+	// The kit's first surface law — "depth is conveyed by lightness order" —
+	// was not expressed by any check. Now it is.
 	//
-	// Порог — различимость (см. константу), а не доступность: WCAG про
-	// соседние поверхности ничего не говорит, и не должен. 1.5 сюда не годится
-	// — это порог для кольца поверх ЗАЛИВКИ, где рядом нет ничего другого.
-	// У стопки соседям помогает ещё и рамка, поэтому довольно меньшего, но
-	// НЕ ЕДИНИЦЫ: единица означает, что ступени нет вовсе.
-	{label: "стопка: страница над углублением", fg: "--surface-page", bg: []string{"--surface-sunken"}, min: step},
-	{label: "стопка: панель над страницей", fg: "--surface-raised", bg: []string{"--surface-page"}, min: step},
-	{label: "стопка: панель над углублением", fg: "--surface-raised", bg: []string{"--surface-sunken"}, min: step},
-	{label: "стопка: карточка в панели", fg: "--surface-sunken", bg: []string{"--surface-raised"}, min: step},
+	// The threshold is distinguishability (see the constant), not accessibility:
+	// WCAG says nothing about adjacent surfaces, and should not. 1.5 is not
+	// suitable here — it is the threshold for a ring over a FILL, where nothing
+	// else is adjacent. For a stack, the border also helps neighboring layers,
+	// so a smaller value is sufficient, but it must NOT be ONE: one means there
+	// is no step at all.
+	{label: "stack: page over recess", fg: "--surface-page", bg: []string{"--surface-sunken"}, min: step},
+	{label: "stack: panel over page", fg: "--surface-raised", bg: []string{"--surface-page"}, min: step},
+	{label: "stack: panel over recess", fg: "--surface-raised", bg: []string{"--surface-sunken"}, min: step},
+	{label: "stack: card in panel", fg: "--surface-sunken", bg: []string{"--surface-raised"}, min: step},
 
-	// Ступень между ВЕСАМИ кнопки, а не между поверхностями стопки. Лестница
-	// весов стоит на тех же утоплениях, и её ступени обязаны расходиться так же:
-	// сойдясь, мягкая и умолчание дают два имени для одного вида.
+	// The step between BUTTON WEIGHTS, not between surface stack layers. The
+	// weight ladder sits on the same recesses, and its steps must separate just
+	// as well: when they converge, soft and default become two names for one
+	// appearance.
 	//
-	// Проверять приходится здесь, потому что веса собираются КОМПОЗИТОМ поверх
-	// подложки и в стопку поверхностей не входят. Пара ловит и обратный случай:
-	// на абсолютной ступени мягкая уходила глубже умолчания, и лестница
-	// переворачивалась.
-	{label: "лестница: мягкая против умолчания", fg: "--surface-recessed-hover", bg: []string{"--surface-raised"},
+	// This has to be checked here because weights are composed ON TOP of the
+	// background and are not part of the surface stack. The pair also catches
+	// the reverse case: at the absolute step, soft went deeper than default,
+	// and the ladder flipped.
+	{label: "ladder: soft against default", fg: "--surface-recessed-hover", bg: []string{"--surface-raised"},
 		alt: []string{"--surface-raised", "--surface-recessed"}, min: step},
 
-	// КНОПКА ПРОТИВ ТОГО, НА ЧЁМ ЛЕЖИТ. Этой пары не было, и её отсутствие
-	// стоило дорого.
+	// BUTTON AGAINST WHAT IT SITS ON. This pair was not here, and its absence
+	// was costly.
 	//
-	// Выше проверено, что поверхности стопки расходятся между собой, и что веса
-	// кнопки расходятся между собой. Ни то, ни другое не спрашивает главного:
-	// отличается ли кнопка от своей подложки. А у умолчания это ЕДИНСТВЕННЫЙ
-	// признак — рамки нет, тени нет, обе снял провал.
+	// Above, surface stack layers are checked against each other, and button
+	// weights are checked against each other. Neither asks the main question:
+	// does the button differ from its background? For the default, this is its
+	// ONLY distinguishing feature — there is no border, no shadow, both removed
+	// in the failure.
 	//
-	// Провал делается чёрной плёнкой в обеих темах, потому что углубление по
-	// смыслу темнее. Но плёнка вычитает светлоту, а вычитать её на дне рампы
-	// уже не из чего: страница тёмной темы — rgb(12,12,12), и даже СПЛОШНОЙ
-	// чёрный даёт против неё 1.073 против 1.142 у светлых. Кнопка переставала
-	// существовать: перепад 1.014.
+	// The failure is caused by a black film in both themes, because the recess
+	// is conceptually darker. But the film subtracts lightness, and at the
+	// bottom of the ramp there is nothing left to subtract: the dark theme page
+	// is rgb(12,12,12), and even SOLID black gives 1.073 against it versus 1.142
+	// for the light ones. The button stopped existing: difference 1.014.
 	//
-	// Обе подложки, потому что кнопка стоит и там и там: на панели — в форме и
-	// в карточке, на странице — в шапке экрана и в тулбаре оболочки.
-	{label: "кнопка против панели", fg: "--surface-recessed", bg: []string{"--surface-raised"}, min: step},
-	{label: "кнопка против страницы", fg: "--surface-recessed", bg: []string{"--surface-page"}, min: step},
-	// Поля вреза здесь НЕТ, и это не пропуск. Поверхность поля совпадает с
-	// приподнятой: опознаёт поле несущая рамка, а не глубина, и отвечают за
-	// это пары «граница контрола» выше. Требовать от поля ступени значило бы
-	// требовать глубины там, где кит её намеренно не даёт.
+	// Both backgrounds, because the button sits on both: on the panel — in the
+	// form and in the card, on the page — in the screen header and shell toolbar.
+	{label: "button against panel", fg: "--surface-recessed", bg: []string{"--surface-raised"}, min: step},
+	{label: "button against page", fg: "--surface-recessed", bg: []string{"--surface-page"}, min: step},
+	// There is NO inset field here, and this is not an omission. The field
+	// surface matches the raised one: the control border identifies the field,
+	// not depth, and the "control border" pairs above handle it. Requiring a
+	// step from the field would mean requiring depth where the kit intentionally
+	// does not provide it.
+
 }
 
 var themes = []*css.Theme{
-	{ID: "light-neutral", Label: "светлая нейтральная", Scheme: "light"},
-	{ID: "light", Label: "светлая тёплая", Scheme: "light"},
-	{ID: "light-cool", Label: "светлая холодная", Scheme: "light"},
-	{ID: "dark-soft", Label: "тёмная серая", Scheme: "dark"},
-	{ID: "dark", Label: "тёмная чёрная", Scheme: "dark"},
+	{ID: "light-neutral", Label: "light neutral", Scheme: "light"},
+	{ID: "light", Label: "light warm", Scheme: "light"},
+	{ID: "light-cool", Label: "light cool", Scheme: "light"},
+	{ID: "dark-soft", Label: "dark gray", Scheme: "dark"},
+	{ID: "dark", Label: "dark black", Scheme: "dark"},
 }
 
-// Акцент — вторая ось проверки, и она обязана быть здесь целиком.
+// Accent is the second axis of the check, and it must be complete here.
 //
-// Пока набор был один, каждая акцентная пара проверялась ровно в том виде,
-// в каком её и рисовали. С ручкой на четыре положения это перестаёт работать:
-// три четверти акцентных пар уезжают в поставку непроверенными, а пороги у
-// них РАЗНЫЕ — потолок светлоты заливки под белой подписью хью-зависимый
-// (0.545 на петроли против 0.580 на глине), и набор, собранный по числам
-// соседнего хью, честно провалится.
+// While there was one set, each accent pair was checked exactly in the form
+// it was drawn. With a four-position control, that stops working: three
+// quarters of the accent pairs go into production untested, and their
+// thresholds are DIFFERENT — the lightness ceiling of a fill under a white
+// label is hue-dependent (0.545 on petrol versus 0.580 on clay), and a set
+// assembled from the numbers of a neighboring hue will honestly fail.
 //
-// Пустой ID — база: набор, объявленный в :root без атрибута. Он должен идти
-// первым, потому что при подробном выводе показывается именно он.
+// Empty ID is the base: the set declared in :root without an attribute. It must
+// come first because detailed output shows exactly that one.
 var accents = []struct{ ID, Label string }{
-	{"", "петроль"},
-	{"graphite", "графит"},
-	{"indigo", "индиго"},
-	{"clay", "глина"},
+	{"", "petrol"},
+	{"graphite", "graphite"},
+	{"indigo", "indigo"},
+	{"clay", "clay"},
 }
 
 func main() {
-	tokens := flag.String("tokens", "../src/tokens.css", "путь к tokens.css")
-	// Полный вывод — это 528 строк на набор, то есть больше двух тысяч на
-	// прогон. Подробно печатается базовый акцент, у остальных — только
-	// провалы и итог: список, который никто не читает, не проверка, а шум.
-	verbose := flag.Bool("v", false, "печатать все пары для каждого акцента")
+	tokens := flag.String("tokens", "../src/tokens.css", "path to tokens.css")
+	// Full output is 528 lines per set, meaning more than two thousand per run.
+	// The base accent is printed in detail; for the others, only failures and
+	// the result are printed: a list nobody reads is not a check, it is noise.
+	verbose := flag.Bool("v", false, "print all pairs for each accent")
 	flag.Parse()
 
 	src, err := css.Load(*tokens)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "не прочитать токены:", err)
+		fmt.Fprintln(os.Stderr, "cannot read tokens:", err)
 		os.Exit(1)
 	}
 
-	// База — первый блок :root. Блоки [data-density] и медиазапросы сюда НЕ
-	// попадают: иначе высоты контролов затёрли бы базовые объявления.
+	// Base is the first :root block. [data-density] blocks and media queries do
+	// NOT belong here: otherwise control heights would overwrite base
+	// declarations.
 	base := src.Decls(regexp.MustCompile(`(?m)^:root \{`))
 	for _, t := range themes {
 		t.Base = base
@@ -372,13 +387,13 @@ func main() {
 		if a.ID != "" {
 			vars = src.Decls(regexp.MustCompile(`\[data-accent="` + a.ID + `"\]\s*\{`))
 			if len(vars) == 0 {
-				fmt.Fprintf(os.Stderr, "акцент %s объявлен в проверке, но не в токенах\n", a.ID)
+				fmt.Fprintf(os.Stderr, "accent %s is declared in the check but not in tokens\n", a.ID)
 				os.Exit(1)
 			}
 		}
 		detail := *verbose || a.ID == ""
 
-		fmt.Printf("\n═══ АКЦЕНТ %s ═══\n", a.Label)
+		fmt.Printf("\n═══ ACCENT %s ═══\n", a.Label)
 		for _, t := range themes {
 			t.Accent, t.AccentID, t.AccentLabel = vars, a.ID, a.Label
 
@@ -393,18 +408,19 @@ func main() {
 					var bg css.RGBA
 					bg, err = t.Flatten(c.bg)
 					if err == nil {
-						// Мера зависит от случая: ступень поверхностей меряется
-						// светлотой, всё остальное — отношением контраста.
+						// The measure depends on the case: surface stack steps are
+						// measured by lightness, everything else by contrast ratio.
 						r, unit := css.Ratio(fg, bg), ""
 						if c.isStep() {
 							r, unit = css.Step(fg, bg), " ΔL"
 							if len(c.alt) > 0 {
 								var other css.RGBA
 								if other, err = t.Flatten(c.alt); err == nil {
-									// Присутствие каждой альтернативы — перепад
-									// к общей подложке. Разница берётся СО
-									// ЗНАКОМ: отрицательная означает
-									// перевёрнутую лестницу и обязана падать.
+									// The presence of each alternative is the
+									// step against the shared background. The
+									// difference is taken WITH ITS SIGN:
+									// negative means a reversed ladder and
+									// must fail.
 									quiet := css.Step(fg, bg)
 									loud := css.StepOf(other, bg)
 									r = loud - quiet
@@ -413,7 +429,7 @@ func main() {
 						}
 						if err != nil {
 							failed, bad = failed+1, bad+1
-							lines = append(lines, fmt.Sprintf("  ✗ %s%s  ОШИБКА: %v", c.label, pad, err))
+							lines = append(lines, fmt.Sprintf("  ✗ %s%s  ERROR: %v", c.label, pad, err))
 							continue
 						}
 						mark := "·"
@@ -421,42 +437,42 @@ func main() {
 							mark, failed, bad = "✗", failed+1, bad+1
 						}
 						if detail || r < c.min {
-							lines = append(lines, fmt.Sprintf("  %s %s%s  %6.3f%s  (нужно %.3f)", mark, c.label, pad, r, unit, c.min))
+							lines = append(lines, fmt.Sprintf("  %s %s%s  %6.3f%s  (need %.3f)", mark, c.label, pad, r, unit, c.min))
 						}
 						continue
 					}
 				}
 				failed, bad = failed+1, bad+1
-				lines = append(lines, fmt.Sprintf("  ✗ %s%s  ОШИБКА: %v", c.label, pad, err))
+				lines = append(lines, fmt.Sprintf("  ✗ %s%s  ERROR: %v", c.label, pad, err))
 			}
 
 			if detail {
-				fmt.Printf("\nТЕМА %s — %s\n", t.ID, t.Label)
+				fmt.Printf("\nTHEME %s — %s\n", t.ID, t.Label)
 				fmt.Println(strings.Repeat("─", width+26))
 			} else if bad > 0 {
-				fmt.Printf("\nТЕМА %s — %s\n", t.ID, t.Label)
+				fmt.Printf("\nTHEME %s — %s\n", t.ID, t.Label)
 			}
 			for _, l := range lines {
 				fmt.Println(l)
 			}
 			if !detail && bad == 0 {
-				fmt.Printf("  · %s — %d пар пройдено\n", t.Label, len(cases))
+				fmt.Printf("  · %s — %d pairs passed\n", t.Label, len(cases))
 			}
 		}
 	}
 
-	// Охват таблицы: цвет текста, которого в ней нет, — это порог, который
-	// никто не мерил. Считается один раз, а не на каждую тему: вопрос не в
-	// значении, а в наличии строки.
+	// Table coverage: a text color that is absent from it is a threshold that
+	// nobody measured. Count it once, not once per theme: the question is not
+	// the value, but whether the row exists.
 	gaps, inkCount, err := checkInkCoverage(filepath.Dir(*tokens), cases)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "не прочитать кит:", err)
+		fmt.Fprintln(os.Stderr, "cannot read kit:", err)
 		os.Exit(1)
 	}
 	total += inkCount
 	failed += len(gaps)
 	if len(gaps) > 0 {
-		fmt.Println("\nОХВАТ ТАБЛИЦЫ")
+		fmt.Println("\nTABLE COVERAGE")
 		for _, g := range gaps {
 			fmt.Println(g)
 		}
@@ -464,37 +480,39 @@ func main() {
 
 	fmt.Println()
 	if failed > 0 {
-		fmt.Printf("✗ провалов: %d из %d\n", failed, total)
+		fmt.Printf("✗ failures: %d of %d\n", failed, total)
 		os.Exit(1)
 	}
-	fmt.Printf("· все %d проверок пройдены: %d тем × %d акцентов, охват %d цветов текста\n",
+	fmt.Printf("· all %d checks passed: %d themes × %d accents, coverage %d text colors\n",
 		total, len(themes), len(accents), inkCount)
+
 }
 
-// ── Покрытие: каждый цвет текста обязан быть кем-то проверен ───────────────
+// ── Coverage: every text color must be checked by something ────────────────
 //
-// Таблица пар выше — рукописная, и это правильно: пара несёт не только два
-// токена, но и СТОПКУ композиции («подпись в поле на панели» — два фона,
-// потому что врез полупрозрачен и складывается с панелью под ним). Такой факт
-// о вложенности разметки из tokens.css не выводится, и генерация пар обезличила
-// бы таблицу, у каждой строки которой есть человеческое имя.
+// The pair table above is handwritten, and that is correct: a pair carries not
+// only two tokens, but also a COMPOSITION STACK ("label in field on panel" —
+// two backgrounds, because the inset is translucent and combines with the
+// panel beneath it). That fact about markup nesting is not derivable from
+// tokens.css, and generating pairs would strip the table of the human name
+// every row has.
 //
-// А вот ДЫРА в ней выводится, и стоит копейки. Компонент, покрасивший текст
-// новым токеном, о котором не подумали, ниоткуда себя не проявит: цвет
-// применится, порог никто не померяет, и узнается это от человека, который не
-// смог прочитать подпись.
+// But a GAP in it is derivable, and costs almost nothing to detect. A component
+// that paints text with a new token nobody considered will reveal itself
+// nowhere: the color will apply, nobody will measure its threshold, and this
+// will be discovered by a person who cannot read the label.
 //
-// Поэтому здесь сверяется не результат, а ОХВАТ: всякий токен, которым кит
-// красит текст, обязан стоять передним планом хотя бы в одной паре. Что именно
-// под ним лежит, по-прежнему решает автор пары.
+// Therefore this checks not the result, but COVERAGE: every token the kit uses
+// to paint text must appear as a foreground in at least one pair. What lies
+// beneath it is still decided by the pair author.
 var (
 	colorDecl = regexp.MustCompile(`(?:^|[;{])\s*color\s*:\s*([^;}]+)`)
 	varUse    = regexp.MustCompile(`var\(\s*(--[a-z][\w-]*)`)
 )
 
-// inkTokens — токены, которыми кит реально красит текст, с местом первой
-// встречи. tokens.css исключён: там цвет объявляется, а не применяется;
-// print.css — тоже, у бумаги свой набор.
+// inkTokens — tokens the kit actually uses to paint text, with the location of
+// the first occurrence. tokens.css is excluded: color is declared there, not
+// applied; print.css is excluded too, because paper has its own set.
 func inkTokens(dir string) (map[string]string, error) {
 	out := map[string]string{}
 	ents, err := os.ReadDir(dir)
@@ -510,9 +528,9 @@ func inkTokens(dir string) (map[string]string, error) {
 		if err != nil {
 			return nil, err
 		}
-		// Комментарии ГАСЯТСЯ, а не вырезаются: они занимают три четверти
-		// файла, и после вырезания номер строки уезжает на сотни строк — то
-		// есть сообщение показывает на чужое правило.
+		// Comments are BLANKED rather than cut out: they take three quarters of
+		// the file, and after cutting the line number drifts by hundreds of
+		// lines — that is, the message points at somebody else's rule.
 		text := string(css.Blank([]byte(strings.ReplaceAll(string(b), "\r\n", "\n"))))
 		for _, m := range colorDecl.FindAllStringSubmatchIndex(text, -1) {
 			value := text[m[2]:m[3]]
@@ -527,12 +545,12 @@ func inkTokens(dir string) (map[string]string, error) {
 	return out, nil
 }
 
-// checkInkCoverage возвращает токены, которыми красят текст, но которые не
-// стоят передним планом ни в одной паре.
+// checkInkCoverage returns tokens used to paint text but not used as a
+// foreground in any pair.
 //
-// Компонентные переменные пропускаются: --btn-fg и --tone-ink не цвета, а
-// ПОДСТАНОВКИ — за ними стоит семантика, и меряется она под своим именем.
-// Проверять их значило бы требовать пару на каждое имя-посредник.
+// Component variables are skipped: --btn-fg and --tone-ink are not colors, but
+// SUBSTITUTIONS — semantics sits behind them and is measured under its own
+// name. Checking them would mean requiring a pair for every intermediary name.
 func checkInkCoverage(dir string, cases []kase) ([]string, int, error) {
 	ink, err := inkTokens(dir)
 	if err != nil {
@@ -548,14 +566,14 @@ func checkInkCoverage(dir string, cases []kase) ([]string, int, error) {
 			continue
 		}
 		bad = append(bad, fmt.Sprintf(
-			"  ✗ %s  красит текст (%s), но не стоит передним планом ни в одной паре.\n"+
-				"      Заведите строку в таблице выше: непроверенный цвет текста — это порог, который никто не мерил",
+			"  ✗ %s  paints text (%s), but is not a foreground in any pair.\n"+
+				"      Add a row to the table above: an unchecked text color is a threshold nobody measured",
 			tok, where))
 	}
 	sort.Strings(bad)
 	return bad, len(ink), nil
 }
 
-// Имена-посредники: компонентная переменная и тон. За ними стоит семантика,
-// которая меряется отдельно и под своим именем.
+// Intermediary names: component variable and tone. Semantics sits behind them,
+// which is measured separately under its own name.
 var indirect = regexp.MustCompile(`^--(btn|tone|level|change|chart)-`)

@@ -286,6 +286,15 @@ var mutations = []mutation{
 		"  /* Transitions collapse rather than switch off",
 		"  /* Переходы схлопываются, а не выключаются",
 		"step 2 runs for twenty sessions, and all that time a file rests on memory alone"},
+	// The tools zone carries named exceptions, and an exception list is the one
+	// thing that can quietly grow until the zone guards nothing. The mutation
+	// lands in a file that is NOT excepted: it proves the zone is alive, and it
+	// fails the moment somebody widens an exception to cover the whole
+	// directory.
+	{"Russian came back into the tools", "lang", "tools/cmd/targets/main.go",
+		"// min is the WCAG 2.2 AA 2.5.8 minimum (Target Size, Minimum).",
+		"// Норма WCAG 2.2 AA 2.5.8 (Target Size, Minimum).",
+		"a zone with exceptions has to be checked outside them, or the exceptions become the zone"},
 
 	{"two roving tabindexes on a translated page", "registry", "docs/components/actions/segmented.en.md",
 		"",

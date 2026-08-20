@@ -1,17 +1,19 @@
-// proportion — проверка ПРОПОРЦИЙ яруса ролей против шкалы кеглей.
+// proportion — checks ROLE PROPORTIONS against the type scale.
 //
-// Зачем отдельная команда. contrast сторожит цвет, targets — цели нажатия,
-// docscheck — сходимость справочника, dist — поставку. Ни одна из них не
-// видела отношения между размерами, и это вскрылось дорого: когда база кегля
-// выросла с 13 на 14, ярус глифов и жёлобов остался на месте. Все четыре
-// проверки при этом остались зелёными, а на экране значок отстал от прописной
-// на 9.8%, а колонка подписей переполнилась и порвала выравнивание формы.
+// Why a separate command. contrast guards color, targets — tap targets,
+// docscheck — reference consistency, dist — delivery. None of them saw the
+// relationship between sizes, and this surfaced expensively: when the base
+// type size grew from 13 to 14, the glyph and gutter tier stayed in place.
+// All four checks remained green, while on screen the icon fell 9.8% behind
+// the uppercase letter, and the label column overflowed and broke form
+// alignment.
 //
-// Проверяются ОТНОШЕНИЯ, а не значения: конкретное число можно поменять
-// осознанно, а вот соотношение, вылезшее из полосы, — почти всегда недосмотр.
+// These checks measure RELATIONSHIPS, not values: a specific number can be
+// changed deliberately, but a ratio that leaves its band is almost always
+// an oversight.
 //
-// Полосы взяты из нынешнего состояния кита, а не из головы: каждая подписана
-// тем, что случится при выходе за неё.
+// The bands come from the kit's current state, not from guesswork: each is
+// labeled with what happens when it falls outside the band.
 package main
 
 import (
@@ -26,231 +28,237 @@ import (
 	"instrument/tools/internal/css"
 )
 
-// Порог различимости кеглей. Ниже него соседние ступени читаются как одна,
-// и шкала теряет ступень, продолжая её декларировать. 1.12 — нижняя граница
-// полосы, в которой держатся рабочие ступени кита.
+// Type size distinguishability threshold. Below this, adjacent steps read as
+// one, and the scale loses a step while continuing to declare it. 1.12 is the
+// lower bound of the band that contains the kit's working steps.
 const stepMin = 1.12
 
 type rule struct {
 	label    string
-	a, b     string  // что делим на что
-	min, max float64 // допустимая полоса отношения
-	why      string  // что случится при выходе
-	perDens  bool    // проверять в каждой плотности
+	a, b     string  // what is divided by what
+	min, max float64 // allowed ratio band
+	why      string  // what happens when it leaves the band
+	perDens  bool    // check at each density
 }
 
 var rules = []rule{
-	// ── Лестница кеглей ────────────────────────────────────────────────────
-	// Каждая ступень обязана отличаться от соседней настолько, чтобы разницу
-	// было видно. Верх шкалы расходится шире — там разница между заголовками.
-	{label: "кегль: 2xs → xs", a: "--text-xs", b: "--text-2xs", min: stepMin, max: 1.30,
-		why: "ступени сливаются: шкала объявляет размер, которого не видно"},
-	{label: "кегль: xs → sm", a: "--text-sm", b: "--text-xs", min: stepMin, max: 1.30,
-		why: "метаданные перестают отличаться от базы размером"},
-	{label: "кегль: sm → md", a: "--text-md", b: "--text-sm", min: stepMin, max: 1.30,
-		why: "имя панели сливается с данными под ним"},
-	{label: "кегль: md → lg", a: "--text-lg", b: "--text-md", min: stepMin, max: 1.30,
-		why: "заголовок блока сливается с прозой"},
-	{label: "кегль: lg → xl", a: "--text-xl", b: "--text-lg", min: stepMin, max: 1.40,
-		why: "заголовок раздела сливается с заголовком блока"},
-	{label: "кегль: xl → 2xl", a: "--text-2xl", b: "--text-xl", min: stepMin, max: 1.40,
-		why: "число-герой сливается с заголовком"},
+	// ── Type size ladder ────────────────────────────────────────────────────
+	// Each step must differ from its neighbor enough for the difference to be
+	// visible. The upper end of the scale spreads wider — that is where the
+	// difference between headings lives.
+	{label: "type: 2xs → xs", a: "--text-xs", b: "--text-2xs", min: stepMin, max: 1.30,
+		why: "steps merge: the scale declares a size that cannot be seen"},
+	{label: "type: xs → sm", a: "--text-sm", b: "--text-xs", min: stepMin, max: 1.30,
+		why: "metadata stops differing from the base by size"},
+	{label: "type: sm → md", a: "--text-md", b: "--text-sm", min: stepMin, max: 1.30,
+		why: "panel name merges with the data below it"},
+	{label: "type: md → lg", a: "--text-lg", b: "--text-md", min: stepMin, max: 1.30,
+		why: "block heading merges with prose"},
+	{label: "type: lg → xl", a: "--text-xl", b: "--text-lg", min: stepMin, max: 1.40,
+		why: "section heading merges with block heading"},
+	{label: "type: xl → 2xl", a: "--text-2xl", b: "--text-xl", min: stepMin, max: 1.40,
+		why: "hero number merges with heading"},
 
-	// ── Глиф против текста ─────────────────────────────────────────────────
-	// Значок и спиннер стоят рядом с подписью и меряются НЕ коробкой, а тем,
-	// как их чернила смотрятся против прописной. Прописная примерно 0.71 от
-	// кегля, чернила значка — 9.02 от коробки 16, то есть 0.564. Отсюда
-	// полоса: коробка значка к базе кегля.
-	{label: "значок к базе кегля", a: "--size-icon", b: "--text-sm", min: 1.20, max: 1.34, perDens: true,
-		why: "значок рядом с подписью читается мелким или наоборот забивает её"},
-	// Та же мера, но против СВОЕГО кегля. Строка состояния набрана --text-2xs,
-	// и значок там обязан считаться против прописной одиннадцатого, а не
-	// четырнадцатого: обычные 18 против 11 дают 1.64 и перевешивают показание.
+	// ── Glyph against text ─────────────────────────────────────────────────
+	// The icon and spinner sit next to a label and are measured NOT by the box,
+	// but by how their ink looks against the uppercase letter. Uppercase is
+	// about 0.71 of the type size, icon ink is 9.02 from a box of 16, or 0.564.
+	// Hence the band: icon box to base type size.
+	{label: "icon to base type size", a: "--size-icon", b: "--text-sm", min: 1.20, max: 1.34, perDens: true,
+		why: "icon next to the label reads tiny or overwhelms it instead"},
+	// The same measure, but against ITS OWN type size. The status row is set in
+	// --text-2xs, so its icon must be measured against the uppercase of eleven,
+	// not fourteen: ordinary 18 against 11 gives 1.64 and outweighs the readout.
 	//
-	// Полоса ШИРЕ, чем у соседа, и это не поблажка. Мера здесь опирается на
-	// модель «прописная = 0.71 × кегль», а браузер набирает прописную целыми
-	// пикселями. На --text-2xs = 11.5px модель даёт 8.16, измеренная равна 9 —
-	// расхождение 10%, и оно берётся ровно оттуда, что один устройственный
-	// пиксель на таком кегле составляет 12% величины. Разрешить один пиксель
-	// линейная модель не может в принципе.
+	// The band is WIDER than its neighbor, and this is not leniency. The measure
+	// relies on the model "uppercase = 0.71 × type size", while the browser
+	// renders uppercase in whole pixels. At --text-2xs = 11.5px the model gives
+	// 8.16, the measured value is 9 — a 10% discrepancy, caused exactly by the
+	// fact that one device pixel at this type size is 12% of the value. A linear
+	// model cannot allow one pixel in principle.
 	//
-	// Поэтому тонкую часть инварианта эта проверка больше не изображает: её
-	// меряет пиксельный гейт, у которого прописная НАСТОЯЩАЯ, полосой
-	// 0.95…1.07 (tools/audit.js). Здесь остаётся грубая — «значок не
-	// перевешивает показание и не пропадает рядом с ним»: 1.64 по-прежнему
-	// падает, а весь корпус 1.231…1.391 проходит.
+	// Therefore this check no longer pretends to measure the fine part of the
+	// invariant: that is measured by the pixel gate, where uppercase is REAL,
+	// with a band of 0.95…1.07 (tools/audit.js). What remains here is the coarse
+	// rule — "the icon does not outweigh the readout and does not disappear
+	// beside it": 1.64 still fails, while the entire 1.231…1.391 body passes.
 	//
-	// Две проверки одного инварианта разными посредниками — это и есть то,
-	// из-за чего значок на масштабе 15 год стоял отставшим: текстовая
-	// говорила «в полосе», пиксельная — «нарушение», и обе были правы про
-	// свою модель.
-	{label: "мелкий значок к своему кеглю", a: "--size-icon-sm", b: "--text-2xs", min: 1.20, max: 1.42, perDens: true,
-		why: "значок в строке состояния забивает показание или пропадает рядом с ним"},
-	{label: "спиннер к базе кегля", a: "--size-spinner", b: "--text-sm", min: 0.92, max: 1.20, perDens: true,
-		why: "кольцо занятости встаёт на место подписи и обязано быть с неё ростом"},
-	{label: "шеврон к базе кегля", a: "--size-chevron", b: "--text-sm", min: 0.62, max: 0.86, perDens: true,
-		why: "раскрывающая стрелка спорит с подписью или теряется рядом с ней"},
+	// Two checks of one invariant through different intermediaries are exactly
+	// why the icon stood behind at scale 15 for a year: the text check said
+	// "in band", the pixel check said "violation", and both were right about
+	// their own model.
+	{label: "small icon to its type size", a: "--size-icon-sm", b: "--text-2xs", min: 1.20, max: 1.42, perDens: true,
+		why: "icon in the status row overwhelms the readout or disappears beside it"},
+	{label: "spinner to base type size", a: "--size-spinner", b: "--text-sm", min: 0.92, max: 1.20, perDens: true,
+		why: "busy indicator takes the label's place and must be its height"},
+	{label: "chevron to base type size", a: "--size-chevron", b: "--text-sm", min: 0.62, max: 0.86, perDens: true,
+		why: "disclosure arrow competes with the label or gets lost beside it"},
 
-	// Значок БЕЗ подписи меряется не против прописной, а против цели нажатия:
-	// рядом с ним слова нет, и сравнивать не с чем. Своё правило, а не полоса
-	// значка с подписью, — иначе --size-icon-lg (24 против базы 14, то есть
-	// 1.71) валил бы гейт, делая ровно то, ради чего заведён.
+	// An icon WITHOUT a label is measured not against uppercase, but against
+	// the tap target: there are no words beside it, so there is nothing to
+	// compare against. Its own rule, rather than the icon-with-label band —
+	// otherwise --size-icon-lg (24 against base 14, or 1.71) would fail the
+	// gate, doing exactly what the rule was introduced to prevent.
 	//
-	// Полоса снизу: глиф мельче половины цели теряется в пустой кнопке.
-	// Сверху: глиф крупнее трёх четвертей упирается в края, и цель перестаёт
-	// читаться как кнопка.
-	{label: "значок рельса к своей кнопке", a: "--size-icon-lg", b: "--control-h-lg", min: 0.5, max: 0.76, perDens: true,
-		why: "глиф тонет в пустой кнопке или упирается в её края"},
+	// Lower bound: a glyph smaller than half the target gets lost in an empty
+	// button. Upper bound: a glyph larger than three quarters hits the edges,
+	// and the target stops reading as a button.
+	{label: "rail icon to its button", a: "--size-icon-lg", b: "--control-h-lg", min: 0.5, max: 0.76, perDens: true,
+		why: "glyph gets lost in an empty button or hits its edges"},
 
-	// ── Ритм ───────────────────────────────────────────────────────────────
-	// Правило ДРУГОГО РОДА, чем остальные здесь. У прочих полоса перцептивная:
-	// «отношение должно попасть в диапазон, иначе не видно разницы». Тут
-	// отношение ТОЧНОЕ, и полоса сжата до погрешности деления.
+	// ── Rhythm ──────────────────────────────────────────────────────────────
+	// A DIFFERENT KIND OF RULE from the others here. The other bands are
+	// perceptual: "the ratio must land in a range, otherwise the difference is
+	// not visible." Here the ratio is EXACT, and the band is narrowed to the
+	// division error.
 	//
-	// --gap-section выведен как --gap-row, поднятый на четыре ступени шкалы.
-	// Шкала 2·4·6·8·12·16·24·32·48·64 устроена так, что +4 ступени дают ровно
-	// ×4 в каждой точке: 4→16, 6→24, 8→32, 12→48, 16→64. Это и делает разрыв
-	// между разделами кратным просвету внутри них во всех пятнадцати ячейках
-	// без отдельного подбора.
+	// --gap-section is derived as --gap-row raised by four scale steps. The
+	// scale 2·4·6·8·12·16·24·32·48·64 is arranged so that +4 steps gives
+	// exactly ×4 at every point: 4→16, 6→24, 8→32, 12→48, 16→64. That is what
+	// makes the gap between sections a multiple of the spacing within them in
+	// all fifteen cells without separate tuning.
 	//
-	// Гейт стережёт вывод, а не число: правку одной ячейки он поймает сразу.
-	// Замерено на собранных экранах, откуда взялась сама четвёрка: у Anthropic
-	// внутри группы 8·12·16, между группами 54–61.
-	{label: "раздел к ряду", a: "--gap-section", b: "--gap-row", min: 3.99, max: 4.01, perDens: true,
-		why: "разрыв между разделами перестал быть кратным просвету внутри них — экран снова читается сплошным потоком"},
+	// The gate guards the derivation, not the number: editing one cell catches
+	// it immediately. Measured on assembled screens, which is where the four
+	// itself came from: Anthropic uses 8·12·16 inside a group, 54–61 between
+	// groups.
+	{label: "section to row", a: "--gap-section", b: "--gap-row", min: 3.99, max: 4.01, perDens: true,
+		why: "gap between sections is no longer a multiple of the spacing within them — the screen reads as one continuous flow again"},
 
-	// ── Контрол против текста ──────────────────────────────────────────────
-	// Полоса широкая намеренно: высота контрола перенастраивается плотностью,
-	// а кегль — нет, поэтому отношение обязано гулять. Границы взяты по краям
-	// самой лестницы (26/14 в плотной и 36/14 в свободной) с запасом в шаг.
-	// Правило ловит не дрейф внутри лестницы, а выпадение из неё: контрол,
-	// которому объявили высоту мимо ряда.
-	{label: "высота контрола к базе", a: "--control-h-md", b: "--text-sm", min: 1.8, max: 2.8, perDens: true,
-		why: "подпись упирается в потолок кнопки или тонет в ней"},
-	{label: "бейдж к своему кеглю", a: "--control-h-xs", b: "--text-2xs", min: 1.5, max: 2.2, perDens: true,
-		why: "бейдж обжимает подпись или раздувается вокруг неё"},
+	// ── Control against text ───────────────────────────────────────────────
+	// The band is intentionally wide: control height is retuned by density,
+	// while type size is not, so the ratio must vary. Bounds are taken from the
+	// edges of the ladder itself (26/14 at dense and 36/14 at loose) with one
+	// step of margin. The rule catches not drift within the ladder, but falling
+	// outside it: a control whose declared height misses the row.
+	{label: "control height to base", a: "--control-h-md", b: "--text-sm", min: 1.8, max: 2.8, perDens: true,
+		why: "label hits the button ceiling or sinks into it"},
+	{label: "badge to its type size", a: "--control-h-xs", b: "--text-2xs", min: 1.5, max: 2.2, perDens: true,
+		why: "badge squeezes the label or inflates around it"},
 
-	// ── Форма контрола ─────────────────────────────────────────────────────
-	// Отступ выводится из высоты через --control-ratio-*, и эти три правила
-	// сторожат сам вывод: если кто-то снова объявит отступ значением, форма
-	// поедет вместе с плотностью, как было до вывода.
-	{label: "форма кнопки sm", a: "--control-pad-sm", b: "--control-h-sm", min: 0.30, max: 0.32, perDens: true,
-		why: "отступ перестал выводиться из высоты — кнопка меняет ФОРМУ вместе с плотностью"},
-	{label: "форма кнопки md", a: "--control-pad-md", b: "--control-h-md", min: 0.365, max: 0.385, perDens: true,
-		why: "отступ перестал выводиться из высоты — кнопка меняет ФОРМУ вместе с плотностью"},
-	{label: "форма кнопки lg", a: "--control-pad-lg", b: "--control-h-lg", min: 0.41, max: 0.43, perDens: true,
-		why: "отступ перестал выводиться из высоты — кнопка меняет ФОРМУ вместе с плотностью"},
+	// ── Control shape ──────────────────────────────────────────────────────
+	// Padding is derived from height through --control-ratio-*, and these three
+	// rules guard the derivation itself: if someone declares padding as a value
+	// again, the shape will move with density, as it did before the derivation.
+	{label: "sm button shape", a: "--control-pad-sm", b: "--control-h-sm", min: 0.30, max: 0.32, perDens: true,
+		why: "padding is no longer derived from height — button SHAPE changes with density"},
+	{label: "md button shape", a: "--control-pad-md", b: "--control-h-md", min: 0.365, max: 0.385, perDens: true,
+		why: "padding is no longer derived from height — button SHAPE changes with density"},
+	{label: "lg button shape", a: "--control-pad-lg", b: "--control-h-lg", min: 0.41, max: 0.43, perDens: true,
+		why: "padding is no longer derived from height — button SHAPE changes with density"},
 
-	// Скругление — вторая половина той же формы. Один радиус на все три
-	// размера читается на мелком контроле почти пилюлей: --radius-md, то есть
-	// 8 на высоте 26, это 0.31, а в плотном режиме 8 на 22 — уже 0.36. Полоса
-	// снизу: ниже 0.16 контрол перестаёт быть скруглённым и спорит с карточкой
-	// вокруг. Сверху: выше 0.30 читается пилюлей, а пилюля в ките значит
-	// «переключатель».
-	{label: "скругление контрола sm", a: "--radius-control-sm", b: "--control-h-sm", min: 0.16, max: 0.30, perDens: true,
-		why: "мелкий контрол читается пилюлей или теряет скругление вовсе"},
-	{label: "скругление контрола md", a: "--radius-control-md", b: "--control-h-md", min: 0.16, max: 0.30, perDens: true,
-		why: "контрол читается пилюлей или теряет скругление вовсе"},
-	{label: "скругление контрола lg", a: "--radius-control-lg", b: "--control-h-lg", min: 0.16, max: 0.30, perDens: true,
-		why: "крупный контрол читается пилюлей или теряет скругление вовсе"},
+	// Radius is the second half of the same shape. One radius for all three
+	// sizes reads as almost a pill on a small control: --radius-md, or 8 at
+	// height 26, is 0.31, while in dense mode 8 at 22 is already 0.36. Lower
+	// bound: below 0.16 the control stops being rounded and competes with the
+	// card around it. Upper bound: above 0.30 it reads as a pill, and a pill in
+	// the kit means "toggle".
+	{label: "sm control rounding", a: "--radius-control-sm", b: "--control-h-sm", min: 0.16, max: 0.30, perDens: true,
+		why: "small control reads as a pill or loses its rounding entirely"},
+	{label: "md control rounding", a: "--radius-control-md", b: "--control-h-md", min: 0.16, max: 0.30, perDens: true,
+		why: "control reads as a pill or loses its rounding entirely"},
+	{label: "lg control rounding", a: "--radius-control-lg", b: "--control-h-lg", min: 0.16, max: 0.30, perDens: true,
+		why: "large control reads as a pill or loses its rounding entirely"},
 
-	// ── Колонка подписей ───────────────────────────────────────────────────
-	// Она держит ТЕКСТ, поэтому обязана расти вместе с кеглем. Именно её
-	// переполнило ростом базы: «Лимит токенов» требовал 99.9px при ширине 92.
-	// Та же оговорка: колонка растёт с плотностью, кегль нет. Полоса широкая и
-	// ловит только грубое выпадение.
+	// ── Label column ────────────────────────────────────────────────────────
+	// It holds TEXT, so it must grow with type size. This is exactly what
+	// overflowed when the base grew: "Token limit" required 99.9px at a width
+	// of 92. Same caveat: the column grows with density, type size does not.
+	// The band is wide and catches only gross deviation.
 	//
-	// ПЕРЕПОЛНЕНИЕ КОЛОНКИ ЭТИМ ПРАВИЛОМ НЕ ЛОВИТСЯ, и это честная граница
-	// текстового гейта: влезет ли «Лимит токенов» в свои пиксели, зависит от
-	// шрифта, а не от токенов. Такое меряет tools/audit.js на отрисованном.
-	{label: "колонка подписей к базе", a: "--label-col", b: "--text-sm", min: 6.0, max: 9.0, perDens: true,
-		why: "колонка выпала из своей лестницы"},
+	// COLUMN OVERFLOW IS NOT CAUGHT BY THIS RULE, and that is the honest limit
+	// of a token-level gate: whether "Token limit" fits into its pixels depends
+	// on the font, not the tokens. tools/audit.js measures that on the rendered
+	// output.
+	{label: "label column to base", a: "--label-col", b: "--text-sm", min: 6.0, max: 9.0, perDens: true,
+		why: "label column fell outside its ladder"},
 
-	// ── Вертикальный ритм ──────────────────────────────────────────────────
-	{label: "вертикаль блока к строке", a: "--pad-block-y", b: "--row-pad-y", min: 0.9, max: 1.7, perDens: true,
-		why: "шапка панели становится выше строки, которую подписывает"},
+	// ── Vertical rhythm ────────────────────────────────────────────────────
+	{label: "block vertical to row", a: "--pad-block-y", b: "--row-pad-y", min: 0.9, max: 1.7, perDens: true,
+		why: "panel header becomes taller than the row it labels"},
 
-	// «По вертикали теснее, чем по горизонтали: часть вертикального воздуха
-	// приносит интерлиньяж» — правило оформления, до сих пор жившее только
-	// текстом. Держалось оно в четырнадцати ячейках из пятнадцати: в свободной
-	// плотности на базовом кегле стояло 12 на 12, то есть ровно то, что
-	// правило запрещает. Верхняя граница строго меньше единицы — в этом всё
-	// содержание правила; нижняя отсекает обратный перекос, при котором
-	// строка сплющивается против собственных боков.
-	{label: "вертикаль строки к горизонтали", a: "--row-pad-y", b: "--pad-cell-x", min: 0.55, max: 0.95, perDens: true,
-		why: "вертикаль перестала быть теснее горизонтали — строка раздаётся вверх, хотя воздух ей уже дал интерлиньяж"},
+	// "Tighter vertically than horizontally: some vertical air comes from
+	// line-height" — a layout rule that had lived only in text until now. It
+	// held in fourteen of fifteen cells: in loose density at the base type size
+	// it was 12 against 12, exactly what the rule forbids. The upper bound is
+	// strictly less than one — that is the entire rule; the lower bound rejects
+	// the opposite skew, where the row gets flattened against its own sides.
+	{label: "row vertical to horizontal", a: "--row-pad-y", b: "--pad-cell-x", min: 0.55, max: 0.95, perDens: true,
+		why: "vertical is no longer tighter than horizontal — the row expands upward even though line-height already supplied the air"},
 }
 
-// Не всё проверяется отношением. Пол кегля — абсолют, радиусы — свойство
-// самого числа. Такие правила живут здесь.
+// Not everything is checked by ratio. Type floor is absolute, radii are a
+// property of the number itself. Such rules live here.
 type absCheck struct {
 	label string
 	fn    func(v func(string) float64) (bool, string)
 }
 
 var absolutes = []absCheck{
-	{"пол кегля не пробит", func(v func(string) float64) (bool, string) {
-		// 11px — объявленный пол кита: ниже него размера нет и не заводится.
+	{"type floor not breached", func(v func(string) float64) (bool, string) {
+		// 11px — the declared kit floor: there is no size below it and none
+		// should be introduced.
 		//
-		// Проверка существует потому, что пол объявлен в rem, то есть он пол
-		// НЕ САМ ПО СЕБЕ, а при корне 16. Потребитель имеет право сменить
-		// корень — это единственный рычаг плотности по тексту, — и при корне
-		// 14 младшая ступень падает до 9.63px совершенно молча.
+		// The check exists because the floor is declared in rem, so the floor
+		// is NOT SELF-CONTAINED, but depends on a root of 16. A consumer can
+		// change the root — this is the only text-density control — and at root
+		// 14 the smallest step silently drops to 9.63px.
 		//
-		// Зажать её через max(11px, …) нельзя, и это стоит записать, чтобы не
-		// предлагали снова: при корне 14 зажатая младшая даёт 11, а соседняя
-		// незажатая — 10.94, и порядок ступеней инвертируется. Зажать обе —
-		// значит схлопнуть их в одно число и потерять ступень. Поэтому пол
-		// сторожится проверкой, а не выражением.
+		// Clamping it through max(11px, …) is impossible, and this needs to be
+		// recorded so it is not proposed again: at root 14 the clamped smallest
+		// step gives 11, while the unclamped neighbor gives 10.94, inverting
+		// the step order. Clamping both means collapsing them into one number
+		// and losing a step. Therefore the floor is guarded by a check, not an
+		// expression.
 		got := v("--text-2xs")
 		if got < 11-0.01 {
-			return false, fmt.Sprintf("--text-2xs = %.2fpx при корне %g — ниже объявленного пола в 11px", got, css.RootPx)
+			return false, fmt.Sprintf("--text-2xs = %.2fpx at root %g — below the declared floor of 11px", got, css.RootPx)
 		}
 		return true, fmt.Sprintf("--text-2xs = %.2fpx", got)
 	}},
-	{"радиусы чётные", func(v func(string) float64) (bool, string) {
+	{"radii are even", func(v func(string) float64) (bool, string) {
 		for _, n := range []string{"--radius-2xs", "--radius-xs", "--radius-sm", "--radius-md", "--radius-lg"} {
 			r := v(n)
 			if int(r)%2 != 0 || r != float64(int(r)) {
-				return false, fmt.Sprintf("%s = %g: нечётный радиус даёт половину устройственного пикселя при плотности 1.5, и дуга стыкуется с гранью мимо сетки", n, r)
+				return false, fmt.Sprintf("%s = %g: odd radius produces half a device pixel at density 1.5, and the arc meets the edge off-grid", n, r)
 			}
 		}
 		return true, fmt.Sprintf("%g · %g · %g · %g · %g",
 			v("--radius-2xs"), v("--radius-xs"), v("--radius-sm"), v("--radius-md"), v("--radius-lg"))
 	}},
-	{"лестница радиусов растёт", func(v func(string) float64) (bool, string) {
+	{"radius ladder grows", func(v func(string) float64) (bool, string) {
 		xs, sm, md, lg := v("--radius-xs"), v("--radius-sm"), v("--radius-md"), v("--radius-lg")
 		if !(xs < sm && sm < md && md < lg) {
-			return false, fmt.Sprintf("%g · %g · %g · %g — вложенный радиус обязан быть меньше внешнего", xs, sm, md, lg)
+			return false, fmt.Sprintf("%g · %g · %g · %g — nested radius must be smaller than the outer one", xs, sm, md, lg)
 		}
 		return true, fmt.Sprintf("%g < %g < %g < %g", xs, sm, md, lg)
 	}},
-	// Сегмент внутри дорожки вычитает поле из радиуса дорожки прямо в CSS,
-	// поэтому концентричность держится сама. Сторожить остаётся результат
-	// вычитания: он обязан быть положительным и ЧЁТНЫМ, иначе внутренний угол
-	// растрируется мимо устройственной сетки при плотности 1.5.
-	{"вычитание радиуса сегмента даёт чётный остаток", func(v func(string) float64) (bool, string) {
+	// A segment inside the track subtracts the field from the track radius
+	// directly in CSS, so concentricity maintains itself. What remains to guard
+	// is the subtraction result: it must be positive and EVEN, otherwise the
+	// inner corner rasterizes off the device grid at density 1.5.
+	{"segment radius subtraction leaves an even remainder", func(v func(string) float64) (bool, string) {
 		md, gap := v("--radius-control-md"), v("--space-1")
 		in := md - gap
 		if in <= 0 || int(in)%2 != 0 {
-			return false, fmt.Sprintf("%g − %g = %g: внутренний радиус обязан быть положительным и чётным", md, gap, in)
+			return false, fmt.Sprintf("%g − %g = %g: inner radius must be positive and even", md, gap, in)
 		}
 		return true, fmt.Sprintf("%g − %g = %g", md, gap, in)
 	}},
 }
 
 var densities = []struct{ id, label string }{
-	{"", "обычная"},
-	{"compact", "плотная"},
-	{"comfortable", "свободная"},
+	{"", "normal"},
+	{"compact", "compact"},
+	{"comfortable", "comfortable"},
 }
 
-// Масштаб — ВТОРАЯ размерная ось, и проверять её отдельно от плотности
-// нельзя: обе двигают высоты контролов, а их сочетание описано собственной
-// ячейкой токенов. Поэтому проверок 3 × 3, а не 3 + 3.
+// Scale is the SECOND dimensional axis, and it cannot be checked separately
+// from density: both move control heights, and their combination is described
+// by its own token cell. Hence 3 × 3 checks, not 3 + 3.
 //
-// Ступени вниз нет намеренно: плотный режим уже стоит на полу WCAG 2.5.8, и
-// масштаб меньше единицы пробил бы критерий по построению.
+// There is intentionally no step below: compact mode is already at the WCAG
+// 2.5.8 floor, and a scale below one would breach the criterion by construction.
 var scales = []struct{ id, label string }{
 	{"", "14px"},
 	{"15", "15px"},
@@ -259,9 +267,9 @@ var scales = []struct{ id, label string }{
 	{"18", "18px"},
 }
 
-// combo — одна ячейка сетки «масштаб × плотность». Оси расплющены в один
-// список нарочно: так тело проверки остаётся одноуровневым, а добавление
-// третьей оси не превратит его в лестницу из вложенных циклов.
+// combo is one cell of the "scale × density" grid. The axes are flattened
+// into one list deliberately: this keeps the check body flat, and adding a
+// third axis will not turn it into a ladder of nested loops.
 type combo struct {
 	scale, dens string
 	label       string
@@ -278,15 +286,15 @@ func combos() []combo {
 }
 
 func main() {
-	tokens := flag.String("tokens", "../src/tokens.css", "путь к tokens.css")
-	verbose := flag.Bool("v", false, "показать пройденные")
-	root := flag.Float64("root", css.RootPx, "корень документа в px: кегли объявлены в rem и считаются от него")
+	tokens := flag.String("tokens", "../src/tokens.css", "path to tokens.css")
+	verbose := flag.Bool("v", false, "show passed checks")
+	root := flag.Float64("root", css.RootPx, "document root in px: type sizes are declared in rem and calculated from it")
 	flag.Parse()
 	css.RootPx = *root
 
 	src, err := css.Load(*tokens)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "не прочитать токены:", err)
+		fmt.Fprintln(os.Stderr, "cannot read tokens:", err)
 		os.Exit(1)
 	}
 
@@ -294,12 +302,12 @@ func main() {
 	for k, v := range src.Decls(regexp.MustCompile(`:where\(:root\)\s*\{`)) {
 		base[k] = v
 	}
-	// Отступ контрола выводится ниже блоков плотности, общим правилом.
+	// Control padding is derived below the density blocks by a common rule.
 	for k, v := range src.Decls(regexp.MustCompile(`:where\(:root\), \[data-density\], \[data-scale\]\s*\{`)) {
 		base[k] = v
 	}
 	if len(base) == 0 {
-		fmt.Fprintln(os.Stderr, "не найден ярус ролей — :where(:root)")
+		fmt.Fprintln(os.Stderr, "role tier not found — :where(:root)")
 		os.Exit(1)
 	}
 
@@ -329,8 +337,8 @@ func main() {
 		}
 	}
 
-	// scaleVals — база плюс одномерная часть масштаба: кегли, лестница
-	// радиусов, глифы и текстовые ширины.
+	// scaleVals — base plus the one-dimensional scale part: type sizes, radius
+	// ladder, glyphs, and text widths.
 	scaleVals := func(id string) map[string]string {
 		vals := map[string]string{}
 		for k, v := range base {
@@ -344,18 +352,18 @@ func main() {
 		return vals
 	}
 
-	// Радиусы от плотности не зависят, но от МАСШТАБА зависят: лестница
-	// переобъявляется целиком. Поэтому абсолютные проверки гоняются по разу
-	// на масштаб, а не один раз на весь кит.
+	// Radii do not depend on density, but they do depend on SCALE: the ladder
+	// is redeclared as a whole. Therefore absolute checks run once per scale,
+	// not once for the entire kit.
 	for _, sc := range scales {
 		vals := scaleVals(sc.id)
 		for _, rc := range absolutes {
 			total++
 			ok, note := rc.fn(valOf(vals))
 			if !ok {
-				problems = append(problems, fmt.Sprintf("  · %-*s  %s  (масштаб %s)", width, rc.label, note, sc.label))
+				problems = append(problems, fmt.Sprintf("  · %-*s  %s  (scale %s)", width, rc.label, note, sc.label))
 			} else if *verbose {
-				fmt.Printf("  · %-*s  %s  (масштаб %s)\n", width, rc.label, note, sc.label)
+				fmt.Printf("  · %-*s  %s  (scale %s)\n", width, rc.label, note, sc.label)
 			}
 		}
 	}
@@ -364,8 +372,8 @@ func main() {
 
 	for _, d := range combos() {
 		vals := scaleVals(d.scale)
-		// Плотность приходит из своего блока, когда масштаб обычный, и из
-		// двумерной ячейки, когда нет: ячейка полностью описывает пару.
+		// Density comes from its own block when the scale is normal, and from a
+		// two-dimensional cell otherwise: the cell fully describes the pair.
 		if d.dens != "" {
 			re := regexp.MustCompile(`\[data-density="` + d.dens + `"\]\s*\{`)
 			if d.scale != "" {
@@ -380,12 +388,12 @@ func main() {
 			fmt.Printf("\n── %s ──\n", d.label)
 		}
 		for _, r := range rules {
-			// perDens означает «зависит от ПЛОТНОСТИ», а не «от любой ячейки».
-			// Лестницу кеглей плотность не трогает, поэтому в её ячейках
-			// правило пропускается — но МАСШТАБ её переобъявляет целиком, и
-			// пропускать его нельзя. Поэтому условие смотрит на d.dens, а не
-			// на d.perDens: со вторым ладдеры масштаба выпадают из проверки
-			// целиком, и гейт зеленеет незаслуженно.
+			// perDens means "depends on DENSITY", not "on any cell".
+			// The type-size ladder is not touched by density, so in its cells
+			// the rule is skipped — but SCALE redeclares it as a whole, and it
+			// cannot be skipped there. Therefore the condition looks at d.dens,
+			// not at d.perDens: with the latter, scale ladders disappear from
+			// the check entirely, and the gate turns green undeservedly.
 			if d.dens != "" && !r.perDens {
 				continue
 			}
@@ -393,20 +401,20 @@ func main() {
 			a, err1 := css.ResolvePx(vals, r.a)
 			b, err2 := css.ResolvePx(vals, r.b)
 			if err1 != nil || err2 != nil {
-				problems = append(problems, fmt.Sprintf("  · %-*s  не разобрать: %v %v", width, r.label, err1, err2))
+				problems = append(problems, fmt.Sprintf("  · %-*s  cannot resolve: %v %v", width, r.label, err1, err2))
 				continue
 			}
 			if b == 0 {
-				problems = append(problems, fmt.Sprintf("  · %-*s  делитель ноль", width, r.label))
+				problems = append(problems, fmt.Sprintf("  · %-*s  divisor is zero", width, r.label))
 				continue
 			}
 			got := a / b
 			if got < r.min || got > r.max {
 				problems = append(problems, fmt.Sprintf(
-					"  · %-*s  %.3f  (полоса %.2f–%.2f, %s)\n      %s",
+					"  · %-*s  %.3f  (band %.2f–%.2f, %s)\n      %s",
 					width, r.label, got, r.min, r.max, d.label, r.why))
 			} else if *verbose {
-				fmt.Printf("  · %-*s  %.3f  (полоса %.2f–%.2f)\n", width, r.label, got, r.min, r.max)
+				fmt.Printf("  · %-*s  %.3f  (band %.2f–%.2f)\n", width, r.label, got, r.min, r.max)
 			}
 		}
 	}
@@ -418,38 +426,40 @@ func main() {
 	fmt.Println()
 	if len(problems) > 0 {
 		sort.Strings(problems)
-		fmt.Printf("── пропорции вышли из полосы (%d) ──\n", len(problems))
+		fmt.Printf("── proportions left the band (%d) ──\n", len(problems))
 		for _, p := range problems {
 			fmt.Println(p)
 		}
 		fmt.Println()
-		fmt.Printf("· %d проверок при корне %gpx, провалено %d\n", total, css.RootPx, len(problems))
+		fmt.Printf("· %d checks at root %gpx, %d failed\n", total, css.RootPx, len(problems))
 		os.Exit(1)
 	}
-	fmt.Printf("· все %d проверок пройдены в %d сочетаниях масштаба и плотности при корне %gpx\n",
+	fmt.Printf("· all %d checks passed in %d scale and density combinations at root %gpx\n",
 		total, len(combos()), css.RootPx)
+
 }
 
-// ── Кросс-ячеечная проверка ────────────────────────────────────────────────
+// ── Cross-cell check ────────────────────────────────────────────────────────
 //
-// Правила выше меряют отношения ВНУТРИ одной ячейки и потому слепы к форме
-// самой таблицы. Ровно так через них прошла инверсия --row-pad-y: на базовом
-// кегле свободная плотность давала 12px, на масштабе 15 — 8px, то есть
-// геометрия УМЕНЬШАЛАСЬ при росте масштаба. Обе ячейки по отдельности лежали
-// в полосе «вертикаль блока к строке» (1.00 и 1.50 при допуске 0.9–1.7), и
-// гейт молчал.
+// The rules above measure ratios WITHIN one cell and are therefore blind to
+// the shape of the table itself. That is exactly how the --row-pad-y inversion
+// passed through them: at the base type size, loose density gave 12px, while
+// at scale 15 it gave 8px, meaning the geometry DECREASED as scale increased.
+// Both cells individually sat inside the "block vertical to row" band (1.00
+// and 1.50 with a 0.9–1.7 tolerance), and the gate stayed silent.
 //
-// Здесь проверяется противоположное: не отношение в точке, а поведение
-// величины ВДОЛЬ ОСИ. Масштаб идёт только вверх, значит и размер, который он
-// двигает, обязан идти только вверх.
+// Here the opposite is checked: not the ratio at a point, but the behavior of
+// the value ALONG THE AXIS. Scale only goes upward, so the size it moves must
+// also only go upward.
 //
-// Список токенов не заводится: он выводится из самих токенов. Проверяется
-// всё, что разрешается в пиксели во всех пяти масштабах, — цвета, доли и
-// ключевые слова отсеиваются сами тем, что не разрешаются. Ручной список
-// здесь был бы восьмым реестром, который надо помнить.
+// The token list is not introduced: it is derived from the tokens themselves.
+// Everything that resolves to pixels across all five scales is checked —
+// colors, fractions, and keywords filter themselves out by failing to resolve.
+// A manual list here would be the eighth registry that has to be remembered.
 //
-// Плато разрешено намеренно: лестница набрана целыми пикселями, и соседние
-// ступени законно совпадают после округления. Запрещено только УБЫВАНИЕ.
+// Plateaus are intentionally allowed: the ladder is set in whole pixels, and
+// adjacent steps can legitimately coincide after rounding. Only DECREASE is
+// forbidden.
 
 type cellVals struct {
 	scale, dens string
@@ -457,8 +467,8 @@ type cellVals struct {
 	vals        map[string]string
 }
 
-// tokenNames — имена в стабильном порядке, чтобы отчёт не прыгал между
-// прогонами.
+// tokenNames — names in stable order so the report does not jump between
+// runs.
 func tokenNames(base map[string]string) []string {
 	out := make([]string, 0, len(base))
 	for k := range base {
@@ -476,7 +486,7 @@ func checkMonotonic(grid []cellVals, base map[string]string) (problems []string,
 
 	for _, name := range tokenNames(base) {
 		for _, d := range densities {
-			// Дорожка токена вдоль масштаба при фиксированной плотности.
+			// The token's track along scale at a fixed density.
 			type step struct {
 				label string
 				px    float64
@@ -491,7 +501,7 @@ func checkMonotonic(grid []cellVals, base map[string]string) (problems []string,
 				}
 				px, err := css.ResolvePx(vals, name)
 				if err != nil {
-					// Не длина — не наше дело. Цвет, доля, ключевое слово.
+					// Not a length — not our concern. Color, fraction, keyword.
 					ok = false
 					break
 				}
@@ -502,15 +512,15 @@ func checkMonotonic(grid []cellVals, base map[string]string) (problems []string,
 			}
 			checked++
 			for i := 1; i < len(track); i++ {
-				// Допуск на дробные rem: 0.01px, а не точное сравнение.
+				// Tolerance for fractional rem: 0.01px, not exact comparison.
 				if track[i].px < track[i-1].px-0.01 {
 					var line []string
 					for _, s := range track {
 						line = append(line, fmt.Sprintf("%s→%g", s.label, s.px))
 					}
 					problems = append(problems, fmt.Sprintf(
-						"  · %s  убывает при росте масштаба, плотность «%s»\n      %s\n"+
-							"      масштаб идёт только вверх: величина, которую он двигает, не имеет права уменьшиться",
+						"  · %s  decreases as scale increases, density \"%s\"\n      %s\n"+
+							"      scale only goes up: the value it moves has no right to decrease",
 						name, d.label, strings.Join(line, "  ")))
 					break
 				}
@@ -518,4 +528,5 @@ func checkMonotonic(grid []cellVals, base map[string]string) (problems []string,
 		}
 	}
 	return problems, checked
+
 }

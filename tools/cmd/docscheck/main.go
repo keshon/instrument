@@ -1,18 +1,18 @@
-// Команда docscheck сверяет документацию с китом. Обе стороны разом.
+// The docscheck command checks the documentation against the kit. Both sides at once.
 //
-// Документация о ките расходится с китом в двух направлениях, и оба
-// одинаково дороги:
+// The kit documentation can diverge from the kit in two directions, and both
+// cost the same:
 //
-//	вперёд   в примере стоит класс, которого в ките нет — читатель копирует
-//	         разметку, она молча не работает, и виноват оказывается кит;
-//	назад    класс в ките есть, а страницы у него нет — компонент существует
-//	         и не находится, что для потребителя равно его отсутствию.
+//	forward   an example contains a class that does not exist in the kit — the reader
+//	          copies the markup, it silently does not work, and the kit gets blamed;
+//	backward  the class exists in the kit, but has no page — the component exists
+//	          and cannot be found, which for the consumer is equivalent to its absence.
 //
-// Проверка читает настоящие исходники кита и настоящие страницы, поэтому
-// разойтись с ними не может — тот же принцип, что у contrast.
+// The check reads the actual kit sources and the actual pages, so it cannot
+// diverge from them — the same principle as contrast.
 //
-//	go run ./cmd/docscheck        коротко
-//	go run ./cmd/docscheck -v     со списком неописанных классов
+//	go run ./cmd/docscheck        briefly
+//	go run ./cmd/docscheck -v     with a list of undocumented classes
 package main
 
 import (
@@ -36,14 +36,14 @@ var (
 	varUse  = regexp.MustCompile(`var\(\s*(--[a-z][\w-]*)`)
 	dataSel = regexp.MustCompile(`\[data-([a-z-]+)="([^"]+)"\]`)
 
-	// Вычеркнуть из селектора всё, что НЕ является голым именем элемента:
-	// классы, идентификаторы, атрибуты, псевдоклассы вместе со скобками.
+	// Strip everything from the selector that is NOT a bare element name:
+	// classes, IDs, attributes, pseudo-classes together with their parentheses.
 	selStrip = regexp.MustCompile(`::?[a-z-]+(\([^)]*\))?|\.[\w-]+|#[\w-]+|\[[^\]]*\]|[>+~,*]`)
 	selBare  = regexp.MustCompile(`[a-z][a-z0-9]*`)
 
-	// Элементы, которые встречаются в прозе справочника и внутри примеров
-	// одновременно. Список закрытый: правило про <html> или <svg> сюда не
-	// относится, а расширять его наугад значит ловить ложные срабатывания.
+	// Elements that occur in the prose of the reference and inside examples
+	// at the same time. The list is closed: the rule for <html> or <svg> does
+	// not belong here, and expanding it randomly means catching false positives.
 	htmlTags = map[string]bool{
 		"table": true, "thead": true, "tbody": true, "tfoot": true, "tr": true,
 		"th": true, "td": true, "caption": true,
@@ -60,14 +60,14 @@ var (
 	tokRe   = regexp.MustCompile(`--[a-z][\w-]*(?:/[a-z0-9-]+)*`)
 	dataAtt = regexp.MustCompile(`data-([a-z-]+)="([^"]*)"`)
 
-	// Атрибуты, которые ЧИТАЕТ kit.js. У них нет селектора, потому что
-	// оформления у них нет: data-copy и data-value — источник данных для
-	// поведения, а не состояние. Ищутся в самом модуле, а не в списке
-	// руками: список разошёлся бы с китом на первой же правке.
+	// Attributes that kit.js READS. They have no selector because they have
+	// no styling: data-copy and data-value are data sources for behavior, not
+	// state. They are found in the module itself rather than listed by hand:
+	// the list would diverge from the kit at the first edit.
 	jsDataset = regexp.MustCompile(`dataset\.([a-zA-Z]+)`)
 )
 
-// camelToDash переводит имя из dataset обратно в имя атрибута:
+// camelToDash converts a name from dataset back to an attribute name:
 // copiedLabel -> copied-label.
 func camelToDash(s string) string {
 	var b strings.Builder
@@ -81,11 +81,11 @@ func camelToDash(s string) string {
 	return b.String()
 }
 
-// strip убирает то, что не является селектором: комментарии, строки, url().
+// strip removes what is not a selector: comments, strings, url().
 //
-// Наивный поиск по файлу даёт мусор: .w3 и .org приезжают из
-// xmlns='http://www.w3.org/2000/svg' внутри data-URI, а .tokens и .base — из
-// имён файлов в комментариях.
+// Naive file-wide searching produces garbage: .w3 and .org come from
+// xmlns='[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)' inside data-URI, while .tokens and .base
+// come from file names in comments.
 func strip(s string) string {
 	s = commentRe.ReplaceAllString(s, " ")
 	s = urlRe.ReplaceAllString(s, " ")
@@ -95,19 +95,19 @@ func strip(s string) string {
 
 func main() {
 	var (
-		srcDir  = flag.String("kit", "../src", "каталог кита")
-		docsDir = flag.String("docs", "../docs", "каталог документации")
-		stage   = flag.String("stage", "../site/internal/render/assets/docs.css", "стили сцены примера")
-		verbose = flag.Bool("v", false, "показать список классов без страницы")
+		srcDir  = flag.String("kit", "../src", "kit directory")
+		docsDir = flag.String("docs", "../docs", "documentation directory")
+		stage   = flag.String("stage", "../site/internal/render/assets/docs.css", "example scene styles")
+		verbose = flag.Bool("v", false, "show list of classes without a page")
 	)
 	flag.Parse()
 
-	// ── Что есть в ките ──────────────────────────────────────────────────
+	// ── What exists in the kit ────────────────────────────────────────────
 	kit := map[string]bool{}
 	var allCSS strings.Builder
 	entries, err := os.ReadDir(*srcDir)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "не прочитать кит:", err)
+		fmt.Fprintln(os.Stderr, "cannot read kit:", err)
 		os.Exit(1)
 	}
 	for _, e := range entries {
@@ -126,11 +126,11 @@ func main() {
 			if i < 0 {
 				continue
 			}
-			// Правила «собаки» — не селекторы, и точка внутри них не класс.
-			// «@layer kit.components {» давала несуществующий .components,
-			// а он выглядел как класс без страницы, то есть как настоящая
-			// находка. Ложное срабатывание в проверке дороже пропуска:
-			// пропуск ищут, ложному верят.
+			// "At-rules" are not selectors, and a dot inside them is not a class.
+			// "@layer kit.components {" produced a nonexistent .components,
+			// and it looked like a class without a page, that is, a real
+			// finding. A false positive in the check costs more than a missed one:
+			// misses get investigated, false positives get trusted.
 			if strings.HasPrefix(strings.TrimSpace(line), "@") {
 				continue
 			}
@@ -141,19 +141,19 @@ func main() {
 	}
 	css := allCSS.String()
 
-	// Токены. Выдуманный токен так же нем, как выдуманный класс: var() от
-	// несуществующего имени молча отдаёт пустоту, и страница врёт беззвучно.
+	// Tokens. A fabricated token is just as silent as a fabricated class: var()
+	// on a nonexistent name silently returns empty, and the page lies without a sound.
 	tokens := map[string]bool{}
 	for _, m := range declRe.FindAllStringSubmatch(css, -1) {
 		tokens[m[1]] = true
 	}
-	// Переменные, которые кит только ЧИТАЕТ, а задаёт разметка: глубина узла
-	// дерева, доля кольца, номер ряда. Объявления у них нет по замыслу.
+	// Variables that the kit only READS, while markup sets them: tree node depth,
+	// ring fraction, row number. They intentionally have no declarations.
 	for _, m := range varUse.FindAllStringSubmatch(css, -1) {
 		tokens[m[1]] = true
 	}
-	// Стол примера имеет собственные свойства — --c у образца цвета. Они не
-	// токены кита и никогда ими не станут, но и выдумкой не являются.
+	// The example stage has its own properties — --c on the color sample. They are
+	// not kit tokens and never will be, but they are not fabricated either.
 	if b, err := os.ReadFile(*stage); err == nil {
 		for _, m := range declRe.FindAllStringSubmatch(string(b), -1) {
 			tokens[m[1]] = true
@@ -163,8 +163,8 @@ func main() {
 		}
 	}
 
-	// Хвосты модификаторов: из inst-btn--danger получается danger. Нужны,
-	// чтобы не принимать «вариант --danger» в прозе за несуществующий токен.
+	// Modifier suffixes: inst-btn--danger produces danger. Needed so that
+	// "variant --danger" in prose is not treated as a nonexistent token.
 	modifiers := map[string]bool{}
 	for c := range kit {
 		if i := strings.Index(c, "--"); i > 0 {
@@ -172,7 +172,7 @@ func main() {
 		}
 	}
 
-	// Словари data-атрибутов — из селекторов, а не из головы.
+	// data-attribute dictionaries — from selectors, not from memory.
 	vocab := map[string]map[string]bool{}
 	for _, m := range dataSel.FindAllStringSubmatch(css, -1) {
 		if vocab[m[1]] == nil {
@@ -180,7 +180,7 @@ func main() {
 		}
 		vocab[m[1]][m[2]] = true
 	}
-	// Атрибуты поведения: значения у них свободные, проверяется только имя.
+	// Behavior attributes: their values are free-form, only the name is checked.
 	free := map[string]bool{}
 	if b, err := os.ReadFile(filepath.Join(*srcDir, "kit.js")); err == nil {
 		for _, m := range jsDataset.FindAllStringSubmatch(string(b), -1) {
@@ -188,9 +188,9 @@ func main() {
 		}
 	}
 
-	// Базовые значения оформления не имеют, поэтому в селекторах их нет. Они
-	// объявлены в конституции — без них проверка ругалась бы на правильную
-	// разметку.
+	// Base state values have no styling, so they are not present in selectors.
+	// They are declared by the constitution — without them the check would
+	// complain about valid markup.
 	for _, v := range []string{"queued", "todo", "approved"} {
 		if vocab["state"] == nil {
 			vocab["state"] = map[string]bool{}
@@ -198,7 +198,7 @@ func main() {
 		vocab["state"][v] = true
 	}
 
-	// ── Что есть в документации ──────────────────────────────────────────
+	// ── What exists in the documentation ─────────────────────────────────
 	var pages []string
 	filepath.WalkDir(*docsDir, func(p string, d os.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
@@ -212,9 +212,9 @@ func main() {
 	})
 	sort.Strings(pages)
 
-	// Пути печатаются от корня репозитория, а не от рабочего каталога:
-	// «docs/button.md» одинаково понятен и в выводе, и в редакторе, откуда
-	// бы проверку ни запустили.
+	// Paths are printed relative to the repository root, not the working directory:
+	// "docs/button.md" is equally clear in the output and in the editor, regardless
+	// of where the check was launched from.
 	root := filepath.Dir(*docsDir)
 	rootRel := func(p string) string {
 		if r, err := filepath.Rel(root, p); err == nil {
@@ -227,22 +227,22 @@ func main() {
 	var problems []string
 	pending := map[string]int{}
 
-	// ── Справочник не имеет права ПЕРЕОФОРМЛЯТЬ кит ───────────────────────
+	// ── The reference has no right to RESTYLE the kit ─────────────────────
 	//
-	// Живая спецификация обещает, что примеры на её страницах — работающая
-	// разметка, а не картинки. Разметка и была работающей; врала отрисовка.
-	// `docs.css` держал правило `.site-body .inst-page-title { font-size:
-	// --text-2xl }`, и заголовок экрана ВНУТРИ живого примера рисовался в
-	// 27px вместо китового 21px. Кто копировал увиденное, получал другое.
+	// The live specification promises that examples on its pages are working
+	// markup, not pictures. The markup did work; the rendering lied.
+	// `docs.css` held the rule `.site-body .inst-page-title { font-size:
+	// --text-2xl }`, and the screen heading INSIDE the live example rendered at
+	// 27px instead of the kit's 21px. Anyone copying what they saw got something else.
 	//
-	// Покрытие классов эту дыру не видит по устройству: класс задокументирован,
-	// страница есть, галочка стоит. Поэтому проверка отдельная и смотрит на
-	// СВОЙСТВА: сайту можно ставить китовому классу отступ (это раскладка его
-	// собственной статьи), но нельзя трогать то, из чего состоит рисунок
-	// компонента, — кегль, интерлиньяж, цвет, заливку, рамку, радиус.
+	// Class coverage cannot see this hole by design: the class is documented,
+	// the page exists, the checkmark is there. So this check is separate and
+	// looks at PROPERTIES: the site may give a kit class spacing (that is the
+	// layout of its own article), but it cannot touch what the component drawing
+	// consists of — font size, line height, color, fill, border, radius.
 	//
-	// Правила сцены примера (`.demo-root`, `.demo-stage`) исключены: это рама
-	// вокруг компонента, а не он сам.
+	// Example scene rules (`.demo-root`, `.demo-stage`) are excluded: they are
+	// the frame around the component, not the component itself.
 	if b, err := os.ReadFile(*stage); err == nil {
 		lines := strings.Split(strip(string(b)), "\n")
 		banned := []string{"font-size", "line-height", "font-weight", "color:",
@@ -261,7 +261,8 @@ func main() {
 				continue
 			}
 			body := line[br:]
-			// Однострочное правило несёт тело здесь же; блочное — ниже, до «}».
+			// A single-line rule carries its body here; a block rule carries it
+			// below, up to "}".
 			if !strings.Contains(body, "}") {
 				for j := i + 1; j < len(lines) && !strings.Contains(lines[j], "}"); j++ {
 					body += lines[j]
@@ -270,27 +271,27 @@ func main() {
 			for _, prop := range banned {
 				if strings.Contains(body, prop) {
 					problems = append(problems, fmt.Sprintf(
-						"%s:%d  справочник переоформляет кит: %q задаёт %s",
+						"%s:%d  reference restyles kit: %q sets %s",
 						rel, i+1, strings.TrimSpace(sel), strings.TrimSuffix(prop, ":")))
 					break
 				}
 			}
 		}
 
-		// ── Вторая дверь: ГОЛЫЙ СЕЛЕКТОР ЭЛЕМЕНТА ─────────────────────────
+		// ── Second door: BARE ELEMENT SELECTOR ─────────────────────────────
 		//
-		// Проверка выше ищет правила, НАЗЫВАЮЩИЕ имя китового класса. Мимо неё
-		// проходит `.site-body td`, потому что `td` никакого имени не называет,
-		// — и переоформляет при этом каждую таблицу внутри каждого живого
-		// примера, ведь стили сайта лежат вне слоёв и выигрывают у кита.
+		// The check above looks for rules NAMING a kit class. `.site-body td`
+		// gets past it because `td` names no kit class, — and still restyles
+		// every table inside every live example, because site styles live outside
+		// layers and override the kit.
 		//
-		// Замер: отступ ячейки в примере «Дашборд» оставался 8px во всех трёх
-		// плотностях, хотя --row-pad-y честно ездил 6 → 4 → 12. Плотность на
-		// таблице не работала, а страница обещала обратное.
+		// Measurement: cell padding in the "Dashboard" example remained 8px
+		// at all three densities, although --row-pad-y honestly changed 6 → 4 → 12.
+		// Density did not work on the table, while the page promised otherwise.
 		//
-		// Дверь закрывается не внимательностью, а формой записи: правило прозы,
-		// трогающее рисунок, обязано вычесть из себя поддерево примера через
-		// `:not(.demo-stage *)`. Тогда оно физически не достаёт до кита.
+		// The door is closed not by attentiveness, but by syntax: a prose rule
+		// touching the drawing must exclude the example subtree through
+		// `:not(.demo-stage *)`. Then it physically cannot reach the kit.
 		for i, line := range lines {
 			br := strings.Index(line, "{")
 			if br < 0 {
@@ -300,8 +301,8 @@ func main() {
 			if !strings.HasPrefix(sel, ".site-body") || strings.Contains(sel, ".demo-stage *") {
 				continue
 			}
-			// Голые имена элементов: всё, что осталось после вычёркивания
-			// классов, псевдоклассов, атрибутов и комбинаторов.
+			// Bare element names: everything left after stripping classes,
+			// pseudo-classes, attributes, and combinators.
 			bare := selBare.FindAllString(selStrip.ReplaceAllString(sel, " "), -1)
 			hit := ""
 			for _, w := range bare {
@@ -322,7 +323,7 @@ func main() {
 			for _, prop := range banned {
 				if strings.Contains(body, prop) {
 					problems = append(problems, fmt.Sprintf(
-						"%s:%d  правило прозы достаёт внутрь живого примера: %q задаёт %s элементу <%s>. Добавьте :not(.demo-stage *)",
+						"%s:%d  prose rule reaches inside live example: %q sets %s on <%s>. Add :not(.demo-stage *)",
 						rel, i+1, sel, strings.TrimSuffix(prop, ":"), hit))
 					break
 				}
@@ -344,14 +345,14 @@ func main() {
 			for _, m := range instRe.FindAllString(line, -1) {
 				documented[m] = true
 				if !kit[m] {
-					problems = append(problems, at+"  класса нет в ките: ."+m)
+					problems = append(problems, at+"  class not in kit: ."+m)
 				}
 			}
 
-			// Ссылки между страницами. Не «ошибка» и не «метрика», а третий
-			// вид: ссылка на ещё не написанную страницу — нормальный след
-			// недоделанной работы, но забытая это дыра, которую никто не
-			// заметит, пока читатель в неё не провалится.
+			// Links between pages. Not an "error" and not a "metric", but a third
+			// kind: a link to a page not written yet is a normal trace of unfinished
+			// work, but a forgotten one is a hole nobody notices until the reader
+			// falls into it.
 			for _, m := range linkRe.FindAllStringSubmatch(line, -1) {
 				target := filepath.Join(filepath.Dir(p), filepath.FromSlash(m[1]))
 				if _, err := os.Stat(target); err != nil {
@@ -359,21 +360,21 @@ func main() {
 				}
 			}
 
-			// Токены. Сокращения вида --text-xs/sm/md раскрываются: это
-			// принятая на страницах форма записи, а не опечатка.
+			// Tokens. Abbreviations like --text-xs/sm/md are expanded: this is
+			// the accepted notation on pages, not a typo.
 			for _, raw := range tokRe.FindAllString(line, -1) {
 				if j := strings.Index(line, raw); j > 0 {
 					prev := line[j-1]
 					if prev == '-' || prev == '_' || (prev >= 'a' && prev <= 'z') ||
 						(prev >= 'A' && prev <= 'Z') || (prev >= '0' && prev <= '9') {
-						continue // часть имени класса: inst-btn--primary
+						continue // part of a class name: inst-btn--primary
 					}
 				}
 				parts := strings.Split(raw, "/")
 				head := parts[0]
-				// Две законные формы, которые токенами не являются:
-				// модификатор класса в прозе («вариант --danger») и
-				// сокращение семейства с оборванным хвостом («--space-*»).
+				// Two valid forms that are not tokens:
+				// a class modifier in prose ("variant --danger") and
+				// a truncated family abbreviation ("--space-*").
 				if strings.HasSuffix(head, "-") || modifiers[strings.TrimPrefix(head, "--")] {
 					continue
 				}
@@ -387,7 +388,7 @@ func main() {
 				}
 				for _, n := range names {
 					if !tokens[n] {
-						problems = append(problems, at+"  токена нет в ките: "+n)
+						problems = append(problems, at+"  token not in kit: "+n)
 					}
 				}
 			}
@@ -402,7 +403,7 @@ func main() {
 				}
 				known, ok := vocab[attr]
 				if !ok {
-					problems = append(problems, at+"  неизвестный атрибут: data-"+attr)
+					problems = append(problems, at+"  unknown attribute: data-"+attr)
 					continue
 				}
 				if val != "" && !known[val] {
@@ -412,13 +413,13 @@ func main() {
 					}
 					sort.Strings(list)
 					problems = append(problems,
-						fmt.Sprintf("%s  data-%s=%q — нет в словаре (%s)", at, attr, val, strings.Join(list, " ")))
+						fmt.Sprintf("%s  data-%s=%q — not in dictionary (%s)", at, attr, val, strings.Join(list, " ")))
 				}
 			}
 		}
 	}
 
-	// ── Отчёт ────────────────────────────────────────────────────────────
+	// ── Report ────────────────────────────────────────────────────────────
 	var undocumented []string
 	for c := range kit {
 		if !documented[c] {
@@ -432,15 +433,15 @@ func main() {
 	if len(kit) > 0 {
 		pct = covered * 100 / len(kit)
 	}
-	fmt.Printf("страниц: %d  ·  классов в ките: %d  ·  покрыто: %d (%d%%)\n\n",
+	fmt.Printf("pages: %d  ·  classes in kit: %d  ·  covered: %d (%d%%)\n\n",
 		len(pages), len(kit), covered, pct)
 
-	// Таблицы токенов: сверка ЗНАЧЕНИЙ, а не существования. Отдельным списком,
-	// потому что это другой род ошибки: класс на месте, токен на месте, врёт
-	// только число.
+	// Token tables: compare VALUES, not existence. Kept as a separate list,
+	// because this is a different kind of error: class is present, token is present,
+	// only the number lies.
 	staleTable := false
 	if miss := checkSourceFields(*docsDir); len(miss) > 0 {
-		fmt.Printf("── source ведёт в никуда (%d) ──\n", len(miss))
+		fmt.Printf("── source leads nowhere (%d) ──\n", len(miss))
 		for _, s := range miss {
 			fmt.Println("  " + s)
 		}
@@ -449,7 +450,7 @@ func main() {
 	}
 
 	if stale := checkModeTables(*srcDir, *docsDir); len(stale) > 0 {
-		fmt.Printf("── таблицы режимов разошлись с кодом (%d) ──\n", len(stale))
+		fmt.Printf("── mode tables diverged from code (%d) ──\n", len(stale))
 		for _, s := range stale {
 			fmt.Println("  " + s)
 		}
@@ -458,7 +459,7 @@ func main() {
 	}
 
 	if stale := checkTokenTables(*srcDir, *docsDir); len(stale) > 0 {
-		fmt.Printf("── таблица токенов разошлась с кодом (%d) ──\n", len(stale))
+		fmt.Printf("── token table diverged from code (%d) ──\n", len(stale))
 		for _, s := range stale {
 			fmt.Println("  " + s)
 		}
@@ -475,7 +476,7 @@ func main() {
 				uniq = append(uniq, p)
 			}
 		}
-		fmt.Printf("── документация ссылается на несуществующее (%d) ──\n", len(uniq))
+		fmt.Printf("── documentation references nonexistent items (%d) ──\n", len(uniq))
 		for _, p := range uniq {
 			fmt.Println("  " + p)
 		}
@@ -488,7 +489,7 @@ func main() {
 			keys = append(keys, k)
 		}
 		sort.Strings(keys)
-		fmt.Printf("── ссылки на ещё не написанные страницы (%d) ──\n", len(keys))
+		fmt.Printf("── links to pages not yet written (%d) ──\n", len(keys))
 		for _, k := range keys {
 			fmt.Printf("  %s  ← %d\n", k, pending[k])
 		}
@@ -497,21 +498,22 @@ func main() {
 
 	if len(undocumented) > 0 {
 		if *verbose {
-			fmt.Printf("── без страницы (%d) ──\n", len(undocumented))
+			fmt.Printf("── without a page (%d) ──\n", len(undocumented))
 			for i, c := range undocumented {
 				undocumented[i] = "." + c
 			}
 			fmt.Println("  " + strings.Join(undocumented, " ") + "\n")
 		} else {
-			fmt.Printf("── без страницы: %d классов (список — с ключом -v) ──\n\n", len(undocumented))
+			fmt.Printf("── without a page: %d classes (list with -v) ──\n\n", len(undocumented))
 		}
 	}
 
 	if len(problems) == 0 && len(undocumented) == 0 && len(pending) == 0 && !staleTable {
-		fmt.Println("· документация и кит сходятся полностью")
+		fmt.Println("· documentation and kit match completely")
 	}
 
 	if len(problems) > 0 || staleTable {
 		os.Exit(1)
 	}
+
 }

@@ -1,27 +1,28 @@
-// Сверка ТАБЛИЦ ТОКЕНОВ в справочнике с объявлениями в tokens.css.
+// Verify the TOKEN TABLES in the reference against declarations in tokens.css.
 //
-// Основная часть docscheck проверяет СУЩЕСТВОВАНИЕ: есть ли класс, есть ли
-// токен, есть ли страница. Она не может поймать самый частый вид расхождения —
-// когда документация называет значение, которого у токена больше нет.
+// The main part of docscheck verifies EXISTENCE: whether a class exists, whether
+// a token exists, whether a page exists. It cannot catch the most common kind of
+// mismatch — when documentation names a value that the token no longer has.
 //
-// Пример, ради которого проверка написана: таблица поверхностей утверждала, что
-// --surface-recessed это «чёрный 5%», а в коде уже стояло 0.060. Класс на месте,
-// токен на месте, docscheck молчал — врало только число.
+// The example this check was written for: the surface table claimed that
+// --surface-recessed was "black 5%", while the code already had 0.060. The
+// class was present, the token was present, docscheck was silent — only the
+// number was wrong.
 //
-// Проверяются лишь машиночитаемые ячейки. Строка вида
+// Only machine-readable cells are checked. A row like
 //
 //	| `--surface-sunken` | `--n-2` | `--n-14` |
 //
-// требует, чтобы в коде было light-dark(var(--n-2), var(--n-14)); строка вида
+// requires the code to contain light-dark(var(--n-2), var(--n-14)); a row like
 //
-//	| `--surface-hover` | чёрный 3.5% | белый 4.5% |
+//	| `--surface-hover` | black 3.5% | white 4.5% |
 //
-// требует light-dark(oklch(0 0 0 / 0.035), oklch(1 0 0 / 0.045)).
+// requires light-dark(oklch(0 0 0 / 0.035), oklch(1 0 0 / 0.045)).
 //
-// Строка, чей токен объявлен через light-dark, проверяется ЦЕЛИКОМ: обе её
-// ячейки обязаны читаться машинно. Пропускать непонятую ячейку значило бы
-// принять «black 9%» за прозу и промолчать: непонятое слово уносит с собой и
-// число, которое стоит рядом.
+// A row whose token is declared through light-dark is checked AS A WHOLE: both
+// of its cells must be machine-readable. Skipping an unrecognized cell would
+// mean accepting "black 9%" as prose and staying silent: an unrecognized word
+// carries away the number next to it.
 package main
 
 import (
@@ -38,28 +39,31 @@ import (
 )
 
 var (
-	// строка таблицы: | `--имя` | ячейка | ячейка |
+	// a table row: | `--name` | cell | cell |
 	rowRe = regexp.MustCompile("^\\|\\s*`(--[a-z][\\w-]*)`\\s*\\|([^|]*)\\|([^|]*)\\|\\s*$")
-	// начало объявления через light-dark; хвост разбирается счётом скобок,
-	// потому что внутри лежит oklch(...) со своими
+	// the head of a light-dark declaration; the tail is parsed by counting
+	// parentheses, because oklch(...) sits inside with parentheses of its own
 	ldHead = regexp.MustCompile(`(--[a-z][\w-]*):\s*light-dark\(`)
-	// ячейка-ссылка на другой токен
+	// a cell that references another token
 	refRe = regexp.MustCompile("^`(--[a-z][\\w-]*)`$")
-	// ячейка-подмес: `--ok-4` 16% — цвет роли, разведённый прозрачным
+	// a blend cell: `--ok-4` 16% — a role colour diluted with transparency
 	refPctRe = regexp.MustCompile("^`(--[a-z][\\w-]*)`\\s+([0-9.]+)%$")
-	// ячейка вида «чёрный 3.5%» или «белый 8%».
+	// a cell of the form "black 3.5%" or "white 8%", in either language.
 	//
-	// Слов ровно два на язык, и оба перечислены здесь поимённо, а не сведены
-	// к «любое слово перед процентом». Третий язык обязан упасть на разборе:
-	// непонятая ячейка теперь ошибка, и это единственное, что отличает
-	// перевод от опечатки.
+	// There are exactly two words per language, and both are listed here by
+	// name rather than reduced to "any word before a percentage". A third
+	// language has to fail parsing: an unparsed cell is an error now, and that
+	// is the only thing separating a translation from a typo.
+	//
+	// The Russian spellings are what docs/foundations/tokens.md still says.
+	// They leave together with the page on step 4 of the move.
 	alphaRe = regexp.MustCompile(`^(чёрный|белый|black|white)\s+([0-9.]+)%$`)
-	// численная альфа, чтобы 0.05 и 0.050 считались одним значением
+	// numeric alpha, so that 0.05 and 0.050 count as one value
 	alphaNum = regexp.MustCompile(`oklch\(([\d ]+)\s*/\s*([\d.]+)\)`)
 )
 
-// splitArgs делит содержимое light-dark(...) по запятой ВЕРХНЕГО уровня.
-// Возвращает nil, если аргументов не два.
+// splitArgs splits the contents of light-dark(...) at a TOP-LEVEL comma.
+// Returns nil if there are not two arguments.
 func splitArgs(s string) []string {
 	var out []string
 	depth, start := 0, 0
@@ -83,8 +87,9 @@ func splitArgs(s string) []string {
 	return out
 }
 
-// lightDarkPairs собирает первое объявление каждого токена: это :root, то есть
-// базовая ячейка. Переопределения тем и масштабов таблица не описывает.
+// lightDarkPairs collects the first declaration of each token: this is :root,
+// so it is the base cell. Theme and scale overrides are not described by the
+// table.
 func lightDarkPairs(css string) map[string][2]string {
 	out := map[string][2]string{}
 	for _, loc := range ldHead.FindAllStringSubmatchIndex(css, -1) {
@@ -114,8 +119,8 @@ func lightDarkPairs(css string) map[string][2]string {
 	return out
 }
 
-// expect переводит ячейку таблицы в то, что обязано стоять в коде.
-// Второе значение — false, если ячейка не машиночитаема.
+// expect translates a table cell into what must appear in the code.
+// The second value is false if the cell is not machine-readable.
 func expect(cell string) (string, bool) {
 	cell = strings.TrimSpace(cell)
 	if m := refRe.FindStringSubmatch(cell); m != nil {
@@ -159,19 +164,20 @@ func sameValue(want, got string) bool {
 	return err1 == nil && err2 == nil && a == b
 }
 
-// langVariants — страница и все её переводы: tokens.md и tokens.en.md.
+// langVariants — the page and all its translations: tokens.md and tokens.en.md.
 //
-// Сверять только базовое имя значило бы отпустить таблицы ровно на тех
-// страницах, которые пишутся заново и потому ошибаются чаще оригинала. Цена
-// известна: тот же фильтр в cmd/registry отпускал половину ARIA-контракта.
-// Сторожит мутация «таблица токенов в переводе соврала».
+// Checking only the base name would mean releasing the tables on exactly those
+// pages that are rewritten and therefore make mistakes more often than the
+// original. The cost is known: the same filter in cmd/registry released half
+// of the ARIA contract. It guards against the mutation "the token table in a
+// translation is wrong".
 func langVariants(dir, stem string) []string {
 	base, _ := filepath.Glob(filepath.Join(dir, stem+".md"))
 	tr, _ := filepath.Glob(filepath.Join(dir, stem+".*.md"))
 	return append(base, tr...)
 }
 
-// checkTokenTables возвращает список расхождений таблицы с кодом.
+// checkTokenTables returns table/code mismatches.
 func checkTokenTables(srcDir, docsDir string) []string {
 	css, err := os.ReadFile(filepath.Join(srcDir, "tokens.css"))
 	if err != nil {
@@ -184,6 +190,7 @@ func checkTokenTables(srcDir, docsDir string) []string {
 		out = append(out, tokenTableOf(page, decl)...)
 	}
 	return out
+
 }
 
 func tokenTableOf(page string, decl map[string][2]string) []string {
@@ -201,25 +208,25 @@ func tokenTableOf(page string, decl map[string][2]string) []string {
 		}
 		got, ok := decl[m[1]]
 		if !ok {
-			continue // токен объявлен не через light-dark — не наш случай
+			continue // the token is not declared through light-dark — not our case
 		}
 		for k, cell := range []string{m[2], m[3]} {
-			end := "светлая"
+			end := "light"
 			if k == 1 {
-				end = "тёмная"
+				end = "dark"
 			}
 			want, machine := expect(cell)
 			if !machine {
 				out = append(out, fmt.Sprintf(
-					"%s:%d: %s, %s — ячейку «%s» не разобрать.\n      "+
-						"Токен объявлен через light-dark, значит колонка машинная: "+
-						"непонятая ячейка молчит там, где обязана возразить",
+					"%s:%d: %s, %s — cannot parse the cell %q.\n      "+
+						"The token is declared through light-dark, so the column is machine "+
+						"readable: an unparsed cell stays quiet where it has to object",
 					name, i+1, m[1], end, strings.TrimSpace(cell)))
 				continue
 			}
 			if !sameValue(want, got[k]) {
 				out = append(out, fmt.Sprintf(
-					"%s:%d: %s, %s — в таблице «%s», в коде «%s»",
+					"%s:%d: %s, %s — %q in the table, %q in the code",
 					name, i+1, m[1], end, strings.TrimSpace(cell), got[k]))
 			}
 		}
@@ -227,37 +234,37 @@ func tokenTableOf(page string, decl map[string][2]string) []string {
 	return out
 }
 
-// ── Таблицы ПЛОТНОСТИ И МАСШТАБА ──────────────────────────────────────────
+// ── DENSITY AND SCALE TABLES ──────────────────────────────────────────────
 //
-// Проверка выше сверяет двухколоночные таблицы цвета: токен, светлая тема,
-// тёмная. У density.md и scale.md форма другая — «токен × режим», и значения
-// лежат не в :root, а в блоках [data-density] и [data-scale]. Под эту форму
-// сверки не было, и это стоило ровно того, ради чего проверка вообще написана:
-// правка --row-pad-y прошла, а таблица осталась называть прежнюю ступень.
-// Класс на месте, токен на месте, врало только число.
+// The check above compares two-column color tables: token, light theme, dark
+// theme. density.md and scale.md have a different shape — "token × mode", and
+// values live in [data-density] and [data-scale] blocks. There was no check for
+// this shape, and it cost exactly what this check was written for: a change to
+// --row-pad-y passed, while the table kept naming the previous step. The class
+// was present, the token was present, only the number was wrong.
 //
-// Разбираются лишь ячейки-ссылки (`--space-4`). Числа и проза пропускаются:
-// заставлять таблицу быть машиночитаемой целиком значило бы её выхолостить.
+// Only reference cells (`--space-4`) are parsed. Numbers and prose are skipped:
+// forcing the whole table to be machine-readable would hollow it out.
 
-// Таблица в разметке узнаётся по СТРОКЕ-РАЗДЕЛИТЕЛЮ: она обязана стоять
-// второй, а шапка — строкой выше. Слово в первой ячейке шапки при этом не
-// значит ничего: колонку токена опознаёт modeRowRe по обратным кавычкам вокруг
-// имени. Узнавать шапку по слову «Токен» значило бы гасить сверку всей таблицы
-// одним переведённым словом — и продолжать печатать «сходятся полностью».
+// A table in markup is recognized by the SEPARATOR ROW: it must be second, with
+// the header one row above. The word in the first header cell means nothing:
+// modeRowRe identifies the token column by backticks around the name. Identifying
+// the header by the word "Token" would mean disabling the entire table check with
+// one translated word — and continuing to print "fully consistent".
 var sepRe = regexp.MustCompile(`^\|(?:\s*:?-{3,}:?\s*\|)+\s*$`)
 
-// Обратная кавычка внутри строки Go не уживается с сырым литералом, поэтому
-// склейка: она читается лучше, чем экранирование каждого разделителя таблицы.
+// A backtick inside a Go raw literal does not work, so concatenate: it reads
+// better than escaping every table delimiter.
 const bq = "`"
 
 var modeRowRe = regexp.MustCompile(`^\|\s*` + bq + `(--[a-z][\w-]*)` + bq + `\s*\|(.+)\|\s*$`)
 var refCellRe = regexp.MustCompile(`^` + bq + `(--[a-z][\w-]*)` + bq + `$`)
 
-// Своя регулярка объявления: у declRe в main.go одна группа захвата — ему
-// нужно только ИМЯ токена, а здесь нужно ещё и значение.
+// Own declaration regex: declRe in main.go has one capture group — it needs
+// only the TOKEN NAME, while this one also needs the value.
 var modeDeclRe = regexp.MustCompile(`(--[a-z][\w-]*)\s*:\s*([^;{}]+);`)
 
-// blockDecls вынимает объявления из ПЕРВОГО блока, чей селектор совпал.
+// blockDecls extracts declarations from the FIRST block whose selector matches.
 func blockDecls(css, selector string) map[string]string {
 	i := strings.Index(css, selector)
 	if i < 0 {
@@ -286,11 +293,11 @@ func blockDecls(css, selector string) map[string]string {
 	return nil
 }
 
-// Код режима объявлен не здесь, а в ките: [data-density="compact"],
-// [data-scale="17"]. Список, зашитый в эту команду, повторял бы кит по памяти
-// и расходился бы с ним молча. Хуже: сверяя подпись со словарём ПОДПИСЕЙ,
-// «плотная» вместо «compact» пришлось бы считать колонкой не про режим — и
-// отпустить её целиком.
+// Mode code is declared not here, but in the kit: [data-density="compact"],
+// [data-scale="17"]. A list hardcoded into this command would duplicate the kit
+// from memory and silently diverge from it. Worse: when matching a label against
+// the LABEL dictionary, "dense" instead of "compact" would have to be treated
+// as a non-mode column — and released entirely.
 var modeSelRe = regexp.MustCompile(`(?m)^\[data-(?:density|scale)="([^"]+)"\] \{$`)
 
 func modeSelectors(sheet string) map[string]string {
@@ -301,7 +308,7 @@ func modeSelectors(sheet string) map[string]string {
 	return out
 }
 
-// Разобранная таблица «токен × режим».
+// Parsed "token × mode" table.
 type modeRow struct {
 	line  int
 	token string
@@ -309,14 +316,14 @@ type modeRow struct {
 }
 
 type modeTable struct {
-	line int      // строка шапки
-	head []string // подписи колонок, без колонки токена
+	line int      // header row
+	head []string // column labels, without the token column
 	rows []modeRow
 }
 
-// headCells режет шапку на ячейки и снимает обратные кавычки: `compact` и
-// compact — одна и та же подпись, и различать их значило бы требовать от
-// автора таблицы вёрстки, а не смысла.
+// headCells splits the header into cells and removes backticks: `compact` and
+// compact are the same label, and distinguishing them would mean requiring the
+// table author to care about markup rather than meaning.
 func headCells(line string) []string {
 	line = strings.TrimSpace(line)
 	line = strings.TrimSuffix(strings.TrimPrefix(line, "|"), "|")
@@ -350,8 +357,9 @@ func modeTablesOf(md string) []modeTable {
 			}
 			t.rows = append(t.rows, modeRow{j + 1, m[1], cells})
 		}
-		// Таблица без единой строки-токена — не про режимы: в density.md и
-		// scale.md таких пять, от «Значение · Для чего» до порога 24px.
+		// A table without a single token row is not about modes: density.md and
+		// scale.md have five such tables, from "Value · Purpose" to the 24px
+		// threshold.
 		if len(t.rows) > 0 {
 			out = append(out, t)
 		}
@@ -359,9 +367,9 @@ func modeTablesOf(md string) []modeTable {
 	return out
 }
 
-// machineCols отмечает колонки, у которых хотя бы одна ячейка читается
-// машинно — ссылкой на токен или числом в px. Колонка сплошной прозы
-// («Когда», «Зачем») режимом не притворяется, и спрашивать с неё нечего.
+// machineCols marks columns where at least one cell is machine-readable — a
+// token reference or a number in px. A column of pure prose ("When", "Why")
+// does not pretend to be a mode, and there is nothing to ask of it.
 func machineCols(t modeTable) []bool {
 	out := make([]bool, len(t.head))
 	for _, r := range t.rows {
@@ -381,20 +389,21 @@ func machineCols(t modeTable) []bool {
 	return out
 }
 
-// column — колонка таблицы, доведённая до селектора в ките.
+// column — a table column resolved to a selector in the kit.
 type column struct {
 	head string
-	sel  string // "" — базовая колонка: значение стоит в ярусе ролей
+	sel  string // "" — base column: value lives in the role tier
 	use  bool
 }
 
-// resolveCols раскладывает колонки по режимам кита.
+// resolveCols maps columns to kit modes.
 //
-// Правило одно: машинная колонка обязана быть либо кодом режима из кита, либо
-// ЕДИНСТВЕННОЙ безымянной — базовой. Две безымянные машинные колонки значат,
-// что одну из них не узнали, и это ошибка, а не повод промолчать. Молчание
-// здесь и есть тот отчёт ни о чём, ради которого проверка написана: без этого
-// правила неизвестная подпись не даёт значений вовсе, и колонка выпадает.
+// One rule: a machine-readable column must be either a mode code from the kit,
+// or the SINGLE unnamed one — the base. Two unnamed machine-readable columns
+// mean one of them was not recognized, and that is an error, not a reason to
+// stay silent. Silence here is exactly the useless report this check was
+// written to prevent: without this rule, an unknown label produces no values
+// at all, and the column disappears.
 func resolveCols(name string, t modeTable, modeSel map[string]string) ([]column, []string) {
 	machine := machineCols(t)
 	cols := make([]column, len(t.head))
@@ -412,8 +421,8 @@ func resolveCols(name string, t modeTable, modeSel map[string]string) ([]column,
 		}
 		unnamed = append(unnamed, k)
 	}
-	// Одна машинная колонка — это не «токен × режим», а список: сверять её не
-	// с чем, и требовать от неё кода режима не за что.
+	// One machine-readable column is not "token × mode", but a list: there is
+	// nothing to compare it with, and no reason to require a mode code from it.
 	if count < 2 {
 		return nil, nil
 	}
@@ -423,9 +432,9 @@ func resolveCols(name string, t modeTable, modeSel map[string]string) ([]column,
 			names = append(names, "«"+t.head[k]+"»")
 		}
 		return nil, []string{fmt.Sprintf(
-			"%s:%d: колонки %s не названы кодом режима.\n      "+
-				"Код режима объявляет кит ([data-density], [data-scale]); "+
-				"безымянной — базовой — может быть только одна",
+			"%s:%d: columns %s are not named with a mode code.\n      "+
+				"The kit declares the mode code ([data-density], [data-scale]); "+
+				"only one unnamed column — the base — is allowed",
 			name, t.line, strings.Join(names, ", "))}
 	}
 	if len(unnamed) == 1 {
@@ -442,7 +451,7 @@ func checkModeTables(srcDir, docsDir string) []string {
 	sheet := commentRe.ReplaceAllString(strings.ReplaceAll(string(raw), "\r\n", "\n"), "")
 	modeSel := modeSelectors(sheet)
 
-	// Ярус ролей: база, поверх которой режим переопределяет своё.
+	// The role tier: the base a mode overrides its own values on top of.
 	base := map[string]string{}
 	for _, sel := range []string{":root {", `:where(:root) {`} {
 		for k, v := range blockDecls(sheet, sel) {
@@ -492,34 +501,34 @@ func checkModeTables(srcDir, docsDir string) []string {
 					}
 					got, ok := values(cols[k].sel)[r.token]
 					if !ok {
-						continue // токен в этом режиме не объявлен
+						continue // the token is not declared in this mode
 					}
 
-					// Ячейка-ссылка: сверяем имя.
+					// A reference cell: the name is what gets compared.
 					if ref := refCellRe.FindStringSubmatch(cell); ref != nil {
 						if got != "var("+ref[1]+")" {
 							problems = append(problems, fmt.Sprintf(
-								"%s:%d: %s в режиме «%s» — в таблице «%s», в коде «%s»",
+								"%s:%d: %s in mode %q — %q in the table, %q in the code",
 								name, r.line, r.token, cols[k].head, ref[1], got))
 						}
 						continue
 					}
 
-					// Ячейка-число: сверяем ПИКСЕЛИ. Таблицы масштаба набраны
-					// кеглями в px, а токены объявлены в rem — без разрешения
-					// сотня чисел осталась бы непроверенной, как осталась бы
-					// ступень плотности.
+					// A numeric cell: PIXELS are what gets compared. The scale tables
+					// are set in px while the tokens are declared in rem — without
+					// resolving them a hundred numbers would stay unchecked, exactly
+					// as the density step once did.
 					want, err := strconv.ParseFloat(strings.TrimSuffix(cell, "px"), 64)
 					if err != nil {
-						continue // проза
+						continue // prose
 					}
 					px, err := css.ResolvePx(values(cols[k].sel), r.token)
 					if err != nil {
-						continue // не длина
+						continue // not a length
 					}
 					if math.Abs(px-want) > 0.01 {
 						problems = append(problems, fmt.Sprintf(
-							"%s:%d: %s в режиме «%s» — в таблице %g, в коде %g (%s)",
+							"%s:%d: %s in mode %q — %g in the table, %g in the code (%s)",
 							name, r.line, r.token, cols[k].head, want, px, got))
 					}
 				}
@@ -529,15 +538,15 @@ func checkModeTables(srcDir, docsDir string) []string {
 	return problems
 }
 
-// ── Поле source в шапке страницы ──────────────────────────────────────────
+// ── source field in the page header ───────────────────────────────────────
 //
-// Каждая страница называет файл, из которого её компонент сделан, и сайт
-// печатает это ссылкой. Проверял её никто: разбиение components.css на восемь
-// файлов оставило двадцать пять страниц указывающими в пустоту, и ни один из
-// семи гейтов не сказал ни слова.
+// Each page names the file its component is made from, and the site prints it
+// as a link. Nobody checked it: splitting components.css into eight files left
+// twenty-five pages pointing into empty space, and none of the seven gates said
+// a word.
 //
-// Стоит эта ошибка ровно того, ради чего справочник существует: человек идёт
-// смотреть, как компонент устроен, и попадает в никуда.
+// This error costs exactly what the reference exists for: a person goes to see
+// how the component is built and ends up nowhere.
 var sourceRe = regexp.MustCompile(`(?m)^source:\s*(\S+)\s*$`)
 
 func checkSourceFields(docsDir string) []string {
@@ -563,7 +572,7 @@ func checkSourceFields(docsDir string) []string {
 		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(m[1]))); err != nil {
 			rel, _ := filepath.Rel(docsDir, p)
 			problems = append(problems, fmt.Sprintf(
-				"%s: source указывает на %s — такого файла нет",
+				"%s: source points to %s — that file does not exist",
 				filepath.ToSlash(rel), m[1]))
 		}
 		return nil

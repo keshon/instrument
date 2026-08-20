@@ -81,6 +81,7 @@ var zones = []zone{
 	{
 		name:  "tools",
 		paths: []string{"tools"},
+		on:    true,
 		step:  "3",
 		why:   "the gates' output lives in the same lines as their code",
 		except: []exception{
@@ -90,6 +91,12 @@ var zones = []zone{
 					"An anchor points at documentation that is still Russian until step 4, " +
 					"and a payload is the very string a gate has to reject: feeding cmd/lang " +
 					"or the comment rule English would test nothing.",
+			},
+			{
+				path: "tools/cmd/registry/main.go",
+				why: "the frontmatter says the kind of an API entry in Russian, and the " +
+					"ownership map is built by matching it. Both spellings are listed in the " +
+					"pattern; the Russian one goes when the pages do, on step 4.",
 			},
 			{
 				path: "tools/cmd/docscheck/tokens.go",

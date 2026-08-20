@@ -1,19 +1,20 @@
-// Команда dist собирает кит в один файл.
+// The dist command builds the kit into a single file.
 //
-// Кит подключается одной строкой и не требует сборки У ПОТРЕБИТЕЛЯ — это
-// остаётся правдой. Но «нет сборки у потребителя» и «в репозитории нет
-// собранного файла» — разные вещи, и вторая обходилась дорого:
+// The kit is connected with one line and requires no build BY THE CONSUMER —
+// that remains true. But "no build for the consumer" and "no built file in
+// the repository" are different things, and the latter used to be costly:
 //
-//	запрос на каждый файл вместо одного (@import — водопад: браузер сначала
-//	забирает kit.css и только потом узнаёт про остальные);
-//	полтысячи килобайт сырых, из которых три четверти — комментарии
-//	по-русски.
+//	request per file instead of one (@import — a waterfall: the browser first
+//	fetches kit.css and only then learns about the rest);
+//	half a megabyte of raw source, three quarters of which are comments
+//	in Russian.
 //
-// Источником остаётся src/. dist/ — вывод, и он лежит в репозитории только
-// затем, чтобы потребитель мог взять один файл.
+// src/ remains the source. dist/ is output, and it lives in the repository
 //
-//	go run ./cmd/dist            собрать
-//	go run ./cmd/dist -check     упасть, если собранное разошлось с исходником
+//	only so the consumer can take one file.
+//
+//	go run ./cmd/dist            build
+//	go run ./cmd/dist -check     fail if the built output diverged from source
 package main
 
 import (
@@ -37,10 +38,10 @@ var (
 
 func main() {
 	var (
-		src     = flag.String("src", "../src", "каталог кита")
-		out     = flag.String("out", "../dist", "каталог вывода")
-		version = flag.String("version", "", "версия; по умолчанию из VERSION")
-		check   = flag.Bool("check", false, "не писать, а сверить")
+		src     = flag.String("src", "../src", "kit directory")
+		out     = flag.String("out", "../dist", "output directory")
+		version = flag.String("version", "", "version; defaults to VERSION")
+		check   = flag.Bool("check", false, "do not write, only compare")
 	)
 	flag.Parse()
 
@@ -48,19 +49,20 @@ func main() {
 	if ver == "" {
 		b, err := os.ReadFile(filepath.Join(filepath.Dir(*src), "VERSION"))
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "не прочитать VERSION:", err)
+			fmt.Fprintln(os.Stderr, "cannot read VERSION:", err)
 			os.Exit(1)
 		}
 		ver = strings.TrimSpace(string(b))
 	}
 
-	// Версия объявлена ДВАЖДЫ: в VERSION и в package.json. Разойтись им нечем
-	// — кроме забывчивости, а она случается ровно в момент выпуска.
+	// The version is declared TWICE: in VERSION and in package.json. There is
+	// nothing to make them diverge — except forgetfulness, and that happens
+	// exactly at release time.
 	//
-	// Цена расхождения не косметическая: шапка dist/ печатает VERSION, а npm
-	// публикует package.json, и в реестр уезжает пакет, внутри которого
-	// написана другая версия. Дальше это не отследить: файл на CDN лежит с
-	// одним номером, а комментарий внутри него называет другой.
+	// The cost of divergence is not cosmetic: the dist/ header prints VERSION,
+	// while npm publishes package.json, and a package containing a different
+	// version is sent to the registry. After that it cannot be traced: the CDN
+	// file carries one number, while the comment inside it names another.
 	if err := checkPkgVersion(filepath.Dir(*src), ver); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -68,15 +70,15 @@ func main() {
 
 	entry, err := os.ReadFile(filepath.Join(*src, "kit.css"))
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "не прочитать kit.css:", err)
+		fmt.Fprintln(os.Stderr, "cannot read kit.css:", err)
 		os.Exit(1)
 	}
 
-	// Порядок слоёв берётся из самого kit.css, а не переписывается сюда:
-	// второй список разошёлся бы с первым, и разошёлся бы молча.
+	// Layer order comes from kit.css itself rather than being rewritten here:
+	// a second list would diverge from the first, and diverge silently.
 	stmt := layerStmtRe.FindSubmatch(entry)
 	if stmt == nil {
-		fmt.Fprintln(os.Stderr, "в kit.css нет объявления @layer")
+		fmt.Fprintln(os.Stderr, "kit.css has no @layer declaration")
 		os.Exit(1)
 	}
 
@@ -87,7 +89,7 @@ func main() {
 
 	imports := importRe.FindAllSubmatch(entry, -1)
 	if len(imports) == 0 {
-		fmt.Fprintln(os.Stderr, "в kit.css нет ни одного @import")
+		fmt.Fprintln(os.Stderr, "kit.css has no @import entries")
 		os.Exit(1)
 	}
 	for _, m := range imports {
@@ -97,9 +99,9 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		// Переносы строк нормализуются на входе. Иначе собранное зависит от
-		// того, на какой системе его собрали: git отдаёт исходники с CRLF на
-		// Windows, и -check не совпадал сам с собой.
+		// Line endings are normalized on input. Otherwise the build depends on
+		// the system it was built on: git delivers source with CRLF on Windows,
+		// and -check would not match itself.
 		b = bytes.ReplaceAll(b, []byte("\r\n"), []byte("\n"))
 		if err := checkBraces(name, b); err != nil {
 			fmt.Fprintln(os.Stderr, err)
@@ -113,16 +115,17 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		// Импорт в слой вкладывает ВСЁ содержимое файла — ровно это и
-		// воспроизводится блоком. Иначе слои разъехались бы, а порядок слоёв
-		// у кита несёт смысл: motion и print обязаны перебивать компоненты.
+		// Importing into a layer nests ALL file contents in that layer — that
+		// is exactly what the block reproduces. Otherwise the layers would
+		// diverge, and the kit's layer order carries meaning: motion and print
+		// must override components.
 		fmt.Fprintf(&css, "/* ── %s → %s ─────────────────────────────── */\n", name, layer)
 		fmt.Fprintf(&css, "@layer %s {\n%s\n}\n\n", layer, b)
 	}
 
 	js, err := os.ReadFile(filepath.Join(*src, "kit.js"))
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "не прочитать kit.js:", err)
+		fmt.Fprintln(os.Stderr, "cannot read kit.js:", err)
 		os.Exit(1)
 	}
 	js = bytes.ReplaceAll(js, []byte("\r\n"), []byte("\n"))
@@ -138,21 +141,21 @@ func main() {
 		for name, want := range files {
 			got, err := os.ReadFile(filepath.Join(*out, name))
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "  нет %s: %v\n", name, err)
+				fmt.Fprintf(os.Stderr, "  missing %s: %v\n", name, err)
 				bad++
 				continue
 			}
 			if !bytes.Equal(bytes.ReplaceAll(got, []byte("\r\n"), []byte("\n")), want) {
-				fmt.Fprintf(os.Stderr, "  %s разошёлся с исходником\n", name)
+				fmt.Fprintf(os.Stderr, "  %s diverged from source\n", name)
 				bad++
 			}
 		}
 		if bad > 0 {
-			fmt.Fprintln(os.Stderr, "\nСобранное отстало от src/. Пересоберите:")
+			fmt.Fprintln(os.Stderr, "\nBuilt output is behind src/. Rebuild:")
 			fmt.Fprintln(os.Stderr, "  go -C tools run ./cmd/dist")
 			os.Exit(1)
 		}
-		fmt.Println("· dist совпадает с src")
+		fmt.Println("· dist matches src")
 		return
 	}
 
@@ -169,35 +172,38 @@ func main() {
 
 	fmt.Printf("instrument %s\n", ver)
 	for _, name := range []string{"instrument.css", "instrument.min.css", "instrument.js"} {
-		fmt.Printf("  %-18s %6.1f КБ\n", name, float64(len(files[name]))/1024)
+		fmt.Printf("  %-18s %6.1f KB\n", name, float64(len(files[name]))/1024)
 	}
-	fmt.Printf("\nбыло: %d файлов, %.1f КБ, столько же запросов\n",
+	fmt.Printf("\nbefore: %d files, %.1f KB, the same number of requests\n",
 		len(imports)+1, float64(len(css.Bytes()))/1024)
+
 }
 
 /*
-minify — намеренно осторожный.
+minify — intentionally cautious.
 
-Он снимает комментарии и лишние пробелы и НЕ ТРОГАЕТ больше ничего. Соблазн
-дожать велик, но каждая следующая оптимизация опасна на этом конкретном CSS:
+It removes comments and extra whitespace and DOES NOT TOUCH anything else.
+The temptation to squeeze more out is strong, but every next optimization is
+dangerous on this particular CSS:
 
-  - пробел перед «:» убирать нельзя. «.a :hover» и «.a:hover» — разные
-    селекторы, и отличить их без разбора селектора невозможно;
-  - содержимое строк неприкосновенно. Кит рисует формы масками из data-URI, а
-    внутри них живут и пробелы, и «;», и «}» — схлопнуть их значит стереть
-    половину значков;
-  - «url(...)» без кавычек — то же самое.
+  - whitespace before ":" cannot be removed. ".a :hover" and ".a:hover" are
+    different selectors, and distinguishing them without parsing the selector
+    is impossible;
+  - string contents are untouchable. The kit draws shapes with data-URI masks,
+    and spaces, ";", and "}" live inside them — collapsing them means erasing
+    half the glyphs;
+  - "url(...)" without quotes is the same.
 
-Комментарии дают три четверти файла, поэтому осторожности хватает с запасом.
+Comments make up three quarters of the file, so this caution has ample margin.
 */
 func minify(s string) string {
 	var b strings.Builder
 	b.Grow(len(s))
 
-	var quote byte     // текущая кавычка, 0 — вне строки
-	inURL := false     // внутри url(...) без кавычек
-	pendingWS := false // видели пробел, ещё не решили, писать ли
-	keepFirst := true  // первый комментарий /*! сохраняется — это шапка
+	var quote byte     // current quote, 0 — outside a string
+	inURL := false     // inside url(...) without quotes
+	pendingWS := false // saw whitespace, have not decided whether to write it
+	keepFirst := true  // first /*! comment is preserved — it is the header
 
 	writeByte := func(c byte) { b.WriteByte(c) }
 
@@ -240,7 +246,8 @@ func minify(s string) string {
 				b.WriteByte('\n')
 				keepFirst = false
 			} else {
-				// Комментарий равносилен пробелу: «a/**/b» — два токена.
+				// A comment is equivalent to whitespace: "a/**/b" is two
+				// tokens.
 				pendingWS = true
 			}
 			i += 2 + end + 1
@@ -251,12 +258,12 @@ func minify(s string) string {
 			continue
 		}
 
-		// url( без кавычек
+		// url( without quotes
 		if c == '(' && strings.HasSuffix(strings.ToLower(b.String()), "url") {
 			flushWS(&b, &pendingWS)
 			writeByte(c)
-			// Пропускаем пробелы сразу после «url(»; если дальше кавычка,
-			// обычная ветка строки её подхватит.
+			// Skip whitespace immediately after "url("; if a quote follows,
+			// the normal string branch will pick it up.
 			j := i + 1
 			for j < len(s) && (s[j] == ' ' || s[j] == '\n' || s[j] == '\t') {
 				j++
@@ -268,7 +275,7 @@ func minify(s string) string {
 			continue
 		}
 
-		// Пробел не нужен рядом со скобками и разделителями объявлений.
+		// Whitespace is unnecessary next to braces and declaration separators.
 		if pendingWS {
 			prev := lastByte(&b)
 			if !isDrop(prev) && !isDrop(c) {
@@ -279,6 +286,7 @@ func minify(s string) string {
 		writeByte(c)
 	}
 	return strings.TrimSpace(b.String()) + "\n"
+
 }
 
 func flushWS(b *strings.Builder, pending *bool) {
@@ -298,26 +306,27 @@ func lastByte(b *strings.Builder) byte {
 	return s[len(s)-1]
 }
 
-// checkBraces сверяет баланс фигурных скобок в файле кита.
+// checkBraces checks the balance of curly braces in a kit file.
 //
-// Импорт в слой вкладывает файл в блок `@layer X { ... }`, поэтому лишняя `}`
-// закрывает не правило, а сам слой: остаток файла — и всё, что импортировано в
-// тот же слой следом, — оказывается ВНЕ слоёв. Неслойное правило выигрывает у
-// любого слоя, то есть у таких компонентов перестают работать переопределения
-// приложения, prefers-reduced-motion, @media print и forced-colors.
+// Importing into a layer nests the file inside an `@layer X { ... }` block,
+// so an extra `}` closes the layer itself rather than the rule: the rest of
+// the file — and everything subsequently imported into that same layer — ends
+// up OUTSIDE the layers. An unlayered rule wins over every layer, so overrides
+// from the application, prefers-reduced-motion, @media print, and
+// forced-colors stop working for such components.
 //
-// В src/ через @import баг не виден: лишняя скобка на верхнем уровне —
-// синтаксическая ошибка, браузер её отбрасывает, а слой назначает импорт.
-// Сравнение dist/ с src/ его тоже не видит: скобка одинаково стоит в обоих.
-// Поэтому проверка идёт по исходнику и до сборки.
+// In src/, the bug is invisible through @import: an extra top-level brace is
+// a syntax error, the browser discards it, and the import assigns the layer.
+// Comparing dist/ with src/ does not catch it either: the brace is identical
+// in both. Therefore the check runs against source before the build.
 //
-// Строки, комментарии и url(...) без кавычек пропускаются: внутри масок из
-// data-URI скобки — часть рисунка, а не структуры.
+// Strings, comments, and unquoted url(...) are skipped: inside data-URI masks,
+// braces are part of the drawing, not structure.
 func checkBraces(name string, css []byte) error {
 	s := string(css)
 	line := 1
 	depth := 0
-	openLine := 0 // строка последней незакрытой «{»
+	openLine := 0 // line of the last unclosed "{"
 
 	var quote byte
 	inURL := false
@@ -344,7 +353,7 @@ func checkBraces(name string, css []byte) error {
 		case c == '/' && i+1 < len(s) && s[i+1] == '*':
 			end := strings.Index(s[i+2:], "*/")
 			if end < 0 {
-				return fmt.Errorf("%s:%d: комментарий не закрыт", name, line)
+				return fmt.Errorf("%s:%d: comment is not closed", name, line)
 			}
 			line += strings.Count(s[i:i+2+end+2], "\n")
 			i += 2 + end + 1
@@ -365,59 +374,62 @@ func checkBraces(name string, css []byte) error {
 			depth--
 			if depth < 0 {
 				return fmt.Errorf(
-					"%s:%d: лишняя «}».\n"+
-						"Файл вкладывается в блок @layer, поэтому она закроет слой, а не правило:\n"+
-						"остаток файла окажется вне слоёв и начнёт выигрывать у стилей приложения,\n"+
-						"prefers-reduced-motion и @media print.",
+					"%s:%d: stray \"}\".\n"+
+						"The file is nested into an @layer block, so it closes the layer rather\n"+
+						"than a rule: the rest of the file ends up outside the layers and starts\n"+
+						"winning against application styles, prefers-reduced-motion and @media print.",
 					name, line)
 			}
 		}
 	}
 
 	if depth > 0 {
-		return fmt.Errorf("%s: не закрыто блоков: %d, первый открыт на строке %d",
+		return fmt.Errorf("%s: unclosed blocks: %d, the first opened on line %d",
 			name, depth, openLine)
 	}
 	if quote != 0 {
-		return fmt.Errorf("%s: строка не закрыта", name)
+		return fmt.Errorf("%s: string is not closed", name)
 	}
 	return nil
 }
 
-// checkPkgVersion сверяет версию в package.json с VERSION.
+// checkPkgVersion checks the version in package.json against VERSION.
 //
-// Отсутствие package.json — не ошибка: кит работает файлом и без реестра, и
-// репозиторий, из которого его берут ссылкой, package.json не обязан иметь.
-// А вот РАСХОЖДЕНИЕ — ошибка, и молчаливая: она видна только после публикации.
+// Missing package.json is not an error: the kit works as a file without a
+// registry, and a repository consumed by link does not have to contain
+// package.json. But DIVERGENCE is an error, and a silent one: it is visible
+// only after publication.
 func checkPkgVersion(root, ver string) error {
 	b, err := os.ReadFile(filepath.Join(root, "package.json"))
 	if errors.Is(err, os.ErrNotExist) {
 		return nil
 	}
 	if err != nil {
-		return fmt.Errorf("не прочитать package.json: %w", err)
+		return fmt.Errorf("cannot read package.json: %w", err)
 	}
 
 	var pkg struct {
 		Version string `json:"version"`
 	}
 	if err := json.Unmarshal(b, &pkg); err != nil {
-		return fmt.Errorf("package.json не разбирается: %w", err)
+		return fmt.Errorf("package.json cannot be parsed: %w", err)
 	}
 	if pkg.Version != ver {
 		return fmt.Errorf(
-			"версии разошлись: VERSION = %s, package.json = %s.\n"+
-				"В шапке dist/ печатается первая, а в реестр уезжает вторая —\n"+
-				"на CDN окажется файл, который называет сам себя не так, как пакет вокруг него.",
+			"versions diverged: VERSION = %s, package.json = %s.\n"+
+				"The dist/ header prints the first, while the registry receives the second —\n"+
+				"the CDN will contain a file that names itself differently from the package around it.",
 			ver, pkg.Version)
 	}
 	return nil
+
 }
 
-// isDrop — символы, рядом с которыми пробел не значит ничего.
+// isDrop — characters next to which whitespace means nothing.
 //
-// «:» и «,» сюда НЕ входят намеренно: у первого пробел меняет селектор, у
-// второго безопасно, но выигрыш копеечный, а правило проще держать одно.
+// ":" and "," are intentionally NOT included: whitespace changes the selector
+// for the first, while it is safe for the second, but the gain is negligible,
+// and keeping one rule is simpler.
 func isDrop(c byte) bool {
 	switch c {
 	case '{', '}', ';', 0:
@@ -426,44 +438,45 @@ func isDrop(c byte) bool {
 	return false
 }
 
-// rawGap ловит обращение к шкале пространства напрямую там, где на просвет уже
-// есть роль.
+// rawGap catches direct access to the spacing scale where a role already
+// exists.
 //
-// Правило кита: «компоненты берут отсюда только через ярус ролей». Оно держалось
-// на честном слове и однажды сломалось: .inst-stack--loose нёс
-// gap: var(--space-7), потому что роли на просвет между разделами не было, а
-// 24px были нужны. Роль завелась (--gap-section), обход убран — но ничто не
-// мешало завести его снова.
+// Kit rule: "components take this only through the role tiers." It relied on
+// an honor system and broke once: .inst-stack--loose carried
+// gap: var(--space-7), because there was no role for the space between
+// sections, while 24px were needed. The role was added (--gap-section), the
+// workaround removed — but nothing prevented adding it again.
 //
-// Ловятся только КРУПНЫЕ ступени и только на просвете. Мелкие (1–6) уходят на
-// микрорасстояния, где роли нет и заводить её не на что: просвет между значком
-// и подписью — не то же, что просвет между разделами. Набивка не ловится вовсе:
-// у неё свои роли, а арифметика вьюпорта вроде 100vw - var(--space-8) к ярусу
-// отношения не имеет.
+// Only LARGE steps are caught, and only in the open. Small ones (1–6) serve
+// micro-spacing, where there is no role and none should be created: spacing
+// between an icon and its label is not the same as spacing between sections.
+// Padding is not caught at all: it has its own roles, and viewport arithmetic
+// such as 100vw - var(--space-8) has nothing to do with the tier.
 var rawGap = regexp.MustCompile(`(?:^|[;{[:space:]])(?:row-|column-)?gap:[[:space:]]*var\(--space-(7|8|9|10)\)`)
 
-// checkRoleTier запрещает просвет мимо яруса ролей. tokens.css исключён: там
-// роли и ОБЪЯВЛЯЮТСЯ через ступени шкалы, в этом их работа.
+// checkRoleTier forbids spacing that bypasses the role tier. tokens.css is
+// excluded: roles are DECLARED there through scale steps; that is its job.
 func checkRoleTier(name string, css []byte) error {
 	if name == "tokens.css" {
 		return nil
 	}
 	for i, line := range strings.Split(string(css), "\n") {
 		if m := rawGap.FindStringSubmatch(line); m != nil {
-			return fmt.Errorf("%s:%d: просвет мимо яруса ролей — var(--space-%s). "+
-				"Между разделами берите --gap-section, внутри — --gap-row или --gap-inline",
+			return fmt.Errorf("%s:%d: spacing bypasses role tier — var(--space-%s). "+
+				"Between sections use --gap-section, inside use --gap-row or --gap-inline",
 				name, i+1, m[1])
 		}
 	}
 	return nil
 }
 
-// Раздел «Запрещено» принципов дизайна, переведённый в регулярные выражения.
+// The "Forbidden" section of the design principles, translated into regular
+// expressions.
 //
-// Все пять правил СЕГОДНЯ ЗЕЛЁНЫЕ — это защёлки, а не работа. Смысл гейта не в
-// том, чтобы что-то найти сейчас, а в том, чтобы запрет перестал держаться на
-// памяти: каждое из пяти нарушается одной строкой, которая выглядит безобидно
-// и не даёт ошибки в браузере.
+// All five rules are GREEN TODAY — these are locks, not work. The point of the
+// gate is not to find something now, but to stop the prohibition from relying
+// on memory: each of the five can be violated by one innocuous-looking line
+// that produces no browser error.
 var (
 	banImportant = regexp.MustCompile(`!\s*important`)
 	banBold      = regexp.MustCompile(`font-weight:\s*(700|800|900|bold)\b`)
@@ -476,77 +489,78 @@ var (
 	urlDecl  = regexp.MustCompile(`([\w-]+)\s*:\s*[^;]*url\(`)
 )
 
-// Слой токенов. Здесь сырой цвет — это РАБОТА, а не нарушение: tokens.css
-// объявляет рампы и семантику, print.css возвращает светлую тему на бумаге,
-// переприсваивая те же семантические имена. Оба яруса 1–2, и обоим положено
-// называть цвет числом. Всем остальным — нет.
+// Token layer. Here a raw color is WORK, not a violation: tokens.css declares
+// ramps and semantics, print.css restores the light theme on paper by
+// reassigning the same semantic names. Both are tiers 1–2, and both are
+// supposed to name color by number. Everyone else is not.
 var colorLayer = map[string]bool{"tokens.css": true, "print.css": true}
 
-// checkBans сторожит запреты, которые до сих пор держались на внимательности.
+// checkBans guards prohibitions that have so far relied on attentiveness.
 //
-// Проверка построчная и потому не видит объявления, разорванного переносом.
-// Для четырёх правил из пяти это безразлично — свойство и значение стоят на
-// одной строке, — а для маски проверено отдельно: во всех 27 объявлениях кита
-// маска однострочная.
+// The check is line-based and therefore does not see a declaration split by a
+// line break. That does not matter for four of the five rules — property and
+// value are on the same line — and masks were checked separately: all 27 kit
+// declarations are single-line.
 func checkBans(name string, raw []byte) error {
 	css := css.Blank(raw)
 	for i, line := range strings.Split(string(css), "\n") {
 		at := fmt.Sprintf("%s:%d", name, i+1)
 
-		// !important. Исключение ровно одно и названо поимённо: [hidden] в
-		// base.css — это корректность, а не оформление.
+		// !important. Exactly one exception, named explicitly: [hidden] in
+		// base.css is correctness, not presentation.
 		if banImportant.MatchString(line) {
 			if !(name == "base.css" && strings.Contains(line, "[hidden]")) {
-				return fmt.Errorf("%s: !important. Единственное разрешённое — [hidden] в base.css. "+
-					"Порядок слоёв решает то же самое и не ломает обещание «стили приложения выигрывают»", at)
+				return fmt.Errorf("%s: !important. The only allowed one is [hidden] in base.css. "+
+					"Layer order does the same thing without breaking the promise that application styles win", at)
 			}
 		}
 
-		// Вес 700. base.css закрывает единственную дверь, через которую его
-		// приносит платформа (strong и b сброшены на --weight-medium); эта
-		// закрывает дверь, через которую его принесёт правка.
+		// Weight 700. base.css closes the only door through which the platform
+		// brings it (strong and b are reset to --weight-medium); this closes the
+		// door through which a change can bring it.
 		if m := banBold.FindStringSubmatch(line); m != nil {
-			return fmt.Errorf("%s: вес %s. В ките два веса — --weight-normal и --weight-medium (600). "+
-				"Настоящего 500 у Segoe UI нет, а 700 в инструментальном интерфейсе кричит громче данных", at, m[1])
+			return fmt.Errorf("%s: weight %s. The kit has two weights — --weight-normal and --weight-medium (600). "+
+				"Segoe UI has no real 500, and 700 in an instrumental interface shouts louder than data", at, m[1])
 		}
 
-		// Утилиты отступов. Шкала разрежена сверху намеренно, и набор утилит
-		// вернул бы «чуть побольше» первым классом.
+		// Spacing utilities. The scale is intentionally sparse at the top, and
+		// a utility set would bring back "a little more" as the first class.
 		if m := banUtility.FindString(line); m != "" {
-			return fmt.Errorf("%s: утилита отступа %q. Ритм задают примитивы потока "+
-				"(.inst-stack, .inst-cluster, .inst-grid) с зазором, названным намерением", at, m)
+			return fmt.Errorf("%s: spacing utility %q. Rhythm is set by flow primitives "+
+				"(.inst-stack, .inst-cluster, .inst-grid) with a gap named by intent", at, m)
 		}
 
-		// Сырой цвет вне слоя токенов — это захардкоженная светлая тема.
+		// A raw color outside the token layer is a hardcoded light theme.
 		if !colorLayer[name] {
 			for _, c := range banColor.FindAllString(line, -1) {
-				// Маска — исключение, и оно узкое: цвет в ней не цвет, а
-				// альфа-канал, которым вырезается форма. Заливка приходит
-				// токеном, поэтому чёрный здесь единственное осмысленное
-				// значение, и только он и разрешён.
+				// A mask is an exception, and it is narrow: the color in it is
+				// not color but the alpha channel that cuts the shape. Fill
+				// comes from a token, so black is the only meaningful value
+				// here, and only it is allowed.
 				if maskDecl.MatchString(line) && maskInk.MatchString(c) {
 					continue
 				}
-				return fmt.Errorf("%s: сырой цвет %q. Компонент обращается к семантике "+
-					"(--text-primary, --surface-raised), а не к числу: число — это захардкоженная светлая тема", at, c)
+				return fmt.Errorf("%s: raw color %q. The component uses semantics "+
+					"(--text-primary, --surface-raised), not a number: a number is a hardcoded light theme", at, c)
 			}
 		}
 
-		// Цвет внутри data-URI. Форма рисуется маской, цвет приходит токеном —
-		// значит в самой картинке цвета нет, есть только чернила формы.
+		// Color inside a data-URI. The shape is drawn with a mask, color comes
+		// from a token — so the image itself contains no color, only shape ink.
 		for _, h := range uriHex.FindAllString(line, -1) {
 			if h != "%23000" {
-				return fmt.Errorf("%s: цвет %s внутри data-URI. Форма рисуется маской и красится токеном; "+
-					"внутри картинки допустим только %%23000 — чернила самой формы", at, h)
+				return fmt.Errorf("%s: color %s inside data-URI. The shape is drawn with a mask and colored by a token; "+
+					"only %%23000 is allowed inside the image — the shape's own ink", at, h)
 			}
 		}
 
-		// url() только в маске. Картинка, поставленная фоном, красится собой и
-		// потому не умеет следовать теме.
+		// url() only in a mask. An image placed as a background colors itself
+		// and therefore cannot follow the theme.
 		if m := urlDecl.FindStringSubmatch(line); m != nil && !strings.HasPrefix(m[1], "mask") {
-			return fmt.Errorf("%s: url() в свойстве %q. Картинка допускается только маской (mask, mask-image): "+
-				"фоновая красится собой и не следует ни теме, ни тону", at, m[1])
+			return fmt.Errorf("%s: url() in property %q. An image is allowed only as a mask (mask, mask-image): "+
+				"a background colors itself and follows neither the theme nor the tone", at, m[1])
 		}
 	}
 	return nil
+
 }

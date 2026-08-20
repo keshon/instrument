@@ -102,13 +102,13 @@ async function launch() {
     '--headless=new',
     `--remote-debugging-port=${PORT}`,
     '--disable-gpu',
-    /* Фоновая вкладка в Chrome тормозится: таймеры разрежаются, а
-       requestAnimationFrame в невидимой вкладке может не сработать вовсе.
-       При одной вкладке это незаметно, при четырёх прогон встаёт намертво —
-       ожидание кадра, который не придёт, упирается в срок команды.
+    /* A background tab in Chrome is throttled: timers are thinned out, and
+       requestAnimationFrame in an invisible tab may never fire at all. With one
+       tab that goes unnoticed; with four the run wedges solid — waiting for a
+       frame that will not come runs into the command timeout.
 
-       Флаги снимают именно торможение, а не что-то ещё: вкладки остаются
-       невидимыми, но живыми. */
+       The flags remove the throttling and nothing else: the tabs stay
+       invisible but alive. */
     '--disable-background-timer-throttling',
     '--disable-backgrounding-occluded-windows',
     '--disable-renderer-backgrounding',

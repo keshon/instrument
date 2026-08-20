@@ -1,9 +1,9 @@
-// Package css разбирает объявления кастомных свойств из настоящего CSS кита
-// и резолвит их так же, как это делает браузер.
+// Package css parses custom-property declarations out of the kit's real CSS
+// and resolves them the way a browser does.
 //
-// Смысл в том, чтобы проверки НЕ ДУБЛИРОВАЛИ значения кита, а вычисляли их:
-// продублированное значение расходится с оригиналом молча и в тот момент,
-// когда его никто не смотрит.
+// The point is that the checks must NOT DUPLICATE the kit's values but compute
+// them: a duplicated value drifts away from the original silently, and at the
+// moment when nobody is looking at it.
 package css
 
 import (
@@ -17,7 +17,7 @@ import (
 
 var commentRe = regexp.MustCompile(`(?s)/\*.*?\*/`)
 
-// Source — разобранный файл токенов.
+// Source is a parsed token file.
 type Source struct{ text string }
 
 func Load(path string) (*Source, error) {
@@ -28,8 +28,8 @@ func Load(path string) (*Source, error) {
 	return &Source{text: commentRe.ReplaceAllString(string(b), "")}, nil
 }
 
-// bodyAt возвращает тело блока, начинающегося на позиции idx, со
-// сбалансированными скобками.
+// bodyAt returns the body of the block starting at position idx, with
+// balanced braces.
 func (s *Source) bodyAt(idx int) string {
 	depth, start := 0, -1
 	for i := idx; i < len(s.text); i++ {
@@ -52,10 +52,10 @@ func (s *Source) bodyAt(idx int) string {
 var declRe = regexp.MustCompile(`(--[\w-]+)\s*:\s*([^;]+);`)
 var spaceRe = regexp.MustCompile(`\s+`)
 
-// Decls вынимает кастомные свойства из ПЕРВОГО блока, совпавшего с re.
+// Decls extracts custom properties from the FIRST block matching re.
 //
-// Именно первого: блоки [data-density] и медиазапросы попадать сюда не
-// должны, иначе высоты контролов затрут базовые объявления.
+// The first one specifically: [data-density] blocks and media queries must not
+// get in here, or the control heights would overwrite the base declarations.
 func (s *Source) Decls(re *regexp.Regexp) map[string]string {
 	out := map[string]string{}
 	loc := re.FindStringIndex(s.text)
@@ -68,19 +68,21 @@ func (s *Source) Decls(re *regexp.Regexp) map[string]string {
 	return out
 }
 
-// Theme — тема как две независимые ручки, а не отдельный набор токенов.
+// Theme is a theme as two independent handles rather than a separate set of
+// tokens.
 type Theme struct {
 	ID, Label, Scheme string
 	Vars              map[string]string
 
-	// Набор акцента — ОТДЕЛЬНАЯ ось, а не разновидность темы, потому что
-	// сочетается с любой из них: 4 акцента × 5 тем. В самом ките это
-	// [data-accent="…"], объявленный рядом с блоками тем.
+	// The accent set is a SEPARATE axis rather than a kind of theme, because it
+	// combines with any of them: 4 accents × 5 themes. In the kit itself this is
+	// [data-accent="…"], declared next to the theme blocks.
 	//
-	// Пересечься с Vars он не может по устройству: тема переопределяет
-	// СЕМАНТИКУ (--accent-text и подобные), акцент — РАМПУ (--a-*), а
-	// семантика читает рампу через var(). Поэтому порядок между этими двумя
-	// картами ни на что не влияет, и спорить им не о чем.
+	// It cannot collide with Vars by construction: a theme overrides the
+	// SEMANTICS (--accent-text and the like), an accent overrides the RAMP
+	// (--a-*), and the semantics read the ramp through var(). So the order
+	// between these two maps changes nothing, and they have nothing to argue
+	// about.
 	Accent      map[string]string
 	AccentID    string
 	AccentLabel string
@@ -98,16 +100,17 @@ func (t *Theme) lookup(name string) (string, error) {
 	if v, ok := t.Base[name]; ok {
 		return v, nil
 	}
-	return "", fmt.Errorf("токен %s не объявлен", name)
+	return "", fmt.Errorf("token %s is not declared", name)
 }
 
 var varRe = regexp.MustCompile(`var\((--[\w-]+)\)`)
 
-// expand подставляет var() текстом — так же, как браузер делает ДО разбора
-// функции. Без этого oklch(0.994 0.002 var(--hue-neutral)) не разобрать.
+// expand substitutes var() textually — the way a browser does it BEFORE
+// parsing the function. Without that, oklch(0.994 0.002 var(--hue-neutral))
+// cannot be parsed.
 func (t *Theme) expand(value string, depth int) (string, error) {
 	if depth > 30 {
-		return "", fmt.Errorf("слишком глубокая подстановка var()")
+		return "", fmt.Errorf("var() substitution is nested too deep")
 	}
 	if !strings.Contains(value, "var(") {
 		return value, nil
@@ -127,7 +130,7 @@ func (t *Theme) expand(value string, depth int) (string, error) {
 	return t.expand(out, depth+1)
 }
 
-// RGBA — цвет в sRGB с альфой, компоненты 0…1.
+// RGBA is a colour in sRGB with alpha, components 0…1.
 type RGBA struct{ R, G, B, A float64 }
 
 func splitArgs(s string) []string {
@@ -158,7 +161,7 @@ func inner(s string) string {
 	return s[strings.Index(s, "(")+1 : strings.LastIndex(s, ")")]
 }
 
-// OklchToSrgb — перевод в sRGB. Матрицы и гамма те же, что у браузера.
+// OklchToSrgb converts to sRGB. The matrices and the gamma are a browser's.
 func OklchToSrgb(L, C, H, alpha float64) RGBA {
 	h := H * math.Pi / 180
 	a := C * math.Cos(h)
@@ -183,21 +186,24 @@ func OklchToSrgb(L, C, H, alpha float64) RGBA {
 	}
 }
 
-// Lightness возвращает светлоту цвета в OKLCH — ту же ось L, которой набрана
-// рампа кита.
+// Lightness returns the lightness of a colour in OKLCH — the same L axis the
+// kit's ramp is set on.
 //
-// Нужна отдельно от Ratio, потому что у ступени поверхностей и у читаемости
-// текста РАЗНЫЕ меры, и подменять одну другой нельзя.
+// It is needed separately from Ratio because the step between surfaces and the
+// readability of text are DIFFERENT measures, and one must not stand in for
+// the other.
 //
-// Формула WCAG несёт слагаемое 0.05 — модель бликов и рассеянного света на
-// экране. Она уместна для текста, но у самого дна светлоты сжимает ВСЕ
-// отношения к единице: шаг в 0.035 светлоты даёт 1.10 у белого конца рампы и
-// 1.04 у чёрного, хотя глаз видит его одинаково. Порог, выставленный по
-// светлому концу, тогда объявляет тёмные темы сломанными, а выставленный по
-// тёмному — перестаёт ловить что-либо в светлых.
+// The WCAG formula carries a 0.05 term — a model of glare and scattered light
+// on a screen. It is right for text, but at the very bottom of the lightness
+// range it squeezes ALL ratios towards one: a step of 0.035 in lightness gives
+// 1.10 at the white end of the ramp and 1.04 at the black one, although the eye
+// sees them as the same. A threshold set by the light end then declares the
+// dark themes broken, and one set by the dark end stops catching anything in
+// the light ones.
 //
-// OKLCH перцептивно равномерен по построению: разница светлоты значит одно и
-// то же на обоих концах, и один порог работает для всех пяти тем.
+// OKLCH is perceptually uniform by construction: a difference in lightness
+// means the same thing at both ends, and one threshold works for all five
+// themes.
 func Lightness(c RGBA) float64 {
 	dec := func(v float64) float64 {
 		if v <= 0.04045 {
@@ -212,29 +218,31 @@ func Lightness(c RGBA) float64 {
 	return 0.2104542553*l + 0.7936177850*m - 0.0040720468*s
 }
 
-// Step — перепад светлоты между тем, что ЛЕГЛО, и тем, на что легло.
+// Step is the lightness difference between what WAS LAID DOWN and what it was
+// laid on.
 //
-// Композит обязателен, и его отсутствие обошлось дорого. Утопления кита —
-// плёнки: --surface-recessed это чёрный с альфой, а не цвет. Без композита
-// у такой плёнки бралась её собственная светлота, то есть ноль, и перепад
-// против любой подложки выходил огромным — проверка проходила всегда и не
-// проверяла ничего. Так «лестница весов кнопки» молчала, пока умолчание в
-// тёмных темах не отличалось от фона на 1.4%.
+// Compositing is mandatory, and its absence cost dearly. The kit's recessed
+// surfaces are films: --surface-recessed is black with alpha rather than a
+// colour. Without compositing, such a film contributed its own lightness, that
+// is zero, and the step against any backdrop came out enormous — the check
+// passed always and verified nothing. That is how the "button weight ladder"
+// stayed quiet while the default in the dark themes differed from the
+// background by 1.4%.
 //
-// Для непрозрачного переднего плана композит возвращает его же, поэтому
-// парам из стопки поверхностей правка безразлична.
+// For an opaque foreground the compositing returns it unchanged, so the pairs
+// from the surface stack are indifferent to this.
 func Step(a, b RGBA) float64 { return math.Abs(Lightness(Composite(a, b)) - Lightness(b)) }
 
-// calcRe находит простое арифметическое выражение целиком.
+// calcRe matches a simple arithmetic expression whole.
 //
-// Кит использует calc() ровно для одного: домножить цветность шага рампы на
-// ручку уклона. Полноценный вычислитель CSS здесь не нужен и был бы враньём
-// о возможностях — поддержаны числа и четыре действия, всё остальное честно
-// падает с ошибкой.
+// The kit uses calc() for exactly one thing: multiplying the chroma of a ramp
+// step by the tint handle. A full CSS evaluator is not needed here and would be
+// a lie about the capabilities — numbers and four operations are supported, and
+// everything else honestly fails with an error.
 var calcRe = regexp.MustCompile(`calc\(([^()]*)\)`)
 
-// evalCalc сворачивает calc() в число. Умножение и деление раньше сложения
-// и вычитания — как в арифметике и как в CSS.
+// evalCalc collapses calc() into a number. Multiplication and division come
+// before addition and subtraction — as in arithmetic and as in CSS.
 func evalCalc(expr string) (float64, bool) {
 	f := strings.Fields(expr)
 	if len(f) == 0 || len(f)%2 == 0 {
@@ -284,7 +292,7 @@ var (
 	mixRe   = regexp.MustCompile(`^(.*?)\s+([\d.]+)%$`)
 )
 
-// Resolve разрешает значение в цвет sRGB для темы.
+// Resolve resolves a value into an sRGB colour for a theme.
 func (t *Theme) Resolve(value string) (RGBA, error) {
 	v, err := t.expand(value, 0)
 	if err != nil {
@@ -292,8 +300,8 @@ func (t *Theme) Resolve(value string) (RGBA, error) {
 	}
 	v = strings.TrimSpace(v)
 
-	// calc() сворачивается ДО разбора цвета: браузер к моменту отрисовки
-	// делает то же самое, и oklch() получает уже число.
+	// calc() is collapsed BEFORE the colour is parsed: by the time it paints, a
+	// browser does the same, and oklch() receives a number already.
 	for calcRe.MatchString(v) {
 		bad := false
 		v = calcRe.ReplaceAllStringFunc(v, func(m string) string {
@@ -305,7 +313,7 @@ func (t *Theme) Resolve(value string) (RGBA, error) {
 			return strconv.FormatFloat(n, 'f', -1, 64)
 		})
 		if bad {
-			return RGBA{}, fmt.Errorf("не вычислить calc: %s", v)
+			return RGBA{}, fmt.Errorf("cannot evaluate the calc: %s", v)
 		}
 	}
 
@@ -316,7 +324,7 @@ func (t *Theme) Resolve(value string) (RGBA, error) {
 	if strings.HasPrefix(v, "light-dark(") {
 		args := splitArgs(inner(v))
 		if len(args) != 2 {
-			return RGBA{}, fmt.Errorf("light-dark ожидает два аргумента: %s", v)
+			return RGBA{}, fmt.Errorf("light-dark expects two arguments: %s", v)
 		}
 		if t.Scheme == "dark" {
 			return t.Resolve(args[1])
@@ -327,11 +335,11 @@ func (t *Theme) Resolve(value string) (RGBA, error) {
 	if strings.HasPrefix(v, "color-mix(") {
 		args := splitArgs(inner(v))
 		if len(args) != 3 || !strings.EqualFold(args[0], "in oklab") {
-			return RGBA{}, fmt.Errorf(`поддержан только "in oklab": %s`, v)
+			return RGBA{}, fmt.Errorf(`only "in oklab" is supported: %s`, v)
 		}
 		m := mixRe.FindStringSubmatch(args[1])
 		if m == nil {
-			return RGBA{}, fmt.Errorf("не разобрать долю: %s", args[1])
+			return RGBA{}, fmt.Errorf("cannot parse the share: %s", args[1])
 		}
 		pct, _ := strconv.ParseFloat(m[2], 64)
 		pct /= 100
@@ -366,10 +374,10 @@ func (t *Theme) Resolve(value string) (RGBA, error) {
 		return OklchToSrgb(l, c, h, alpha), nil
 	}
 
-	return RGBA{}, fmt.Errorf("не разобрать цвет: %s", v)
+	return RGBA{}, fmt.Errorf("cannot parse the colour: %s", v)
 }
 
-// Token разрешает токен по имени.
+// Token resolves a token by name.
 func (t *Theme) Token(name string) (RGBA, error) {
 	v, err := t.lookup(name)
 	if err != nil {
@@ -378,7 +386,7 @@ func (t *Theme) Token(name string) (RGBA, error) {
 	return t.Resolve(v)
 }
 
-// Composite накладывает fg на bg.
+// Composite lays fg over bg.
 func Composite(fg, bg RGBA) RGBA {
 	return RGBA{
 		R: fg.R*fg.A + bg.R*(1-fg.A),
@@ -388,7 +396,8 @@ func Composite(fg, bg RGBA) RGBA {
 	}
 }
 
-// Flatten схлопывает стопку токенов в непрозрачный цвет. Первый — база.
+// Flatten collapses a stack of tokens into an opaque colour. The first is the
+// base.
 func (t *Theme) Flatten(stack []string) (RGBA, error) {
 	var out RGBA
 	for i, name := range stack {
@@ -415,7 +424,7 @@ func luminance(c RGBA) float64 {
 	return 0.2126*f(c.R) + 0.7152*f(c.G) + 0.0722*f(c.B)
 }
 
-// Ratio — контраст переднего плана против фона по WCAG.
+// Ratio is the contrast of a foreground against a background, per WCAG.
 func Ratio(fg, bg RGBA) float64 {
 	solid := Composite(fg, bg)
 	hi, lo := luminance(solid), luminance(bg)
@@ -425,7 +434,7 @@ func Ratio(fg, bg RGBA) float64 {
 	return (hi + 0.05) / (lo + 0.05)
 }
 
-// ── Геометрия ───────────────────────────────────────────────────────────────
+// ── Geometry ────────────────────────────────────────────────────────────────
 
 var (
 	varUseRe = regexp.MustCompile(`var\(\s*(--[a-z][\w-]*)\s*\)`)
@@ -433,40 +442,43 @@ var (
 	remNumRe = regexp.MustCompile(`([\d.]+)rem`)
 )
 
-// RootPx — корень, относительно которого считается rem.
+// RootPx is the root that rem is measured against.
 //
-// В rem кит держит ровно один ярус — кегли, — и делает это затем, чтобы
-// уважать увеличенный размер шрифта в браузере. Проверке нужен конкретный
-// корень, иначе кегль не с чем сравнить: геометрия объявлена в px. 16 —
-// умолчание всех браузеров, и к нему же привязаны комментарии в tokens.css
-// («0.875rem × 16 = 14px»).
+// The kit keeps exactly one tier in rem — the type sizes — and it does so in
+// order to respect an enlarged font size in the browser. The check needs a
+// concrete root, or there is nothing to compare a type size with: the geometry
+// is declared in px. 16 is every browser's default, and the comments in
+// tokens.css are tied to it as well ("0.875rem × 16 = 14px").
 //
-// ПЕРЕМЕННАЯ, а не константа, и это важно. Потребитель имеет право сменить
-// корень: это единственный рычаг, которым приложение делает себя плотнее по
-// ТЕКСТУ, не трогая геометрию — высоты контролов и цели нажатия остаются в px
-// и не сжимаются вместе с буквами. Но рычаг небезопасен: при корне 14
-// младшая ступень падает до 9.63px, то есть ниже объявленного пола кита, а
-// значок перестаёт попадать в свою полосу против прописной.
+// A VARIABLE rather than a constant, and that matters. A consumer is entitled
+// to change the root: it is the only lever with which an application makes
+// itself denser in TEXT without touching the geometry — control heights and tap
+// targets stay in px and do not shrink along with the letters. But the lever is
+// not safe: at a root of 14 the smallest step falls to 9.63px, that is below
+// the floor the kit declares, and the icon stops landing inside its band
+// against the cap height.
 //
-// Пока корень был константой, проверить чужой выбор было нечем. Теперь можно:
-// `proportion -root 14` считает всю лестницу так, как её увидит браузер.
+// While the root was a constant there was nothing to check somebody else's
+// choice with. Now there is: `proportion -root 14` computes the whole ladder
+// the way a browser will see it.
 var RootPx = 16.0
 
-// ResolvePx разворачивает var() и считает calc(), возвращая число пикселей.
+// ResolvePx expands var() and evaluates calc(), returning a number of pixels.
 //
-// Живёт здесь, а не в команде, потому что таких потребителей стало двое:
-// cmd/targets меряет цели нажатия, cmd/proportion — пропорции. Копия резолвера
-// в каждой из них была бы ровно тем «будущим расхождением», о котором говорит
-// конституция: одна поправила бы разбор calc, вторая нет.
+// It lives here rather than in a command because there are two consumers now:
+// cmd/targets measures tap targets and cmd/proportion measures proportions. A
+// copy of the resolver in each of them would be exactly the "future
+// divergence" the design principles warn about: one of them would fix the calc
+// parsing and the other would not.
 //
-// Значения здесь всегда геометрические, то есть в px: цвета и проценты сюда
-// не приходят, и поэтому разбор умещается в тридцать строк вместо резолвера
-// цветов выше.
+// The values here are always geometric, that is in px: colours and percentages
+// never arrive, and that is why the parsing fits into thirty lines rather than
+// the colour resolver above.
 func ResolvePx(vals map[string]string, expr string) (float64, error) {
 	if strings.HasPrefix(expr, "--") {
 		v, ok := vals[expr]
 		if !ok {
-			return 0, fmt.Errorf("нет токена %s", expr)
+			return 0, fmt.Errorf("no token %s", expr)
 		}
 		expr = v
 	}
@@ -482,7 +494,7 @@ func ResolvePx(vals map[string]string, expr string) (float64, error) {
 			return strings.TrimSpace(v)
 		})
 		if missing != "" {
-			return 0, fmt.Errorf("нет токена %s", missing)
+			return 0, fmt.Errorf("no token %s", missing)
 		}
 	}
 	for strings.Contains(expr, "calc(") {
@@ -495,18 +507,18 @@ func ResolvePx(vals map[string]string, expr string) (float64, error) {
 			return fmt.Sprintf("%gpx", v)
 		})
 		if expr == before {
-			return 0, fmt.Errorf("не разобрать calc в %q", expr)
+			return 0, fmt.Errorf("cannot parse the calc in %q", expr)
 		}
 	}
 	if v, ok := evalCalc(stripPx(expr)); ok {
 		return v, nil
 	}
-	return 0, fmt.Errorf("не разобрать %q", expr)
+	return 0, fmt.Errorf("cannot parse %q", expr)
 }
 
-// stripPx приводит длину к безразмерному числу пикселей: px теряет суффикс,
-// rem домножается на корень. Поэтому смешанное выражение вроде
-// calc(1rem + 2px) считается верно, а не «как повезёт».
+// stripPx reduces a length to a dimensionless number of pixels: px loses its
+// suffix and rem is multiplied by the root. That is why a mixed expression such
+// as calc(1rem + 2px) is computed correctly rather than by luck.
 func stripPx(s string) string {
 	s = remNumRe.ReplaceAllStringFunc(strings.TrimSpace(s), func(m string) string {
 		v, err := strconv.ParseFloat(remNumRe.FindStringSubmatch(m)[1], 64)
@@ -518,14 +530,14 @@ func stripPx(s string) string {
 	return pxNumRe.ReplaceAllString(s, "$1")
 }
 
-// Blank заменяет тела комментариев пробелами, СОХРАНЯЯ переносы строк.
+// Blank replaces comment bodies with spaces, PRESERVING the line breaks.
 //
-// Нужна там, где проверка сообщает НОМЕР СТРОКИ. Вырезать комментарии совсем
-// нельзя: у кита они занимают три четверти файла, и после вырезания номер
-// уезжает на сотни строк — сообщение показывает на чужое правило и стоит
-// дороже, чем его отсутствие.
+// It is needed wherever a check reports a LINE NUMBER. Cutting comments out
+// entirely will not do: in the kit they take three quarters of a file, and
+// after cutting the number drifts by hundreds of lines — the message points at
+// somebody else's rule and costs more than no message at all.
 //
-// Комментарии в CSS не вкладываются, поэтому проход одним курсором достаточен.
+// Comments in CSS do not nest, so a single cursor pass is enough.
 func Blank(src []byte) []byte {
 	out := make([]byte, len(src))
 	copy(out, src)
@@ -554,10 +566,10 @@ func Blank(src []byte) []byte {
 	return out
 }
 
-// StepOf — перепад светлоты между двумя УЖЕ непрозрачными цветами.
+// StepOf is the lightness difference between two ALREADY opaque colours.
 //
-// Отличается от Step тем, что ничего не композитит: обе стороны собраны
-// заранее. Нужна для альтернатив — двух состояний одного элемента на одной
-// подложке, где вопрос не «насколько плёнка меняет фон», а «насколько эти
-// два вида отличаются друг от друга».
+// It differs from Step in compositing nothing: both sides are assembled in
+// advance. It is needed for alternatives — two states of one element on one
+// backdrop, where the question is not "how much does the film change the
+// background" but "how much do these two looks differ from each other".
 func StepOf(a, b RGBA) float64 { return math.Abs(Lightness(a) - Lightness(b)) }

@@ -19,7 +19,6 @@ rem     check pixels --mutate    the pixel audit, checked
 rem     check behavior [/sect/]  keyboard contract of instrument.js; same needs
 rem     check behavior --mutate  the behaviour checks, checked
 rem     check fmt                gofmt over both modules
-rem     check figma <args>       Figma dump reader. NOT a check
 rem     check help               this list
 rem
 rem  WHY THIS FILE IS IN ENGLISH, unlike everything else in the repository.
@@ -59,7 +58,6 @@ if /i "%~1"=="site"   goto site
 if /i "%~1"=="serve"  goto serve
 if /i "%~1"=="pixels" goto pixels
 if /i "%~1"=="behavior" goto behavior
-if /i "%~1"=="figma"  goto figma
 if /i "%~1"=="fmt"    goto fmt
 if /i "%~1"=="help"   goto usage
 if /i "%~1"=="-h"     goto usage
@@ -95,8 +93,6 @@ echo   check behavior [/sect/]  keyboard contract of instrument.js; same needs
 echo   check behavior --mutate  break one promise, demand the check goes red
 echo.
 echo   check fmt                gofmt over both modules. CI runs it; "all" does not
-echo   check figma ^<args^>       read a Figma "Copy as CSS" dump. NOT a check:
-echo                            it asserts nothing about the kit, so it cannot fail
 echo.
 set "fails=0"
 goto done
@@ -265,20 +261,6 @@ echo.
 gofmt -l tools site
 if errorlevel 1 set /a fails+=1
 echo   (empty above means formatted; names listed are not)
-goto done
-
-rem -- Figma dump reader ------------------------------------------------------
-rem
-rem Deliberately outside "all" and outside CI, and its own header says why: it
-rem reads someone else's mock-up and asserts nothing about the kit, so it has
-rem nothing to fail. It is reachable from here anyway, because the reason a
-rem tool stops being used is having to retype its full invocation.
-rem
-rem   check figma -f temp\components-dump.css -list
-:figma
-echo.
-go -C tools run ./cmd/figma %2 %3 %4 %5 %6 %7
-if errorlevel 1 set /a fails+=1
 goto done
 
 :done
