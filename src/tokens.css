@@ -1396,13 +1396,17 @@
   /* 16 rather than 14, though 14 stands on scale 14 too.
      The cap height of --text-2xs stepped here and the icon did not: sizes of
      11 → 11.5px round to 8 → 9 device pixels, and 14 gives ink of 7.9 against
-     a cap height of 9.0, a ratio of 0.877 against a body of 0.974…1.041. This
-     is the one place in all fifteen cells where the icon fell behind the type
-     — measured 106 035 times. 16 gives 1.003.
+     a cap height of 9.0, a ratio of 0.877 against a body of 0.974…1.041.
+     16 gives 1.003.
 
-     The --size-icon-sm ladder becomes 14-16-16-16-18: a plateau across three
-     steps, and it is legitimate — the scale is set in whole pixels, and
-     neighbouring steps coincide after rounding. */
+     The same shape of defect sits on --size-icon-sm at scales 16 and 17, and
+     it is fixed the same way: a cap height that holds still while the type
+     keeps growing leaves the icon behind.
+
+     The --size-icon-sm ladder is 14-16-17-17-18: the plateau sits on 16 and 17,
+     where the cap height of --text-2xs holds at 10 device pixels while the type
+     keeps growing. The scale is set in whole pixels, and a step that the cap
+     height does not take is a step the icon must not take either. */
   --size-icon-sm:  16px;
   --size-chevron:  11px;
   --size-tick:     3px;
@@ -1467,7 +1471,15 @@
   --size-spinner:  16px;
   --size-icon:     20px;
   --size-icon-lg:  28px;
-  --size-icon-sm:  16px;
+  /* 17 rather than 16, for the same reason as on scale 15 and against the same
+     measure. The cap height of --text-2xs steps 9 -> 10 device pixels here and
+     the icon does not move at all: 16 gives ink of 9.0 against a cap height of
+     10.0, a ratio of 0.902 against a band of 0.95…1.07. 17 gives 0.959.
+
+     Against the type gate 17/12.5 = 1.36, inside 1.20…1.42 — and that band is
+     wide precisely because the fine part of this invariant is measured by the
+     pixel gate, where the cap height is real rather than modelled. */
+  --size-icon-sm:  17px;
   --size-chevron:  11px;
   --size-tick:     4px;
   --size-marker:   2px;
@@ -1525,7 +1537,11 @@
   --size-spinner:  17px;
   --size-icon:     22px;
   --size-icon-lg:  30px;
-  --size-icon-sm:  16px;
+  /* 17, not 16: the cap height of --text-2xs stays at 10 device pixels from
+     scale 16 to 17 while the type grows 12.5 -> 13px, so the icon that fell
+     behind on 16 is still behind here. 16 gives 0.902, 17 gives 0.959.
+     Against the type gate 17/13 = 1.308. */
+  --size-icon-sm:  17px;
   --size-chevron:  12px;
   --size-tick:     4px;
   --size-marker:   2px;

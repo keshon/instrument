@@ -443,6 +443,13 @@ window.kitAudit = (function () {
           where: host.className || host.tagName,
           text: hostText.slice(0, 24),
           box: box,
+          // The type size and weight of the HOST, not just the cap height it
+          // produced. Without them a report saying "cap 11" cannot be told
+          // apart from a report saying "cap 12" for the same class: one is a
+          // second type size on the page, the other is a different font, and
+          // the two are fixed in opposite directions. An hour went into
+          // guessing which of them it was.
+          font: hcs.fontSize + '/' + hcs.fontWeight,
           ink: Math.round(ink * 10) / 10,
           cap: Math.round(cap * 10) / 10,
           ratio: Math.round(d * 100) / 100
