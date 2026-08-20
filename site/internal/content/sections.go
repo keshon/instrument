@@ -10,7 +10,8 @@ type SectionDef struct {
 
 var sectionDefs = []SectionDef{
 	{"install", 10, []string{"Установка", "Installation"}},
-	{"usage", 20, []string{"Использование", "Usage", "Разметка", "Контракт разметки", "Разметка обязательна"}},
+	{"usage", 20, []string{"Использование", "Usage", "Разметка", "Разметка обязательна"}},
+	{"contract", 25, []string{"Контракт", "Contract", "Контракт разметки", "Markup contract"}},
 	{"when", 30, []string{"Когда использовать", "When to use"}},
 	{"anatomy", 40, []string{"Устройство", "Anatomy", "Части", "Пункты"}},
 	{"scale", 45, []string{"Шкала", "Scale", "Значения", "Values"}},
@@ -29,7 +30,6 @@ var sectionDefs = []SectionDef{
 	// «Использование» and «Доступность»: both said the same thing — what has
 	// to be written for the component to work rather than to lie — and on
 	// fifty pages that came to 1 480 lines of one rule told twice.
-	{"contract", 145, []string{"Контракт", "Contract", "Контракт разметки", "Markup contract"}},
 	{"api", 150, []string{"API", "Справочник", "API Reference"}},
 	{"related", 160, []string{"Связанное", "Related"}},
 }

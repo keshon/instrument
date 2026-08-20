@@ -375,15 +375,26 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 		// из токенов, а тема кита работает на любом поддереве. Второй
 		// переключатель у каждого из двухсот примеров был лишней дорогой к
 		// тому же результату.
-		// Рама примера собрана КИТОМ, а не своими стилями сайта. Справочник,
-		// который рисует свою рамку вокруг чужого компонента, показывает не
-		// то, что раздаёт: панель с шапкой, телом и раскрывающимся низом у
-		// кита есть, и повод писать её заново отсутствует.
-		fmt.Fprintf(w, `<figure class="inst-panel demo%s" data-demo>`+
-			`<figcaption class="inst-panel-header demo-bar">`+
-			`<span class="inst-panel-title">%s</span>`+
-			`</figcaption>`+
-			`<div class="inst-panel-body demo-stage inst-theme">`+
+		// Рама примера — ГРАНИЦА, а не панель, и это смена решения.
+		//
+		// Панель кита в этой роли собиралась по рассуждению «справочник,
+		// рисующий свою рамку вокруг чужого компонента, показывает не то,
+		// что раздаёт». Рассуждение верное для рисунка и неверное для роли:
+		// панель — это ПРОДУКТ, кит её раздаёт, и демонстрация, одетая в
+		// неё, выглядит отгружаемой вещью и спорит за внимание с тем, что
+		// внутри. На странице кнопки таких панелей тринадцать.
+		//
+		// Штриховая граница китом не раздаётся — и потому ею можно обвести
+		// пример, не выдавая его за компонент. Токены при этом всё равно
+		// китовы: справочник не заводит своего языка, он лишь перестаёт
+		// одевать демонстрацию в товар.
+		//
+		// Класс .demo-stage остаётся: на нём висит два десятка правил со
+		// :has() — штриховка подложки, воздух, собранный экран. Снять его
+		// значило бы переписать их все заодно с рамой.
+		fmt.Fprintf(w, `<figure class="demo%s" data-demo>`+
+			`<figcaption class="demo-label">%s</figcaption>`+
+			`<div class="demo-frame demo-stage inst-theme">`+
 			`<div class="demo-root%s">%s</div></div>`,
 			hero, label, ctxClass(ctx), raw)
 		writeCode(w, raw, lang, true, lg)
@@ -397,8 +408,15 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 
 func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
 	if inDemo {
-		fmt.Fprintf(w, `<details class="inst-accordion-item inst-accordion-item--flush demo-code">`+
-			`<summary class="inst-accordion-head">%s</summary>`,
+		// Код стоит ПОД рамой, а не внутри неё: в раме варианты компонента,
+		// и всё, что туда попадает, читается как его часть.
+		//
+		// Переключателя целей здесь пока нет, и это не забывчивость. Цель
+		// сегодня одна — HTML; вкладка, у которой нет второй, обещает
+		// выбор, которого не существует, а кит запрещает такие обещания
+		// сам себе. Переключатель заводится вместе со второй целью.
+		fmt.Fprintf(w, `<details class="demo-code">`+
+			`<summary class="demo-code-head">%s</summary>`,
 			i18n.T(lg, "demo.markup"))
 	}
 	cls := "code-block"

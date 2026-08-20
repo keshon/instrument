@@ -30,12 +30,25 @@ var requiredByShape = map[int][]string{
 // Sections that shape 2 does not merely stop demanding but forbids: while they
 // are still allowed, a half-migrated page passes both dictionaries and nobody
 // can tell which one it follows.
+//
+// The list holds only what has somewhere to go TODAY. Three more sections are
+// meant to leave and cannot yet, and saying so here is cheaper than discovering
+// it while migrating a page:
+//
+//	when     — belongs in the section index, and docs/components/actions/ has
+//	           no index.md at all: four pages and no page above them.
+//	related  — meant to be derived from the registry, but a registry entry
+//	           carries one field, `axes`. There are no relations in it to
+//	           derive from; that line of DOCS-SHAPE.md was written on an
+//	           assumption rather than on a reading.
+//	rules    — belongs in foundations, and which foundation page takes which
+//	           rule is not decided per component.
+//
+// Forbidding a section whose destination does not exist would force the prose
+// to be deleted rather than moved, and deleted reasoning does not come back.
 var goneInShape2 = map[string]string{
-	"usage":   "the markup moved into the matrix and the code panel",
-	"a11y":    "merged into the markup contract",
-	"when":    "moved to the section index, where the comparison stands in one place",
-	"rules":   "moved to foundations, where the rule is stated once rather than fifty times",
-	"related": "derived from the registry",
+	"usage": "the markup moved into the demo frame and the code panel",
+	"a11y":  "merged into the markup contract",
 }
 
 func underContract(dir string) bool {

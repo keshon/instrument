@@ -347,6 +347,16 @@ var mutations = []mutation{
 		"layout: component\nsource: src/actions.css",
 		"layout: component\nshape: 2\nsource: src/actions.css",
 		"a half-migrated page passes neither dictionary, and the gate has to name which one it fails"},
+	// The two halves of the new rule, each on its own, now that a migrated page
+	// exists to break. The mutation above fires on both at once and cannot tell
+	// them apart; these two can, and a rule whose halves are never seen
+	// separately is a rule nobody has checked.
+	{"a shape 2 page lost its markup contract", "site", "docs/components/actions/chip.md",
+		"## Контракт", "### Контракт",
+		"the contract is the section shape 2 exists for; without it the page promises a role and explains nothing"},
+	{"a shape 2 page kept a section of the old shape", "site", "docs/components/actions/chip.md",
+		"## Состояния", "## Использование",
+		"while both shapes are allowed on one page, nobody can tell which one it follows"},
 }
 
 func main() {

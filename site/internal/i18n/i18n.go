@@ -131,6 +131,7 @@ func Kind(l Lang, kind string) string {
 var sectionTitles = map[string]map[Lang]string{
 	"install":       {RU: "Установка", EN: "Installation"},
 	"usage":         {RU: "Использование", EN: "Usage"},
+	"contract":      {RU: "Контракт", EN: "Contract"},
 	"when":          {RU: "Когда использовать", EN: "When to use"},
 	"anatomy":       {RU: "Устройство", EN: "Anatomy"},
 	"scale":         {RU: "Шкала", EN: "Scale"},
