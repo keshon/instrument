@@ -1,91 +1,96 @@
 /* ==========================================================================
    instrument — tokens
    --------------------------------------------------------------------------
-   Четыре яруса, и разделение между ними — весь смысл файла.
+   Four tiers, and the separation between them is the whole point of the file.
 
-   1. РАМПЫ      сырые шаги. Не меняются между темами. Рампа непрерывна по
-                 определению: шаг, не занятый семантикой, — резерв под
-                 приложение и графики, а не мусор.
+   1. RAMPS      raw steps. They do not change between themes. A ramp is
+                 continuous by definition: a step not taken by semantics is a
+                 reserve for the application and for charts, not rubbish.
 
-   2. СЕМАНТИКА  для чего цвет нужен. Одно объявление на токен через
-                 light-dark(): расхождение между темами невозможно по
-                 конструкции, а не «маловероятно при аккуратности».
+   2. SEMANTICS  what a colour is for. One declaration per token through
+                 light-dark(): divergence between themes is impossible by
+                 construction rather than "unlikely if one is careful".
 
-   3. РОЛИ       отступы, размеры глифов и жёлобов — по назначению, а не по
-                 числу. Единственный ярус, который перенастраивает плотность,
-                 и единственная причина, по которой в компонентах нет констант.
+   3. ROLES      padding, glyph sizes, gutters — by purpose rather than by
+                 number. The only tier density retunes, and the only reason
+                 there are no constants in the components.
 
-   4. КОМПОНЕНТ  --btn-bg и подобные. Живут рядом со своим компонентом.
+   4. COMPONENT  --btn-bg and its like. They live beside their component.
 
-   Компонент имеет право обращаться к ярусам 2 и 3. Компонент, дотянувшийся
-   до --n-3, только что захардкодил светлую тему; компонент, написавший
-   14px, только что сломал плотность.
+   A component is entitled to reach tiers 2 and 3. A component that reached
+   for --n-3 has just hardcoded the light theme; a component that wrote 14px
+   has just broken density.
    ========================================================================== */
 
 :root {
-  /* light-dark() читает используемую цветовую схему — именно поэтому здесь
-     объявлены обе. Переключение темы атрибутом ниже работает через неё же. */
+  /* light-dark() reads the colour scheme in use — which is exactly why both
+     are declared here. Switching the theme by attribute below works through
+     the same mechanism. */
   color-scheme: light dark;
 
-  /* Ручка 1: тон нейтрали. 75 — тёплый, 250 — холодный. */
+  /* Knob 1: the hue of the neutral. 75 is warm, 250 is cool. */
   --hue-neutral: 75;
 
-  /* Ручка 2: сила уклона. 0 — чистый серый, дальше множитель.
-     Нужна отдельно от тона, потому что «нейтральная» тема это не третий
-     тон, а его отсутствие: любой hue при нулевой цветности даёт один и тот
-     же серый. Множитель, а не абсолютная величина, — чтобы шаги рампы
-     сохраняли СВОИ доли уклона: у светлого конца он слабее, у тёмного
-     сильнее, и это соотношение подобрано, а не случайно.
+  /* Knob 2: the strength of the tint. 0 is pure grey, above that a
+     multiplier.
 
-     УМОЛЧАНИЕ — НОЛЬ, и это решение, а не отсутствие решения.
+     It is wanted separately from the hue, because a "neutral" theme is not a
+     third hue but the absence of one: any hue at zero chroma gives the same
+     grey. A multiplier rather than an absolute value, so that the steps of
+     the ramp keep THEIR OWN shares of the tint: weaker at the light end,
+     stronger at the dark one, and that ratio is chosen rather than
+     accidental.
 
-     Кит предназначен для админок и настольных инструментов, а самая частая
-     система под ними — Windows, где Fluent живёт на чистом сером. Тёплая или
-     холодная страница там читается не как замысел, а как сбитый профиль
-     монитора: первое, что делает человек, — идёт в настройки дисплея
-     проверять, не сломалось ли у него что-то. Умолчание обязано быть тем,
-     чего никто не заметит.
+     THE DEFAULT IS ZERO, and that is a decision rather than the absence of
+     one.
 
-     Признак того, что умолчание выбрано верно: справочнику больше не нужна
-     собственная строка, гасящая уклон. Пока она была нужна, витрина показывала
-     не то, что отдаёт кит.
+     The kit is meant for back offices and desktop instruments, and the
+     commonest system under them is Windows, where Fluent lives on pure grey.
+     A warm or a cool page reads there not as intent but as a knocked-out
+     monitor profile: the first thing a person does is go to the display
+     settings to check whether something has broken. A default has to be the
+     thing nobody notices.
 
-     И ещё: единица всё равно не работала. Уклон 0.002–0.006 по цветности
-     лежит НИЖЕ порога различения (в oklch при такой светлоте это примерно
-     0.01–0.02), и прежний комментарий этим гордился — «ниже порога
-     осознанного замечания, и в этом его работа». Работы там не было:
-     уклон, которого нельзя увидеть, — не тепло, а округление. Отсюда 3 у
-     тем, которые уклон объявляют СВОИМ признаком: см. блок тем ниже.       */
+     The sign that the default is chosen right: the reference no longer needs
+     a line of its own to kill the tint. While it needed one, the showcase was
+     showing something other than what the kit ships.
+
+     And besides: a value of one did not work anyway. A tint of 0.002–0.006 in
+     chroma lies BELOW the threshold of discrimination (in oklch at that
+     lightness roughly 0.01–0.02), and a tint that cannot be seen is not
+     warmth but rounding. Hence the 3 on the themes that declare the tint as a
+     trait of THEIR OWN: see the themes block below.                        */
   --tint: 0;
 
-  /* ══ 1. Рампы ════════════════════════════════════════════════════════════
+  /* ══ 1. Ramps ═══════════════════════════════════════════════════════════
 
-     Нейтраль несёт слабый уклон (цветность 0.002–0.006) — чистый серый
-     читается клинически на длинной сессии. Направление уклона задаёт
-     --hue-neutral: 75 — тёплый, 250 — холодный. Это первая из двух ручек,
-     которыми набирается тема; вторая — глубина поверхностей ниже.
+     The neutral carries a faint tint (chroma 0.002–0.006) — pure grey reads
+     clinically over a long session. The direction of the tint is set by
+     --hue-neutral: 75 is warm, 250 is cool. This is the first of the two
+     knobs a theme is assembled from; the second is the depth of the surfaces
+     below.
 
-     Уклон ниже порога осознанного замечания, и в этом его работа.
+     15 steps: the dark end needs four distinguishable surfaces
+     (sunken/page/raised/overlay), and 14 steps fit only three.             */
 
-     15 шагов: тёмному концу нужно четыре различимых поверхности
-     (sunken/page/raised/overlay), а на 14 шагах их помещалось три.         */
+  /* THE LIGHT END IS SPREAD APART, and this is the most expensive change in
+     the file.
 
-  /* СВЕТЛЫЙ КОНЕЦ РАЗВЁДЕН, и это самая дорогая правка в файле.
+     At 0.994 · 0.978 · 0.958 the panel, the page and the recess fit into 3.6%
+     of lightness, and the page↔panel step came to 1.05:1. The kit declares
+     that depth is carried by the order of lightness and never by a shadow,
+     and at 1.05 that promise is not kept: a stack of four tiers on a light
+     theme is indistinguishable, and the hairlines quietly take over the work
+     of structure. Measured on a dashboard: 42 drawn edges across 103 nodes
+     with TWO genuinely different surfaces. The screen was held up by a grid
+     of lines.
 
-     Стояло 0.994 · 0.978 · 0.958 — то есть панель, страница и углубление
-     умещались в 3.6% светлоты, а перепад страница↔панель составлял 1.05:1.
-     Кит объявляет «глубина передаётся порядком светлоты и никогда — тенью»,
-     и при 1.05 это обещание не выполнялось: стопка из четырёх ярусов на
-     светлой теме неразличима, а работу структуры молча забирали хайрлайны.
-     Замер на дашборде: 42 нарисованные грани на 103 узла при ДВУХ реально
-     различных поверхностях. Экран держался на решётке линий.
+     Now 1.000 · 0.968 · 0.940: steps of 1.10 and 1.09 — exactly the register
+     the dark side lives in (dark-soft has 1.117). The light themes work by
+     the same mechanism as the dark ones at last, rather than by a border.
 
-     Стало 1.000 · 0.968 · 0.940: перепад 1.10 и 1.09 — ровно тот регистр, в
-     котором живёт тёмная сторона (у dark-soft 1.117). Светлые темы наконец
-     работают тем же механизмом, что тёмные, а не рамкой.
-
-     Панель — чистый белый намеренно: это ещё и --accent-on, подпись на
-     сплошной кнопке, и ей незачем быть на два процента серой.               */
+     The panel is pure white on purpose: it is also --accent-on, the label on
+     a solid button, and there is no reason for it to be two percent grey.  */
   --n-0:  oklch(1.000 calc(0.002 * var(--tint)) var(--hue-neutral));
   --n-1:  oklch(0.976 calc(0.003 * var(--tint)) var(--hue-neutral));
   --n-2:  oklch(0.952 calc(0.004 * var(--tint)) var(--hue-neutral));
@@ -93,21 +98,21 @@
   --n-4:  oklch(0.878 calc(0.005 * var(--tint)) var(--hue-neutral));
   --n-5:  oklch(0.806 calc(0.006 * var(--tint)) var(--hue-neutral));
   --n-6:  oklch(0.706 calc(0.006 * var(--tint)) var(--hue-neutral));
-  /* Шаги 7–9 подвинуты ради ЛЕСТНИЦЫ ТЕКСТА, а не ради поверхностей.
+  /* Steps 7–9 are moved for the sake of the TEXT LADDER, not the surfaces.
 
-     Ступени основного, вторичного, приглушённого и блёклого стояли на
-     0.196 · 0.416 · 0.508 · 0.606 — шаги 0.220 · 0.092 · 0.098. Первый шаг
-     был в 2.4 раза больше остальных: обрыв, а за ним три почти одинаковых
-     серых. На экране это читается как «чёрный текст и три неразличимых
-     подписи» — то есть в тихом регистре иерархии нет вовсе, хотя каждая
-     пара честно проходит порог по отдельности.
+     At 0.196 · 0.416 · 0.508 · 0.606 the primary, secondary, muted and faint
+     tiers give steps of 0.220 · 0.092 · 0.098. The first step is 2.4 times
+     the others: a cliff, and behind it three nearly identical greys. On
+     screen that reads as "black text and three indistinguishable labels" —
+     that is, no hierarchy at all in the quiet register, although every pair
+     honestly clears its threshold on its own.
 
-     Текстовый гейт такого не ловит по устройству: он сверяет пару с порогом,
-     а не ступени между собой. Дефект этот повторяется: два токена, каждый
-     честно проходящий свой порог, способны сойтись в один цвет — и лестница
-     теряет ступень, оставаясь зелёной.
+     The text gate cannot catch that by construction: it checks a pair against
+     a threshold, not steps against each other. The defect recurs: two tokens,
+     each honestly clearing its own threshold, can converge into one colour —
+     and the ladder loses a step while staying green.
 
-     Стало 0.196 · 0.360 · 0.480 · 0.600 — шаги 0.164 · 0.120 · 0.120.       */
+     Now 0.196 · 0.360 · 0.480 · 0.600 — steps of 0.164 · 0.120 · 0.120.     */
   --n-7:  oklch(0.605 calc(0.006 * var(--tint)) var(--hue-neutral));
   --n-8:  oklch(0.500 calc(0.006 * var(--tint)) var(--hue-neutral));
   --n-9:  oklch(0.400 calc(0.006 * var(--tint)) var(--hue-neutral));
@@ -117,58 +122,61 @@
   --n-13: oklch(0.155 calc(0.003 * var(--tint)) var(--hue-neutral));
   --n-14: oklch(0.120 calc(0.003 * var(--tint)) var(--hue-neutral));
 
-  /* Акцент. Один тон, шесть шагов. Второй акцентный тон ОДНОВРЕМЕННО — не
-     запрос фичи, а сигнал, что смысл должно нести что-то другое; сменить сам
-     тон целиком — можно и нужно, это третья ручка темы (см. «Акценты» ниже).
+  /* The accent. One hue, six steps. A second accent hue AT THE SAME TIME is
+     not a feature request but a sign that something else should be carrying
+     the meaning; changing the hue itself wholesale is allowed and wanted —
+     that is the theme's third knob (see "Accents" below).
 
-     Здесь стоит ПЕТРОЛЬ — база, как «чёрная» у тёмных тем: она объявлена без
-     атрибута, остальные три переопределяют шесть строк.
+     PETROL stands here — the base, as "black" is for the dark themes: it is
+     declared without an attribute and the other three override six lines.
 
-     Почему не прежний oklch(0.560 0.155 250). Это буквально дефолтный синий
-     фреймворков — Bootstrap primary, Material Blue 700, цвет ссылки. На
-     нейтрально-серой странице (а нейтраль здесь умолчание) акцент остаётся
-     ЕДИНСТВЕННЫМ хью на экране и потому несёт весь характер кита. Кит,
-     который в остальном спорит с каждой чужой привычкой, брал самый чужой
-     цвет, какой существует.
+     Why not oklch(0.560 0.155 250). That is literally the default blue of the
+     frameworks — Bootstrap primary, Material Blue 700, the colour of a link.
+     On a neutral grey page (and neutral is the default here) the accent
+     remains the ONLY hue on the screen and therefore carries the whole
+     character of the kit. A kit that argues with every other borrowed habit
+     would be taking the most borrowed colour there is.
 
-     ── Почему набор, а не множитель ─────────────────────────────────────────
+     ── Why a set rather than a multiplier ───────────────────────────────────
 
-     Первым заходом варианты описывались как хью плюс множитель хромы — по
-     образцу --tint. Не сходится: потолок хромы в sRGB зависит от хью и от
-     светлоты, и держит его ТЁМНЫЙ конец. На 215° шаг --a-6 упирается в
-     потолок при 0.060, и единый множитель падает до 0.58 — петроль оказался
-     бы не насыщеннее графита, то есть варианты перестали бы различаться.
+     Describing the variants as a hue plus a chroma multiplier, after the
+     model of --tint, does not add up: the chroma ceiling in sRGB depends on
+     hue and on lightness, and it is the DARK end that holds it. At 215° the
+     --a-6 step meets the ceiling at 0.060, and a single multiplier drops to
+     0.58 — petrol would come out no more saturated than graphite, that is,
+     the variants would stop differing.
 
-     Поэтому вариант — это шесть явных значений, ровно как dark-soft
-     переопределяет пять токенов поверхности. Все 24 цвета проверены на
-     обрезку по sRGB: браузер зажимает молча, и зажатая рампа теряет СВОИ
-     доли насыщенности — то самое, от чего --tint устроен множителем.        */
+     So a variant is six explicit values, exactly as dark-soft overrides five
+     surface tokens. All 24 colours are checked against sRGB clipping: the
+     browser clamps silently, and a clamped ramp loses ITS OWN shares of
+     saturation — the very thing --tint is built as a multiplier to avoid.  */
   --a-1: oklch(0.960 0.018 215);
   --a-2: oklch(0.800 0.078 215);
   --a-3: oklch(0.700 0.100 215);
-  /* 0.545, а не 0.560. Потолок светлоты у заливки задаёт БЕЛАЯ ПОДПИСЬ, и он
-     хью-зависимый: на 215° это 0.545, на 250° — 0.568, на 275° — 0.576, на
-     45° — 0.580. Прежний комментарий называл 0.56 общим правилом, хотя это
-     было измерение одного-единственного синего.                             */
+  /* 0.545, not 0.560. The lightness ceiling of a fill is set by the WHITE
+     LABEL on it, and it depends on hue: at 215° it is 0.545, at 250° 0.568,
+     at 275° 0.576, at 45° 0.580. Calling 0.56 a general rule would be taking
+     the measurement of one single blue for a law.                          */
   --a-4: oklch(0.545 0.098 215);
   --a-5: oklch(0.450 0.082 215);
   --a-6: oklch(0.330 0.060 215);
 
-  /* Статусы. Зарезервированные тона — никогда не используются как украшение
-     или как «четвёртая серия на графике».
+  /* Statuses. Reserved hues — never used as decoration or as "a fourth
+     series on a chart".
 
-     Шаги имеют закреплённые роли, и это правило, а не совпадение:
-       1 — тонированный фон в светлой теме
-       2 — текст на ПРИПОДНЯТЫХ тёмных поверхностях. Существует потому, что
-           серая тёмная тема ставит панель на --n-11, а на слоях поверх неё
-           шаг 3 не дотягивает: зелёный бейдж давал 3.70 при норме 4.5
-       3 — текст в ТЁМНЫХ темах на дне рампы
-       4 — заливка/индикатор в СВЕТЛОЙ
-       5 — текст в СВЕТЛОЙ поверх шага 1
-       6 — резерв под графики
-     Шаг 5 существует именно потому, что шаг 4 не вытягивает 4.5:1 на
-     собственном тонированном фоне: без шага 5 жёлтый бейдж живёт на
-     контрасте 3.02.                                                 */
+     The steps have fixed roles, and that is a rule rather than a
+     coincidence:
+       1 — a tinted background in the light theme
+       2 — text on RAISED dark surfaces. It exists because the soft dark
+           theme puts the panel on --n-11, and on layers over it step 3 does
+           not reach: a green badge gives 3.70 against a norm of 4.5
+       3 — text in DARK themes at the bottom of the ramp
+       4 — a fill or an indicator in the LIGHT one
+       5 — text in the LIGHT one over step 1
+       6 — a reserve for charts
+     Step 5 exists precisely because step 4 does not pull 4.5:1 on its own
+     tinted background: without step 5 a yellow badge lives at a contrast of
+     3.02.                                                            */
 
   --ok-1:   oklch(0.955 0.025 150);
   --ok-2:   oklch(0.780 0.140 150);
@@ -185,262 +193,286 @@
   --warn-6: oklch(0.360 0.080 85);
 
   --err-1:  oklch(0.955 0.025 25);
-  /* 0.780, вровень с --ok-2. Шаг 2 существует для текста на ПРИПОДНЯТЫХ
-     тёмных поверхностях, и красный отставал от зелёного на две сотых светлоты
-     без причины — смысловые тона обязаны звучать в одном регистре.
+  /* 0.780, level with --ok-2. Step 2 exists for text on RAISED dark
+     surfaces, and the red trailing the green by two hundredths of lightness
+     had no reason behind it — tones that carry meaning have to sound in one
+     register.
 
-     Отставание стоило одного случая: заголовок блока отказа стоит не просто
-     на панели, а на панели ПЛЮС собственная тоновая заливка блока — 16%
-     красного, прозрачные, — и на приподнятой тёмной поверхности эта стопка роняла
-     его до 4.43 при норме 4.5. Пара «токен на поверхности» проходила, падала
-     композиция, а её в текстовой проверке не перечислить: сочетаний столько,
-     сколько слоёв. Нашёл обход всех страниц headless. */
+     The lag cost one case: the heading of a failure block stands not merely
+     on a panel but on a panel PLUS the block's own tone fill — 16% red,
+     translucent — and on a raised dark surface that stack drops it to 4.43
+     against a norm of 4.5. The pair "token on surface" passes, the
+     composition fails, and a composition cannot be enumerated in a text
+     check: there are as many combinations as there are layers. Found by the
+     headless sweep over every page. */
   --err-2:  oklch(0.780 0.150 25);
   --err-3:  oklch(0.725 0.160 25);
   --err-4:  oklch(0.545 0.185 25);
   --err-5:  oklch(0.500 0.185 25);
   --err-6:  oklch(0.330 0.110 25);
 
-  /* ══ 2. Семантика ════════════════════════════════════════════════════════
+  /* ══ 2. Semantics ═══════════════════════════════════════════════════════
 
-     Тёмная тема — не инверсия. Контраст между соседними поверхностями
-     расширяется, цветность опускается, рамки переходят с тёмной альфы на
-     светлую. Всё это здесь, в одном объявлении на токен.                   */
+     A dark theme is not an inversion. The contrast between neighbouring
+     surfaces widens, the chroma comes down, and the borders move from a dark
+     alpha to a light one. All of that is here, in one declaration per
+     token.                                                                 */
 
-  /* Поверхности читаются как стопка: sunken < page < raised < overlay.
-     Глубина передаётся порядком светлоты и никогда — тенью.                */
+  /* The surfaces read as a stack: sunken < page < raised < overlay. Depth is
+     carried by the order of lightness and never by a shadow.               */
   --surface-sunken:   light-dark(var(--n-2), var(--n-14));
   --surface-page:     light-dark(var(--n-1), var(--n-13));
   --surface-raised:   light-dark(var(--n-0), var(--n-12));
   --surface-overlay:  light-dark(var(--n-0), var(--n-11));
 
-  /* Поверхность поля ввода — ПРИПОДНЯТАЯ, и опознаёт поле рамка, а не глубина.
+  /* A FIELD IS RECESSED, and what identifies it is the border rather than the
+     depth. The two answer different questions, and a field that carries both
+     at full strength — a fill of its own plus a load-bearing border at 3.46:1,
+     the loudest line in the kit — is a grey slab in a dark frame, the one
+     element shouting twice.
 
-     Поле долго несло ОБА признака сразу: собственную утопленную заливку и
-     несущую рамку на 3.46:1 — самую громкую линию в ките. В комментариях
-     каждый из двух был обоснован отсутствием другого: рамка тем, что поле не
-     отличалось заливкой, заливка тем, что рамка была волосяной. Обе правки
-     въехали, ни одна не отменила предыдущую, и форма получилась тяжёлой:
-     серая плита в тёмной оправе — единственный элемент кита, кричащий дважды.
+     What was removed is the fill and not the border, and the choice is not a
+     matter of taste. WCAG 1.4.11 asks 3:1 for the boundary of a control, and
+     on a PAGE the recess gave only 0.028 ΔL — that is, the fill never held
+     the norm, the border did. Remove the border and the kit stops meeting the
+     criterion; remove the fill and it does not.
 
-     Снята заливка, а не рамка, и выбор тут не вкусовой. WCAG 1.4.11 требует
-     3:1 для границы контрола, и на СТРАНИЦЕ перепад вреза давал всего 0.028
-     ΔL — то есть заливка норму не держала никогда, её держала рамка. Убрав
-     рамку, кит перестал бы выполнять критерий; убрав заливку — не перестаёт.
+     be1b3fe brought the fill back in the same commit that removed it: there
+     the fill and the border justified each other in a circle. The circle is
+     gone — they have different work. The border holds WCAG 1.4.11 and
+     identifies the control; the fill holds INDEPENDENCE FROM THE CONTAINER —
+     a field steps away from its ground by the same amount on a page, in a
+     panel and in a modal alike. An absolute step cannot do that: it knows one
+     depth, and there are three grounds.
 
-     Роль остаётся отдельной, потому что вопрос «какого цвета поле» и вопрос
-     «какого цвета панель» — разные, и однажды ответы разойдутся снова. Это
-     тот же случай, что у --surface-overlay, который тоже равен raised на
-     светлом конце: две роли на одном шаге — не дубликат.
+     The role stays separate because "what colour is a field" and "what colour
+     is a panel" are different questions, and one day the answers will diverge
+     again. The same case as --surface-overlay, which also equals raised at
+     the light end: two roles on one step are not a duplicate.
 
-     Следствие: поле не участвует в стопке глубины вовсе. Гейт ступеней его
-     поэтому и не проверяет — за него отвечают пары «граница контрола».      */
-  /* ВРЕЗ — утопление, и симметрия тут не вкус, а арифметика.
+     A consequence: the field takes no part in the depth stack at all. That is
+     why the step gate does not check it — the "control boundary" pairs answer
+     for it.                                                                */
 
-     Anthropic держит поле подъёмом: белый 8% поверх панели. У них это
-     работает, потому что тёмная тема одна и над панелью вся рампа свободна —
-     на #262625 те же 8% дают +0.064 по светлоте.
+  /* THE RECESS GOES DOWNWARDS, and the symmetry there is arithmetic rather
+     than taste.
 
-     У кита пять тем, и в трёх светлых подъёма НЕ СУЩЕСТВУЕТ. Рампа сверху
-     упирается в белый, панель после be1b3fe стоит на нём же, и набрать вверх
-     нельзя ничего: 8% дают +0.000, а 100% — +0.018 даже с панели, опущенной
-     на ступень. Это половина нужного шага, и достаётся она ценой того, что
-     заливка снова становится абсолютной.
+     Anthropic holds a field by a lift: white 8% over the panel. It works for
+     them because there is one dark theme and the whole ramp above the panel
+     is free — on #262625 those same 8% give +0.064 in lightness.
 
-     Вниз места сколько угодно на обоих концах: чёрный 5% на белом даёт
-     −0.038, чёрный 20% на тёмной панели −0.032. Одно направление, один
-     токен, одинаковый шаг во всех пяти темах.
+     The kit has five themes, and in three light ones A LIFT DOES NOT EXIST.
+     The ramp meets white above, the panel stands on white too since be1b3fe,
+     and there is nothing to gain upwards: 8% give +0.000, and 100% give
+     +0.018 even from a panel dropped by a step. That is half the step wanted,
+     and it costs the fill becoming absolute again.
 
-     Заливку сюда вернул be1b3fe, сняв её же: там она и рамка обосновывали
-     друг друга по кругу. Круга больше нет — у них разные работы. Рамка
-     держит WCAG 1.4.11 и опознаёт контрол; заливка держит НЕЗАВИСИМОСТЬ ОТ
-     КОНТЕЙНЕРА: поле отходит от подложки на один и тот же шаг и на странице,
-     и в панели, и в модалке. Абсолютная ступень этого не умеет — она знает
-     одну глубину, а подложек три.                                          */
+     Downwards there is as much room as one likes at both ends: black 5% on
+     white gives −0.038, black 20% on a dark panel −0.032. One direction, one
+     token, the same step in all five themes.                               */
   --surface-field:    var(--surface-recessed);
 
-  /* Поверхность АННОТАЦИИ — тултип и всё, что поясняет интерфейс, не будучи
-     его частью. Она нарочно выпадает из стопки sunken→page→raised→overlay:
-     её работа не «лежать выше», а «не быть похожей на содержимое».
+  /* The surface of an ANNOTATION — the tooltip and everything that explains
+     the interface without being part of it. It deliberately falls out of the
+     sunken→page→raised→overlay stack: its job is not to lie higher but to
+     look unlike content.
 
-     Пока тултип брал --surface-overlay, он выглядел маленькой панелью — те же
-     рамка, тень и цвет текста, что у всего остального, — и глаз читал его как
-     ещё один кусок интерфейса, а не как сноску к нему.
+     On --surface-overlay a tooltip looks like a small panel — the same
+     border, shadow and text colour as everything else — and the eye reads it
+     as one more piece of interface rather than as a note about it.
 
-     В светлой теме это тёмный шаг, в тёмной — светлый: инверсия к странице, а
-     не фиксированный чёрный. Чёрная плашка на тёмной странице исчезает.     */
+     In the light theme this is a dark step, in the dark one a light step: an
+     inversion against the page rather than a fixed black. A black plate on a
+     dark page disappears.                                                  */
   --surface-inverse:  light-dark(var(--n-12), var(--n-3));
-  /* Мягкая инверсия — для ПОСТОЯННОГО выбора, а не для мелькнувшего слоя.
+  /* A soft inversion — for a PERMANENT selection rather than for a layer that
+     flashed by.
 
-     Подсказка живёт секунду и берёт полную инверсию: ей положено разойтись со
-     страницей на всю шкалу, потому что она перекрывает её и должна читаться
-     сразу. Выбранная вкладка стоит всё время, и полная инверсия делает из неё
-     кирпич: на светлой странице почти чёрная плашка тянет на себя больше
-     внимания, чем содержимое, ради которого вкладку выбрали.
+     A hint lives for a second and takes the full inversion: it is entitled to
+     part from the page across the whole scale, because it covers the page and
+     has to read at once. A selected tab stands there all the time, and a full
+     inversion turns it into a brick: on a light page an almost-black plate
+     pulls more attention than the content the tab was selected for.
 
-     0.322 против 0.196 — на два шага светлее, направление то же, белая
-     подпись держит запас втрое против порога.                              */
+     0.322 against 0.196 — two steps lighter, the same direction, and the
+     white label keeps three times the margin over the threshold.           */
   --surface-inverse-soft: light-dark(var(--n-10), var(--n-4));
   --text-on-inverse:  light-dark(var(--n-0),  var(--n-13));
 
   --surface-hover:    light-dark(oklch(0 0 0 / 0.035), oklch(1 0 0 / 0.045));
   --surface-active:   light-dark(oklch(0 0 0 / 0.065), oklch(1 0 0 / 0.080));
 
-  /* УТОПЛЕНИЕ — чёрный поверх, а не своя ступень рампы. Разница не
-     косметическая: ступень рампы задаёт светлоту АБСОЛЮТНО и потому знает
-     только одну глубину, а на деле кнопка лежит то на странице, то на
-     панели, то в модалке — и от каждой из них должна отойти на одинаковый
-     шаг. Полупрозрачный чёрный это и делает: глубина считается от того, что
-     под кнопкой, каким бы оно ни было.
+  /* A RECESS is black laid over, not a step of the ramp. The difference is
+     not cosmetic: a step of the ramp sets lightness ABSOLUTELY and therefore
+     knows one depth only, while in fact a button lies now on a page, now on a
+     panel, now in a modal — and it has to step away from each of them by the
+     same amount. Translucent black does exactly that: the depth is counted
+     from whatever is under the button.
 
-     Именно на этом ловилась заливка --surface-sunken: на странице она давала
-     нужный провал, а на приподнятой панели — двойной, потому что панель уже
-     сама была на шаг выше. 0.087 по светлоте вместо 0.033.
+     That is what catches a --surface-sunken fill out: on a page it gives the
+     drop that is wanted, and on a raised panel a double one, because the
+     panel is already a step higher. 0.087 in lightness instead of 0.033.
 
-     Числа с макета Anthropic: панель #262625, вторичная кнопка на ней
-     rgba(0,0,0,0.2) — провал 0.033 по светлоте. Наведение там ПОЛОВИНИТ
-     утопление (0.2 → 0.1), то есть подтягивает кнопку к поверхности, а не
-     отрывает от неё. Нажатие углубляет: у вдавленного предмета провал
-     больше, и это та же мысль, что снятая тень у приподнятого.
+     The numbers come from the Anthropic mockup: a panel at #262625 with a
+     secondary button on it at rgba(0,0,0,0.2) — a drop of 0.033 in lightness.
+     Hover there HALVES the recess (0.2 → 0.1), that is, it pulls the button
+     towards the surface rather than tearing it away. A press deepens it: an
+     object pushed in has a bigger drop, and that is the same thought as the
+     shadow removed from a raised one.
 
-     В светлых темах шаг вчетверо мельче. Чёрный на белом набирает светлоту
-     быстрее, чем на тёмном: те же 0.2 дали бы на странице серый кирпич. */
-  /* ГРАНИЦА РОЛИ, чтобы её не применяли сплошь. Утопление относительное нужно
-     тому, у кого меняется подложка ИЛИ у кого шаг иначе выходит двойным. Кто
-     остался на абсолютной ступени и почему:
+     In the light themes the step is four times smaller. Black gains lightness
+     faster on white than on dark: the same 0.2 would give a grey brick on a
+     page. */
+  /* THE BOUNDARY OF THE ROLE, so that it is not applied across the board. A
+     relative recess is wanted by whatever has a changing ground OR whose step
+     would otherwise come out doubled. What stayed on an absolute step, and
+     why:
 
-       .inst-shell-aside, .inst-rail, .inst-statusbar — области оболочки, они
-         сами и есть подложка, отходить им не от чего;
-       .inst-log, .inst-code, .inst-code-src, .inst-diff-body — самодостаточные
-         колодцы: у них своя рамка и свой кегль, глубина работает признаком
-         рода, а не отношением к соседу.
+       .inst-shell-aside, .inst-rail, .inst-statusbar — regions of the shell;
+         they are the ground themselves and have nothing to step away from;
+       .inst-log, .inst-code, .inst-code-src, .inst-diff-body — self-contained
+         wells: they have a border and a type size of their own, and depth
+         works there as a mark of kind rather than as a relation to a
+         neighbour.
 
-     Признак простой: если элемент — ПОВЕРХНОСТЬ, на которой что-то лежит, ему
-     абсолютная ступень; если элемент ЛЕЖИТ на поверхности — относительная. */
-  /* ЗНАК ПЛЁНКИ ЗАВИСИТ ОТ ТОГО, ГДЕ МЫ НА РАМПЕ: в светлых темах чёрная, в
-     тёмных белая. Инвариант поэтому формулируется без слова «глубина» —
-     поверхность контрола обязана отличаться от своей подложки на различимую
-     ступень: на дне рампы вычитать светлоту не из чего.
+     The test is simple: if an element is a SURFACE something lies on, it gets
+     the absolute step; if the element LIES on a surface, the relative one. */
+  /* THE SIGN OF THE FILM DEPENDS ON WHERE WE ARE ON THE RAMP: black in the
+     light themes, white in the dark ones. The invariant is therefore stated
+     without the word "depth" — the surface of a control has to differ from
+     its ground by a discernible step: at the bottom of the ramp there is
+     nothing to subtract lightness from.
 
-     Знак меняется, ПОРЯДОК ГРОМКОСТИ — нет: мягкая тише умолчания, нажатие
-     громче. Средняя строка служит двум работам сразу — наведению умолчания и
-     покою мягкого веса, — поэтому обязана быть тише умолчания в обеих темах.
+     The sign changes, THE ORDER OF LOUDNESS does not: soft is quieter than
+     the default, a press is louder. The middle line serves two jobs at once —
+     the hover of the default and the rest state of the soft weight — so it
+     has to be quieter than the default in both themes.
 
-     Вывод альф и замеры — docs/internal/DECISIONS.md. Сторожат три пары
-     cmd/contrast, и «лестница» из них сравнивает НАПРАВЛЕННО: модуль разницы
-     пропускал перевёрнутый порядок молча. */
+     The derivation of the alphas and the measurements are in
+     docs/internal/DECISIONS.md. Three cmd/contrast pairs guard this, and the
+     "ladder" among them compares DIRECTIONALLY: the modulus of the difference
+     let a reversed order through in silence. */
   --surface-recessed:        light-dark(oklch(0 0 0 / 0.060), oklch(1 0 0 / 0.050));
   --surface-recessed-hover:  light-dark(oklch(0 0 0 / 0.025), oklch(1 0 0 / 0.015));
   --surface-recessed-active: light-dark(oklch(0 0 0 / 0.075), oklch(1 0 0 / 0.062));
 
-  /* ЛЕСТНИЦА ВЕСОВ КНОПКИ ЖИВЁТ НА ЭТИХ ЖЕ СТУПЕНЯХ, и потому светлое значение
-     --surface-recessed равно 0.060, а не 0.050.
+  /* THE LADDER OF BUTTON WEIGHTS LIVES ON THESE SAME STEPS, which is why the
+     light value of --surface-recessed is 0.060 rather than 0.050.
 
-     Веса меряются «присутствием» — площадью, взвешенной на перепад светлоты:
-     заливка работает всей коробкой, рамка только периметром, а он у кнопки
-     100×32 занимает 8% площади. Отсюда лестница получается такой:
+     Weights are measured by "presence" — area weighted by the step in
+     lightness: a fill works with the whole box, a border only with the
+     perimeter, which on a 100×32 button is 8% of the area. Hence the ladder:
 
-       призрачная 0        обводка 0.007        мягкая 0.017–0.022
-       умолчание 0.044–0.048          сплошная 0.17–0.47
+       ghost 0          outline 0.007        soft 0.017–0.022
+       default 0.044–0.048            solid 0.17–0.47
 
-     Ступень наведения работает у мягкой ЗАЛИВКОЙ ПОКОЯ. Совпадение намеренное:
-     мягкая в покое выглядит как умолчание под курсором, и это не путает —
-     наведение приходит вместе с курсором и живёт ровно пока он на месте.
+     The hover step doubles as the RESTING FILL of the soft weight. The
+     coincidence is deliberate: soft at rest looks like the default under a
+     cursor, and that confuses nobody — hover arrives with the cursor and
+     lives exactly as long as it stays.
 
-     0.050 в светлой не подходило арифметически: мягкая отстояла бы от
-     умолчания на 0.019 при пороге ступени 0.022. 0.060 даёт 0.027, тёмная на
-     своих 0.20 даёт 0.024. Сверяет пара «лестница: мягкая против умолчания» в
-     cmd/contrast.                                                          */
+     0.050 does not fit arithmetically in the light theme: soft would stand
+     0.019 from the default against a step threshold of 0.022. 0.060 gives
+     0.027, and the dark theme on its 0.20 gives 0.024. The pair "ladder: soft
+     against default" in cmd/contrast checks it.                            */
 
-  /* Выделение — альфа в обеих темах, чтобы состояния складывались: hover по
-     выделенной строке должен быть виден, а не съеден непрозрачной заливкой. */
+  /* Selection is alpha in both themes, so that states add up: hover over a
+     selected row has to stay visible rather than be eaten by an opaque
+     fill. */
   --surface-selected: color-mix(in oklab, var(--a-4) 14%, transparent);
 
-  /* Четыре ступени текста.
-     ВАЖНО: --text-faint не применяется к тексту, который читают. Это порог
-     декорации (≥3:1), а не чтения (≥4.5:1). Таймстемп лога — данные, ему
-     положен --text-muted.                                                  */
+  /* Four tiers of text.
+     IMPORTANT: --text-faint is not applied to text that gets read. It is the
+     threshold of decoration (≥3:1), not of reading (≥4.5:1). A log timestamp
+     is data, and --text-muted is due to it.                                */
   --text-primary:   light-dark(var(--n-12), var(--n-1));
   --text-secondary: light-dark(var(--n-9),  var(--n-5));
   --text-muted:     light-dark(var(--n-8),  var(--n-6));
   --text-faint:     light-dark(var(--n-7),  var(--n-7));
 
-  /* Рамки. Несущая и декоративная — разные токены, потому что к ним разные
-     требования. Если граница и ЕСТЬ контрол (чекбокс, поле, дорожка свитча),
-     она обязана держать 3:1. Если рядом есть ещё и перепад поверхностей
-     (панель, карточка, разделитель) — не обязана.                          */
+  /* Borders. Load-bearing and decorative are different tokens, because the
+     requirements on them differ. If the boundary IS the control (a checkbox,
+     a field, a switch track), it has to hold 3:1. If there is also a step
+     between surfaces beside it (a panel, a card, a divider), it does not. */
   --border-subtle:  light-dark(oklch(0 0 0 / 0.07), oklch(1 0 0 / 0.06));
   --border:         light-dark(oklch(0 0 0 / 0.12), oklch(1 0 0 / 0.11));
   --border-strong:  light-dark(oklch(0 0 0 / 0.22), oklch(1 0 0 / 0.20));
   --border-control: light-dark(oklch(0 0 0 / 0.46), oklch(1 0 0 / 0.38));
 
-  /* Каждый смысловой тон имеет РОВНО ДВА токена, и это результат расчёта,
-     а не вкуса.
+  /* Every tone that carries meaning has EXACTLY TWO tokens, and that is the
+     result of a calculation rather than of taste.
 
-     --*-text  МЕТКА на поверхности: текст, точка состояния, заливка меры,
-               полоса сноски. Всё это читается по границе с фоном, и фон
-               может быть тонированным (бейдж) или приглушённым (дорожка
-               меры) — то есть требование одно и то же, самое жёсткое.
-     --*-bg    тонированный фон под меткой.
+     --*-text  a MARK on a surface: text, a state dot, the fill of a meter,
+               the bar of a note. All of it is read by its boundary with the
+               background, and the background may be tinted (a badge) or
+               muted (a meter track) — so the requirement is one and the
+               same, the strictest one.
+     --*-bg    the tinted background under the mark.
 
-     Третьего токена — «заливка» между текстом и фоном — здесь больше нет.
-     Он существовал, жил на шаге 4, и не проходил нигде, где под ним
-     оказывалась дорожка: жёлтая заливка меры давала 2.49 при норме 3.0.
-     Ровно на этом же лишнем ярусе --warn-solid когда-то уехал на шаг 3 и
-     дал жёлтую точку на 1.92.
+     A third token — a "fill" between the text and the background — is not
+     here. Living on step 4, it passes nowhere that has a track under it: a
+     yellow meter fill gives 2.49 against a norm of 3.0. On that same
+     superfluous tier a --warn-solid slides to step 3 and gives a yellow dot
+     at 1.92.
 
-     Исключение одно — акцент, потому что у него есть случай, которого нет
-     у статусов: заливка ПОД белой подписью.                                */
+     There is one exception — the accent, because it has a case the statuses
+     do not: a fill UNDER a white label.                                    */
 
   --accent-text:   light-dark(var(--a-5), var(--a-3));
   --accent-bg:     light-dark(var(--a-1), color-mix(in oklab, var(--a-4) 15%, transparent));
 
-  /* Заливка кнопки. Её светлота ограничена СВЕРХУ белой подписью, и предел
-     ХЬЮ-ЗАВИСИМЫЙ: 0.545 на 215°, 0.568 на 250°, 0.576 на 275°, 0.580 на 45°.
-     Единого числа тут быть не может: «светлее 0.56 подпись не держит 4.5:1» —
-     это измерение одного синего, а на петроли 0.560 даёт 4.46.
+  /* The button fill. Its lightness is bounded FROM ABOVE by the white label,
+     and the bound DEPENDS ON HUE: 0.545 at 215°, 0.568 at 250°, 0.576 at
+     275°, 0.580 at 45°. There can be no single number here: "lighter than
+     0.56 and the label loses 4.5:1" is the measurement of one blue, and on
+     petrol 0.560 gives 4.46.
 
-     Каждый набор --a-* держит свой предел сам; проверяет гейт.             */
+     Each --a-* set holds its own bound; the gate checks it.                */
   --accent-solid:  var(--a-4);
   --accent-on:     var(--n-0);
 
-  /* КРОМКА СПЛОШНОЙ ЗАЛИВКИ. Не тень и не рамка: волосяная линия чуть светлее
-     заливки, положенная по ВЕРХНЕМУ краю. Говорит она то же самое, что
-     --shadow-control снизу, — «у предмета есть толщина», — только с
-     освещённой стороны. Тень одна показывает толщину лишь наполовину: низ
-     отделён, верх обрезан.
+  /* THE EDGE OF A SOLID FILL. Neither a shadow nor a border: a hairline a
+     little lighter than the fill, laid along the TOP edge. It says the same
+     thing --shadow-control says from below — the object has thickness — only
+     from the lit side. A shadow alone shows the thickness by half: the bottom
+     is parted, the top is cut off.
 
-     Число взято с макета Anthropic: заливка oklch(0.543 0.125 42) несёт по
-     верху линию oklch(0.613 0.122 57) на половинной непрозрачности. В
-     ступенях рампы это шаг 3 — тот самый, которым в тёмной теме уже светит
-     --accent-mark, — поэтому своего числа кромке не понадобилось.
+     The number comes from the Anthropic mockup: a fill of oklch(0.543 0.125
+     42) carries a line of oklch(0.613 0.122 57) at half opacity along its
+     top. In the steps of the ramp that is step 3 — the very one --accent-mark
+     already shines with in the dark theme — so the edge needed no number of
+     its own.
 
-     ТОЛЬКО у сплошной заливки, и это не экономия. Утопленной и призрачной
-     кнопке освещать нечего: собственной поверхности, которой ловят свет, у
-     них нет — есть затемнение поверхности чужой.                           */
+     ONLY on a solid fill, and that is not thrift. A recessed or a ghost
+     button has nothing to light: it has no surface of its own to catch the
+     light with, only a darkening of somebody else's.                       */
   --accent-edge: color-mix(in oklab, var(--a-3) 50%, transparent);
 
-  /* МЕТКА без подписи поверх: точка «идёт», каретка, бегунок, заливка меры,
-     отрезок дорожки. Ограничена СНИЗУ — обязана отделяться от поверхности
-     и от дорожки, поэтому в тёмной теме уходит вверх.
+  /* A MARK with no label over it: the "running" dot, the caret, the slider
+     thumb, the meter fill, a lane segment. It is bounded FROM BELOW — it has
+     to part from the surface and from the track — so in the dark theme it
+     moves up.
 
-     В светлой это ТОТ ЖЕ шаг, что и заливка кнопки, и это не совпадение, а
-     требование: иначе на одном экране соседствуют два разных синих —
-     чекбокс одного оттенка, бегунок рядом другого. Текст остаётся на шаге
-     5, потому что 4.5:1 на белом ему иначе не взять, и это единственное
-     место, где акцент имеет право быть другим.                            */
+     In the light theme it is the SAME step as the button fill, and that is
+     not a coincidence but a requirement: otherwise two different blues stand
+     side by side on one screen — a checkbox of one shade, a slider of
+     another. Text stays on step 5, because 4.5:1 on white is out of reach
+     otherwise, and that is the one place where the accent is entitled to
+     differ.                                                               */
   --accent-mark:   light-dark(var(--a-4), var(--a-3));
 
-  /* Заливка сплошной кнопки при наведении уходит ОТ цвета подписи, а не к
-     нему. Подпись белая — значит, в обеих темах вниз. Зеркальное «в тёмной
-     светлее» роняло контраст подписи до 2.61.                              */
+  /* On hover the fill of a solid button moves AWAY from the colour of the
+     label rather than towards it. The label is white, so in both themes that
+     is downwards. A mirrored "lighter in the dark theme" drops the label's
+     contrast to 2.61.                                                      */
   --accent-hover:  var(--a-5);
   --accent-border: light-dark(var(--a-4), var(--a-3));
 
-  /* У метки своя ступень, как у акцента: шаг 5 рассчитан на ТЕКСТ (4.5:1) и
-     на заливке во всю строку читается темнее и глуше, чем акцентная метка
-     рядом. Метке довольно 3:1, и на шаге 4 все метки кита — синяя, зелёная,
-     жёлтая, красная — оказываются в одном регистре. */
+  /* A mark has a step of its own, as the accent does: step 5 is calculated
+     for TEXT (4.5:1) and across a full-width fill reads darker and duller
+     than the accent mark beside it. A mark makes do with 3:1, and on step 4
+     every mark in the kit — blue, green, yellow, red — lands in one
+     register. */
   --ok-mark:   light-dark(var(--ok-4),   var(--ok-3));
   --warn-mark: light-dark(var(--warn-4), var(--warn-3));
   --err-mark:  light-dark(var(--err-4),  var(--err-3));
@@ -454,23 +486,26 @@
   --err-text:  light-dark(var(--err-5),  var(--err-3));
   --err-bg:    light-dark(var(--err-1),  color-mix(in oklab, var(--err-4) 16%, transparent));
 
-  /* ── Категориальная палитра ──────────────────────────────────────────────
+  /* ── The categorical palette ─────────────────────────────────────────────
 
-     Единственное место, где цвет НЕ кодирует состояние, а кодирует ряд, —
-     поэтому у неё отдельные правила и отдельные тона. Порядок, потолок в
-     шесть рядов, разная светлота ради дальтонизма и минимум 25° от статусных
-     коридоров — docs/components/charts/palette.md.
+     The one place where colour encodes NOT a state but a series, which is why
+     it has rules and tones of its own. The order, the ceiling of six series,
+     the deliberately differing lightness for the sake of colour blindness and
+     the minimum of 25° from the status corridors — see
+     docs/components/charts/palette.md.
 
-     От АКЦЕНТА угловой гарантии нет и быть не может: у него четыре положения
-     (215 · 250 · 275 · 45), и глина стоит в 10° от --chart-4. Вместо неё
-     разделение областей — акцент не заходит внутрь графика, категориальный
-     цвет не выходит наружу. Умолчание одного ряда — --accent-mark, замер при
-     нём в data.css.                                                        */
+     Against the ACCENT there is no angular guarantee and there can be none:
+     it has four positions (215 · 250 · 275 · 45), and clay stands 10° from
+     --chart-4. In place of a guarantee, a division of territory — the accent
+     does not step inside a chart, a categorical colour does not step outside.
+     The default for a single series is --accent-mark; the measurement behind
+     that is in data.css.                                                   */
 
-  /* 292, а не 280: набор «индиго» ставит акцент на 275°, и пятиградусная
-     дистанция сделала бы ряд №1 неотличимым от интерфейса. 292 даёт 17° —
-     не гарантия, но вместе с разной светлотой этого хватает, а до соседнего
-     ряда (320) остаётся 28°.                                               */
+  /* 292 rather than 280: the "indigo" set puts the accent at 275°, and five
+     degrees of distance would make series no. 1 indistinguishable from the
+     interface. 292 gives 17° — not a guarantee, but together with the
+     differing lightness it is enough, and 28° remain to the neighbouring
+     series (320).                                                          */
   --chart-1: light-dark(oklch(0.520 0.150 292), oklch(0.700 0.130 292));
   --chart-2: light-dark(oklch(0.600 0.150 320), oklch(0.760 0.120 320));
   --chart-3: light-dark(oklch(0.550 0.140 355), oklch(0.720 0.120 355));
@@ -478,65 +513,70 @@
   --chart-5: light-dark(oklch(0.580 0.130 115), oklch(0.740 0.120 115));
   --chart-6: light-dark(oklch(0.620 0.110 190), oklch(0.780 0.100 190));
 
-  /* Кольцо фокуса — НЕ метка, а обводка вокруг метки, и требование у него своё:
-     отделиться и от каждой поверхности, и от каждой ЗАЛИВКИ, какую кит может
-     подложить под него. Поэтому шаг здесь другой, чем у --accent-mark, и это
-     не третий синий по недосмотру, а единственный шаг рампы, который никогда
-     не бывает заливкой.
+  /* The focus ring is NOT a mark but an outline around one, and it has a
+     requirement of its own: to part both from every surface and from every
+     FILL the kit can lay under it. That is why the step here differs from
+     --accent-mark — this is not a third blue by oversight but the one step of
+     the ramp that is never a fill.
 
-     Стояло light-dark(--a-4, --a-3). В светлых темах --a-4 — это РОВНО
-     --accent-solid: кольцо вокруг сплошной кнопки было того же цвета, что
-     кнопка, контраст 1.00, и разделял их только зазор в 1px. Самый слабый
-     фокус в ките стоял на главном действии экрана. Текстовый гейт этого не
-     видел: в его списке есть кольцо против страницы, панели и вреза, но не
-     против заливки, которую кольцо обводит.
+     On light-dark(--a-4, --a-3) it fails: in the light themes --a-4 is
+     EXACTLY --accent-solid, so the ring around a solid button is the colour
+     of the button, contrast 1.00, with only a 1px gap between them. The
+     weakest focus in the kit would sit on the main action of the screen. The
+     text gate does not see this: its list has the ring against a page, a
+     panel and a recess, but not against the fill the ring outlines.
 
-     Новые значения проверены во всех пяти темах и четырёх акцентах. Против
-     заливки: 2.51 в светлых, 2.49 в тёмных (было 1.00 и 1.75). Против
-     поверхностей худший случай — 8.54 при норме 3.0.                      */
+     The values here are checked across all five themes and four accents.
+     Against the fill: 2.51 in the light themes, 2.49 in the dark ones (1.00
+     and 1.75 before). Against the surfaces the worst case is 8.54 against a
+     norm of 3.0.                                                           */
   --focus-ring: light-dark(var(--a-6), var(--a-2));
 
-  /* Пустая дорожка меры и слайдера. Намеренно тихая: её работа — дать
-     заливке отделиться, а не отделиться самой. Протяжённость дорожки
-     показывает не её цвет, а внутренний хайрлайн у .inst-meter.
+  /* The empty track of a meter and a slider. Deliberately quiet: its job is
+     to let the fill part from it, not to part from anything itself. The
+     extent of the track is shown not by its colour but by the inner hairline
+     on .inst-meter.
 
-     Дорожка НЕ несущая, поэтому 3:1 к поверхности с неё не спрашивается.
-     У свитча — спрашивается, и там к ней добавляется кольцо
-     --border-control, потому что у свитча граница и есть контрол.          */
+     A track is not load-bearing, so 3:1 against the surface is not asked of
+     it. Of a switch it is asked, and there the --border-control ring is added
+     to it, because on a switch the boundary IS the control.                */
   --track: light-dark(oklch(0 0 0 / 0.10), oklch(1 0 0 / 0.16));
 
-  /* Подложка модалки. В тёмной теме она гуще: на светлой странице затемнение
-     само по себе создаёт контраст, на тёмной его приходится добавлять.
-     Это затемнение, а не размытие — размытия кит запрещает.               */
+  /* The ground under a modal. In the dark theme it is denser: on a light page
+     a dimming creates contrast by itself, on a dark one it has to be added.
+     This is a dimming and not a blur — the kit forbids blurs.              */
   --scrim: light-dark(oklch(0 0 0 / 0.32), oklch(0 0 0 / 0.58));
 
-  /* Тень — не цвет, поэтому через light-dark() проходит её ЦВЕТ, а не
-     значение целиком: light-dark() принимает только <color>.               */
+  /* A shadow is not a colour, so what goes through light-dark() is its COLOUR
+     rather than the whole value: light-dark() accepts only a <color>.      */
   --shadow-color-near: light-dark(oklch(0 0 0 / 0.06), oklch(0 0 0 / 0.30));
   --shadow-color-far:  light-dark(oklch(0 0 0 / 0.10), oklch(0 0 0 / 0.45));
 
-  /* Теней три, и у них ДВА РАЗНЫХ СМЫСЛА. Второй появился позже первого, и
-     смешивать их нельзя — иначе тень снова станет украшением.
+  /* There are three shadows, and they carry TWO DIFFERENT MEANINGS. Mixing
+     them is not allowed — otherwise a shadow becomes decoration again.
 
-     Смысл первый, «плавает сверху и сейчас исчезнет»: поповер и модалка.
-     Расплыв большой, смещение заметное — слой явно оторван от плоскости.
-     Карточка и панель такой тени не получают никогда, они получают
-     поверхность.
+     Meaning one, "it floats above and is about to disappear": the popover and
+     the modal. A large blur, a noticeable offset — the layer is plainly torn
+     off the plane. A card and a panel never get such a shadow; they get a
+     surface.
 
-     Смысл второй, «это физическая поверхность, её жмут»: приподнятая кнопка.
-     Расплыв в один пиксель и почти нулевое смещение — не отрыв от плоскости,
-     а намёк на толщину. Она НЕ поднимает элемент над слоем, она сообщает, что
-     под пальцем окажется предмет.
+     Meaning two, "this is a physical surface and it gets pressed": a raised
+     button. A blur of one pixel and an almost zero offset — not a tearing off
+     the plane but a hint of thickness. It does NOT lift the element above the
+     layer, it says that under the finger there will be an object.
 
-     Почему второй смысл вообще понадобился. Кнопка отличалась от фона одним
-     контуром, и на 3.46:1 этот контур был самой громкой линией экрана. Опустив
-     его до 1.31, мы получили кнопку, которую почти не видно: перепад
-     поверхностей в светлых темах всего 1.05, и заливке одной не справиться.
-     Работу берёт тень — ровно ту, которую в этом ките раньше запрещали.
+     Why the second meaning was needed at all. A button differed from the
+     background by one outline, and at 3.46:1 that outline was the loudest
+     line on the screen. Dropping it to 1.31 gives a button that is barely
+     visible: the step between surfaces in the light themes is only 1.05, and
+     the fill alone cannot manage. The shadow takes the work — the very thing
+     this kit used to forbid.
 
-     Граница между смыслами проверяется одним вопросом: тень ОТРЫВАЕТ слой или
-     утолщает его? Отрывает — это поповер, и таких ровно два. Утолщает — это
-     контрол. Третьего смысла нет, и заводить его без такой же записи нельзя. */
+     The boundary between the meanings is checked by one question: does the
+     shadow TEAR the layer off or thicken it? Tears it off — that is a
+     popover, and there are exactly two. Thickens it — that is a control. A
+     third meaning does not exist, and starting one without an entry like this
+     is not allowed. */
   --shadow-popover: 0 4px 12px -2px var(--shadow-color-far),
                     0 2px 4px -2px var(--shadow-color-near);
   --shadow-modal:   0 16px 40px -8px var(--shadow-color-far),
@@ -544,152 +584,163 @@
   --shadow-control: 0 1px 2px -1px var(--shadow-color-far),
                     0 1px 1px -1px var(--shadow-color-near);
 
-  /* ══ Типографика ═════════════════════════════════════════════════════════
+  /* ══ Typography ══════════════════════════════════════════════════════════
 
-     Семь ступеней, не больше. Каждая лишняя — это решение, которое кто-то
-     примет неправильно. 14px — база интерфейса: плотные инструменты живут
-     там. 16px — проза, и это другая задача, поэтому она опт-ин (.inst-prose),
-     а не умолчание: базой должен быть частый случай, иначе каждый компонент
-     вынужден переобъявлять размер.
+     Seven steps, no more. Every extra one is a decision somebody will take
+     wrongly. 14px is the interface base: dense tools live there. 16px is
+     prose, and that is a different task, so it is opt-in (.inst-prose) rather
+     than the default: the base has to be the frequent case, otherwise every
+     component is forced to redeclare the size.
 
-     ── Почему шкала такая, а не плотнее ──────────────────────────────────
+     ── Why the scale is this and not tighter ─────────────────────────────
 
-     Ступень существует, только если её ВИДНО. Шкала 11·12·13 давала внизу
-     отношения 1.091 и 1.083 — ниже порога, на котором глаз различает кегли,
-     и потому три ступени работали как одна. Замер по живым экранам: 98.2%
-     интерфейсного текста лежало в полосе шириной два пикселя. Иерархию
-     несли вес и цвет; размер в ней не участвовал, и экран звучал одним
-     голосом — ровно то, что читается как «плоско».
+     A step exists only if it is SEEN. A scale of 11·12·13 gives ratios of
+     1.091 and 1.083 at the bottom — below the threshold at which the eye
+     tells type sizes apart, so the three steps work as one. Measured on live
+     screens: 98.2% of the interface text lay in a band two pixels wide. The
+     hierarchy was carried by weight and colour; size took no part in it, and
+     the screen sounded in one voice — exactly what reads as "flat".
 
-     Теперь отношения 1.136 · 1.12 · 1.143 · 1.125 в рабочей части и
-     1.222 · 1.273 в дисплейной. Дисплейные шире намеренно: заголовок
-     отличается от заголовка на бо́льшую долю, чем подпись от подписи.
+     The ratios are now 1.136 · 1.12 · 1.143 · 1.125 in the working part and
+     1.222 · 1.273 in the display part. The display ones are wider on purpose:
+     a heading differs from a heading by a larger share than a caption from a
+     caption.
 
-     Плотность от этого не теряется — 14px база это то, чем набраны
-     инструментальные интерфейсы такого класса. Теряется только слипание.
+     Density is not lost by this — a 14px base is what tooling interfaces of
+     this class are set in. Only the sticking-together is lost.
 
-     Вес 600 и 700 остаются запрещёнными, и это делает размер ЕДИНСТВЕННЫМ
-     носителем крупной иерархии. Тем более он обязан быть различимым.      */
+     Weights 600 and 700 stay forbidden, and that makes size the ONLY carrier
+     of the large-scale hierarchy. All the more reason for it to be
+     distinguishable.                                                       */
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
                "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", "SF Mono",
                Consolas, "Liberation Mono", monospace;
 
-  /* Размеры в rem, и это единственный ярус, который в rem.
+  /* The sizes are in rem, and this is the only tier that is in rem.
 
-     Интерфейс обязан уважать увеличенный размер шрифта по умолчанию в
-     браузере: в админке сидят весь день, и это первая настройка, которую
-     делает человек с ослабленным зрением. Масштабирование страницы
-     (Ctrl+±) работает и с px, но настройку «размер шрифта по умолчанию»
-     px игнорирует молча.
+     An interface has to respect an increased default font size in the
+     browser: people sit in an admin panel all day, and that is the first
+     setting somebody with weakened sight changes. Page zoom (Ctrl+±) works
+     with px too, but the "default font size" setting is ignored by px
+     silently.
 
-     Всё остальное остаётся в px, потому что это ГЕОМЕТРИЯ, а не текст:
-     хайрлайн, точка состояния, жёлоб, радиус. Растягивать их вместе со
-     шрифтом незачем — плотный инструментальный вид от этого расползается.
+     Everything else stays in px, because it is GEOMETRY rather than text: the
+     hairline, the state dot, the gutter, the radius. There is no point in
+     stretching those along with the type — a dense tooling look falls apart
+     from it.
 
-     Следствие, которое нельзя игнорировать: если текст растёт, а высоты
-     контролов заданы в px, текст однажды упрётся в потолок. Поэтому
-     высоты применяются как min-block-size, а не block-size: токен
-     задаёт МИНИМУМ и гарантию плотности, но не запрет на рост.
+     A consequence that cannot be ignored: if the text grows while the control
+     heights are set in px, the text will one day hit the ceiling. So the
+     heights are applied as min-block-size rather than block-size: the token
+     sets a MINIMUM and a guarantee of density, not a ban on growth.
 
-     Значения точны при корне 16px: 0.875rem × 16 = 14px. База совпадает с
-     корнем ровно на одной ступени — --text-md, — и это удобное совпадение,
-     а не привязка: шкала считается от 11px вверх, а не от корня вниз.     */
+     The values are exact at a root of 16px: 0.875rem × 16 = 14px. The base
+     coincides with the root at exactly one step — --text-md — and that is a
+     convenient coincidence rather than a tie: the scale is counted from 11px
+     upwards, not from the root downwards.                                  */
 
-  --text-2xs: 0.6875rem;  /* 11px — бейджи, подписи осей: пол, ниже не опускаемся */
-  --text-xs:  0.78125rem; /* 12.5px — метаданные, время, подсказки */
-  --text-sm:  0.875rem;   /* 14px — база интерфейса: подписи, кнопки, ячейки */
-  --text-md:  1rem;       /* 16px — проза, тела сообщений, имя панели */
+  --text-2xs: 0.6875rem;  /* 11px — badges, axis labels: the floor, no lower */
+  --text-xs:  0.78125rem; /* 12.5px — metadata, times, hints */
+  --text-sm:  0.875rem;   /* 14px — the base: labels, buttons, cells */
+  --text-md:  1rem;       /* 16px — prose, message bodies, a panel name */
   --text-lg:  1.125rem;   /* 18px */
   --text-xl:  1.375rem;   /* 22px */
-  --text-2xl: 1.75rem;    /* 28px — только числа-герои */
+  --text-2xl: 1.75rem;    /* 28px — hero numbers only */
 
-  /* Два начертания. 700 в шрифте есть и запрещено: на макете из хайрлайнов и
-     воздуха оно читается как крик.
+  /* Two weights. 700 exists in the font and is forbidden: on a layout of
+     hairlines and air it reads as a shout.
 
-     МЕДИУМ — 600, И ЭТО ПРИЗНАНИЕ ФАКТА, А НЕ СМЕНА ВКУСА.
+     MEDIUM IS 600, AND THAT IS AN ADMISSION OF FACT RATHER THAN A CHANGE OF
+     TASTE.
 
-     Стояло 500, и конституция отдельной строкой запрещала 600. Замер по
-     отрисованным пикселям показал, что запрет не исполнялся ни дня: у Segoe UI
-     настоящего 500 нет, и системный стек снапает его к Semibold. Одна и та же
-     строка в 500 и в 600 совпадала ПИКСЕЛЬ В ПИКСЕЛЬ — то есть на Windows
-     каждый --weight-medium в этом ките уже рисовался ровно тем весом, который
-     назван запрещённым.
+     On 500, with the constitution forbidding 600 in a line of its own, a
+     measurement of the rendered pixels shows the ban was never enforced for a
+     day: Segoe UI has no true 500, and the system stack snaps it to Semibold.
+     One and the same line at 500 and at 600 matched PIXEL FOR PIXEL — that
+     is, on Windows every --weight-medium in this kit was already drawn in
+     precisely the weight called forbidden.
 
-     Хуже другое: на macOS у SF Pro настоящий Medium есть, и там он и рисуется.
-     Кит выглядел по-разному на двух платформах в самой нагруженной оси
-     иерархии — и это не выбиралось, а доставалось по жребию от шрифта.
+     Worse: on macOS SF Pro does have a true Medium, and there it is what gets
+     drawn. The kit looked different on two platforms along the busiest axis
+     of the hierarchy — and that was not chosen, it fell out of the font by
+     lot.
 
-     Выбор был между «поставить свой шрифт» и «признать 600». Свой шрифт стоит
-     обещания из README — «без сборки и без зависимостей, одной строкой», — и
-     оно дороже. Поэтому 600: одинаково везде, ноль зависимостей, и правило
-     наконец описывает то, что нарисовано.
+     The choice was between shipping a font of our own and admitting 600. A
+     font of our own costs the promise from the README — "no build and no
+     dependencies, in one line" — and that is worth more. Hence 600: the same
+     everywhere, zero dependencies, and the rule finally describes what is
+     drawn.
 
-     500 в разметке кита больше не встречается: единственная дверь для него —
-     этот токен.                                                            */
+     500 no longer occurs in the kit's markup: this token is its only door. */
   --weight-normal: 400;
   --weight-medium: 600;
 
-  --leading-tight: 1.25;  /* заголовки, однострочный интерфейс */
-  --leading-ui:    1.4;   /* переносящиеся подписи, ячейки таблиц */
+  --leading-tight: 1.25;  /* headings, single-line interface */
+  --leading-ui:    1.4;   /* wrapping labels, table cells */
 
-  /* 1.4 даёт дробную строку на четырёх масштабах из пяти: 19.6 · 22.4 · 23.8 ·
-     25.2, целое только 21 на пятнадцатом. Это выглядит как нарушение доктрины
-     чётных радиусов — «на полпикселя мимо сетки», — и вопрос поднимался дважды.
+  /* 1.4 gives a fractional line on four scales out of five: 19.6 · 22.4 ·
+     23.8 · 25.2, whole only at 21 on the fifteenth. That looks like a breach
+     of the even-radius doctrine — "half a pixel off the grid" — and the
+     question has been raised twice.
 
-     ЗАМЕРЕНО, и вреда нет. Таблица с одинаковым текстом в шести строках при
-     DPR 1.5: строки получают две высоты, 31.927 и 32.260, разница ровно 0.333 —
-     половина устройственного пикселя. Это и есть остаток от того, что браузер
-     САМ прижимает границы строк к устройственной сетке. Границы ложатся целыми,
-     рамки соседних строк рисуются одинаково.
+     MEASURED, and there is no harm. A table with identical text in six rows
+     at DPR 1.5: the rows get two heights, 31.927 and 32.260, a difference of
+     exactly 0.333 — half a device pixel. That is the remainder of the browser
+     snapping the row boundaries to the device grid ITSELF. The boundaries
+     land whole, and the borders of neighbouring rows are drawn alike.
 
-     Целый интерлиньяж картину улучшает, но не закрывает: на пятнадцатом
-     масштабе дробных верхов 3 из 6 против 5 из 6 на остальных. Значит причина
-     не в одном интерлиньяже, и менять 1.4 на 1.5 значило бы разредить каждую
-     строку и ячейку кита ради невидимого.
+     A whole leading improves the picture but does not close it: on the
+     fifteenth scale 3 of 6 tops are fractional against 5 of 6 on the rest. So
+     the cause is not the leading alone, and changing 1.4 to 1.5 would thin
+     out every row and cell of the kit for the sake of the invisible.
 
-     Приложениям с виртуализированными списками: высоту строки надо МЕРИТЬ, а не
-     считать константой — она чередуется в пределах трети пикселя.           */
-  --leading-prose: 1.65;  /* проза */
+     For applications with virtualised lists: the row height must be MEASURED
+     rather than taken for a constant — it alternates within a third of a
+     pixel.                                                                 */
+  --leading-prose: 1.65;  /* prose */
 
-  /* Четвёртая ступень, и она не выдумана: 1.55 уже стоял числом в четырёх
-     местах — блок «что именно» у согласования, тело дифа, причина отказа, лог.
-     Все четыре моноширинные и все четыре читают ПОДРЯД, а не сканируют.
+  /* A fourth step, and it is not invented: 1.55 already stood as a number in
+     four places — the "what exactly" block of an approval, a diff body, a
+     reason for refusal, a log. All four are monospaced and all four are read
+     THROUGH rather than scanned.
 
-     Между интерфейсной (1.4) и прозаической (1.65) он оказался не случайно.
-     Моноширинный набор шире пропорционального при том же кегле, строка выходит
-     короче по знакам, и глазу нужно меньше воздуха, чем прозе, — но больше,
-     чем ячейке таблицы, которую пробегают взглядом.
+     Its landing between the interface value (1.4) and the prose one (1.65) is
+     no accident. Monospaced setting is wider than proportional at the same
+     size, the line comes out shorter in characters, and the eye needs less
+     air than prose does — but more than a table cell that gets skimmed.
 
-     Своего имени у числа не было, и правило кита «число в компоненте
-     запрещено, новое значение заводится токеном яруса ролей» держалось на нём
-     четырежды нарушенным.                                                  */
-  --leading-code:  1.55;  /* моноширинные блоки: лог, диф, причина отказа */
+     The number had no name of its own, and the kit's rule "a number in a
+     component is forbidden, a new value gets a token in the role tier" stood
+     broken by it four times over.                                          */
+  --leading-code:  1.55;  /* monospaced blocks: log, diff, reason for refusal */
 
-  /* МЕРА — предельная длина строки, которую глаз проходит, не теряя начала
-     следующей. Классическая норма 45–75 знаков; 68 стоит у верхнего края,
-     потому что интерфейсные описания короткие и переносятся редко.
+  /* THE MEASURE — the limit on the length of a line the eye can traverse
+     without losing the start of the next one. The classical norm is 45–75
+     characters; 68 stands at the upper edge, because interface descriptions
+     are short and wrap rarely.
 
-     Роль, а не литерал: до этого 68ch было вписано в двух местах руками, и
-     каждое следующее место выбирало число заново. Замерено, во что это
-     обходится: тело баннера на широком контейнере доходило до 105 знаков.
+     A role rather than a literal: before this, 68ch was written out by hand
+     in two places, and every next place chose the number afresh. What that
+     costs was measured: a banner body on a wide container reached 105
+     characters.
 
-     Единица ch, а не пиксели, — иначе мера разъезжается с кеглем на каждой
-     из пяти ступеней масштаба.                                            */
+     The unit is ch and not pixels — otherwise the measure parts ways with the
+     type size on each of the five scale steps.                             */
   --measure: 68ch;
 
-  /* Трекинг: отрицательный на крупном, нулевой на мелком. Оптическая
-     коррекция, не стиль — крупный кегль по умолчанию выглядит разреженным. */
+  /* Tracking: negative on the large, zero on the small. An optical
+     correction rather than a style — large type looks loose by default. */
   --tracking-tight: -0.01em;
   --tracking-normal: 0;
 
-  /* ══ Пространство ════════════════════════════════════════════════════════
-     Шаг 2px внизу, дальше он растёт: 2·4·6·8, затем 12·16, затем 24·32·48·64.
-     (Раньше здесь было написано «шаг 4px» — комментарий не описывал код: 2 и
-     6 в наборе есть.) Разрежена шкала нарочно, чтобы «чуть побольше» просто
-     не было доступным решением. Компоненты берут отсюда только через ярус
-     ролей.                                                                 */
+  /* ══ Space ═══════════════════════════════════════════════════════════════
+     A step of 2px at the bottom, growing after that: 2·4·6·8, then 12·16,
+     then 24·32·48·64. It is not a 4px step — 2 and 6 are in the set. The
+     scale is sparse on purpose, so that "a little bigger" is simply not an
+     available decision. Components take from here only through the role
+     tier.                                                                  */
 
   --space-1: 2px;
   --space-2: 4px;
@@ -702,48 +753,51 @@
   --space-9: 48px;
   --space-10: 64px;
 
-  /* ══ Радиусы ═════════════════════════════════════════════════════════════
-     Вложенным углам нужен внутренний радиус меньше внешнего, иначе
-     внутренний элемент выглядит выпирающим из контейнера.                  */
+  /* ══ Radii ═══════════════════════════════════════════════════════════════
+     Nested corners need an inner radius smaller than the outer one,
+     otherwise the inner element looks as if it bulges out of its
+     container.                                                             */
 
-  /* Все четыре — ЧЁТНЫЕ, и это не эстетика, а растеризация.
+  /* All four are EVEN, and that is rasterisation rather than aesthetics.
 
-     Радиус превращается в устройственные пиксели умножением на плотность.
-     Самая частая плотность на рабочем столе — 1.5 (масштаб Windows 150%), и
-     на ней нечётный радиус даёт ПОЛОВИНУ пикселя: 3·1.5 = 4.5, 5·1.5 = 7.5,
-     7·1.5 = 10.5, 11·1.5 = 16.5. Дуга упирается в прямую грань на полпикселя
-     мимо сетки, браузер разводит стык сглаживанием, и на каждом углу оно
-     ложится по-своему. Это и читается как «скругление кривое, окружность
-     неровная»: сами грани чёткие, а углы размытые и все четыре разные.
+     A radius turns into device pixels by multiplication by the density. The
+     most frequent density on the desktop is 1.5 (Windows scaling at 150%),
+     and at it an odd radius gives HALF a pixel: 3·1.5 = 4.5, 5·1.5 = 7.5,
+     7·1.5 = 10.5, 11·1.5 = 16.5. The arc meets the straight edge half a pixel
+     off the grid, the browser smooths the junction over, and on each corner
+     it lands its own way. That is what reads as "the rounding is crooked, the
+     circle uneven": the edges themselves are crisp while the corners are
+     blurred and all four differ.
 
-     Чётные ложатся целыми на всех трёх ходовых плотностях:
+     Even ones land whole on all three common densities:
        1.0 →  4 ·  6 ·  8 · 12
        1.5 →  6 ·  9 · 12 · 18
        2.0 →  8 · 12 · 16 · 24
 
-     Шаг лестницы не тронут: было 3·5·7·11 с приращениями 2·2·4, стало
-     4·6·8·12 с теми же 2·2·4. Вложенность тоже цела — у сегментированного
-     контрола внешний радиус минус его отступ по-прежнему даёт внутренний:
-     8 − 2 = 6.
+     The step of the ladder is untouched: 3·5·7·11 with increments of 2·2·4
+     became 4·6·8·12 with the same 2·2·4. The nesting is intact too — on a
+     segmented control the outer radius minus its padding still gives the
+     inner one: 8 − 2 = 6.
 
-     Побочно радиус подрос относительно высоты: у кнопки в 32px было 7/32 =
-     0.22, стало 8/32 = 0.25. Дуга длиннее, переход от грани к углу мягче. */
+     Incidentally the radius grew relative to the height: on a 32px button
+     7/32 = 0.22 became 8/32 = 0.25. The arc is longer, and the passage from
+     edge to corner softer. */
 
-  /* Нижняя ступень: точка состояния и всё, что размером с неё. На боксе в
-     6px даже --radius-xs (4) даёт круг, а круг у кита занят — им помечен
-     обратимый пункт в списке последствий. 2 читается скруглённым квадратом
-     и оставляет форму свободной. */
+  /* The bottom step: the state dot and everything of its size. On a 6px box
+     even --radius-xs (4) gives a circle, and the circle is taken in this kit
+     — it marks a reversible item in a list of consequences. 2 reads as a
+     rounded square and leaves the shape free. */
   --radius-2xs: 2px;
-  --radius-xs: 4px;   /* инлайн: бейджи, образцы, торцы полос */
-  --radius-sm: 6px;   /* контролы внутри карточки */
-  --radius-md: 8px;   /* отдельно стоящие контролы */
-  --radius-lg: 12px;  /* карточки, панели, модалка */
+  --radius-xs: 4px;   /* inline: badges, swatches, the ends of bars */
+  --radius-sm: 6px;   /* controls inside a card */
+  --radius-md: 8px;   /* free-standing controls */
+  --radius-lg: 12px;  /* cards, panels, the modal */
   --radius-full: 999px;
 
-  /* ══ Движение ════════════════════════════════════════════════════════════
-     Достаточно быстро, чтобы читаться причиной, а не анимацией. Всё, что
-     вызвал пользователь, обязано разрешиться внутри --dur-2; всё, что
-     дольше, требует состояния, а не перехода.                              */
+  /* ══ Motion ══════════════════════════════════════════════════════════════
+     Fast enough to read as a cause rather than as an animation. Everything
+     the user set off has to resolve within --dur-2; anything longer calls
+     for a state rather than a transition.                                  */
 
   --dur-1: 80ms;
   --dur-2: 140ms;
@@ -751,108 +805,115 @@
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* Порядок слоёв приложения. Тоста здесь НЕТ, и это не пропуск: модалка
-     живёт в ВЕРХНЕМ СЛОЕ, а верхний слой не пробивается никаким z-index.
-     Область тостов сама объявлена popover — см. overlay.css. Токен, который
-     нельзя применить, не резерв, а долг.                                   */
+  /* The layer order of the application. There is NO toast here, and that is
+     not an omission: a modal lives in the TOP LAYER, and the top layer is
+     not pierced by any z-index. The toast region is itself declared a
+     popover — see overlay.css. A token that cannot be applied is a debt
+     rather than a reserve.                                                 */
   --z-sticky: 10;
   --z-popover: 100;
   --z-modal: 1000;
 }
 
-/* Переключение темы вручную. Достаточно сменить color-scheme — light-dark()
-   в семантике сама начнёт отдавать вторую ветку. Никакого второго блока
-   токенов не существует, поэтому и расходиться нечему. */
-/* ══ Темы ══════════════════════════════════════════════════════════════════
+/* Switching the theme by hand. Changing color-scheme is enough — light-dark()
+   in the semantics starts handing out the second branch by itself. No second
+   block of tokens exists, so there is nothing to diverge. */
+/* ══ Themes ════════════════════════════════════════════════════════════════
 
-   Тема — это НЕ отдельный набор токенов. Это комбинация трёх независимых
-   ручек, и именно поэтому тем шесть, а не шесть копий семантики:
+   A theme is NOT a separate set of tokens. It is a combination of three
+   independent knobs, and that is exactly why there are six themes rather
+   than six copies of the semantics:
 
-     ручка 1 — тон нейтрали      (--hue-neutral: 75 тёплый / 250 холодный)
-     ручка 2 — сила уклона       (--tint: 1 есть / 0 чистый серый)
-     ручка 3 — глубина тёмных поверхностей (какие шаги рампы берут surface)
+     knob 1 — the hue of the neutral  (--hue-neutral: 75 warm / 250 cool)
+     knob 2 — the strength of the cast (--tint: 1 present / 0 pure grey)
+     knob 3 — the depth of the dark surfaces (which ramp steps the surfaces
+              take)
 
-   Ручки не пересекаются по назначению, и поэтому оси у светлых и тёмных
-   тем РАЗНЫЕ — не по недосмотру, а потому что замечают в них разное. В
-   светлой теме глаз ловит уклон нейтрали: белый бывает тёплым, холодным
-   или никаким. В тёмной уклон почти не читается, зато сразу видно, на
-   какой глубине стоят поверхности — «чёрная» и «серая» отличаются именно
-   этим.
+   The knobs do not overlap in purpose, and that is why the axes of the light
+   and the dark themes DIFFER — not by oversight but because different things
+   are noticed in them. In a light theme the eye catches the cast of the
+   neutral: white can be warm, cool, or neither. In a dark one the cast is
+   barely read, while it is immediately visible how deep the surfaces stand —
+   "black" and "grey" differ in exactly that.
 
-   Светлая глубина не регулируется намеренно: сверху рампы шаги идут
-   плотно, и «менее светлая» светлая тема — это просто серый фон, а не тема.
+   The light depth is deliberately not adjustable: at the top of the ramp the
+   steps run close together, and a "less light" light theme is just a grey
+   background rather than a theme.
 
-   Седьмая тема остаётся одной строкой.                                    */
+   A seventh theme stays one line.                                         */
 
-/* ── Область темы ─────────────────────────────────────────────────────────
+/* ── The region of a theme ────────────────────────────────────────────────
 
-   Тема объявлена атрибутом, а не селектором корня, поэтому работает на любом
-   поддереве: `data-theme` на диве перекрашивает всё внутри него.
+   A theme is declared by an attribute rather than by a root selector, so it
+   works on any subtree: `data-theme` on a div repaints everything inside it.
 
-   Одного атрибута, однако, не хватает. `color` наследуется ВЫЧИСЛЕННЫМ
-   значением: узел внутри тёмной области, который сам не объявил цвет,
-   унаследует чёрный от светлого предка и станет нечитаемым. То же с фоном —
-   его просто нет.
+   The attribute alone, however, is not enough. `color` is inherited by its
+   COMPUTED value: a node inside a dark region that has not declared a colour
+   itself inherits black from a light ancestor and becomes unreadable. The
+   same with the background — there simply is none.
 
-   `.inst-theme` заново объявляет базу — ровно те две строки, которые
-   `base.css` объявляет для `body`. Без неё тёмная панель в светлом
-   приложении, предпросмотр темы в настройках и встроенный виджет
-   невозможны: смена темы работает только целиком на документ.            */
+   `.inst-theme` declares the base afresh — the very lines `base.css`
+   declares for `body`. Without it a dark panel in a light application, a
+   theme preview in the settings and an embedded widget are impossible:
+   changing the theme works only on the whole document.                    */
 
 .inst-theme {
   color: var(--text-primary);
   background: var(--surface-page);
-  /* И кегль с интерлиньяжем — они тоже наследуются, и без них остров темы
-     переобъявлял базу лишь наполовину.
+  /* The type size and the leading too — they are inherited as well, and
+     without them an island of theme redeclares the base only by half.
 
-     Комментарий выше обещает «ровно те строки, которые base.css объявляет для
-     body», а строк там объявлено больше двух. Цена промаха мерялась в
-     справочнике: его статья несёт .inst-prose, то есть интерлиньяж 1.65, и он
-     протекал сквозь .inst-theme во все живые примеры. Восемь компонентов на
-     одной странице рисовались с прозаическим интерлиньяжем вместо
-     интерфейсного — .inst-panel-title, .inst-metric-delta, .inst-legend-*,
-     .inst-budget-* и другие, — то есть справочник показывал кит не тем, чем
-     он окажется в приложении.
+     The cost of missing them was measured in the reference: its article
+     carries .inst-prose, that is a leading of 1.65, and it leaked through
+     .inst-theme into every live example. Eight components on one page were
+     drawn with the prose leading instead of the interface one —
+     .inst-panel-title, .inst-metric-delta, .inst-legend-*, .inst-budget-* and
+     others — that is, the reference showed the kit as something other than
+     what it turns out to be in an application.
 
-     Остров темы — это кусок ПРИЛОЖЕНИЯ внутри чего угодно, и база у него
-     обязана быть интерфейсной, а не унаследованной от того, что вокруг.     */
+     An island of theme is a piece of an APPLICATION inside anything at all,
+     and its base has to be the interface one rather than inherited from
+     whatever is around.                                                    */
   font-size: var(--text-sm);
   line-height: var(--leading-ui);
 }
 
-/* ── Светлые: различаются уклоном нейтрали ─────────────────────────────── */
+/* ── The light ones: they differ by the cast of the neutral ────────────── */
 
-/* Нейтральная — БАЗА, как «чёрная» у тёмных: своих переопределений у неё нет,
-   потому что --tint: 0 и есть умолчание корня. Атрибут существует, чтобы
-   выбор можно было записать явно и чтобы он пережил смену умолчания.
+/* Neutral is the BASE, as "black" is among the dark ones: it has no overrides
+   of its own, because --tint: 0 is the root default. The attribute exists so
+   that the choice can be written down explicitly and so that it survives a
+   change of the default.
 
-   Уклон у двух других — 2, а не 1. При единице все три светлые темы
-   различались цветностью 0.003: на мелком элементе это ниже порога различения,
-   и светлая тема была фактически одна, хотя список обещал три.
+   The cast on the other two is 2, not 1. At one, all three light themes
+   differ by a chroma of 0.003: on a small element that is below the threshold
+   of discrimination, and there was in fact one light theme though the list
+   promised three.
 
-   Двойка, а не тройка, и разница тут не косметическая. Порог различения
-   зависит от ПЛОЩАДИ: на странице во весь экран глаз ловит уклон куда раньше,
-   чем на бейдже, и тройка уводит страницу в #f8f4ee — это уже крем, а середина
-   рампы на ней уходит в коричневый и тянет за собой рамки и приглушённый
-   текст. Двойка даёт #f7f4f0: тёплый серый, который виден и не назначает себе
-   собственного цвета.
+   Two rather than three, and the difference here is not cosmetic. The
+   threshold of discrimination depends on AREA: on a full-screen page the eye
+   catches the cast far sooner than on a badge, and three takes the page to
+   #f8f4ee — that is cream already, and the middle of the ramp on it goes
+   brown and drags the borders and the muted text along. Two gives #f7f4f0: a
+   warm grey that is visible and does not appoint itself a colour of its own.
 
-   Шаги рампы при этом сохраняют СВОИ доли уклона: множитель для того и
-   множитель, меняется одно число, а соотношение светлого и тёмного концов
-   остаётся подобранным.                                                    */
+   The steps of the ramp keep THEIR OWN shares of the cast through this: a
+   multiplier is a multiplier for that very reason — one number changes, and
+   the balance of the light and dark ends stays as it was chosen.          */
 [data-theme="light-neutral"] { color-scheme: light; }
 [data-theme="light"]         { color-scheme: light; --tint: 2; --hue-neutral: 75; }
 [data-theme="light-cool"]    { color-scheme: light; --tint: 2; --hue-neutral: 250; }
 
-/* ── Тёмные: различаются глубиной поверхностей ─────────────────────────────
+/* ── The dark ones: they differ by the depth of the surfaces ──────────────
 
-   Переопределяются только поверхности — остальная семантика не знает, что
-   тема сменилась, потому что смотрит на них.
+   Only the surfaces are overridden — the rest of the semantics does not know
+   the theme has changed, because it looks at them.
 
-   Глубже «чёрной» ступени нет: она стоит на дне рампы. Выше «серой» тема
-   перестаёт быть тёмной, и подпись на ней теряет порог.                                            */
+   There is no step deeper than "black": it stands at the bottom of the ramp.
+   Above "grey" a theme stops being dark, and a label on it loses its
+   threshold.                                                              */
 
-[data-theme="dark"] { color-scheme: dark; }   /* чёрная: дно рампы, без переопределений */
+[data-theme="dark"] { color-scheme: dark; }   /* black: ramp bottom, no overrides */
 
 [data-theme="dark-soft"] {
   color-scheme: dark;
@@ -861,20 +922,21 @@
   --surface-raised:  var(--n-11);
   --surface-overlay: var(--n-10);
 
-  /* Подписи статусов уходят на шаг 2: поверхность здесь приподнята, и на ней
-     шаг 3 порога не берёт.
+  /* The status labels move to step 2: the surface here is raised, and on it
+     step 3 does not reach the threshold.
 
-     Тоновая заливка в тёмных темах ПРОЗРАЧНАЯ: 16% цвета, а не сплошной шаг 1,
-     как в светлых. Значит, сквозь бейдж просвечивает всё, что под ним, и
-     контраст зависит от стопки. Панель этой темы светлее, чем в базовой
-     тёмной, и на бейдже внутри ВЫДЕЛЕННОЙ строки таблицы — панель, плюс 14%
-     акцента от выделения, плюс 16% тона — зелёная подпись давала 4.15 при
-     норме 4.5.
+     A tone fill in the dark themes is TRANSPARENT: 16% of the colour rather
+     than a solid step 1 as in the light ones. So everything under a badge
+     shows through it, and the contrast depends on the stack. The panel of
+     this theme is lighter than in the base dark one, and on a badge inside a
+     SELECTED table row — panel, plus 14% of the accent from the selection,
+     plus 16% of the tone — a green label gives 4.15 against a norm of 4.5.
 
-     Перечислить такие стопки в текстовой проверке нельзя: их столько, сколько
-     сочетаний полупрозрачных слоёв. Нашла tools/audit.js по отрисованным
-     пикселям. Поднят не один зелёный, а все четыре: тона обязаны остаться в
-     одном регистре, иначе зелёный кричит громче красного.                  */
+     Such stacks cannot be enumerated in a text check: there are as many of
+     them as there are combinations of translucent layers. tools/audit.js
+     found this one by the rendered pixels. It is not one green that is
+     raised but all four: the tones have to stay in one register, otherwise
+     the green shouts louder than the red.                                  */
   --accent-text: var(--a-2);
   --ok-text:     var(--ok-2);
   --warn-text:   var(--warn-2);
@@ -882,38 +944,44 @@
 }
 
 
-/* ══ Акценты ═══════════════════════════════════════════════════════════════
+/* ══ Accents ═══════════════════════════════════════════════════════════════
 
-   ТРЕТЬЯ РУЧКА, и она ортогональна теме: любой акцент сочетается с любой из
-   пяти тем, потому что переопределяет только рампу --a-*, а вся семантика
-   (--accent-solid, --accent-mark, --accent-text, --accent-bg, --focus-ring)
-   читает рампу и про смену не знает. 4 акцента × 5 тем × 3 плотности.
+   THE THIRD KNOB, and it is orthogonal to the theme: any accent combines
+   with any of the five themes, because it overrides only the --a-* ramp,
+   while the whole of the semantics (--accent-solid, --accent-mark,
+   --accent-text, --accent-bg, --focus-ring) reads the ramp and knows nothing
+   of the change. 4 accents × 5 themes × 3 densities.
 
-   Петроль объявлен выше без атрибута — он база, как «чёрная» у тёмных тем.
-   Снять атрибут значит вернуться к нему; отдельного [data-accent="petrol"]
-   нет намеренно, дубликат однажды разойдётся.
+   Petrol is declared above without an attribute — it is the base, as "black"
+   is among the dark themes. Removing the attribute means returning to it; a
+   separate [data-accent="petrol"] is deliberately absent, a duplicate would
+   diverge one day.
 
-   ── Что обязан держать каждый набор ──────────────────────────────────────
+   ── What every set has to hold ───────────────────────────────────────────
 
-     шаг 1  тонированный фон в светлой теме
-     шаг 2  текст на ПРИПОДНЯТЫХ тёмных поверхностях (dark-soft)
-     шаг 3  текст и метка в тёмных темах
-     шаг 4  ЗАЛИВКА под белой подписью. Светлота ограничена сверху, и предел
-            хью-зависимый — 0.545 / 0.560 / 0.560 / 0.560 соответственно
-     шаг 5  текст в СВЕТЛОЙ поверх шага 1 (4.5:1 на белом)
-     шаг 6  кольцо фокуса в светлых темах — единственный шаг, который
-            никогда не бывает заливкой, поэтому обводит её не сливаясь
+     step 1  the tinted background in a light theme
+     step 2  text on RAISED dark surfaces (dark-soft)
+     step 3  text and mark in the dark themes
+     step 4  the FILL under a white label. The lightness is bounded from
+             above, and the bound depends on hue — 0.545 / 0.560 / 0.560 /
+             0.560 respectively
+     step 5  text in a LIGHT theme over step 1 (4.5:1 on white)
+     step 6  the focus ring in the light themes — the one step that is never
+             a fill, so it outlines one without merging into it
 
-   Все 24 цвета проверены на обрезку по sRGB и прогоняются гейтом контраста
-   по всем пяти темам: cmd/contrast итерирует ось акцента наравне с темой.
+   All 24 colours are checked for sRGB clipping and are run through the
+   contrast gate across all five themes: cmd/contrast iterates the accent
+   axis alongside the theme.
 
-   ── Пятый набор ──────────────────────────────────────────────────────────
+   ── A fifth set ──────────────────────────────────────────────────────────
 
-   Стоит шесть строк. Требования: не ближе 25° к статусным (25 · 85 · 150),
-   шаг 4 в гамуте при своей светлоте, и прогон гейта.                       */
+   Costs six lines. The requirements: no closer than 25° to the status hues
+   (25 · 85 · 150), step 4 within gamut at its lightness, and a run of the
+   gate.                                                                    */
 
-/* Графит: тот же хью, что у прежнего дефолта, но на треть тише. Для тех, кому
-   нужен синий и не нужен характер: кит перестаёт кричать, оставаясь привычным. */
+/* Graphite: the same hue as the former default, but a third quieter. For
+   those who want blue and do not want character: the kit stops shouting
+   while staying familiar. */
 [data-accent="graphite"] {
   --a-1: oklch(0.960 0.014 250);
   --a-2: oklch(0.800 0.065 250);
@@ -923,14 +991,15 @@
   --a-6: oklch(0.330 0.065 250);
 }
 
-/* Индиго: самый насыщенный из четырёх — на 275° потолок гамута высокий, и
-   шаг 4 берёт 0.145 без обрезки.
+/* Indigo: the most saturated of the four — at 275° the ceiling of the gamut
+   is high, and step 4 takes 0.145 without clipping.
 
-   ВНИМАНИЕ на соседство с категориальной палитрой: --chart-1 стоит на 292°,
-   то есть в 17° отсюда. Внутри одного компонента они не встречаются (акцент
-   в область графика не заходит, категориальный цвет за её пределы не выходит),
-   но легенда многорядного графика окажется рядом с акцентом на одном экране.
-   Различать их там будет светлота, а не тон.                                */
+   MIND the neighbourhood of the categorical palette: --chart-1 stands at
+   292°, that is 17° from here. Inside one component they do not meet (the
+   accent does not step into the area of a chart, a categorical colour does
+   not step outside it), but the legend of a multi-series chart will stand
+   beside the accent on one screen. What tells them apart there is lightness
+   rather than hue.                                                          */
 [data-accent="indigo"] {
   --a-1: oklch(0.960 0.021 275);
   --a-2: oklch(0.800 0.093 275);
@@ -940,19 +1009,20 @@
   --a-6: oklch(0.330 0.093 275);
 }
 
-/* Глина: единственный ТЁПЛЫЙ акцент, и единственный, стоящий по ту же сторону
-   от нейтрали, что и предупреждение.
+/* Clay: the only WARM accent, and the only one standing on the same side of
+   the neutral as the warning.
 
-   До warn (85°) отсюда 40°, и формально это ближе, чем принятые в ките 25°…
-   впрочем, ровно 25° — порог для КАТЕГОРИАЛЬНОЙ палитры, где цвет является
-   единственным различителем ряда. У акцента иначе, и защита уже написана:
-   состояние «идёт» опознаётся ПУЛЬСАЦИЕЙ, а не тоном (ничто другое в ките не
-   пульсирует), а статус по правилу всегда ходит с точкой И словом.
+   From here to warn (85°) is 40°, which is more than the 25° the kit
+   accepts — but 25° is the threshold for the CATEGORICAL palette, where
+   colour is the only thing telling a series apart. With an accent it is
+   otherwise, and the protection is already written: the "running" state is
+   recognised by its PULSE rather than by its hue (nothing else in the kit
+   pulses), and a status by rule always travels with a dot AND a word.
 
-   Тем не менее это единственный набор, где рыжая метка «идёт» стоит в одном
-   регистре с жёлтой меткой warn, и на 6px точке разница мельче, чем в любом
-   другом наборе. Если экран строится вокруг статусных точек без подписей —
-   выбирать надо не этот.                                                    */
+   Even so this is the one set where the orange "running" mark stands in the
+   same register as the yellow warn mark, and on a 6px dot the difference is
+   finer than in any other set. If a screen is built around status dots
+   without labels, this is not the one to choose.                            */
 [data-accent="clay"] {
   --a-1: oklch(0.960 0.018 45);
   --a-2: oklch(0.800 0.084 45);
@@ -962,12 +1032,12 @@
   --a-6: oklch(0.330 0.084 45);
 }
 
-/* ══ Толщина линий ═════════════════════════════════════════════════════════
+/* ══ Line thickness ════════════════════════════════════════════════════════
 
-   Браузер никогда не рисует рамку тоньше одного физического пикселя. На
-   1x-дисплее 0.5px и 1px дают ОДНО И ТО ЖЕ, а отрицательное поле в -0.5px
-   при нарисованной рамке в 1px оставляет полпикселя двойной линии.
-   Поэтому хайрлайн включается только там, где ему есть куда поместиться. */
+   A browser never draws a border thinner than one physical pixel. On a 1x
+   display 0.5px and 1px give THE SAME THING, while a negative margin of
+   -0.5px against a border drawn at 1px leaves half a pixel of doubled line.
+   So the hairline is turned on only where there is room for it. */
 
 :root { --hairline: 1px; --stroke: 1px; }
 
@@ -976,118 +1046,129 @@
 }
 
 /* ==========================================================================
-   3. Роли
+   3. Roles
 
-   Ярус между шкалами и компонентами. Он существует по двум причинам:
-   у каждого размера появляется имя (значит, в компонентах нет констант),
-   и плотность получает одну точку, через которую перенастраивает всё.
+   The tier between the scales and the components. It exists for two reasons:
+   every size gets a name (so there are no constants in the components), and
+   density gets one point through which it retunes everything.
 
-   Всё здесь объявлено через :where() — нулевая специфичность. Дефолт с той
-   же специфичностью, что и переопределение, — это не дефолт, а правило,
-   объявленное позже. Ровно на этом --row-pad-y перестаёт реагировать на
-   плотность вообще.
+   Everything here is declared through :where() — zero specificity. A default
+   with the same specificity as an override is not a default but a rule
+   declared later. That is exactly what stops --row-pad-y reacting to density
+   at all.
    ========================================================================== */
 
 :where(:root) {
-  /* Высоты контролов. Токен, а не константа компонента, поэтому кнопка и
-     стоящее рядом поле физически не могут разойтись.                       */
-  --control-h-xs: 20px;   /* бейдж, чип */
+  /* Control heights. A token rather than a constant in a component, so that a
+     button and a field standing next to it physically cannot diverge.      */
+  --control-h-xs: 20px;   /* badge, chip */
   --control-h-sm: 26px;
   --control-h-md: 32px;
   --control-h-lg: 38px;
 
-  /* СКРУГЛЕНИЕ контрола — своё на каждый размер, по той же причине, по какой
-     отступ выводится из высоты: рисунок обязан держаться, когда размер
-     меняется.
+  /* THE ROUNDING of a control is its own for each size, for the same reason
+     the padding is derived from the height: the drawing has to hold when the
+     size changes.
 
-     Один радиус на все три размера этого не даёт. 8 на высоте 26 — это 0.31,
-     на 32 — 0.25, на 38 — 0.21, а в плотном режиме 8 на 22 доходит до 0.36:
-     мелкий контрол читается пилюлей, крупный — прямоугольником. Пилюля же в
-     ките значит «переключатель», и мелкая кнопка не имеет права её изображать.
+     One radius for all three sizes does not give that. 8 at a height of 26 is
+     0.31, at 32 it is 0.25, at 38 it is 0.21, and in the compact mode 8 at 22
+     reaches 0.36: a small control reads as a pill, a large one as a
+     rectangle. And a pill in this kit means "switch", so a small button has
+     no right to depict one.
 
-     Числа берутся из лестницы радиусов, а не выводятся через calc: calc от
-     высоты даёт дробный пиксель (26 × 0.25 = 6.5), а кит требует радиус,
-     ложащийся на устройственную сетку при плотности 1.5. Отношение при этом
-     держится в полосе 0.18–0.27 во всех трёх плотностях — проверяет
-     cmd/proportion.                                                        */
+     The numbers are taken from the radius ladder rather than derived through
+     calc: calc from the height gives a fractional pixel (26 × 0.25 = 6.5),
+     while the kit requires a radius that lands on the device grid at a
+     density of 1.5. The ratio meanwhile stays in the band 0.18–0.27 across
+     all three densities — cmd/proportion checks it.                        */
   --radius-control-sm: var(--radius-sm);
   --radius-control-md: var(--radius-md);
   --radius-control-lg: var(--radius-md);
 
-  /* ПРОПОРЦИЯ контрола, а не его отступ. Это единственное место в ките, где
-     объявлено ОТНОШЕНИЕ, и причина в том, что отношение и есть форма кнопки.
+  /* THE PROPORTION of a control rather than its padding. This is the one
+     place in the kit where a RATIO is declared, and the reason is that the
+     ratio is the shape of the button.
 
-     Высота и отступ были двумя независимыми лестницами: высота росла
-     26→32→36 (×1.23, ×1.13), отступ 8→12→16 (×1.5, ×1.33). Ничто не держало
-     их вместе, и одна и та же кнопка меняла ФОРМУ вместе с плотностью —
-     отношение отступа к высоте гуляло от 0.273 до 0.545, вдвое. В плотном
-     режиме кнопки выходили узкими и высокими, в просторном — широкими и
-     плоскими: плотность обязана менять размер, а не рисунок.
+     Height and padding were two independent ladders: the height grew 26→32→36
+     (×1.23, ×1.13), the padding 8→12→16 (×1.5, ×1.33). Nothing held them
+     together, and one and the same button changed SHAPE along with the
+     density — the ratio of padding to height wandered from 0.273 to 0.545,
+     twofold. In the compact mode buttons came out narrow and tall, in the
+     comfortable one wide and flat: density has to change the size, not the
+     drawing.
 
-     Теперь отступ выводится из высоты, и разойтись им нечем — по той же
-     причине, по какой светлая и тёмная темы объявлены одной строкой через
-     light-dark(): расхождение невозможно по конструкции, а не «маловероятно
-     при аккуратности».
+     Now the padding is derived from the height, and there is nothing for them
+     to diverge with — for the same reason the light and the dark themes are
+     declared in one line through light-dark(): divergence is impossible by
+     construction rather than "unlikely if one is careful".
 
-     Числа взяты из нынешнего обычного режима, поэтому он не сдвигается ни на
-     пиксель: 8/26 ≈ 0.31, 12/32 = 0.375, 16/38 ≈ 0.42. Разные отношения у
-     разных размеров — это не недосмотр: крупная кнопка оптически требует
-     пропорционально большего поля, и сегодня так и нарисовано.
+     The numbers are taken from the current normal mode, so it does not shift
+     by a pixel: 8/26 ≈ 0.31, 12/32 = 0.375, 16/38 ≈ 0.42. Different ratios at
+     different sizes are not an oversight: a large button optically calls for
+     a proportionally larger field, and that is how it is drawn today.
 
-     Плотность их НЕ трогает: она двигает высоту, а форма едет следом.       */
+     Density does NOT touch them: it moves the height, and the shape follows.
+                                                                            */
   --control-ratio-sm: 0.31;
   --control-ratio-md: 0.375;
   --control-ratio-lg: 0.42;
-  /* Сам вывод отступа из высоты стоит НИЖЕ, после блоков плотности, и там же
-     объяснено, почему он не может стоять здесь. */
+  /* The derivation of the padding from the height itself stands BELOW, after
+     the density blocks, and the reason it cannot stand here is explained
+     there. */
 
-  /* Отступы по назначению. Компонент берёт их, а не --space-* напрямую. */
+  /* Paddings by purpose. A component takes these rather than --space-*
+     directly. */
   --pad-panel:   var(--space-5);
   --pad-card:    var(--space-6);
   --pad-cell-x:  var(--space-4);
   --row-pad-y:   var(--space-3);
   --gap-row:     var(--space-3);
-  /* РАЗДЕЛ — четвёртая ступень ритма, и она выводится, а не назначается.
-     Ярус ролей упирался в 16px: самое громкое, чем можно было разделить два
-     блока, было того же порядка, что просвет ВНУТРИ блока (6–8). Экран из-за
-     этого читался сплошным потоком — сказать «здесь начинается другое» было
-     нечем, и 24, 32, 48, 64 лежали в шкале без единой роли.
+  /* A SECTION is the fourth step of the rhythm, and it is derived rather than
+     appointed. The role tier stopped at 16px: the loudest thing available to
+     part two blocks was of the same order as the gap INSIDE a block (6–8).
+     The screen therefore read as one continuous flow — there was nothing to
+     say "something else begins here" with, and 24, 32, 48, 64 lay in the
+     scale without a single role.
 
-     Замерено на собранных экранах Anthropic: внутри группы 8·12·16, между
-     группами 54–61, то есть разрыв примерно вчетверо. У собственной консоли
-     прогонов весь диапазон 0–18, без разрыва вовсе.
+     Measured on assembled Anthropic screens: inside a group 8·12·16, between
+     groups 54–61, that is a gap of roughly fourfold. On our own run console
+     the whole range is 0–18, with no gap at all.
 
-     Отсюда правило: раздел — это --gap-row, поднятый на ЧЕТЫРЕ ступени. Шкала
-     2·4·6·8·12·16·24·32·48·64 устроена так, что +4 ступени дают ровно ×4 в
-     каждой точке: 4→16, 6→24, 8→32, 12→48, 16→64. Отношение держится во всех
-     пятнадцати сочетаниях масштаба и плотности само, без отдельного подбора.
+     Hence the rule: a section is --gap-row raised by FOUR steps. The scale
+     2·4·6·8·12·16·24·32·48·64 is built so that +4 steps give exactly ×4 at
+     every point: 4→16, 6→24, 8→32, 12→48, 16→64. The ratio holds across all
+     fifteen combinations of scale and density by itself, with no separate
+     fitting.
 
-     Проверка на попадание: в базовой ячейке роль даёт 24px — ровно то число,
-     которое .inst-stack--loose держал руками, дотягиваясь в шкалу мимо яруса.
-     Кит нащупал его раньше, чем назвал.                                     */
+     A check that it lands: in the base cell the role gives 24px — precisely
+     the number .inst-stack--loose held by hand, reaching into the scale past
+     the tier. The kit felt it out before it named it.                       */
   --gap-section: var(--space-7);
   --gap-inline:  var(--space-4);
 
-  /* Вертикаль БЛОКА — шапка панели и оболочки, тулбар, баннер, лог, код,
-     тост. Вертикаль СТРОКИ живёт выше и отдельно (--row-pad-y): строка
-     плотнее блока, и это разные вещи, а не одна с двумя именами.
+  /* The vertical of a BLOCK — the header of a panel and of the shell, a
+     toolbar, a banner, a log, code, a toast. The vertical of a ROW lives
+     above and separately (--row-pad-y): a row is denser than a block, and
+     these are different things rather than one thing with two names.
 
-     Роль существует потому, что вертикальный отступ у всех перечисленных был
-     записан сырым --space-*, тогда как горизонтальный — ролью. Всего таких
-     мест в ките нашлось 18. Следствие мерялось на живом экране: высота шапки
-     панели оставалась 34.9px во ВСЕХ трёх плотностях, пока строка данных под
-     ней ходила 31→38→54. В плотном режиме шапка оказывалась ВЫШЕ строки,
-     которую подписывает (отношение 1.12), в просторном — вдвое ниже (0.65).
-     Отношение инвертировалось; тише данных обязана быть шапка, а не наоборот.
+     The role exists because the vertical padding of everything listed was
+     written as a raw --space-*, while the horizontal one was a role. 18 such
+     places were found in the kit. The consequence was measured on a live
+     screen: the height of a panel header stayed 34.9px across ALL three
+     densities while the data row under it moved 31→38→54. In the compact mode
+     the header came out TALLER than the row it labels (a ratio of 1.12), in
+     the comfortable one half its height (0.65). The ratio inverted; it is the
+     header that has to be quieter than the data, not the other way round.
 
-     Почему по вертикали теснее, чем по горизонтали: часть вертикального
-     воздуха уже приносит интерлиньяж, горизонтального его не приносит никто.
-     Это и есть соотношение, которое и так стоит в обычном режиме (8 против
-     12) — теперь оно просто держится во всех трёх плотностях.              */
+     Why it is tighter vertically than horizontally: part of the vertical air
+     is already brought by the leading, and nobody brings any horizontally.
+     That is the very balance that stands in the normal mode anyway (8 against
+     12) — it now simply holds across all three densities.                  */
   --pad-block-y: var(--space-4);
 
-  /* Размеры глифов и жёлобов. Без ролей это пятнадцать чисел, вписанных
-     прямо в компоненты, и ни одно из них не реагировало на плотность.      */
+  /* The sizes of glyphs and gutters. Without roles these are fifteen numbers
+     written straight into the components, and not one of them reacted to
+     density.                                                               */
   --size-dot:      6px;
   --size-check:    15px;
   --size-switch-w: 30px;
@@ -1095,90 +1176,98 @@
   --size-thumb:    14px;
   --size-track:    4px;
   --size-meter:    6px;
-  --size-spinner:  14px;   /* совпадает с базой текста: он встаёт на место подписи */
-  /* 18, а не 16, и это следствие роста базы с 13 на 14.
+  --size-spinner:  14px;   /* the text base: it stands in a label's place */
+  /* 18 rather than 16, and that follows from the base growing from 13 to 14.
 
-     Значок рядом с подписью меряется не своей коробкой, а ЧЕРНИЛАМИ против
-     высоты прописной. По 98 значкам спрайта средние чернила занимают 9.02 из
-     16 коробки. При базе 13 прописная была 9.2 — значок совпадал с ней почти
-     точно. При базе 14 прописная стала 10.0, и тот же значок отстал на 9.8%:
-     рядом с подписью он читается мелким.
+     An icon beside a label is measured not by its box but by its INK against
+     the cap height. Across the 98 icons of the sprite the average ink takes
+     9.02 of the 16 box. At a base of 13 the cap height was 9.2 — the icon
+     matched it almost exactly. At a base of 14 the cap height became 10.0,
+     and the same icon fell 9.8% behind: beside a label it reads as small.
 
-     18 возвращает соотношение: 18 × 9.02/16 = 10.15 против прописной 10.0.
-     Чётное — при плотности 1.5 это 27 целых устройственных пикселей.       */
+     18 restores the balance: 18 × 9.02/16 = 10.15 against a cap height of
+     10.0. Even — at a density of 1.5 that is 27 whole device pixels.       */
   --size-icon:     18px;
-  /* Значок БЕЗ подписи: рельс разделов, где опознают по форме, а не по слову.
-     Отдельный токен, потому что мера у него другая. --size-icon подобран
-     против высоты прописной подписи, которая стоит рядом; у рельса подписи
-     нет вовсе, и значок там меряется против цели нажатия — ему положено быть
-     крупнее, иначе кнопка в 40px держит глиф в 18 и выглядит пустой. */
+  /* An icon WITHOUT a label: the rail of sections, where things are
+     recognised by shape rather than by word. A separate token, because its
+     measure is different. --size-icon is fitted against the cap height of the
+     label standing beside it; the rail has no label at all, and an icon there
+     is measured against the tap target — it is due to be larger, otherwise a
+     40px button holds an 18px glyph and looks empty. */
   --size-icon-lg:  24px;
-  /* Значок при кегле --text-2xs: строка состояния, где показания набраны
-     одиннадцатым, а не четырнадцатым.
+  /* An icon at the --text-2xs size: the status bar, where the readings are
+     set in eleven rather than in fourteen.
 
-     Мера та же, что у --size-icon, только прописная другая: 11 × 0.71 = 8.0
-     против 10.0 у базы. Значку положены чернила 7.0–9.3, то есть коробка
-     12.5–16.5. Обычные 18 дают 10.15 — значок перевешивает показание, ради
-     которого стоит; шеврон 10 даёт 5.6 — значок пропадает вовсе.
+     The measure is the same as for --size-icon, only the cap height differs:
+     11 × 0.71 = 8.0 against 10.0 at the base. The icon is due ink of 7.0–9.3,
+     that is a box of 12.5–16.5. The usual 18 gives 10.15 — the icon outweighs
+     the reading it stands for; a chevron at 10 gives 5.6 — the icon vanishes
+     altogether.
 
-     14 даёт 7.9 против прописной 8.0, то есть отношение 0.99. Число не новое:
-     это --text-sm, и оно чётное — при плотности 1.5 ровно 21 устройственный
-     пиксель.                                                               */
+     14 gives 7.9 against a cap height of 8.0, that is a ratio of 0.99. The
+     number is not new: it is --text-sm, and it is even — at a density of 1.5
+     exactly 21 device pixels.                                              */
   --size-icon-sm:  14px;
   --size-chevron:  10px;
-  /* Норма цели нажатия, WCAG 2.2 AA (2.5.8). Токен, а не константа, потому
-     что от него зависят области нажатия нескольких компонентов, и менять их
-     врозь нельзя. Плотностью НЕ перенастраивается: норма доступности не
-     обсуждается вместе с вкусом к плотности.
+  /* The tap-target norm, WCAG 2.2 AA (2.5.8). A token rather than a constant,
+     because the tap areas of several components depend on it and changing
+     them apart is not allowed. Density does NOT retune it: a norm of
+     accessibility is not discussed together with a taste in density.
 
-     Мелкие контролы держат её областью, а не формой: флажок остаётся 15px,
-     свитч 30×18, крестик тега 10px — растёт невидимый ::before. Форма кита
-     от доступности не толстеет.                                            */
+     Small controls hold it by area rather than by shape: the checkbox stays
+     15px, the switch 30×18, the tag cross 10px — what grows is an invisible
+     ::before. The shape of the kit does not thicken from accessibility.    */
   --tap-min:       24px;
 
-  --size-tick:     3px;    /* штрих в полосе истории: одна проверка, один
-                              прогон, один запуск. Уже — рябит, шире —
-                              полоса перестаёт читаться как ряд */
+  --size-tick:     3px;    /* a tick in a history bar: one check, one run, one
+                              launch. Narrower and it shimmers, wider and the
+                              bar stops reading as a series */
 
-  --size-marker:   2px;    /* несущая метка: полоса вкладки, край сноски,
-                              край текущего пункта навигации. Тоньше её не
-                              видно, толще — она спорит с текстом */
-  --size-gutter:   14px;   /* левый жёлоб строки задачи */
-  --size-indent:   14px;   /* шаг вложенности дерева */
-  /* Колонка подписей. Растёт вместе с кеглем: подпись в ней — текст, а не
-     геометрия, и при базе 13 колонка уже стояла на грани — «Лимит токенов»
-     требовал 92.8px при ширине 92. С базой 14 тот же ярлык требует 99.9 и
-     переносится на две строки, ломая выравнивание всей формы.
+  --size-marker:   2px;    /* a load-bearing mark: a tab's bar, the edge of a
+                              note, the edge of the current navigation item.
+                              Thinner and it is not seen, thicker and it
+                              argues with the text */
+  --size-gutter:   14px;   /* the left gutter of a task row */
+  --size-indent:   14px;   /* the indent step of a tree */
+  /* The label column. It grows along with the type size: a label in it is
+     text rather than geometry, and at a base of 13 the column already stood
+     on the edge — "Token limit" wanted 92.8px against a width of 92. At a
+     base of 14 the same label wants 99.9 and wraps onto two lines, breaking
+     the alignment of the whole form.
 
-     Отсюда 104: пропорция к прежней (×1.077) плюс ступень запаса, потому что
-     впритык эта колонка уже однажды не сработала.                          */
-  /* Колонка подписей плотностью НЕ перенастраивается — как и --tap-min, и по
-     той же причине: её ширину задаёт текст, а кегль плотность не трогает.
-     Пока колонка сжималась вместе с плотностью, а подпись оставалась прежней,
-     «Лимит токенов» переносился на две строки в плотном режиме и рвал
-     выравнивание всей формы. Нашёл обход всех страниц headless.
+     Hence 104: the proportion to the former width (×1.077) plus a step of
+     margin, because this column has already failed once when fitted exactly.
 
-     104 — по самой длинной подписи в примерах кита (99.9px) плюс просвет. */
-  --label-col:     104px;  /* колонка подписей инспектора */
+     Density does NOT retune it — as with --tap-min, and for the same reason:
+     its width is set by text, and density does not touch the type size. While
+     the column shrank along with the density and the label stayed as it was,
+     "Token limit" wrapped onto two lines in the compact mode and tore the
+     alignment of the whole form. A headless sweep of every page found it.
 
-  /* Раскладка приложения */
-  --aside-w:       232px;  /* боковая колонка оболочки */
-  --container-max: 76rem;  /* потолок ширины рабочей области — в rem, потому
-                              что мера читаемости, а не геометрия */
-  --split-side:    18rem;  /* желаемая ширина боковой части сплита */
-  --split-main:    30rem;  /* ниже этого основная часть переносится вниз */
-  --col-min:       260px;  /* минимальная колонка адаптивной сетки */
+     104 comes from the longest label in the kit's examples (99.9px) plus the
+     gap. */
+  --label-col:     104px;  /* the label column of the inspector */
+
+  /* Application layout */
+  --aside-w:       232px;  /* the side column of the shell */
+  --container-max: 76rem;  /* the ceiling on the width of the working area — in
+                              rem, because it is a measure of readability
+                              rather than geometry */
+  --split-side:    18rem;  /* the wanted width of a split's side part */
+  --split-main:    30rem;  /* below this the main part wraps underneath */
+  --col-min:       260px;  /* the minimum column of a responsive grid */
 }
 
 /* ==========================================================================
-   Плотность
+   Density
 
-   Инспектор gamedev и транскрипт агента хотят разной плотности одних и тех
-   же компонентов. Плотность — атрибут контейнера, а не вариант на каждом
-   компоненте: один атрибут на панели перенастраивает всё внутри неё.
+   A gamedev inspector and an agent transcript want different densities of the
+   same components. Density is an attribute of a container rather than a
+   variant on every component: one attribute on a panel retunes everything
+   inside it.
 
-   Меняется ровно ярус ролей — и этого достаточно, потому что компоненты
-   собственных чисел не содержат.
+   Exactly the role tier changes — and that is enough, because the components
+   hold no numbers of their own.
    ========================================================================== */
 
 [data-density="compact"] {
@@ -1186,8 +1275,9 @@
   --control-h-sm: 22px;
   --control-h-md: 26px;
   --control-h-lg: 32px;
-  /* --control-pad-* здесь НЕТ намеренно: они выводятся из высоты через
-     --control-ratio-*, и форма контрола едет за размером сама. */
+  /* --control-pad-* are deliberately NOT here: they are derived from the
+     height through --control-ratio-*, and the shape of a control follows its
+     size by itself. */
   --radius-control-sm: var(--radius-xs);
   --radius-control-md: var(--radius-sm);
   --radius-control-lg: var(--radius-md);
@@ -1215,8 +1305,9 @@
   --control-h-sm: 30px;
   --control-h-md: 36px;
   --control-h-lg: 44px;
-  /* --control-pad-* здесь НЕТ намеренно: они выводятся из высоты через
-     --control-ratio-*, и форма контрола едет за размером сама. */
+  /* --control-pad-* are deliberately NOT here: they are derived from the
+     height through --control-ratio-*, and the shape of a control follows its
+     size by itself. */
   --radius-control-sm: var(--radius-md);
   --radius-control-md: var(--radius-md);
   --radius-control-lg: var(--radius-lg);
@@ -1224,11 +1315,12 @@
   --pad-panel:  var(--space-6);
   --pad-card:   var(--space-7);
   --pad-cell-x: var(--space-5);
-  /* Ступень, а не две: по вертикали теснее, чем по горизонтали, потому что
-     часть вертикального воздуха приносит интерлиньяж. Бока строки здесь
-     12px — значит вертикали положено 8. То же соотношение держат все
-     пятнадцать ячеек, и сторожат его две проверки cmd/proportion: «вертикаль
-     строки к горизонтали» в каждой ячейке и монотонность вдоль масштаба. */
+  /* One step, not two: it is tighter vertically than horizontally, because
+     part of the vertical air is brought by the leading. The sides of a row
+     here are 12px — so the vertical is due 8. All fifteen cells hold the same
+     balance, and two cmd/proportion checks guard it: "a row's vertical
+     against its horizontal" in every cell, and monotonicity along the
+     scale. */
   --row-pad-y:  var(--space-4);
   --gap-row:    var(--space-4);
   --gap-section: var(--space-8);
@@ -1245,28 +1337,29 @@
 }
 
 /* ==========================================================================
-   Масштаб — ВТОРАЯ размерная ось, и она не дубликат плотности: плотность
-   двигает геометрию и не трогает кегль, масштаб двигает кегль ВМЕСТЕ с
-   геометрией. Проверка та же, что у атрибутных словарей: если две ручки дают
-   один результат, это одна ручка с двумя именами.
+   Scale — the SECOND dimensional axis, and it is not a duplicate of density:
+   density moves the geometry and does not touch the type size, scale moves
+   the type size TOGETHER WITH the geometry. The test is the same as for the
+   attribute vocabularies: if two knobs give one result, it is one knob with
+   two names.
 
-   Почему лестница начинается с 14, почему таблица авторская, а не множитель,
-   почему у каждой ячейки два селектора и чего в таблице нет намеренно —
-   docs/foundations/scale.md. Полосы, которыми это сторожится, объявлены в
-   cmd/proportion: шаг кегля 1.12–1.30, радиус контрола к его высоте
-   0.16–0.30.
+   Why the ladder starts at 14, why the table is hand-written rather than a
+   multiplier, why every cell has two selectors and what is deliberately
+   absent from the table — docs/foundations/scale.md. The bands that guard
+   this are declared in cmd/proportion: a type-size step of 1.12–1.30, a
+   control radius against its height of 0.16–0.30.
    ========================================================================== */
 
 [data-scale="15"] {
   --text-2xs: 0.71875rem;   /* 11.5 */
   --text-xs:  0.8125rem;    /* 13 */
-  --text-sm:  0.9375rem;    /* 15 — база интерфейса */
+  --text-sm:  0.9375rem;    /* 15 — the interface base */
   --text-md:  1.0625rem;    /* 17 */
   --text-lg:  1.21875rem;   /* 19.5 */
   --text-xl:  1.46875rem;   /* 23.5 */
   --text-2xl: 1.875rem;     /* 30 */
 
-  --radius-2xs: 2px;        /* приколочен: см. шапку */
+  --radius-2xs: 2px;        /* nailed down: see the header */
   --radius-xs:  4px;
   --radius-sm:  6px;
   --radius-md:  10px;
@@ -1300,16 +1393,16 @@
   --size-spinner:  15px;
   --size-icon:     19px;
   --size-icon-lg:  26px;
-  /* 16, а не 14, хотя 14 стоит и на масштабе 14.
-     Прописная --text-2xs здесь шагнула, а значок — нет: 11 → 11.5px кегля
-     округляются в 8 → 9 устройственных пикселей, и 14 даёт чернила 7.9
-     против прописной 9.0, отношение 0.877 при корпусе 0.974…1.041. Это
-     единственное место во всех пятнадцати ячейках, где значок отстал от
-     кегля, — замерено 106 035 раз. 16 даёт 1.003.
+  /* 16 rather than 14, though 14 stands on scale 14 too.
+     The cap height of --text-2xs stepped here and the icon did not: sizes of
+     11 → 11.5px round to 8 → 9 device pixels, and 14 gives ink of 7.9 against
+     a cap height of 9.0, a ratio of 0.877 against a body of 0.974…1.041. This
+     is the one place in all fifteen cells where the icon fell behind the type
+     — measured 106 035 times. 16 gives 1.003.
 
-     Лестница --size-icon-sm становится 14-16-16-16-18: плато на трёх
-     ступенях, и оно законно — шкала набрана целыми пикселями, соседние
-     ступени после округления совпадают. */
+     The --size-icon-sm ladder becomes 14-16-16-16-18: a plateau across three
+     steps, and it is legitimate — the scale is set in whole pixels, and
+     neighbouring steps coincide after rounding. */
   --size-icon-sm:  16px;
   --size-chevron:  11px;
   --size-tick:     3px;
@@ -1317,11 +1410,12 @@
   --size-gutter:   15px;
   --size-indent:   15px;
 
-  /* Всё, что размечено ТЕКСТОМ, обязано ехать вместе с кеглем — иначе
-     повторяется ровно та поломка, которой посвящён комментарий у --label-col:
-     подпись переросла колонку и порвала выравнивание всей формы. Плотность их
-     не трогает, потому что не трогает кегль; масштаб трогает по той же
-     логике, только с обратным знаком.                                      */
+  /* Everything measured out by TEXT has to travel with the type size —
+     otherwise exactly the breakage the comment at --label-col is about
+     repeats: a label outgrows its column and tears the alignment of the whole
+     form. Density does not touch these, because it does not touch the type
+     size; scale touches them by the same logic, only with the opposite
+     sign.                                                                  */
   --label-col:     112px;
   --aside-w:       244px;
   --col-min:       274px;
@@ -1333,7 +1427,7 @@
 [data-scale="16"] {
   --text-2xs: 0.78125rem;   /* 12.5 */
   --text-xs:  0.875rem;     /* 14 */
-  --text-sm:  1rem;         /* 16 — база интерфейса */
+  --text-sm:  1rem;         /* 16 — the interface base */
   --text-md:  1.15625rem;   /* 18.5 */
   --text-lg:  1.3125rem;    /* 21 */
   --text-xl:  1.625rem;     /* 26 */
@@ -1391,7 +1485,7 @@
 [data-scale="17"] {
   --text-2xs: 0.8125rem;    /* 13 */
   --text-xs:  0.9375rem;    /* 15 */
-  --text-sm:  1.0625rem;    /* 17 — база интерфейса */
+  --text-sm:  1.0625rem;    /* 17 — the interface base */
   --text-md:  1.21875rem;   /* 19.5 */
   --text-lg:  1.40625rem;   /* 22.5 */
   --text-xl:  1.75rem;      /* 28 */
@@ -1449,7 +1543,7 @@
 [data-scale="18"] {
   --text-2xs: 0.875rem;     /* 14 */
   --text-xs:  1rem;         /* 16 */
-  --text-sm:  1.125rem;     /* 18 — база интерфейса */
+  --text-sm:  1.125rem;     /* 18 — the interface base */
   --text-md:  1.3125rem;    /* 21 */
   --text-lg:  1.5rem;       /* 24 */
   --text-xl:  1.875rem;     /* 30 */
@@ -1504,15 +1598,17 @@
   --split-main:    38rem;
 }
 
-/* ── Двумерные ячейки ──────────────────────────────────────────────────────
+/* ── Two-dimensional cells ────────────────────────────────────────────────
 
-   Здесь стоит ровно то, что трогают ОБЕ оси: высоты, скругление контрола,
-   отступы и размеры глифов. Кегль, лестница радиусов и текстовые ширины в
-   ячейках отсутствуют намеренно — их двигает только масштаб, и повторять их
-   тут значило бы завести дубликат, который однажды разойдётся.
+   Here stands exactly what BOTH axes touch: heights, the rounding of a
+   control, paddings and glyph sizes. The type size, the radius ladder and the
+   text-driven widths are deliberately absent from the cells — only scale
+   moves those, and repeating them here would start a duplicate that would
+   diverge one day.
 
-   Скругление контрола записано ССЫЛКАМИ в лестницу, а не числами: лестница
-   уже отмасштабирована блоком выше, и ячейке остаётся выбрать ступень.     */
+   The rounding of a control is written as REFERENCES into the ladder rather
+   than as numbers: the ladder is already scaled by the block above, and it
+   remains for the cell to pick a step.                                     */
 
 [data-scale="15"][data-density="compact"],
 [data-scale="15"] [data-density="compact"] {
@@ -1693,8 +1789,9 @@
   --control-h-xs: 22px;
   --control-h-sm: 28px;
   --control-h-md: 34px;
-  /* 44, а не 42: при 42 значок рельса давал 32/42 = 0.762 при потолке 0.76.
-     Двигается высота, а не значок — значок держит отношение к кеглю. */
+   /* 44 rather than 42: at 42 the rail icon gives 32/42 = 0.762 against a
+     ceiling of 0.76. What moves is the height, not the icon — the icon holds
+     its ratio to the type size. */
   --control-h-lg: 44px;
 
   --radius-control-sm: var(--radius-xs);
@@ -1748,23 +1845,25 @@
   --size-indent:   21px;
 }
 
-/* ── Отступ контрола выводится из его высоты ────────────────────────────────
+/* ── A control's padding is derived from its height ────────────────────────
 
-   Правило стоит ЗДЕСЬ, а не в ярусе ролей, и это не вкус, а устройство
-   каскада. Значение пользовательского свойства подставляется там, где
-   свойство ОБЪЯВЛЕНО, и вниз идёт уже вычисленным. Объявленный в :root
-   calc(var(--control-h-md) * …) берёт высоту КОРНЯ и застывает: атрибут
-   плотности висит на панели или оболочке, то есть ниже, и до него очередь
-   не доходит. Проверено замером — отступ кнопки оставался 12px во всех трёх
-   режимах, хотя высота честно менялась 26→32→36.
+   The rule stands HERE rather than in the role tier, and that is the
+   arrangement of the cascade rather than taste. The value of a custom
+   property is substituted where the property is DECLARED, and travels
+   downwards already computed. A calc(var(--control-h-md) * …) declared in
+   :root takes the height of the ROOT and freezes: the density attribute hangs
+   on a panel or on the shell, that is lower, and its turn never comes.
+   Verified by measurement — a button's padding stayed 12px in all three
+   modes, though the height honestly changed 26→32→36.
 
-   Отсюда второй селектор — и третий: масштаб ставит высоты по той же схеме,
-   что плотность, поэтому элемент с [data-scale] обязан пересчитать отступ
-   так же. На элементе, несущем сам атрибут, --control-h-*
-   уже переопределён, и та же формула считается заново с его числами. Формула
-   при этом одна: дубликата, который однажды разойдётся, не появляется.
-   Вложенная плотность работает по той же причине — плотная панель внутри
-   просторной страницы пересчитает отступ по своей высоте.                  */
+   Hence the second selector — and the third: scale sets the heights by the
+   same scheme as density, so an element with [data-scale] has to recompute
+   the padding in the same way. On the element carrying the attribute itself
+   --control-h-* is already overridden, and the same formula is computed
+   afresh with its numbers. The formula meanwhile is one: no duplicate that
+   would diverge one day appears.
+   Nested density works for the same reason — a compact panel inside a
+   comfortable page recomputes the padding from its own height.            */
 
 :where(:root), [data-density], [data-scale] {
   --control-pad-sm: calc(var(--control-h-sm) * var(--control-ratio-sm));
