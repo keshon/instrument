@@ -2,7 +2,6 @@
 title: Поповер
 group: Оверлеи
 layout: component
-shape: 2
 source: src/overlay.css
 api:
   - { name: "inst-popover", kind: "класс", doc: "Плавающая поверхность: рамка, радиус, фон, тень, внутренний отступ" }

@@ -2,7 +2,6 @@
 title: Шаги мастера
 group: Навигация
 layout: component
-shape: 2
 source: src/layout.css
 api:
   - { name: "inst-stepper", kind: "класс", doc: "Список шагов. Ставится на `<ol>`" }

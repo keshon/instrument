@@ -2,7 +2,6 @@
 title: Секция
 group: Раскладка
 layout: component
-shape: 2
 source: src/layout.css
 api:
   - { name: "inst-section", kind: "класс", doc: "Колонка с зазором `--gap-row`" }

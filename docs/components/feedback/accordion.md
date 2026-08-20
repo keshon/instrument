@@ -2,7 +2,6 @@
 title: Аккордеон
 group: Обратная связь
 layout: component
-shape: 2
 source: src/feedback.css
 api:
   - { name: "inst-accordion", kind: "класс", doc: "Контейнер. Колонка секций с зазором `--space-1`" }

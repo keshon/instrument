@@ -2,7 +2,6 @@
 title: Баннер
 group: Обратная связь
 layout: component
-shape: 2
 source: src/feedback.css
 js: Закрытие баннера — слой приложения. Крестика у баннера нет
 api:

@@ -2,7 +2,6 @@
 title: Шапка экрана
 group: Раскладка
 layout: component
-shape: 2
 source: src/layout.css
 api:
   - { name: "inst-page-header", kind: "класс", doc: "Контейнер. Ряд с переносом, выравнивание по верху" }

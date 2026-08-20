@@ -9,42 +9,21 @@ import (
 	"instrument/site/internal/i18n"
 )
 
-// What a page OWES, per shape of the contract.
+// What a page OWES.
 //
-// Two dictionaries live side by side on purpose, and the reason is the same one
-// the migration zones in cmd/lang are built on: switching the single dictionary
-// would turn all fifty pages red in one commit, and a gate raised red lives
-// with its check disabled. A page declares its shape and is judged by it; the
-// last page to switch takes the old entry with it, and that collapse is the
-// mark of completion for the step.
+// There was a second entry here while the pages migrated: a page declared its
+// shape and was judged by it, because judging a page written under the old
+// contract by the new one would fail it for something nobody asked of it. The
+// last page took that entry with it, and the collapse is the mark of
+// completion for the step — the same way the `src` zone closed in cmd/lang.
 //
-// Shape 2 asks for less because the prose leaves the component page altogether
-// (docs/internal/DOCS-SHAPE.md): «Правила» and «Когда использовать» move to
-// foundations and to the section index, «Доступность» merges into the markup
-// contract, and «Связанное» is derived from the registry rather than written.
-var requiredByShape = map[int][]string{
-	1: {"usage", "a11y", "api", "related"},
-	2: {"contract", "api"},
-}
+// Shape 2 asks for little because the prose left the component page altogether
+// (docs/internal/DOCS-SHAPE.md): the comparison of neighbours moved to the
+// section index, accessibility merged into the markup contract, and the list of
+// neighbours is derived from the registry rather than written.
+var required = []string{"contract", "api"}
 
-// Sections that shape 2 does not merely stop demanding but forbids: while they
-// are still allowed, a half-migrated page passes both dictionaries and nobody
-// can tell which one it follows.
-//
-// The list holds only what has somewhere to go TODAY. Three more sections are
-// meant to leave and cannot yet, and saying so here is cheaper than discovering
-// it while migrating a page:
-//
-//	related  — meant to be derived from the registry, but a registry entry
-//	           carries one field, `axes`. There are no relations in it to
-//	           derive from; that line of DOCS-SHAPE.md was written on an
-//	           assumption rather than on a reading.
-//	rules    — belongs in foundations, and which foundation page takes which
-//	           rule is not decided per component.
-//
-// Forbidding a section whose destination does not exist would force the prose
-// to be deleted rather than moved, and deleted reasoning does not come back.
-var goneInShape2 = map[string]string{
+var gone = map[string]string{
 	"usage": "the markup moved into the demo frame and the code panel",
 	"a11y":  "merged into the markup contract",
 	// A page cannot migrate before its section has an index, and that is the
@@ -102,18 +81,15 @@ func Contract(pages []*content.Page) (errs, warns []string) {
 			seen[s.ID] = true
 		}
 
-		for _, id := range requiredByShape[p.Shape] {
+		for _, id := range required {
 			if !seen[id] {
-				out = append(out, fmt.Sprintf("%s  нет обязательного раздела %q (форма %d)",
-					p.Route, id, p.Shape))
+				out = append(out, fmt.Sprintf("%s  нет обязательного раздела %q", p.Route, id))
 			}
 		}
-		if p.Shape >= 2 {
-			for _, s := range p.Sections {
-				if why, gone := goneInShape2[s.ID]; gone {
-					out = append(out, fmt.Sprintf(
-						"%s  раздел %q не живёт в форме 2: %s", p.Route, s.ID, why))
-				}
+		for _, s := range p.Sections {
+			if why, gone := gone[s.ID]; gone {
+				out = append(out, fmt.Sprintf(
+					"%s  раздел %q больше не живёт на странице: %s", p.Route, s.ID, why))
 			}
 		}
 		if !p.Hero {

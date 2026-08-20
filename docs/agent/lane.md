@@ -2,7 +2,6 @@
 title: Дорожки прогонов
 group: Агентный слой
 layout: component
-shape: 2
 source: src/agent.css
 api:
   - { name: "inst-lanes", kind: "класс", doc: "Набор дорожек" }

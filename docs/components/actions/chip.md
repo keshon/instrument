@@ -2,7 +2,6 @@
 title: Чип
 group: Действия
 layout: component
-shape: 2
 source: src/actions.css
 js: Переключение, стрелки и бегущий tabindex — делает `instrument.js`
 api:

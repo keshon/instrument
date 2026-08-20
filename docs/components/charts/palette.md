@@ -2,7 +2,6 @@
 title: Категориальная палитра
 group: Графики
 layout: component
-shape: 2
 source: src/tokens.css
 api:
   - { name: "--chart-1", kind: "токен", doc: "Тон ряда №1. Порядок — часть контракта: ряд №1 всегда этот тон" }

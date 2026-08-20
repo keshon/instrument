@@ -2,7 +2,6 @@
 title: Таблица
 group: Отображение данных
 layout: component
-shape: 2
 source: src/table.css
 js: Сортировка и действия строки. «Выбрать всё» делает `instrument.js`
 api:

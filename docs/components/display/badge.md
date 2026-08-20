@@ -2,7 +2,6 @@
 title: Бейдж
 group: Отображение данных
 layout: component
-shape: 2
 source: src/status.css
 api:
   - { name: "inst-badge", kind: "класс", doc: "Базовый" }

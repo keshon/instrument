@@ -2,7 +2,6 @@
 title: Сноска
 group: Обратная связь
 layout: component
-shape: 2
 source: src/feedback.css
 api:
   - { name: "inst-note", kind: "класс", doc: "Всё. У сноски нет частей: заголовка и действий у неё не бывает по определению" }

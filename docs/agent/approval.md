@@ -2,7 +2,6 @@
 title: Запрос подтверждения
 group: Агентный слой
 layout: component
-shape: 2
 source: src/agent.css
 js: Отправка решения и перевод блока в решённое состояние — слой приложения
 api:

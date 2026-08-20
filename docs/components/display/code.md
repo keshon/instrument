@@ -2,7 +2,6 @@
 title: Код и копируемое значение
 group: Отображение данных
 layout: component
-shape: 2
 source: src/agent.css
 js: Копирование в буфер — делает `instrument.js`
 api:

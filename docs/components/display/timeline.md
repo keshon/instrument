@@ -2,7 +2,6 @@
 title: Лента событий
 group: Отображение данных
 layout: component
-shape: 2
 source: src/data.css
 api:
   - { name: "inst-timeline", kind: "класс", doc: "Контейнер" }

@@ -2,7 +2,6 @@
 title: Кольцо
 group: Графики
 layout: component
-shape: 2
 source: src/data.css
 api:
   - { name: "inst-ring-wrap", kind: "класс", doc: "Обёртка. Позиционирует подпись" }

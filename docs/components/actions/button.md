@@ -2,7 +2,6 @@
 title: Кнопка
 group: Действия
 layout: component
-shape: 2
 source: src/actions.css
 api:
   - { name: "inst-btn",          kind: "класс",       doc: "Базовый. На `<button>` или `<a>`. Обязателен всегда" }

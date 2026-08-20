@@ -2,7 +2,6 @@
 title: Мера
 group: Графики
 layout: component
-shape: 2
 source: src/status.css
 api:
   - { name: "inst-meter", kind: "класс", doc: "Дорожка. Носитель роли и значений" }

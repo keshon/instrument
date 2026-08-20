@@ -2,7 +2,6 @@
 title: Легенда
 group: Графики
 layout: component
-shape: 2
 source: src/data.css
 api:
   - { name: "inst-legend", kind: "класс", doc: "Контейнер-список" }

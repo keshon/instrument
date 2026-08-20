@@ -2,7 +2,6 @@
 title: Контейнер
 group: Раскладка
 layout: component
-shape: 2
 source: src/layout.css
 api:
   - { name: "inst-container", kind: "класс", doc: "Ширина 100%, потолок `--container-max`, центрирование, боковые поля `--pad-panel`" }

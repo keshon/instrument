@@ -2,7 +2,6 @@
 title: Меню
 group: Оверлеи
 layout: component
-shape: 2
 source: src/overlay.css
 js: Стрелки и бегущий tabindex делает `instrument.js`. Открытие и закрытие берёт на себя Popover API
 api:

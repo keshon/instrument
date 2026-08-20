@@ -2,7 +2,6 @@
 title: Тултип
 group: Оверлеи
 layout: component
-shape: 2
 source: src/overlay.css
 api:
   - { name: "inst-tooltip", kind: "класс", doc: "Обёртка триггера. `position: relative`, отсюда считается положение" }

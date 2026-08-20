@@ -2,7 +2,6 @@
 title: Сегментированный контрол
 group: Действия
 layout: component
-shape: 2
 source: src/actions.css
 js: Выбор, стрелки и бегущий tabindex — делает `instrument.js`
 api:

@@ -2,7 +2,6 @@
 title: Вставки
 group: Ввод
 layout: component
-shape: 2
 source: src/rows.css
 js: Вставка в поле по нажатию — делает `instrument.js`
 api:

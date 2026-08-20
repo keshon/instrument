@@ -2,7 +2,6 @@
 title: Постраничная навигация
 group: Навигация
 layout: component
-shape: 2
 source: src/layout.css
 api:
   - { name: "inst-pager", kind: "класс", doc: "Список страниц. Ставится на `<ol>`, переносится по ширине" }

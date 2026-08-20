@@ -2,7 +2,6 @@
 title: Текстовое поле
 group: Ввод
 layout: component
-shape: 2
 source: src/forms.css
 api:
   - { name: "inst-input", kind: "класс", doc: "Однострочное поле" }

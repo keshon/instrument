@@ -2,7 +2,6 @@
 title: Скелетон
 group: Обратная связь
 layout: component
-shape: 2
 source: src/agent.css
 api:
   - { name: "inst-skeleton", kind: "класс", doc: "Базовый. Обязателен всегда" }

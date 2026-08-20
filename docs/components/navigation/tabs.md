@@ -2,7 +2,6 @@
 title: Вкладки
 group: Навигация
 layout: component
-shape: 2
 source: src/layout.css
 js: Переключение панели. Стрелки и бегущий tabindex делает `instrument.js`
 api:

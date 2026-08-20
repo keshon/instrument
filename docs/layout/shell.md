@@ -2,7 +2,6 @@
 title: Оболочка приложения
 group: Раскладка
 layout: component
-shape: 2
 source: src/layout.css
 api:
   - { name: "inst-shell", kind: "класс", doc: "Грид на всю высоту окна (`100dvh`)" }

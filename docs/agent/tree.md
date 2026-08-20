@@ -2,7 +2,6 @@
 title: Дерево
 group: Агентный слой
 layout: component
-shape: 2
 source: src/text.css
 js: Ленивая подгрузка детей — слой приложения. Стрелки, раскрытие и бегущий tabindex делает `instrument.js`
 api:

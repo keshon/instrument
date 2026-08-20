@@ -2,7 +2,6 @@
 title: Навигация
 group: Навигация
 layout: component
-shape: 2
 source: src/layout.css
 api:
   - { name: "inst-nav", kind: "класс", doc: "Контейнер списка. Колонка с зазором `--space-1`" }

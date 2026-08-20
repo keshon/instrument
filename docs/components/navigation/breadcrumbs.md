@@ -2,7 +2,6 @@
 title: Крошки
 group: Навигация
 layout: component
-shape: 2
 source: src/layout.css
 api:
   - { name: "inst-crumbs", kind: "класс", doc: "Список пути. Ставится на `<ol>`" }

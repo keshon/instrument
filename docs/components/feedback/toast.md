@@ -2,7 +2,6 @@
 title: Уведомление
 group: Обратная связь
 layout: component
-shape: 2
 source: src/overlay.css
 js: "Очередь, таймер и пауза под курсором — на instrument.js. Вид, появление и уход — целиком CSS"
 api:

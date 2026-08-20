@@ -2,7 +2,6 @@
 title: Тег
 group: Отображение данных
 layout: component
-shape: 2
 source: src/data.css
 js: Снятие тега — делает `instrument.js`
 api:

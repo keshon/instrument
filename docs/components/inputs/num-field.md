@@ -2,7 +2,6 @@
 title: Числовое поле инспектора
 group: Ввод
 layout: component
-shape: 2
 source: src/table.css
 js: Перетаскивание подписи оси — делает `instrument.js`
 api:

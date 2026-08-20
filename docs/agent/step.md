@@ -2,7 +2,6 @@
 title: Шаг — вызов инструмента
 group: Агентный слой
 layout: component
-shape: 2
 source: src/agent.css
 api:
   - { name: "inst-step", kind: "класс", doc: "Шаг, на `<details>`" }

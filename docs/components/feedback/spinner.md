@@ -2,7 +2,6 @@
 title: Спиннер
 group: Обратная связь
 layout: component
-shape: 2
 source: src/status.css
 api:
   - { name: "inst-spinner", kind: "класс", doc: "Базовый. Ставится на `<svg>`" }

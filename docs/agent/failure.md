@@ -2,7 +2,6 @@
 title: Блок отказа
 group: Агентный слой
 layout: component
-shape: 2
 source: src/agent.css
 api:
   - { name: "inst-failure", kind: "класс", doc: "Блок" }

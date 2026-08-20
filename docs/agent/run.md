@@ -2,7 +2,6 @@
 title: Прогон
 group: Агентный слой
 layout: component
-shape: 2
 source: src/agent.css
 js: Живые числа и остановка — слой приложения. Свёртка фаз работает без скрипта
 api:

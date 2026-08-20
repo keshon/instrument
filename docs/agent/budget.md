@@ -2,7 +2,6 @@
 title: Бюджет
 group: Агентный слой
 layout: component
-shape: 2
 source: src/agent.css
 api:
   - { name: "inst-budget", kind: "класс", doc: "Контейнер" }

@@ -2,7 +2,6 @@
 title: Метрика
 group: Отображение данных
 layout: component
-shape: 2
 source: src/surfaces.css
 api:
   - { name: "inst-metric", kind: "класс", doc: "Одна метрика" }

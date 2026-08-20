@@ -2,7 +2,6 @@
 title: Аватар
 group: Отображение данных
 layout: component
-shape: 2
 source: src/data.css
 api:
   - { name: "inst-avatar", kind: "класс", doc: "Один аватар. Размер `--control-h-md`" }

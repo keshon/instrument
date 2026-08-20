@@ -2,7 +2,6 @@
 title: Изменение файла
 group: Отображение данных
 layout: component
-shape: 2
 source: src/data.css
 api:
   - { name: "inst-change", kind: "класс", doc: "Глиф изменения. Контур со знаком внутри" }

@@ -2,7 +2,6 @@
 title: Спарклайн
 group: Графики
 layout: component
-shape: 2
 source: src/data.css
 api:
   - { name: "inst-sparkline", kind: "класс", doc: "`<svg>`. Обязателен: остальные классы работают только внутри него" }

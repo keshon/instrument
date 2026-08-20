@@ -2,7 +2,6 @@
 title: Модалка
 group: Оверлеи
 layout: component
-shape: 2
 source: src/overlay.css
 js: "Открытие — одна строка: dlg.showModal(). Закрытие, подложка, блокировка прокрутки фона и возврат фокуса скрипта не требуют"
 api:

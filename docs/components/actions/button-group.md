@@ -2,7 +2,6 @@
 title: Группа кнопок
 group: Действия
 layout: component
-shape: 2
 source: src/actions.css
 api:
   - { name: "inst-btn-group", kind: "класс", doc: "Контейнер. Внутри — только `inst-btn`" }

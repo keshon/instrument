@@ -2,7 +2,6 @@
 title: Форма
 group: Ввод
 layout: component
-shape: 2
 source: src/forms.css
 api:
   - { name: "inst-form", kind: "класс", doc: "Форма: вертикальный поток с шагом `--pad-panel`" }

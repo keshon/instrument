@@ -2,7 +2,6 @@
 title: Переключатели
 group: Ввод
 layout: component
-shape: 2
 source: src/forms.css
 api:
   - { name: "inst-checkbox", kind: "класс", doc: "Обёртка-подпись чекбокса" }

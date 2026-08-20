@@ -345,39 +345,21 @@ var mutations = []mutation{
 		"func main() {",
 		"// Раньше здесь стоял отдельный порог для крупного кегля.\nfunc main() {",
 		"tools/** entered the gate's zone; without a mutation that rested on nothing"},
-	// Two page-contract dictionaries live side by side while the pages migrate
-	// one at a time, and the risk of that arrangement is specific: a page that
-	// declares the new shape while keeping the old sections satisfies neither
-	// dictionary and nobody notices, because the gate that used to judge it now
-	// judges something else.
+	// The page contract used to have two dictionaries at once while the pages
+	// migrated one at a time; a mutation stood here that declared the new shape
+	// on a page written under the old one. Both are gone: the last page took the
+	// second dictionary with it, and a mutation testing a mechanism that no
+	// longer exists is a green line about nothing.
 	//
-	// The mutation declares shape 2 on a page written under shape 1 and demands
-	// that the gate say so. It fires on both halves of the new rule at once —
-	// the missing markup contract and the sections shape 2 no longer keeps —
-	// and that is honest while no page has migrated yet. The half that
-	// separates them lands together with the first migrated page.
-	// The page has to be one still in shape 1, and every component page has
-	// moved. What is left is `foundations`: eleven pages of a different kind,
-	// with no section index to send their "when to use" to, and it is not
-	// decided yet whether they take the component contract at all.
-	//
-	// That is also why the two dictionaries have not collapsed: while a
-	// population remains in shape 1, deleting the old entry would judge those
-	// eleven by a contract nobody wrote for them.
-	{"a page declares shape 2 without moving to it", "site", "docs/foundations/colors.md",
-		"layout: foundation\nsource: src/tokens.css",
-		"layout: foundation\nshape: 2\nsource: src/tokens.css",
-		"a half-migrated page passes neither dictionary, and the gate has to name which one it fails"},
-	// The two halves of the new rule, each on its own, now that a migrated page
-	// exists to break. The mutation above fires on both at once and cannot tell
-	// them apart; these two can, and a rule whose halves are never seen
-	// separately is a rule nobody has checked.
-	{"a shape 2 page lost its markup contract", "site", "docs/components/actions/chip.md",
+	// What remains is the contract itself, and its two halves are checked apart.
+	// A rule whose halves are never seen separately is a rule nobody has
+	// checked: the first mutation would fire on either of them.
+	{"a page lost its markup contract", "site", "docs/components/actions/chip.md",
 		"## Контракт", "### Контракт",
-		"the contract is the section shape 2 exists for; without it the page promises a role and explains nothing"},
-	{"a shape 2 page kept a section of the old shape", "site", "docs/components/actions/chip.md",
+		"the contract is the section the whole shape exists for; without it the page promises a role and explains nothing"},
+	{"a page kept a section the shape no longer holds", "site", "docs/components/actions/chip.md",
 		"## Состояния", "## Использование",
-		"while both shapes are allowed on one page, nobody can tell which one it follows"},
+		"a section that left has somewhere to be, and two homes for one thing drift apart"},
 }
 
 func main() {

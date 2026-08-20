@@ -2,7 +2,6 @@
 title: Выбираемая карточка
 group: Ввод
 layout: component
-shape: 2
 source: src/forms.css
 api:
   - { name: "inst-choice-card", kind: "класс", doc: "`<label>`-контейнер. Сетка, рамка, состояния" }

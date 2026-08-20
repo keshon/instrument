@@ -2,7 +2,6 @@
 title: Поиск
 group: Ввод
 layout: component
-shape: 2
 source: src/forms.css
 js-optional: Живая фильтрация. Поле и очистка работают без скрипта
 api:

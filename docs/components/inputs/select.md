@@ -2,7 +2,6 @@
 title: Селект
 group: Ввод
 layout: component
-shape: 2
 source: src/forms.css
 js-optional: Свой список вместо нативного. Нативный работает без скрипта
 api:

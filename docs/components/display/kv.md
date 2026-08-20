@@ -2,7 +2,6 @@
 title: Список свойств
 group: Отображение данных
 layout: component
-shape: 2
 source: src/table.css
 api:
   - { name: "inst-kv", kind: "класс", doc: "Список только для чтения, на `<dl>`" }

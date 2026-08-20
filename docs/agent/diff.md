@@ -2,7 +2,6 @@
 title: Диф
 group: Агентный слой
 layout: component
-shape: 2
 source: src/agent.css
 api:
   - { name: "inst-diff", kind: "класс", doc: "Контейнер" }

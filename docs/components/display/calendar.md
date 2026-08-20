@@ -2,7 +2,6 @@
 title: Календарь
 group: Отображение данных
 layout: component
-shape: 2
 source: src/data.css
 js: Выбор даты и переключение месяцев — слой приложения
 api:

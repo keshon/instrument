@@ -34,7 +34,6 @@ type Page struct {
 	APIFrom    string
 	Icon       string
 	Layout     string
-	Shape      int
 	HTML       string
 	TOC        []Heading
 	Sections   []Section
@@ -232,31 +231,8 @@ type frontmatter struct {
 	API      []APIRow `yaml:"api"`
 	APIFrom  string   `yaml:"api-from"`
 
-	// Shape is the version of the page contract this page follows. Empty means
-	// 1: the dictionary the reference was written on. 2 is the shape from
-	// docs/internal/DOCS-SHAPE.md.
-	//
-	// It is a field of its own rather than a second value of `layout` because
-	// the two answer different questions: layout says how the page is RENDERED,
-	// shape says which sections it OWES. During the move one shape is rendered
-	// by both layouts, and one layout serves both shapes.
-	Shape int `yaml:"shape"`
-
 	TitleEN string `yaml:"title-en"`
 	GroupEN string `yaml:"group-en"`
-}
-
-// shapeOf normalises the declared page shape.
-//
-// The default is 1 rather than "the newest": a page that says nothing keeps
-// the contract it was written under. Otherwise switching the dictionary would
-// turn all fifty pages red in one commit, and a gate raised red lives with its
-// check disabled — the same rule the migration zones in cmd/lang are built on.
-func shapeOf(v int) int {
-	if v == 0 {
-		return 1
-	}
-	return v
 }
 
 var fmRe = regexp.MustCompile(`(?s)\A---\r?\n(.*?)\r?\n---\r?\n`)
@@ -358,7 +334,6 @@ func parse(fsPath, rel string, lang i18n.Lang, translated bool) (*Page, error) {
 		JSOpt:      meta.JSOpt,
 		Splash:     meta.Template == "splash",
 		Layout:     meta.Layout,
-		Shape:      shapeOf(meta.Shape),
 		API:        meta.API,
 		APIFrom:    meta.APIFrom,
 		Lang:       lang,

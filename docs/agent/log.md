@@ -2,7 +2,6 @@
 title: Лог
 group: Агентный слой
 layout: component
-shape: 2
 source: src/text.css
 js: Копирование делает `instrument.js`. Прокрутка за хвостом и виртуализация — слой приложения
 api:

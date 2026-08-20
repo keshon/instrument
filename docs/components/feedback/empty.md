@@ -2,7 +2,6 @@
 title: Пустое состояние
 group: Обратная связь
 layout: component
-shape: 2
 source: src/feedback.css
 api:
   - { name: "inst-empty", kind: "класс", doc: "Контейнер, центрирует содержимое" }

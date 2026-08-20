@@ -2,7 +2,6 @@
 title: Строка состояния
 group: Раскладка
 layout: component
-shape: 2
 source: src/layout.css
 api:
   - { name: "inst-statusbar", kind: "класс", doc: "Полоса у нижнего края. Высота в одну строку" }

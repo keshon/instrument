@@ -2,7 +2,6 @@
 title: Строка очереди
 group: Агентный слой
 layout: component
-shape: 2
 source: src/rows.css
 js: Порядок и состояния задач — слой приложения. Клавиатуру и выбор строки делает `instrument.js`
 api:
