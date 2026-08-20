@@ -126,16 +126,29 @@ func Comments(files map[string]string) []string {
 	return problems
 }
 
+// comments вынимает из исходника то, что человек написал ЧЕЛОВЕКУ.
+//
+// Строковые литералы при этом пропускаются, и это не педантизм. Разбор по
+// первому `//` в строке считает комментарием всё, что стоит за кавычками, —
+// а мутационный стенд хранит запрещённые фразы ДАННЫМИ: у него это текст
+// мутации, а не пояснение к соседней функции. Без такого различения стенд
+// роняет сборку сайта собственным содержимым, и роняет заслуженно: с точки
+// зрения разбора он неотличим от нарушителя.
+//
+// Разбор построчный: многострочный сырой литерал Go он не отследит. Цена
+// ошибки при этом односторонняя — пропущенный комментарий, а не выдуманный,
+// — и это правильная сторона: гейт, который ругается на то, чего человек не
+// писал, отучают читать первым.
 func comments(src string) string {
 	var b strings.Builder
 	for _, line := range strings.Split(src, "\n") {
-		if i := strings.Index(line, "//"); i >= 0 {
+		if i := lineComment(line); i >= 0 {
 			b.WriteString(line[i+2:])
 			b.WriteByte('\n')
 		}
 	}
 	for {
-		i := strings.Index(src, "/*")
+		i := blockOpen(src)
 		if i < 0 {
 			return b.String()
 		}
@@ -149,6 +162,71 @@ func comments(src string) string {
 		b.WriteByte('\n')
 		src = src[j+2:]
 	}
+}
+
+// lineComment — позиция `//`, начинающего комментарий, или -1.
+func lineComment(line string) int {
+	return outsideQuotes(line, "//", false)
+}
+
+// blockOpen — позиция `/*`, начинающего комментарий, или -1.
+func blockOpen(src string) int {
+	return outsideQuotes(src, "/*", true)
+}
+
+// outsideQuotes ищет первое вхождение want вне кавычек. Кавычка, не закрытая
+// до конца строки, кавычкой не считается: это апостроф в прозе, а не литерал.
+func outsideQuotes(src, want string, multiline bool) int {
+	var quote byte
+	for i := 0; i < len(src); i++ {
+		c := src[i]
+		if c == '\n' {
+			if !multiline {
+				break
+			}
+			quote = 0
+			continue
+		}
+		if quote != 0 {
+			if c == '\\' {
+				i++
+				continue
+			}
+			if c == quote {
+				quote = 0
+			}
+			continue
+		}
+		if c == '"' || c == '\'' || c == '`' {
+			// Одиночная кавычка без пары до конца строки — апостроф.
+			if !closes(src[i+1:], c) {
+				continue
+			}
+			quote = c
+			continue
+		}
+		if strings.HasPrefix(src[i:], want) {
+			return i
+		}
+	}
+	return -1
+}
+
+// closes отвечает, встречается ли кавычка ещё раз до конца строки.
+func closes(rest string, q byte) bool {
+	for i := 0; i < len(rest); i++ {
+		if rest[i] == '\n' {
+			return false
+		}
+		if rest[i] == '\\' {
+			i++
+			continue
+		}
+		if rest[i] == q {
+			return true
+		}
+	}
+	return false
 }
 
 func stripComments(css string) string {

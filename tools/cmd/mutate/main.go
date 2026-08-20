@@ -36,23 +36,40 @@ import (
 )
 
 // Гейт: имя, пакет и то, как ему объяснить, где лежит дерево.
+//
+// mod — модуль, из которого гейт собирается; пусто значит tools. perRun —
+// собирать заново на КАЖДУЮ мутацию, а не один раз в начале. Второе нужно
+// ровно одному гейту: сборка сайта носит стили и шаблоны внутри себя через
+// go:embed, и мутация в них видна только пересобранному двоичному файлу.
+// Собирать так всех значило бы платить сборкой за каждую из сорока четырёх
+// мутаций ради одной.
 type gate struct {
-	pkg  string
-	args func(tree string) []string
+	pkg    string
+	mod    string
+	perRun bool
+	args   func(tree string) []string
 }
 
 var gates = map[string]gate{
-	"contrast":   {"./cmd/contrast", func(t string) []string { return []string{"-tokens", t + "/src/tokens.css"} }},
-	"targets":    {"./cmd/targets", func(t string) []string { return []string{"-tokens", t + "/src/tokens.css"} }},
-	"proportion": {"./cmd/proportion", func(t string) []string { return []string{"-tokens", t + "/src/tokens.css"} }},
-	"dist":       {"./cmd/dist", func(t string) []string { return []string{"-src", t + "/src", "-out", t + "/dist"} }},
-	"docscheck": {"./cmd/docscheck", func(t string) []string {
+	"contrast":   {"./cmd/contrast", "", false, func(t string) []string { return []string{"-tokens", t + "/src/tokens.css"} }},
+	"targets":    {"./cmd/targets", "", false, func(t string) []string { return []string{"-tokens", t + "/src/tokens.css"} }},
+	"proportion": {"./cmd/proportion", "", false, func(t string) []string { return []string{"-tokens", t + "/src/tokens.css"} }},
+	"dist":       {"./cmd/dist", "", false, func(t string) []string { return []string{"-src", t + "/src", "-out", t + "/dist"} }},
+	"docscheck": {"./cmd/docscheck", "", false, func(t string) []string {
 		return []string{"-kit", t + "/src", "-docs", t + "/docs", "-stage", t + "/stage.css"}
 	}},
-	"registry": {"./cmd/registry", func(t string) []string {
+	"registry": {"./cmd/registry", "", false, func(t string) []string {
 		return []string{"-src", t + "/src", "-docs", t + "/docs", "-registry", t + "/components.json"}
 	}},
-	"lang": {"./cmd/lang", func(t string) []string { return []string{"-root", t} }},
+	"lang": {"./cmd/lang", "", false, func(t string) []string { return []string{"-root", t} }},
+	// Сборка сайта — самый крупный гейт по объёму замера и до сих пор
+	// единственный, ни одной мутации на который не стояло. Он собирается из
+	// СКОПИРОВАННОГО дерева и запускается в нём же: пути internal, cmd и
+	// tools он ищет от своего каталога, а стили держит внутри двоичного
+	// файла — снаружи мутировать в нём нечего.
+	"site": {"./cmd/site", "site", true, func(t string) []string {
+		return []string{"-docs", "../docs", "-kit", "../src", "-assets", "../assets", "-out", t + "/site-out"}
+	}},
 }
 
 // mutation — одна поломка. from обязан существовать в файле: мутация, которая
@@ -252,11 +269,43 @@ var mutations = []mutation{
 		"",
 		"---\ntitle: Segmented\nsource: src/actions.css\n---\n\n```html preview\n<div class=\"inst-segmented\" role=\"radiogroup\" aria-label=\"View\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"true\" tabindex=\"0\">List</button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Grid</button>\n</div>\n```\n",
 		"перевод пишется заново и ошибается чаще оригинала, а проверялся только оригинал"},
+
+	// ── сборка сайта ───────────────────────────────────────────────────────
+	//
+	// Самый крупный гейт по объёму замера: контракт страниц, ссылки, спрайт,
+	// токены сайта против кита и правило комментария на весь репозиторий.
+	// Ни одной мутации на него не стояло, то есть про его зелёный цвет было
+	// известно ровно столько же, сколько про любой непроверенный.
+	{"токен сайта, которого нет в ките", "site", "site/internal/render/assets/docs.css",
+		".site-logo:hover { background: var(--surface-hover); }",
+		".site-logo:hover { background: var(--surface-nonesuch); }",
+		"леса сайта берут у кита то, чего кит не обещал"},
+	{"сырой цвет в лесах сайта", "site", "site/internal/render/assets/docs.css",
+		".site-logo:hover { background: var(--surface-hover); }",
+		".site-logo:hover { background: #f3f3f3; }",
+		"число вместо семантики — захардкоженная светлая тема на сайте кита"},
+	{"комментарий-летопись в ките", "site", "src/actions.css",
+		".inst-btn {",
+		"/* Раньше здесь стоял другой радиус. */\n.inst-btn {",
+		"история правок вместо «почему так сейчас»"},
+	{"комментарий-летопись в скрипте", "site", "src/kit.js",
+		"function rovingOwned(group) {",
+		"// Раньше здесь стоял флаг на самом пункте.\nfunction rovingOwned(group) {",
+		"зона гейта — весь репозиторий, а не только CSS"},
+	{"ранний */ внутри пояснения", "site", "src/status.css",
+		".inst-dot {",
+		"/* Полоса 1.20*/1.34 задаёт вид. */\n.inst-dot {",
+		"комментарий закрывается раньше времени и съедает следующее правило"},
+	{"комментарий-летопись в инструментах", "site", "tools/cmd/contrast/main.go",
+		"func main() {",
+		"// Раньше здесь стоял отдельный порог для крупного кегля.\nfunc main() {",
+		"tools/** вошли в зону гейта — Д4; без мутации это держалось ни на чём"},
 }
 
 func main() {
 	verbose := flag.Bool("v", false, "показать вывод упавшего гейта")
 	only := flag.String("only", "", "только мутации одного гейта")
+	keep := flag.Bool("keep", false, "не удалять дерево пропущенной мутации")
 	root := flag.String("root", "..", "корень репозитория")
 	flag.Parse()
 
@@ -271,20 +320,44 @@ func main() {
 
 	fmt.Println("сборка гейтов…")
 	bin := map[string]string{}
-	for name, g := range gates {
+	build := func(name, root string) string {
+		g := gates[name]
+		mod := g.mod
+		if mod == "" {
+			mod = "tools"
+		}
 		out := filepath.Join(binDir, name+exeSuffix())
 		cmd := exec.Command("go", "build", "-o", out, g.pkg)
-		cmd.Dir = filepath.Join(repo, "tools")
+		cmd.Dir = filepath.Join(root, mod)
 		if b, err := cmd.CombinedOutput(); err != nil {
 			fmt.Fprintf(os.Stderr, "не собрать %s: %v\n%s", name, err, b)
 			os.Exit(1)
 		}
-		bin[name] = out
+		return out
+	}
+	for name, g := range gates {
+		if g.perRun {
+			continue
+		}
+		bin[name] = build(name, repo)
 	}
 
 	run := func(name, tree string) (bool, string) {
-		cmd := exec.Command(bin[name], gates[name].args(tree)...)
-		cmd.Dir = filepath.Join(repo, "tools")
+		g := gates[name]
+		exe := bin[name]
+		if g.perRun {
+			exe = build(name, tree)
+		}
+		cmd := exec.Command(exe, g.args(tree)...)
+		// Рабочий каталог — модуль гейта В КОПИИ, если модуль назван.
+		// Гейт сайта ищет src, docs и tools от своего каталога: запущенный
+		// из репозитория, он честно проверит репозиторий и не заметит
+		// мутации, а стенд зачтёт это как «инвариант не охраняется».
+		if g.mod != "" {
+			cmd.Dir = filepath.Join(tree, g.mod)
+		} else {
+			cmd.Dir = filepath.Join(repo, "tools")
+		}
 		b, err := cmd.CombinedOutput()
 		return err == nil, string(b)
 	}
@@ -337,13 +410,26 @@ func main() {
 		}
 
 		ok, out := run(m.gate, tree)
-		os.RemoveAll(tree)
 
 		pad := strings.Repeat(" ", width-len([]rune(m.name)))
 		if ok {
 			missed++
 			fmt.Printf("  %s%s  ✗ ПРОПУЩЕНА  гейтом %s\n", m.name, pad, m.gate)
 			fmt.Printf("      %s\n", m.why)
+			// Вывод ЗЕЛЁНОГО гейта показывается наравне с выводом красного:
+			// на вопрос «почему не поймал» отвечают его же слова, а молчание
+			// на этом месте отправляет разбираться вслепую.
+			if *verbose {
+				for _, l := range strings.Split(strings.TrimSpace(out), "\n") {
+					fmt.Printf("      %s\n", l)
+				}
+			}
+			// Дерево остаётся по -keep. Пропущенная мутация — это вопрос
+			// «что гейт видел», и ответить на него может только само дерево.
+			if *keep {
+				fmt.Printf("      дерево: %s\n", tree)
+				continue
+			}
 		} else {
 			fmt.Printf("  %s%s  · поймана   %s\n", m.name, pad, m.gate)
 			if *verbose {
@@ -352,6 +438,7 @@ func main() {
 				}
 			}
 		}
+		os.RemoveAll(tree)
 	}
 
 	fmt.Println()
@@ -368,6 +455,21 @@ func main() {
 func seed(repo, tree string) error {
 	for _, d := range []string{"src", "docs"} {
 		if err := copyTree(filepath.Join(repo, d), filepath.Join(tree, d)); err != nil {
+			return err
+		}
+	}
+	// Сборка сайта собирается и запускается ИЗ КОПИИ: она носит стили и
+	// шаблоны внутри двоичного файла через go:embed, и мутация в них
+	// проявится только у пересобранного. Заодно копируется tools/ — гейт
+	// комментариев ищет его рядом с китом, и без него зона, из-за которой
+	// заводили Д4, снова осталась бы снаружи.
+	//
+	// site/dist пропускается: девять мегабайт собранного сайта не нужны
+	// никому, а копировать их на каждую из сорока с лишним мутаций значит
+	// платить за это временем каждый раз.
+	for _, d := range []string{"site", "tools"} {
+		src := filepath.Join(repo, d)
+		if err := copyTreeExcept(src, filepath.Join(tree, d), filepath.Join(src, "dist")); err != nil {
 			return err
 		}
 	}
@@ -421,7 +523,14 @@ func apply(path, from, to string) (bool, error) {
 }
 
 func copyTree(src, dst string) error {
+	return copyTreeExcept(src, dst, "")
+}
+
+func copyTreeExcept(src, dst, skip string) error {
 	return filepath.WalkDir(src, func(p string, d os.DirEntry, err error) error {
+		if skip != "" && p == skip {
+			return filepath.SkipDir
+		}
 		if err != nil {
 			return err
 		}

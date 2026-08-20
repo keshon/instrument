@@ -290,6 +290,10 @@ window.kitAudit = (function () {
    * побайтово один; у light он oklch(0.976 0.006 75). */
   var THEMES = ['light-neutral', 'light', 'light-cool', 'dark', 'dark-soft'];
   var DENSITIES = ['', 'compact', 'comfortable'];
+  /* Пустая строка — снятый атрибут, то есть петроль: отдельного
+     [data-accent="petrol"] в ките нет, умолчание и есть он. */
+  var ACCENTS = ['', 'graphite', 'indigo', 'clay'];
+  var SCALES = ['', '15', '16', '17', '18'];
 
 
   /* ── Пропорции: влезает ли текст в свою коробку ─────────────────────────
@@ -375,7 +379,20 @@ window.kitAudit = (function () {
 
     /* Значок против прописной подписи, рядом с которой он стоит. Значок
        меряется не коробкой, а чернилами: по спрайту кита они занимают 9.02
-       из 16, то есть 0.564 коробки. Прописная — около 0.71 кегля. */
+       из 16, то есть 0.564 коробки.
+
+       Полоса 0.95…1.07 — не вкус, а замер: 106 035 отношений по всем 85
+       страницам во всех пятнадцати ячейках масштаба и плотности лежат в
+       0.974…1.041. Прежние 0.88…1.16 пускали 1.16 при наблюдаемом
+       максимуме 1.041 и стояли на три тысячных под единственным выбросом —
+       то есть были подогнаны под дефект, а не выведены из корпуса.
+
+       Запас с каждой стороны около 0.025, и он МЕНЬШЕ шага, которым эта
+       величина умеет двигаться: коробка и прописная целые, и один
+       устройственный пиксель прописной сдвигает отношение примерно на 0.1.
+       Это не хрупкость полосы, а её смысл: значок, не шагнувший вместе с
+       кеглем, — ровно тот дефект, ради которого проверка написана, и
+       промолчать о нём полоса не должна. */
     var icons = root0.querySelectorAll('.inst-icon');
     for (var j = 0; j < icons.length; j++) {
       var ic = icons[j];
@@ -403,7 +420,7 @@ window.kitAudit = (function () {
       checked++;
       var ink = box * 0.564;
       var d = ink / cap;
-      if (d < 0.88 || d > 1.16) {
+      if (d < 0.95 || d > 1.07) {
         bad.push({
           где: host.className || host.tagName,
           текст: hostText.slice(0, 24),
@@ -431,34 +448,59 @@ window.kitAudit = (function () {
     document.head.appendChild(kill);
     function flush() { return document.body.offsetHeight; }
 
+    var accent0 = html.getAttribute('data-accent');
+    var scale0 = html.getAttribute('data-scale');
+
+    /* Матрица, а не одна ячейка.
+     *
+     * Проверка меряла 5 тем при ОДНОМ акценте и 3 плотности при ОДНОМ
+     * масштабе — примерно шесть ячеек из трёхсот. Единственное, что видит
+     * настоящие пиксели, смотрело в дырку.
+     *
+     * Оси разведены по тому, от чего зависит величина, а не сведены в одну
+     * общую матрицу: цвет не зависит от масштаба, геометрия не зависит от
+     * темы, и перемножать всё на всё значило бы умножить время прогона на
+     * двадцать ради повторения одних и тех же чисел.
+     *
+     * Контраст — по теме × акценту: акцент переопределяет --accent-*, и
+     * подпись на акцентной заливке в каждой теме своя.
+     * Цели и пропорции — по масштабу × плотности: обе оси двигают геометрию,
+     * и обе округляются до целых пикселей независимо друг от друга. Ровно на
+     * этом произведении и нашёлся значок, отставший от кегля на масштабе 15.
+     */
     var res = { контраст: {}, цели: {}, пропорции: {}, всего: 0 };
     THEMES.forEach(function (t) {
       html.setAttribute('data-theme', t);
-      flush();
-      var v = contrast(sel);
-      res.контраст[t] = v;
-      res.всего += v.проверено;
+      ACCENTS.forEach(function (a) {
+        a ? html.setAttribute('data-accent', a) : html.removeAttribute('data-accent');
+        flush();
+        var v = contrast(sel);
+        res.контраст[t + ' · ' + (a || 'петроль')] = v;
+        res.всего += v.проверено;
+      });
     });
     theme0 ? html.setAttribute('data-theme', theme0) : html.removeAttribute('data-theme');
+    accent0 ? html.setAttribute('data-accent', accent0) : html.removeAttribute('data-accent');
 
-    DENSITIES.forEach(function (d) {
-      d ? html.setAttribute('data-density', d) : html.removeAttribute('data-density');
-      flush();
-      var v = targets(sel);
-      res.цели[d || 'обычная'] = v;
-      // Цели входят в общий счёт наравне с контрастом: итоговая строка
-      // обещает «и цели в 3 плотностях», и без этой строки она обещала
-      // больше, чем считала.
-      res.всего += v.проверено;
-    });
-    DENSITIES.forEach(function (d) {
-      d ? html.setAttribute('data-density', d) : html.removeAttribute('data-density');
-      flush();
-      var p = proportion(sel);
-      res.пропорции[d || 'обычная'] = p;
-      res.всего += p.проверено;
+    SCALES.forEach(function (sc) {
+      sc ? html.setAttribute('data-scale', sc) : html.removeAttribute('data-scale');
+      DENSITIES.forEach(function (d) {
+        d ? html.setAttribute('data-density', d) : html.removeAttribute('data-density');
+        flush();
+        var key = (sc || '14') + ' · ' + (d || 'обычная');
+        // Цели входят в общий счёт наравне с контрастом: итоговая строка
+        // обещает «и цели», и без этой строки она обещала больше, чем
+        // считала.
+        var v = targets(sel);
+        res.цели[key] = v;
+        res.всего += v.проверено;
+        var pr = proportion(sel);
+        res.пропорции[key] = pr;
+        res.всего += pr.проверено;
+      });
     });
     dens0 ? html.setAttribute('data-density', dens0) : html.removeAttribute('data-density');
+    scale0 ? html.setAttribute('data-scale', scale0) : html.removeAttribute('data-scale');
     flush();
     kill.remove();
 
@@ -487,7 +529,8 @@ window.kitAudit = (function () {
     console.table(свод);
     if (!падений) {
       console.log('%c· ' + res.всего + ' замеров: контраст в ' + THEMES.length +
-                  ' темах, цели и пропорции в ' + DENSITIES.length + ' плотностях — чисто',
+                  '×' + ACCENTS.length + ' темах и акцентах, цели и пропорции в ' +
+                  SCALES.length + '×' + DENSITIES.length + ' масштабах и плотностях — чисто',
                   'color:green');
       return;
     }

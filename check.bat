@@ -15,6 +15,7 @@ rem     check dist               rebuild dist/ from src/
 rem     check site               build the documentation site
 rem     check serve [port]       build and serve; default :4322
 rem     check pixels [/section/] rendered-pixel audit; needs Chrome and a server
+rem     check pixels --mutate    the pixel audit, checked
 rem     check behavior [/sect/]  keyboard contract of instrument.js; same needs
 rem     check behavior --mutate  the behaviour checks, checked
 rem     check fmt                gofmt over both modules
@@ -89,6 +90,7 @@ echo   check dist               rebuild dist/ from src/
 echo   check site               build the documentation site
 echo   check serve [port]       build and serve; default :4322
 echo   check pixels [/section/] rendered-pixel audit; needs "check serve" running
+echo   check pixels --mutate    break one token, demand the audit goes red
 echo   check behavior [/sect/]  keyboard contract of instrument.js; same needs
 echo   check behavior --mutate  break one promise, demand the check goes red
 echo.
@@ -223,6 +225,8 @@ rem construction.
 rem
 rem   check pixels                     every page
 rem   check pixels /components/        one section
+rem   check pixels --mutate            the audit, checked
+rem   check pixels --jobs 8            tabs at once; 4 by default, 8 is not faster
 :pixels
 echo.
 echo   Needs "check serve" running in another window on :%INSTRUMENT_PORT%.

@@ -11,6 +11,7 @@
  *
  *   node tools/behavior-run.mjs                    the whole reference
  *   node tools/behavior-run.mjs /components/       one section
+ *   node tools/behavior-run.mjs --jobs 8           tabs at once (4 by default)
  *   node tools/behavior-run.mjs --mutate           the checks, checked
  *   node tools/behavior-run.mjs --base http://…
  *
@@ -32,6 +33,17 @@ const BASE = baseIdx >= 0 ? args[baseIdx + 1] : 'http://localhost:4322';
 const MUTATE = args.includes('--mutate');
 const VERBOSE = args.includes('-v');
 const FILTER = args.find((a) => a.startsWith('/')) || '';
+/* Pages are walked several tabs at a time.
+ *
+ * A tab spends most of its life waiting — navigation, fonts, layout — and the
+ * measurement is independent per page: each tab presses keys on its OWN
+ * document, and there is nothing to share.
+ *
+ * Four is measured, not "more is better": the pixel gate over the same
+ * eighty-five pages takes 4 min on one tab, 1:08 on four and 1:32 on eight.
+ * Past four the wait is gone and the layout thread is the wall. */
+const jobsIdx = args.indexOf('--jobs');
+const JOBS = Math.max(1, jobsIdx >= 0 ? Number(args[jobsIdx + 1]) || 4 : 4);
 const PORT = 9222 + (process.pid % 500);
 
 const CHROME = [
@@ -48,6 +60,22 @@ if (!CHROME) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const CMD_TIMEOUT = 90_000;
+
+/* A queue of n concurrent jobs. Results come back IN INPUT ORDER, not in
+   completion order: pages finish interleaved, and a report whose order moves
+   between runs cannot be compared with the run before. */
+async function pool(items, n, fn) {
+  const out = new Array(items.length);
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => {
+    for (;;) {
+      const i = next++;
+      if (i >= items.length) return;
+      out[i] = await fn(items[i], i);
+    }
+  }));
+  return out;
+}
 
 function withTimeout(p, ms, what) {
   let t;
@@ -74,6 +102,16 @@ async function launch() {
     '--headless=new',
     `--remote-debugging-port=${PORT}`,
     '--disable-gpu',
+    /* Фоновая вкладка в Chrome тормозится: таймеры разрежаются, а
+       requestAnimationFrame в невидимой вкладке может не сработать вовсе.
+       При одной вкладке это незаметно, при четырёх прогон встаёт намертво —
+       ожидание кадра, который не придёт, упирается в срок команды.
+
+       Флаги снимают именно торможение, а не что-то ещё: вкладки остаются
+       невидимыми, но живыми. */
+    '--disable-background-timer-throttling',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding',
     '--no-first-run',
     '--no-default-browser-check',
     '--user-data-dir=' + (process.env.TEMP || '/tmp') + '/instrument-behavior-' + process.pid,
@@ -331,16 +369,24 @@ try {
     }
   } else {
     const list = await pages();
-    console.log(`pages: ${list.length}  ·  ${BASE}\n`);
+    console.log(`pages: ${list.length}  ·  ${BASE}  ·  tabs at once: ${JOBS}\n`);
 
     let checked = 0, violations = 0, skipped = 0;
     const problems = [];
-    for (const p of list) {
-      let r;
+    const measured = await pool(list, JOBS, async (p) => {
       try {
-        r = await inPage(BASE + p, EXPR(src));
+        const r = await inPage(BASE + p, EXPR(src));
+        process.stdout.write('·');
+        return { p, r };
       } catch (e) {
-        problems.push({ page: p, section: '-', what: 'did not run: ' + e.message });
+        process.stdout.write('x');
+        return { p, err: e.message };
+      }
+    });
+
+    for (const { p, r, err } of measured) {
+      if (err) {
+        problems.push({ page: p, section: '-', what: 'did not run: ' + err });
         violations++;
         continue;
       }
@@ -355,7 +401,6 @@ try {
           problems.push({ page: p, section: name, what: `${it.at}: expected ${it.expected}, got ${it.got}` });
         }
       }
-      process.stdout.write(problems.length ? 'x' : '·');
       if (VERBOSE) {
         console.log(' ' + p + '  ' + pack(r));
         for (const s of Object.values(r)) {
