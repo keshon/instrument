@@ -135,7 +135,7 @@ go -C tools run ./cmd/figma -list                     # все имена с п�
 
 ```bash
 go -C tools run ./cmd/dist        # собрать dist/, проверить баланс скобок
-go -C tools run ./cmd/contrast    # контраст пар токенов, 6 тем × 4 акцента
+go -C tools run ./cmd/contrast    # контраст пар токенов, 5 тем × 4 акцента
 go -C tools run ./cmd/targets     # цели нажатия, 15 сочетаний
 go -C tools run ./cmd/proportion  # отношения размеров
 go -C tools run ./cmd/docscheck   # документация против кита, в обе стороны

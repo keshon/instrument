@@ -60,7 +60,6 @@ var strings = map[string]map[Lang]string{
 	"theme.ln":     {RU: "Светлая нейтральная", EN: "Light neutral"},
 	"theme.l":      {RU: "Светлая тёплая", EN: "Light warm"},
 	"theme.lc":     {RU: "Светлая холодная", EN: "Light cool"},
-	"theme.dl":     {RU: "Тёмная светло-серая", EN: "Dark light-grey"},
 	"theme.ds":     {RU: "Тёмная серая", EN: "Dark grey"},
 	"theme.d":      {RU: "Тёмная чёрная", EN: "Dark black"},
 	"accent":       {RU: "Акцент", EN: "Accent"},

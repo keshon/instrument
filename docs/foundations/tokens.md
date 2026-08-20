@@ -361,8 +361,7 @@ group-en: "Foundations"
 | `data-theme="light-neutral"` | `light` | 75 | `--tint: 0` — умолчание, чистый серый |
 | `data-theme="light"` | `light` | 75 | `--tint: 2` — тёплая |
 | `data-theme="light-cool"` | `light` | 250 | `--tint: 2` — холодная |
-| `data-theme="dark-light"` | `dark` | 75 | Стопка на две ступени вверх, плюс подписи статусов и дорожка |
-| `data-theme="dark-soft"` | `dark` | 75 | Переопределены `--surface-sunken` `--surface-page` `--surface-raised` `--surface-overlay` |
+| `data-theme="dark-soft"` | `dark` | 75 | Стопка на ступень вверх, плюс подписи статусов |
 | `data-theme="dark"` | `dark` | 75 | |
 
 ## Правила

@@ -16,7 +16,7 @@
  *
  * ПРИМЕНЕНИЕ. Откройте свой экран, вставьте файл в консоль:
  *
- *     kitAudit.run()          вся страница, 6 тем и 3 плотности
+ *     kitAudit.run()          вся страница, 5 тем и 3 плотности
  *     kitAudit.run('#main')   только часть
  *     kitAudit.contrast()     один прогон в текущей теме
  *     kitAudit.targets()      один прогон в текущей плотности
@@ -277,7 +277,7 @@ window.kitAudit = (function () {
     return { проверено: boxes.length, нарушений: bad.length, список: bad };
   }
 
-  var THEMES = ['', 'light-neutral', 'light-cool', 'dark', 'dark-soft', 'dark-light'];
+  var THEMES = ['', 'light-neutral', 'light-cool', 'dark', 'dark-soft'];
   var DENSITIES = ['', 'compact', 'comfortable'];
 
 
@@ -470,7 +470,7 @@ window.kitAudit = (function () {
     console.log('%cinstrument · проверка по пикселям', 'font-weight:bold');
     console.table(свод);
     if (!падений) {
-      console.log('%c· ' + res.всего + ' замеров контраста в 6 темах и цели в 3 плотностях — чисто',
+      console.log('%c· ' + res.всего + ' замеров контраста в 5 темах и цели в 3 плотностях — чисто',
                   'color:green');
       return;
     }

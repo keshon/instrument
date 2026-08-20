@@ -42,8 +42,8 @@ import '@keshon/instrument/js';         // поведение, по желани
 <link rel="stylesheet" href="instrument.min.css">
 ```
 
-Возьмите `dist/instrument.min.css` — 106 КБ, 17 КБ в gzip. Это вся библиотека:
-токены, шесть тем, пять масштабов, три плотности, все компоненты. `dist/instrument.css` — то же
+Возьмите `dist/instrument.min.css` — 108 КБ, 17 КБ в gzip. Это вся библиотека:
+токены, пять тем, пять масштабов, три плотности, все компоненты. `dist/instrument.css` — то же
 самое без сжатия и с комментариями.
 
 ## Иконки
@@ -156,7 +156,7 @@ import '@keshon/instrument/js';         // поведение, по желани
 Оба — атрибуты, и оба работают на любом поддереве, а не только на документе.
 
 ```html
-<html data-theme="dark">              <!-- шесть тем; без атрибута — по настройке ОС -->
+<html data-theme="dark">              <!-- пять тем; без атрибута — по настройке ОС -->
 <html data-accent="clay">             <!-- петроль (умолчание) · graphite · indigo · clay -->
 <section data-density="compact">      <!-- compact · comfortable -->
 ```
@@ -164,7 +164,7 @@ import '@keshon/instrument/js';         // поведение, по желани
 | Тема | |
 |---|---|
 | `light-neutral` `light` `light-cool` | светлые: нейтральная, тёплая, холодная |
-| `dark-light` `dark-soft` `dark` | тёмные, различаются глубиной поверхностей |
+| `dark-soft` `dark` | тёмные, различаются глубиной поверхностей |
 
 Без атрибута тема выбирается по настройке ОС. Что именно меняет каждая ручка —
 в [цвете](../foundations/colors.md) и [плотности](../foundations/density.md).
