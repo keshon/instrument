@@ -13,8 +13,8 @@ api:
   - { name: "inst-copyable", kind: "класс", doc: "Однострочное значение с кнопкой" }
   - { name: "inst-copy", kind: "класс", doc: "Кнопка копирования. Работу выполняет [instrument.js](../../foundations/behavior.md). Внутри `.inst-code` встаёт в дальний верхний угол сама" }
   - { name: "data-copy", kind: "атрибут", doc: "Копировать это значение, а не текст блока" }
-  - { name: "data-copied-label", kind: "атрибут", doc: "Своя фраза для скринридера вместо «Скопировано»" }
-  - { name: "data-failed-label", kind: "атрибут", doc: "То же для неудачи. По умолчанию «Не удалось скопировать»" }
+  - { name: "data-copied-label", kind: "атрибут", doc: "Своя фраза для скринридера вместо «Copied»" }
+  - { name: "data-failed-label", kind: "атрибут", doc: "То же для неудачи. По умолчанию «Could not copy»" }
   - { name: "data-copied", kind: "атрибут", value: "true · false", doc: "Ответ кнопки. Ставит и снимает `instrument.js`" }
   - { name: "--surface-sunken", kind: "токен" }
   - { name: "--border-subtle", kind: "токен" }
@@ -126,8 +126,8 @@ group-en: "Data display"
 | Атрибут | Что делает |
 |---|---|
 | `data-copy` | Копировать это значение, а не текст блока. Нужно, когда видно сокращение, а копировать надо полное |
-| `data-copied-label` | Своя фраза для скринридера вместо «Скопировано» |
-| `data-failed-label` | То же для неудачи. По умолчанию «Не удалось скопировать» |
+| `data-copied-label` | Своя фраза для скринридера вместо «Copied» |
+| `data-failed-label` | То же для неудачи. По умолчанию «Could not copy» |
 
 ```html
 <span class="inst-copyable">a4f7c2e

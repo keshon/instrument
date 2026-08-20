@@ -82,7 +82,7 @@ func main() {
 
 	var css bytes.Buffer
 	fmt.Fprintf(&css, "/*! instrument %s — https://github.com/keshon/instrument\n"+
-		"    Собран из src/. Правится ИСХОДНИК, а не этот файл. */\n", ver)
+		"    Built from src/. Edit the SOURCE, not this file. */\n", ver)
 	fmt.Fprintf(&css, "@layer %s;\n\n", strings.Join(strings.Fields(string(stmt[1])), " "))
 
 	imports := importRe.FindAllSubmatch(entry, -1)

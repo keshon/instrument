@@ -63,7 +63,7 @@
  * своё для ОДНОЙ кнопки. Здесь меняется язык всего экрана:
  *
  *     import { strings } from '@keshon/instrument/js';
- *     strings.copied = 'Copied';
+ *     strings.copied = 'Скопировано';
  *
  * Объект, а не функция перевода: словарь на четыре строки, которому нужны
  * подстановки в одном месте. Полноценный i18n здесь был бы механизмом
@@ -71,10 +71,10 @@
  * кит не выполняет.
  */
 export const strings = {
-  toasts: 'Уведомления',
-  copied: 'Скопировано',
-  copyFailed: 'Не удалось скопировать',
-  tagRemoved: (label) => `Метка ${label} снята`,
+  toasts: 'Notifications',
+  copied: 'Copied',
+  copyFailed: 'Could not copy',
+  tagRemoved: (label) => `Tag ${label} removed`,
 };
 
 /* Роли, у которых есть контракт клавиатуры, и всё, что о них надо знать.

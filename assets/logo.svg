@@ -2,15 +2,16 @@
      role="img" aria-label="instrument">
   <title>instrument</title>
 
-  <!-- Знак: вертикальный ряд точек состояния и строки работы рядом с ними.
-       Верхняя точка акцентная — это состояние «идёт». -->
+  <!-- The mark: a vertical run of state dots with work lines beside them.
+       The top dot is the accent one — that is the "running" state. -->
   <circle cx="4" cy="4.5" r="1.7" fill="#0a77cb"/>
   <circle cx="4" cy="10" r="1.7" fill="#a2a09c"/>
   <circle cx="4" cy="15.5" r="1.7" fill="#a2a09c"/>
   <path d="M8.6 4.5h8M8.6 10h5.4M8.6 15.5h6.6" fill="none" stroke="#84817e"
         stroke-width="1.6" stroke-linecap="round"/>
 
-  <!-- Цвета захардкожены намеренно: файл живёт вне кита, где токенов нет. -->
+  <!-- Colours are hardcoded on purpose: this file lives outside the kit,
+       where there are no tokens. -->
   <text x="28" y="16" fill="#161513" font-size="17" font-weight="500" letter-spacing="-0.17"
         font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
   >instrument</text>

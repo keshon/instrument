@@ -1,7 +1,7 @@
 {
   "name": "@keshon/instrument",
   "version": "0.7.0",
-  "description": "CSS-кит для интерфейсов, которые показывают человеку работу машины: очереди задач, прогоны, логи, инспекторы, состояния и неопределённость",
+  "description": "CSS kit for interfaces that show a human what a machine is doing: task queues, runs, logs, inspectors, states and uncertainty",
   "keywords": [
     "css",
     "design-system",

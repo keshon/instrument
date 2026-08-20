@@ -11,7 +11,7 @@ api:
   - { name: "aria-disabled", kind: "атрибут", value: "true", doc: "Пункт выпадает из обхода стрелками" }
   - { name: "data-value", kind: "атрибут", doc: "На пункте группы и на теге. Что придёт в `detail` события вместо текста" }
   - { name: "data-copy", kind: "атрибут", doc: "На `.inst-copy`. Копировать это значение, а не текст блока" }
-  - { name: "data-copied-label", kind: "атрибут", doc: "На `.inst-copy`. Своя фраза для скринридера вместо «Скопировано»" }
+  - { name: "data-copied-label", kind: "атрибут", doc: "На `.inst-copy`. Своя фраза для скринридера вместо «Copied»" }
   - { name: "data-failed-label", kind: "атрибут", doc: "На `.inst-copy`. То же для неудачи" }
   - { name: "data-copied", kind: "атрибут", value: "true · false", doc: "Ставит и снимает `instrument.js`. Ответ кнопки копирования, живёт 1,4 с" }
   - { name: "data-instrument", kind: "атрибут", value: "manual", doc: "На `<html>`. Модуль не запускается сам — приложение зовёт `start()` когда готово" }
@@ -132,12 +132,14 @@ start(document, { observe: false });
 ### Строки, которые слышит человек
 
 Модуль произносит четыре фразы — имя области уведомлений и три ответа
-действий. Все они собраны в одном месте и меняются целиком:
+действий. **Умолчания английские**: кит уезжает в пакет, и язык экрана
+выбирает приложение, а не библиотека. Все четыре собраны в одном месте и
+меняются целиком:
 
 ```js
 import { strings } from '@keshon/instrument/js';
 
-strings.copied = 'Copied';
+strings.copied = 'Скопировано';
 ```
 
 Атрибуты `data-copied-label` и `data-failed-label` по-прежнему выигрывают: у
@@ -211,7 +213,7 @@ document.addEventListener('inst:remove', (e) => {
 | Атрибут | Где | Что делает |
 |---|---|---|
 | `data-copy` | на `.inst-copy` | Копировать это, а не текст блока |
-| `data-copied-label` | на `.inst-copy` | Своя фраза для скринридера вместо «Скопировано» |
+| `data-copied-label` | на `.inst-copy` | Своя фраза для скринридера вместо «Copied» |
 | `data-failed-label` | на `.inst-copy` | То же для неудачи |
 | `data-value` | на `.inst-tag` и на пункте группы | Что придёт в `detail` вместо текста |
 | `step`, `min`, `max` | на `input[type=number]` | Шаг и границы перетаскивания оси |

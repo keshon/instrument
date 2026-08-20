@@ -52,6 +52,7 @@ var gates = map[string]gate{
 	"registry": {"./cmd/registry", func(t string) []string {
 		return []string{"-src", t + "/src", "-docs", t + "/docs", "-registry", t + "/components.json"}
 	}},
+	"lang": {"./cmd/lang", func(t string) []string { return []string{"-root", t} }},
 }
 
 // mutation — одна поломка. from обязан существовать в файле: мутация, которая
@@ -227,6 +228,26 @@ var mutations = []mutation{
 	{"роль скрипта не объявлена в реестре", "registry", "components.json",
 		"\"role\": \"tablist\",", "\"role\": \"tablist-renamed\",",
 		"скрипт обещает клавиатуру от имени кита, а реестр об этом не знает"},
+	// ── lang ───────────────────────────────────────────────────────────────
+	//
+	// Зона объявлена переведённой — значит русская строка, вернувшаяся в неё по
+	// привычке, обязана падать здесь, а не у потребителя в aria-label.
+	{"русская строка вернулась в публичные умолчания", "lang", "dist/instrument.js",
+		"copied: 'Copied',", "copied: 'Скопировано',",
+		"фразу слышит скринридер, и подменить её потребитель обязан сам, а не вынужденно"},
+	{"русская строка в шаблоне метки", "lang", "dist/instrument.js",
+		"tagRemoved: (label) => `Tag ${label} removed`,",
+		"tagRemoved: (label) => `Метка ${label} снята`,",
+		"шаблонный литерал — такая же произнесённая фраза, как и обычный"},
+	{"русское описание в манифесте пакета", "lang", "package.json",
+		"\"description\": \"CSS kit for interfaces",
+		"\"description\": \"CSS-кит для интерфейсов",
+		"description виден в реестре npm любому постороннему"},
+	{"русский комментарий уехал в знак", "lang", "assets/logo.svg",
+		"<!-- The mark: a vertical run",
+		"<!-- Знак: вертикальный ряд",
+		"файл уезжает в пакет вместе с комментариями внутри"},
+
 	{"два бегущих tabindex на переведённой странице", "registry", "docs/components/actions/segmented.en.md",
 		"",
 		"---\ntitle: Segmented\nsource: src/actions.css\n---\n\n```html preview\n<div class=\"inst-segmented\" role=\"radiogroup\" aria-label=\"View\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"true\" tabindex=\"0\">List</button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Grid</button>\n</div>\n```\n",
@@ -357,6 +378,11 @@ func seed(repo, tree string) error {
 	for _, f := range []string{
 		"components.json", "VERSION", "package.json",
 		"tools/audit.js", "dist/instrument.min.css",
+		// Зоны шага 1 переезда: собранный модуль и знаки. Гейт lang смотрит
+		// на ВЫВОД, а не на исходник — русская строка, не дошедшая до dist/,
+		// потребителя не касается.
+		"dist/instrument.js",
+		"assets/logo.svg", "assets/mark.svg", "assets/sprite.svg",
 	} {
 		if err := copyFile(filepath.Join(repo, f), filepath.Join(tree, filepath.FromSlash(f))); err != nil {
 			return err
