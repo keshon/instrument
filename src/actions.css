@@ -1,118 +1,130 @@
 /* ==========================================================================
-   instrument — действия
+   instrument — actions
 
-   Кнопка со всеми весами, вызов боковой колонки, сегментированный контрол,
-   чип.
+   The button in all its weights, the side-column toggle, the segmented
+   control, the chip.
 
-   Кнопка вызова колонки живёт здесь, а не в layout.css, и это каскад, а не
-   недосмотр: она несёт .inst-btn из слоя kit.components, а layout.css
-   импортирован раньше — оттуда её не спрятать никаким селектором.
-   Объяснение целиком стоит на её месте в layout.css.
+   The side-column toggle lives here rather than in layout.css, and that is
+   the cascade rather than an oversight: it carries .inst-btn from the
+   kit.components layer, while layout.css is imported earlier — from there no
+   selector can hide it. The full explanation stands in its place in
+   layout.css.
 
-   Импортируется в слой kit.components вместе с остальными частями: файлы
-   разные, слой один, порядок прежний. Разбиение — про то, чтобы правило
-   находилось, а не про каскад.
+   Imported into the kit.components layer along with the other parts: separate
+   files, one layer, the same order. The split is about finding a rule, not
+   about the cascade.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Кнопка
+   Button
 
-   По умолчанию кнопка тихая. Экран, где всё primary, не имеет primary вовсе.
+   A button is quiet by default. A screen where everything is primary has no
+   primary at all.
 
-   Ховер меняет ТОЛЬКО --btn-bg, и базовое правило не пишет background
-   напрямую. Иначе переменная на ховере не читается, каждому варианту
-   приходится переопределять ховер целиком, и в одном компоненте оказывается
-   три несовместимых механизма вместо обещанных «двух строк на вариант».
+   Hover changes ONLY --btn-bg, and the base rule does not write background
+   directly. Otherwise the variable is not read on hover, every variant has to
+   override hover in full, and one component ends up with three incompatible
+   mechanisms instead of the promised "two lines per variant".
    ────────────────────────────────────────────────────────────────────────── */
 
-/* ПЯТЬ ВЕСОВ, и это система, а не набор вариантов.
+/* FIVE WEIGHTS, and this is a system rather than a set of variants.
 
-   Вес отвечает на вопрос «насколько громко кнопка просит нажать себя». Ответ
-   измерим: «присутствие» — площадь, взвешенная на перепад светлоты к подложке.
-   Заливка работает всей коробкой, рамка только периметром, а он у кнопки
-   100×32 занимает 8% площади. Числа ниже — светлая и тёмная темы:
+   A weight answers the question of how loudly a button asks to be pressed.
+   The answer is measurable: "presence" is area weighted by the step in
+   lightness against the ground. A fill works with the whole box, a border
+   only with the perimeter, and on a 100×32 button that perimeter is 8% of the
+   area. The numbers below are for the light and dark themes:
 
-     сплошная  (--primary)  0.47 · 0.17   заливка акцентом, кромка, тень
-                            одно действие на экране
-     умолчание              0.046 · 0.048  утопление, ни рамки, ни тени
-                            обычное действие, стоящее само по себе
-     МЯГКАЯ    (--soft)     0.017 · 0.022  половина утопления, рамки нет вовсе
-                            контрол внутри группы: тулбар, ряд значков, чип
-     ОБВОДКА   (--outline)  0.007 · 0.007  тихая рамка, заливки нет
-                            действие, которое обязано выглядеть нажимаемым,
-                            не претендуя на внимание
-     призрачная (--ghost)   0             ничего до наведения
-                            действие, которое ищут глазами
+     solid     (--primary)  0.47 · 0.17   accent fill, an edge, a shadow
+                            one action per screen
+     default                0.046 · 0.048  a recess, no border, no shadow
+                            an ordinary action standing on its own
+     SOFT      (--soft)     0.017 · 0.022  half a recess, no border at all
+                            a control inside a group: a toolbar, a row of
+                            glyphs, a chip
+     OUTLINE   (--outline)  0.007 · 0.007  a quiet border, no fill
+                            an action that has to look pressable without
+                            claiming attention
+     ghost     (--ghost)    0             nothing until hover
+                            an action people go looking for
 
-   Лестница монотонна во всех пяти темах, и соседние ступени расходятся не
-   меньше чем на порог 0.022 — тот же, которым кит меряет стопку поверхностей.
-   Сверяет пара «лестница: мягкая против умолчания» в cmd/contrast.
+   The ladder is monotonic in all five themes, and neighbouring steps are at
+   least the 0.022 threshold apart — the same one the kit measures its stack
+   of surfaces with. The pair "ladder: soft against default" in cmd/contrast
+   checks it.
 
-   Обведённого веса у кита НЕТ, и это решение, а не пробел. Держал его контур в
-   3.46:1 — несущая линия, втрое громче панели, которая кнопку содержит; она
-   оказывалась самой громкой линией экрана.
+   There is NO outlined weight in the sense of a load-bearing border, and that
+   is a decision rather than a gap. Such a weight held its outline at 3.46:1 —
+   a load-bearing line three times louder than the panel containing the
+   button, and the loudest line on the screen.
 
-   Тихая рамка такого греха не совершает: у Anthropic обводка «Use a project»
-   идёт на 1.25:1, и --border кита дал бы 1.32:1. Дело поэтому не в контрасте, а
-   в лестнице: обведённая и утопленная отвечают на один и тот же вопрос — «тихо,
-   но заметно», — а лестница существует, чтобы на каждый вопрос был один ответ.
-   Тихих ступеней и так две: мягкая с плоской заливкой и утопленное умолчание.
+   A quiet border commits no such sin: Anthropic's "Use a project" outline
+   runs at 1.25:1, and this kit's --border would give 1.32:1. So the matter is
+   not contrast but the ladder: outlined and recessed answer one and the same
+   question — quiet but noticeable — and the ladder exists so that every
+   question has one answer. There are two quiet steps as it is: soft with a
+   flat fill and the recessed default.
 
-   Мягкий вес отвечает на другой вопрос. В группе — ряд значков, переключатель
-   режима, плашка выбора модели — контур каждого элемента складывается в решётку,
-   и группа читается как таблица. Заливка без контура собирает группу в один
-   объект, а выбранный элемент внутри отличается плотностью заливки, а не рамкой. */
+   The soft weight answers a different question. In a group — a row of glyphs,
+   a mode switch, a model-picker plate — the outline of every element adds up
+   into a grid, and the group reads as a table. A fill without an outline
+   gathers the group into one object, and the selected element inside differs
+   by the density of the fill rather than by a border. */
 
 .inst-btn {
-  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  /* Sized by its content: it does not stretch in a column and centres in a
+     row. */
   align-self: var(--flow-self, center);
   --btn-fg: var(--text-primary);
-  /* УТОПЛЕНА, А НЕ ПРИПОДНЯТА. Третье умолчание за историю кита, и каждое
-     прошлое ловилось на своей беде: обведённое делало контур кнопки самой
-     громкой линией экрана, приподнятое держалось на тени в один пиксель —
-     на перепаде поверхностей 1.05 она и была всем, чем кнопка отличалась
-     от фона.
+  /* RECESSED, NOT RAISED. Two other defaults were each caught on a trouble of
+     their own: an outlined one made the button's outline the loudest line on
+     the screen, and a raised one rested on a one-pixel shadow — at a surface
+     step of 1.05 that shadow was all that told the button from its ground.
 
-     Утопление снимает обе беды разом, потому что не нуждается ни в контуре,
-     ни в толщине: провал по светлоте виден сам. Кнопка перестаёт быть
-     предметом НА плоскости и становится выемкой В ней — и ровно поэтому
-     сплошная кнопка рядом читается громче не за счёт рамки, а за счёт того,
-     что она единственная поднята.
+     A recess removes both troubles at once, because it needs neither an
+     outline nor a thickness: a drop in lightness is visible by itself. The
+     button stops being an object ON a plane and becomes a hollow IN it — and
+     that is exactly why a solid button beside it reads louder not through a
+     border but through being the only one raised.
 
-     Прозрачность, а не заливка. Ровно то, что запрещал прежний комментарий
-     на этом месте, — но запрет был следствием тени: тень вокруг дырки и
-     правда висит в воздухе. Тени больше нет, и запрет ушёл вместе с ней, а
-     на его месте оказалось требование: глубина обязана считаться от того,
-     что под кнопкой. Обоснование — при --surface-recessed в tokens.css.
+     Transparency, not a fill. A shadow around a hollow really does hang in
+     mid-air, which is why an earlier rule here banned transparency — but the
+     ban was a consequence of the shadow. With no shadow the ban goes with it,
+     and a requirement takes its place: depth has to be counted from whatever
+     lies under the button. The reasoning is at --surface-recessed in
+     tokens.css.
 
-     Наведение ПОДТЯГИВАЕТ кнопку к поверхности, нажатие углубляет. Это тот
-     же закон, что у сплошной («заливка уходит ОТ цвета подписи»), только
-     здесь подпись светлая, а заливка тёмная, и потому направления зеркальны:
-     под курсором кнопка идёт вверх, под пальцем — вниз.                    */
+     Hover PULLS the button up towards the surface, pressing deepens it. That
+     is the same law as on the solid weight ("the fill moves AWAY from the
+     colour of the label"), only here the label is light and the fill is dark,
+     so the directions are mirrored: under the cursor the button goes up,
+     under the finger down.                                                 */
   --btn-bg: var(--surface-recessed);
   --btn-bg-hover: var(--surface-recessed-hover);
   --btn-bg-active: var(--surface-recessed-active);
-  /* Рамки нет и толщины нет — обе снял провал. Несущая линия
-     (--border-control, 3.46:1) положена тому, у чего граница И ЕСТЬ контрол:
-     флажку, полю, дорожке свитча — внутри пусто, и опознать их больше нечем.
-     У кнопки внутри подпись, и опознаёт подпись.
+  /* No border and no thickness — the recess removed both. A load-bearing line
+     (--border-control, 3.46:1) is due to whatever has a boundary that IS the
+     control: a checkbox, a field, a switch track — they are empty inside and
+     there is nothing else to recognise them by. A button has a label inside,
+     and the label is what recognises it.
 
-     Объявление остаётся прозрачным, а не удаляется: `border` в правиле ниже
-     занимает свой пиксель в любом случае, и убери мы его — все кнопки кита
-     сузились бы на два пикселя разом. Плюс варианты, которым рамка нужна
-     (--field), ставят её одним словом, не трогая раскладку.                */
+     The declaration stays transparent rather than being deleted: `border` in
+     the rule below takes its pixel either way, and removing it would narrow
+     every button in the kit by two pixels at once. And the variants that do
+     want a border (--field) set it with one word without touching layout. */
   --btn-border: transparent;
   --btn-shadow: none;
-  /* Отступ переменной, а не значением: оптическая поправка на значок ниже
-     обязана знать размер кнопки, а размеров три. */
+  /* Padding through a variable rather than a value: the optical correction
+     for a glyph below has to know the size of the button, and there are
+     three sizes. */
   --btn-pad: var(--control-pad-md);
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* Роль, а не сырой шаг: просвет между значком и подписью обязан ехать за
-     плотностью вместе со всем остальным. В обычном режиме это 8px — на зуме
-     скриншотов просвет читается примерно так же.                           */
+  /* A role rather than a raw step: the gap between glyph and label has to
+     ride density along with everything else. In the ordinary mode that is
+     8px — on zoomed screenshots the gap reads about the same.              */
   gap: var(--gap-inline);
   min-block-size: var(--control-h-md);
   padding-inline: var(--btn-pad);
@@ -123,11 +135,11 @@
   color: var(--btn-fg);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
-  /* Кнопка бывает ссылкой, и на этой же странице написано, что переход по
-     адресу обязан быть <a>. Постоянного подчёркивания base.css ссылке больше
-     не даёт, но ПОД КУРСОРОМ подчёркивает — и правильно делает: так ссылку
-     опознают. Кнопке это не нужно ни в каком состоянии, поэтому отмена
-     остаётся. */
+  /* A button is sometimes a link, and the same page says that navigating to
+     an address has to be an <a>. base.css no longer gives a link a permanent
+     underline, but it does underline UNDER THE CURSOR — and rightly so, that
+     is how a link is recognised. A button wants none of that in any state, so
+     the cancellation stays. */
   text-decoration: none;
   line-height: 1;
   white-space: nowrap;
@@ -138,34 +150,38 @@
               transform var(--dur-1) var(--ease-out);
 
   &:hover:not(:disabled)  { --btn-bg: var(--btn-bg-hover); }
-  /* 0.985, а не 0.95. Нажатие надо почувствовать, а не разглядывать.
-     Тень при нажатии снимается: у предмета, который вдавили, толщины больше
-     нет. Это тот же самый приём, что и масштаб, — просто вторая его половина,
-     и без неё кнопка вдавливается, продолжая висеть над плоскостью.        */
+  /* 0.985, not 0.95. A press is to be felt, not examined.
+     The shadow comes off on press: an object that has been pushed in has no
+     thickness left. That is the same device as the scale — simply its other
+     half, and without it the button is pushed in while still hovering above
+     the plane.                                                             */
   &:active:not(:disabled) { --btn-bg: var(--btn-bg-active); --btn-shadow: none; transform: scale(0.985); }
 
-  /* Прозрачность, а не серая заливка: кнопка сохраняет идентичность, и
-     видно, какое именно действие недоступно.                              */
+  /* Transparency rather than a grey fill: the button keeps its identity, and
+     it stays visible which action exactly is unavailable.                  */
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* Занятость — на aria-busy, а не на своём data-state. У кнопки нет
-     жизненного цикла, как у строки очереди или шага: есть переходный флаг
-     «действие пошло». Платформа для него слово уже придумала, и стили кита
-     завязаны на ARIA именно затем, чтобы состояние жило в одном месте.
+  /* Busy lives on aria-busy rather than on a data-state of its own. A button
+     has no life cycle the way a queue row or a step does: it has a transient
+     flag saying the action has started. The platform already has a word for
+     that, and the kit's styles hang on ARIA precisely so that a state lives
+     in one place.
 
-     Подпись НЕ убирается из потока, а гасится цветом: ширина кнопки должна
-     остаться прежней, иначе полоса действий дёргается в момент нажатия —
-     ровно тогда, когда пользователь смотрит на курсор. Заодно подпись
-     остаётся скринридеру и не требует запасного aria-label.
+     The label is NOT taken out of the flow but dimmed by colour: the width of
+     the button has to stay the same, or the action bar twitches at the moment
+     of the press — precisely when the user is watching the cursor. The label
+     also stays available to a screen reader and needs no fallback
+     aria-label.
 
-     Кольцо собрано из рамки, а не из .inst-spinner: тот — настоящий SVG из
-     двух окружностей, псевдоэлементом его не вставить. Токен размера,
-     толщина и кадры анимации у них общие, поэтому разойтись не могут.
+     The ring is assembled from a border rather than from .inst-spinner: that
+     one is a real SVG of two circles and cannot be inserted as a
+     pseudo-element. The size token, the stroke width and the animation
+     keyframes are shared between them, so they cannot drift apart.
 
-     Кнопка остаётся фокусируемой намеренно. disabled выбрасывает её из
-     порядка обхода прямо под пальцами у того, кто пришёл с клавиатуры;
-     pointer-events снимает только мышь, а защита от повторного нажатия —
-     на обработчике: это поведение, а не оформление.                       */
+     The button stays focusable on purpose. disabled would throw it out of the
+     tab order right under the fingers of somebody who came by keyboard;
+     pointer-events removes the mouse only, and guarding against a second
+     press belongs to the handler: that is behaviour, not styling.         */
   &[aria-busy="true"] {
     position: relative;
     pointer-events: none;
@@ -174,12 +190,14 @@
     &::after {
       content: "";
       position: absolute;
-      /* Центр задан явно. Абсолютный потомок флекс-контейнера встаёт по его
-         align/justify «сам», но это тихо ломается от первого же варианта с
-         другой раскладкой — например, у иконочной кнопки.
+      /* The centring is stated explicitly. An absolutely positioned child of a
+         flex container takes the container's align/justify "by itself", but
+         that breaks silently at the first variant with a different layout —
+         the icon button, for instance.
 
-         translate отдельным свойством, а не в transform: анимация крутит
-         rotate, и в одном transform они бы затирали друг друга.           */
+         translate as a separate property rather than inside transform: the
+         animation turns rotate, and in one transform the two would overwrite
+         each other.                                                       */
       inset-block-start: 50%;
       inset-inline-start: 50%;
       translate: -50% -50%;
@@ -197,87 +215,89 @@
 .inst-btn--primary {
   --btn-fg: var(--accent-on);
   --btn-bg: var(--accent-solid);
-  /* Вниз, а не вверх: заливка обязана уходить ОТ цвета подписи. */
+  /* Down, not up: the fill has to move AWAY from the colour of the label. */
   --btn-bg-hover: var(--accent-hover);
   --btn-bg-active: var(--accent-hover);
 
-  /* Рамка не СНИМАЕТСЯ, а приравнивается к заливке, уведённой на полшага
-     вниз. Прозрачная рамка оставляла сплошную кнопку без собственного края:
-     на светлых поверхностях заливка расплывалась в антиалиасинг, и граница
-     предмета читалась мягче, чем граница у соседней утопленной кнопки, —
-     то есть громче звучала тихая.
+  /* The border is not REMOVED but set equal to the fill taken half a step
+     down. A transparent border leaves a solid button with no edge of its own:
+     on light surfaces the fill smears into the antialiasing, and the boundary
+     of the object reads softer than the boundary of the recessed button next
+     to it — that is, the quiet one sounds louder.
 
-     Разница с заливкой — две сотых по светлоте. Это КРАЙ, а не кольцо: его
-     нельзя увидеть, глядя на кнопку, его видно, только если края нет. На
-     макете Anthropic то же самое и с тем же запасом: 0.543 против 0.537. */
+     The difference from the fill is two hundredths of lightness. This is an
+     EDGE, not a ring: it cannot be seen by looking at the button, it is seen
+     only when it is absent. The Anthropic mockup does the same with the same
+     margin: 0.543 against 0.537. */
   --btn-border: color-mix(in oklab, var(--accent-solid) 80%, var(--accent-hover));
 
-  /* Толщина с ДВУХ сторон: тень снизу, кромка сверху. Про тень уже написано
-     в tokens.css — «не отрыв от плоскости, а намёк на толщину», — и намёк
-     этот был односторонним. Кромка договаривает вторую половину.
+  /* Thickness on BOTH sides: a shadow below, a highlight above. The shadow is
+     already described in tokens.css — "not a lift off the plane but a hint of
+     thickness" — and that hint was one-sided. The highlight says the other
+     half.
 
-     --stroke, а не --hairline: на экранах с двойной плотностью волосяная
-     уходит в 0.5px, и блик на половинной непрозрачности от неё пропадает
-     вовсе. Тень там же остаётся видимой, потому что у неё есть расплыв.
+     --stroke rather than --hairline: on double-density screens a hairline
+     goes to 0.5px, and a highlight at half opacity disappears from it
+     entirely. The shadow stays visible there because it has spread.
 
-     Нажатие гасит обе линии разом — :active снимает --btn-shadow целиком.
-     Это не побочный эффект: у вдавленного предмета толщины нет ни снизу,
-     ни сверху.                                                            */
+     A press puts out both lines at once — :active removes --btn-shadow
+     wholesale. That is not a side effect: an object pushed in has no
+     thickness either below or above.                                      */
   --btn-shadow: var(--shadow-control),
                 inset 0 var(--stroke) 0 var(--accent-edge);
 }
 
-/* ОБВОДКА — ступень между призрачной и мягкой, и она выведена, а не добавлена
-   по образцу.
+/* OUTLINE — the step between ghost and soft, and it is derived rather than
+   added by analogy.
 
-   Вес меряется «присутствием»: площадь, взвешенная на перепад светлоты. Рамка
-   у кнопки 100×32 занимает 8% площади, поэтому даже при контрасте линии выше,
-   чем у заливки, суммарно она вшестеро тише. Отсюда 0.007 против 0.017 у
-   мягкой — между призрачной и мягкой был пятикратный разрыв, и в нём было
-   пусто.
+   A weight is measured by "presence": area weighted by the step in lightness.
+   The border of a 100×32 button is 8% of its area, so even at a line contrast
+   higher than the fill's it is six times quieter overall. Hence 0.007 against
+   soft's 0.017 — between ghost and soft there was a fivefold gap with nothing
+   in it.
 
-   Рамка ДЕКОРАТИВНАЯ (--border), а не несущая. Обведённый вес у кита уже был и
-   был убран именно потому, что держался на --border-control в 3.46:1: контур
-   кнопки оказывался самой громкой линией экрана. На тихой рамке этого не
-   происходит.
+   The border is DECORATIVE (--border), not load-bearing. An outlined weight
+   on --border-control at 3.46:1 makes the outline of a button the loudest
+   line on the screen. A quiet border does not.
 
-   Заливки нет намеренно: заливка вместе с рамкой подняла бы вес на ступень
-   мягкой и разрыв закрылся бы снова.                                      */
+   There is deliberately no fill: a fill together with a border would raise
+   the weight to soft's step and the gap would close again.                */
 .inst-btn--outline {
   --btn-bg: transparent;
   --btn-border: var(--border);
   --btn-shadow: none;
 }
 
-/* Мягкая: контрол ВНУТРИ группы. Рамки нет вовсе — в ряду из пяти значков
-   контуры складываются в решётку, и группа читается как таблица. Тени тоже
-   нет: приподнятой она не является, она лежит в общей плашке.             */
+/* Soft: a control INSIDE a group. No border at all — in a row of five glyphs
+   the outlines add up into a grid, and the group reads as a table. No shadow
+   either: it is not raised, it lies inside a shared plate.                */
 .inst-btn--soft {
-  /* Половина ступени умолчания, а не абсолютный врез. Абсолютная ступень знала
-     одну глубину и в светлых темах садилась на умолчание: ΔL 0.009 при пороге
-     0.022, то есть два имени для одного вида. В тёмных она же уходила ГЛУБЖЕ
-     умолчания, и лестница переворачивалась — третья ступень звучала громче
-     второй.
+  /* Half the default's step rather than an absolute well. An absolute step
+     knows one depth and in light themes lands on the default: ΔL 0.009
+     against a threshold of 0.022, that is two names for one appearance. In
+     dark themes the same step goes DEEPER than the default, and the ladder
+     turns over — the third step sounds louder than the second.
 
-     Относительная ступень наведения даёт 0.019 в светлых и 0.024 в тёмных при
-     умолчании 0.046 и 0.048: порядок один и разрывы выше порога везде. */
+     A relative hover step gives 0.019 in light themes and 0.024 in dark ones
+     against a default of 0.046 and 0.048: one order, and every gap above the
+     threshold. */
   --btn-bg: var(--surface-recessed-hover);
   --btn-border: transparent;
   --btn-shadow: none;
 }
 
-/* Призрачная: до наведения нет ничего. Тень снимается вместе с рамкой —
-   иначе «ничего» отбрасывает тень.
+/* Ghost: nothing at all until hover. The shadow comes off together with the
+   border — otherwise "nothing" casts a shadow.
 
-   И СОДЕРЖИМОЕ ТИШЕ. Призрачная — третьестепенное действие, но до сих пор
-   тише у неё была только рамка, а подпись и значок оставались полной силы.
-   Следствие видно на ряду: четыре призрачные иконочные кнопки в полосе
-   инструментов давали четыре почти чёрных глифа, каждый громче данных,
-   которые они обслуживают. Это третий закон, применённый до половины.
+   AND THE CONTENT IS QUIETER. Ghost is a third-order action, and quieting
+   only its border while the label and the glyph stay at full strength applies
+   the third law halfway. The consequence shows in a row: four ghost icon
+   buttons in a toolbar give four almost-black glyphs, each louder than the
+   data they serve.
 
-   Под курсором сила возвращается: наведение усиливает элемент, а не вводит
-   его в бытие, — то же правило, по которому кнопка копирования в справочнике
-   видна всегда.                                                            */
+   Under the cursor the strength comes back: hover strengthens an element
+   rather than bringing it into being — the same rule by which the copy button
+   in the reference is always visible.                                       */
 .inst-btn--ghost {
   --btn-bg: transparent;
   --btn-border: transparent;
@@ -287,88 +307,93 @@
   &:hover:not(:disabled) { --btn-fg: var(--text-primary); }
 }
 
-/* ОПАСНОСТЬ — ТОН, А НЕ ПЯТЫЙ ВЕС.
+/* DANGER IS A TONE, NOT A FIFTH WEIGHT.
 
-   Вес отвечает на вопрос «насколько громко кнопка просит нажать себя», и
-   ответов ровно четыре. «Разрушительное» — ответ на ДРУГОЙ вопрос, поэтому
-   danger не занимает своей строки в лестнице весов, а красит ту, на которой
-   стоит: с приподнятой даёт красную подпись на приподнятой кнопке, с
-   призрачной — красную подпись и больше ничего.
+   A weight answers how loudly a button asks to be pressed, and there are
+   exactly four answers. "Destructive" answers a DIFFERENT question, so danger
+   takes no line of its own in the ladder of weights and paints whichever line
+   it stands on: on the raised weight it gives a red label on a raised button,
+   on the ghost weight a red label and nothing else.
 
-   Собственной рамки у него нет, и это не упрощение, а исполнение правила.
-   Кит объявляет обведённый вес несуществующим — «в ряду из пяти контуры
-   складываются в решётку, и группа читается как таблица», — и при этом сам
-   держал ровно один обведённый контрол: красный контур в 40% тона был самой
-   заметной линией в полосе действий, громче рамки панели, которая её
-   содержит. Кнопка удаления кричала не тоном, а геометрией, которой в ките
-   нет ни у чего другого.
+   It has no border of its own, and that is not simplification but the rule
+   being carried out. The kit declares a load-bearing outlined weight
+   non-existent — "in a row of five the outlines add up into a grid and the
+   group reads as a table" — and a red outline at 40% of the tone is the most
+   noticeable line in an action bar, louder than the border of the panel that
+   contains it. A delete button would then shout in geometry that nothing else
+   in the kit has, rather than in tone.
 
-   Сплошного красного варианта нет намеренно. Заливка под белой подписью —
-   привилегия акцента (см. tokens.css), и второй сплошной цвет означал бы
-   второе главное действие на экране: правило «ровно одно primary на экран»
-   не различает, каким тоном это primary покрашено.                        */
-/* Кнопка в две строки: подпись сверху, значение снизу.
+   There is deliberately no solid red variant. A fill under a white label is
+   the accent's privilege (see tokens.css), and a second solid colour would
+   mean a second main action on the screen: the rule of exactly one primary
+   per screen does not care what tone that primary is painted in.          */
+/* A two-line button: the label above, the value below.
 
-   Однострочность базовой кнопки — свойство ДЕЙСТВИЯ: у команды подпись
-   короткая, и перенос в ней почти всегда признак плохой подписи. Но есть
-   контрол, у которого главное значение, а подпись лишь говорит, чего это
-   значение: переключатель репозитория, ветки, окружения, учётной записи.
-   «master» сам по себе не значит ничего — убрать «Current branch» нельзя.
+   The single line of the base button is a property of an ACTION: a command
+   has a short label, and a wrap in it is almost always a sign of a bad label.
+   But there is a control whose main thing is the value, with the label only
+   saying what the value is of: a repository, branch, environment or account
+   switcher. "master" on its own means nothing — "Current branch" cannot be
+   removed.
 
-   Дыра всплыла на двух разных настоящих интерфейсах подряд, и это тот порог,
-   после которого компонент имеет право появиться.
+   The gap surfaced on two different real interfaces in a row, and that is the
+   threshold past which a component earns the right to exist.
 
-   Снимаются ровно две вещи, мешающие второй строке: приколоченный
-   line-height и запрет переноса. Выравнивание уходит на начало — две строки
-   разной длины по центру читаются рвано.                                   */
+   Exactly two things that stand in the way of a second line are removed: the
+   nailed-down line-height and the ban on wrapping. The alignment goes to the
+   start — two lines of different length centred read ragged.               */
 .inst-btn--stacked {
   justify-content: start;
   line-height: var(--leading-ui);
   white-space: normal;
   text-align: start;
-  /* Высота набирается содержимым: две строки в --control-h-md не помещаются,
-     а min-block-size это МИНИМУМ, не потолок. Отступ по вертикали свой. */
+  /* The height is made up by the content: two lines do not fit into
+     --control-h-md, and min-block-size is a MINIMUM rather than a ceiling.
+     The vertical padding is its own. */
   padding-block: var(--pad-block-y);
 }
 
-/* Столбик текста — ОТДЕЛЬНАЯ часть, а не колонка на всей кнопке.
+/* The column of text is a SEPARATE part, not a column across the whole
+   button.
 
-   Сначала колонкой была сама кнопка, и на первом же настоящем экране это
-   развалилось: у такого контрола почти всегда есть ведущий значок и шеврон в
-   конце, и колонка уложила бы значок НАД подписью, а шеврон ПОД значением.
-   Кнопка остаётся строкой, столбиком становится только текст.
+   With the button itself as the column, the first real screen breaks it: such
+   a control almost always has a leading glyph and a chevron at the end, and a
+   column would lay the glyph ABOVE the label and the chevron BELOW the value.
+   The button stays a row; only the text becomes a column.
 
-   min-inline-size снимает минимум флекс-элемента: без него длинное значение
-   распирает кнопку вместо того, чтобы обрезаться.                          */
+   min-inline-size removes the flex minimum: without it a long value bursts
+   the button open instead of being truncated.                              */
 .inst-btn-stack { min-inline-size: 0; }
 
-/* Подпись и значение внутри. Отношение то же, что у метрики: подпись тише и
-   мельче, значение в полный голос. */
+/* The label and the value inside. The relation is the same as on a metric:
+   the label quieter and smaller, the value at full voice. */
 .inst-btn-label { display: block; font-size: var(--text-xs); font-weight: var(--weight-normal); color: var(--text-muted); }
 .inst-btn-value {
   display: block;
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
-  /* Значение — идентификатор: имя репозитория или ветки. Переносить его
-     нельзя, оно читается как одно слово, поэтому длинное обрезается. */
+  /* The value is an identifier: the name of a repository or a branch. It
+     cannot be wrapped, it is read as one word, so a long one is truncated. */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Кнопка в одежде вреза: открывает палитру или список, но остаётся кнопкой.
+/* A button dressed as a field: it opens a palette or a list but remains a
+   button.
 
-   Разметка обязана быть <button>: подменять её настоящим <input> ради вида
-   значит соврать скринридеру про то, что здесь можно печатать, и сломать
-   клавиатуру — поле не открывается пробелом.
+   The markup has to be a <button>: swapping in a real <input> for the sake of
+   appearance lies to a screen reader about typing being possible here and
+   breaks the keyboard — a field does not open on Space.
 
-   Поэтому вид берётся у вреза, а поведение остаётся кнопочным: рамка несущая,
-   как у поля, потому что здесь она И ЕСТЬ контрол — внутри только подсказка. */
-/* У ВРЕЗА РАМКА ОСТАЁТСЯ. Умолчание её потеряло, и это правильно для кнопки,
-   но врез — не кнопка по виду: он обещает раскрывающийся список, и обещает
-   ровно контуром. На макете Anthropic это отдельный вес («Use a project»,
-   1px #373632 без заливки), и он там сосуществует с утопленной вторичной, а
-   не заменяет её.                                                          */
+   So the look comes from the field and the behaviour stays a button's: the
+   border is load-bearing, as on a field, because here it IS the control —
+   inside there is only a placeholder. */
+/* THE FIELD KEEPS ITS BORDER. The default lost it, and that is right for a
+   button, but a field does not look like a button: it promises a dropdown,
+   and it promises with the outline exactly. In the Anthropic mockup this is a
+   weight of its own ("Use a project", 1px #373632 with no fill), and there it
+   coexists with the recessed secondary rather than replacing it.           */
 .inst-btn--field {
   --btn-bg: var(--surface-field);
   --btn-border: var(--border-control);
@@ -380,60 +405,66 @@
   &:hover:not(:disabled) { --btn-border: var(--text-muted); }
 }
 
-/* ТОН — ОБЩИЙ СЛОВАРЬ КИТА, а не собственный набор кнопки.
+/* A TONE IS THE KIT'S SHARED VOCABULARY, not a set of the button's own.
 
-   У кита пять тонов с тремя каналами каждый (--tone-ink, --tone-mark,
-   --tone-bg), и ими живут бейдж, точка, мера, баннер, сноска. Кнопка на них не
-   отзывалась: вместо этого у неё был --danger, руками повторявший ровно одну
-   строку той же таблицы. Один особый случай — это приглашение завести второй.
+   The kit has five tones with three channels each (--tone-ink, --tone-mark,
+   --tone-bg), and the badge, the dot, the meter, the banner and the note all
+   live by them. A button that did not answer to them had a --danger of its
+   own instead, repeating by hand exactly one row of that same table. One
+   special case is an invitation to make a second.
 
-   Теперь кнопка читает словарь. Бесплатно появляются акцентное действие
-   (data-tone="running" — «добавить контекст» без хрома, ровно как у Anthropic),
-   успешное и предупреждающее.
+   So the button reads the vocabulary. An accent action comes free
+   (data-tone="running" — "add context" with no chrome, exactly as at
+   Anthropic), and so do the successful and the warning ones.
 
-   ТОЛЬКО ПО АТРИБУТУ НА САМОЙ КНОПКЕ, а не наследованием. --tone-ink наследуется,
-   и правило вида «просто читать переменную» покрасило бы кнопку внутри аварийного
-   баннера в красный само собой. Тон у кнопки объявляется, а не подхватывается. */
+   BY THE ATTRIBUTE ON THE BUTTON ITSELF ONLY, never by inheritance.
+   --tone-ink is inherited, and a rule that simply read the variable would
+   paint a button inside an error banner red all by itself. A button's tone is
+   declared, not picked up. */
 .inst-btn[data-tone] {
   --btn-fg: var(--tone-ink);
   --btn-bg-hover: var(--tone-bg);
   --btn-bg-active: var(--tone-bg);
 }
 
-/* Сплошная тон НЕ принимает: подпись у неё стоит на заливке акцентом и держит
-   4.5:1 только белым (--accent-on), а красный или зелёный на этой заливке дают
-   1.5–2.0. Правило перечисляет и --danger, потому что он тот же тон под другим
-   написанием, и сломать сочетание должно быть одинаково нельзя обоими путями.
+/* The solid weight does NOT take a tone: its label stands on an accent fill
+   and holds 4.5:1 only in white (--accent-on), while red or green on that
+   fill give 1.5–2.0. The rule lists --danger too, because it is the same tone
+   under another spelling, and breaking the combination has to be equally
+   impossible either way.
 
-   Обезвреживать приходится здесь, а не гейтом: cmd/contrast сверяет пары
-   ТОКЕНОВ, а это сочетание классов — их он не перебирает.                  */
+   This has to be defused here rather than by a gate: cmd/contrast checks
+   pairs of TOKENS, and this is a combination of classes, which it does not
+   enumerate.                                                               */
 .inst-btn--primary[data-tone], .inst-btn--primary.inst-btn--danger {
   --btn-fg: var(--accent-on);
 }
 
-/* ОПАСНОСТЬ — тот же тон error, записанный классом.
+/* DANGER is the same error tone written as a class.
 
-   Класс остаётся, потому что разрушительное действие встречается часто и
-   заслуживает короткого написания; data-tone="error" ему равносилен. Значения
-   продублированы из таблицы тонов сознательно: связать класс с атрибутом
-   средствами CSS нельзя, а две строки — меньшее зло, чем третий механизм.    */
+   The class stays because a destructive action is frequent and deserves a
+   short spelling; data-tone="error" is equivalent to it. The values are
+   duplicated from the tone table knowingly: CSS cannot tie a class to an
+   attribute, and two lines are a smaller evil than a third mechanism.       */
 .inst-btn--danger {
   --btn-fg: var(--err-text);
   --btn-bg-hover: var(--err-bg);
   --btn-bg-active: var(--err-bg);
 }
 
-/* ЗНАЧОК ТИШЕ ПОДПИСИ.
+/* THE GLYPH IS QUIETER THAN THE LABEL.
 
-   Третий закон называет иконки поимённо: «подписи, рамки, шапки и иконки
-   обслуживают данные и обязаны быть тише». .inst-icon наследует currentColor,
-   поэтому значок в кнопке выходил ровно того же цвета, что подпись, — закон
-   требовал, а код не исполнял. На зуме это первое, что отличает нашу кнопку
-   от чужой: там карандаш серый, а слово почти чёрное.
+   The third law names glyphs explicitly: labels, borders, headers and glyphs
+   serve the data and have to be quieter than it. .inst-icon inherits
+   currentColor, so a glyph in a button comes out exactly the colour of the
+   label — the law asking and the code not carrying it out. Under zoom that is
+   the first thing telling our button from somebody else's: there the pencil
+   is grey and the word almost black.
 
-   На сплошной заливке гасить нечего: подпись там белая, и приглушённый значок
-   ушёл бы под порог. Иконочная кнопка тоже не гасится — там значок И ЕСТЬ
-   подпись, тише ему быть некого.                                          */
+   On a solid fill there is nothing to quieten: the label there is white, and
+   a muted glyph would drop below the threshold. An icon button is not
+   quietened either — there the glyph IS the label, and there is nobody for it
+   to be quieter than.                                                      */
 .inst-btn:not(.inst-btn--primary):not(.inst-btn--icon) > .inst-icon {
   color: var(--text-muted);
 }
@@ -441,45 +472,49 @@
 .inst-btn--sm { --btn-pad: var(--control-pad-sm); min-block-size: var(--control-h-sm); border-radius: var(--radius-control-sm); font-size: var(--text-xs); }
 .inst-btn--lg { --btn-pad: var(--control-pad-lg); min-block-size: var(--control-h-lg); border-radius: var(--radius-control-lg); font-size: var(--text-md); }
 
-/* ОПТИЧЕСКАЯ поправка на значок у края.
+/* An OPTICAL correction for a glyph at the edge.
 
-   Замер: коробка значка начинается ровно на границе содержимого, но ЧЕРНИЛА —
-   на 2.5px глубже, потому что глиф нарисован с полем внутри своей коробки 16×16.
-   По 98 значкам спрайта поле стабильно: слева в среднем 2.44, справа 2.45,
-   медиана 2.2 — то есть набор нарисован ровно, и зазор системный, а не кривой.
+   Measured: the box of a glyph starts exactly at the content edge, but the
+   INK starts 2.5px further in, because the glyph is drawn with padding inside
+   its own 16×16 box. Across the 98 glyphs of the sprite that padding is
+   stable: 2.44 on the leading side on average, 2.45 on the trailing one, a
+   median of 2.2 — so the set is drawn evenly and the gap is systematic rather
+   than crooked.
 
-   Считает же браузер по коробке, и у кнопки со значком слева выходило 12px до
-   края коробки плюс 2.5px пустоты = 14.5px оптического отступа против честных
-   12px справа, где стоит текст. Кнопка читалась левотяжёлой, подпись — сдвинутой.
+   The browser, however, counts by the box, and a button with a leading glyph
+   comes out at 12px to the edge of the box plus 2.5px of emptiness = 14.5px
+   of optical padding against an honest 12px on the trailing side, where the
+   text is. The button reads leading-heavy and the label displaced.
 
-   Поправка --space-1 (2px) — ближайшая ступень шкалы к измеренной медиане.
-   Иконочная кнопка исключена: у неё отступа нет вовсе, значок в ней центрируется
-   сам, и вычитать не из чего.
+   The correction --space-1 (2px) is the nearest step of the scale to the
+   measured median. The icon button is excluded: it has no padding at all, its
+   glyph centres by itself, and there is nothing to subtract from.
 
-   КОНТРАКТ РАЗМЕТКИ: в подписанной кнопке значок стоит ПЕРВЫМ. Так во всех
-   примерах справочника, и иначе быть не может — подпись здесь текстовый узел,
-   а текстовые узлы для CSS не существуют. При <svg>Обновить</svg> селектор
-   `svg:first-child` и `svg:last-child` истинны ОБА (элемент-потомок один), и
-   поправить хвостовой значок отдельным правилом нельзя: оно било бы и по
-   ведущему. Значок в конце подписи — это не кнопка, а раскрывающий контрол,
-   и у него свой компонент.                                                */
+   THE MARKUP CONTRACT: in a labelled button the glyph comes FIRST. So it is
+   in every example in the reference, and it cannot be otherwise — the label
+   here is a text node, and text nodes do not exist for CSS. In
+   <svg>Refresh</svg> both `svg:first-child` and `svg:last-child` are true
+   (there is one element child), and a trailing glyph cannot be corrected by a
+   rule of its own: it would hit the leading one as well. A glyph after the
+   label is not a button but a disclosure control, and that has a component of
+   its own.                                                                 */
 .inst-btn:not(.inst-btn--icon):has(> svg:first-child) {
   padding-inline-start: calc(var(--btn-pad) - var(--space-1));
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Кнопка вызова боковой колонки
+   The side-column toggle
 
-   Раскладка оболочки — в layout.css, и по теме кнопка принадлежит ей. Но
-   правило живёт ЗДЕСЬ, потому что оно перебивает `display` у .inst-btn, а
-   kit.layout объявлен РАНЬШЕ kit.components: порядок слоёв бьёт
-   специфичность, и из layout.css это правило не выигрывало никаким
-   селектором. Вложенный @layer там тоже не спасает — импорт в слой
-   вкладывает всё содержимое файла, давая подслой внутри kit.layout.
+   The shell layout is in layout.css, and by theme the button belongs to it.
+   But the rule lives HERE, because it beats `display` on .inst-btn, and
+   kit.layout is declared BEFORE kit.components: layer order beats
+   specificity, and from layout.css this rule wins with no selector at all. A
+   nested @layer there does not save it either — importing into a layer nests
+   the whole content of the file, giving a sub-layer inside kit.layout.
 
-   Отсюда же второй @media в ките. Он на том же пороге, что единственный
-   @media оболочки, и описывает то же событие; разнесены они каскадом, а не
-   замыслом.
+   Hence also the kit's second @media. It is on the same breakpoint as the
+   shell's only @media and describes the same event; the two are separated by
+   the cascade rather than by design.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-shell-nav-toggle { display: none; }
@@ -488,29 +523,32 @@
   .inst-shell-nav-toggle { display: inline-flex; }
 }
 
-/* Иконочная кнопка квадратная, а не «узкая»: прямоугольник 32×28 — самый
-   частый признак самодельного кита.                                       */
+/* An icon button is square rather than "narrow": a 32×28 rectangle is the
+   commonest mark of a home-made kit.                                       */
 .inst-btn--icon { inline-size: var(--control-h-md); padding-inline: 0; }
 .inst-btn--sm.inst-btn--icon { inline-size: var(--control-h-sm); }
 .inst-btn--lg.inst-btn--icon { inline-size: var(--control-h-lg); }
 
-/* Шов группы — снятая рамка у соседа, а не отрицательное поле. Сдвиг в
-   -0.5px при нарисованной рамке в 1px оставлял полпикселя двойной линии:
-   браузер никогда не рисует рамку тоньше физического пикселя.             */
+/* The seam of a group is a border removed from a neighbour, not a negative
+   margin. An offset of -0.5px against a drawn 1px border leaves half a pixel
+   of doubled line: a browser never draws a border thinner than a physical
+   pixel.                                                                   */
 .inst-btn-group {
-  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  /* Sized by its content: it does not stretch in a column and centres in a
+     row. */
   align-self: var(--flow-self, center);
   display: inline-flex;
-  /* Тени у группы НЕТ. Толщину показывать нечему: кнопки внутри утоплены, и
-     приподнятая рамка вокруг врезанного содержимого читается как ошибка
-     сборки. Единственный вес с собственной толщиной — сплошная, и внутри
-     группы её тоже снимают: группа обязана читаться одним предметом, а
-     блестящий сегмент посреди врезанного ряда рвёт это чтение.            */
-  /* Радиус группы — радиус ЕЁ кнопок, а не постоянная. Группа читается одним
-     предметом, и её углы обязаны совпасть с углами крайних кнопок: жёсткое
-     число давало 8 на группе из sm-кнопок высотой 22, то есть 0.36 — пилюлю
-     вокруг двух прямоугольников. Размер группа узнаёт у содержимого: своего
-     размера у неё нет вовсе. */
+  /* The group has NO shadow. There is no thickness to show: the buttons
+     inside are recessed, and a raised frame around recessed content reads as
+     an assembly error. The one weight with a thickness of its own is the
+     solid one, and inside a group that is taken off too: a group has to read
+     as one object, and a glossy segment in the middle of a recessed row tears
+     that reading apart.                                                    */
+  /* The group's radius is the radius of ITS buttons rather than a constant. A
+     group reads as one object, and its corners have to meet the corners of
+     the outermost buttons: a hard number gives 8 on a group of sm buttons 22
+     tall, that is 0.36 — a pill around two rectangles. The group learns its
+     size from its content: it has no size of its own at all. */
   --group-radius: var(--radius-control-md);
   border-radius: var(--group-radius);
 
@@ -518,15 +556,15 @@
   &:has(> .inst-btn--lg) { --group-radius: var(--radius-control-lg); }
 
   & > .inst-btn { border-radius: 0; --btn-shadow: none; }
-  /* ШОВ РИСУЕТСЯ, а не остаётся от рамки соседа. Пока у умолчания была своя
-     рамка, деление между кнопками возникало само и снимать приходилось лишнюю
-     линию. Утопленному умолчанию рамки не положено, и ряд слипался в одно
-     пятно — при том что группа заводится ровно затем, чтобы кнопки в ней
-     различались.
+  /* THE SEAM IS DRAWN rather than left over from a neighbour's border. While
+     the default had a border of its own, the division between buttons arose
+     by itself and what had to be removed was the extra line. The recessed
+     default is due no border, and the row fuses into one blot — while a group
+     is made precisely so that the buttons in it can be told apart.
 
-     Одна линия между соседями, а не контур у каждого: контуры в ряду
-     складываются в решётку, и группа начинает читаться таблицей. Тот же довод,
-     по которому у мягкой рамки нет вовсе.                                 */
+     One line between neighbours rather than an outline on each: outlines in a
+     row add up into a grid, and the group starts reading as a table. The same
+     argument by which the soft weight has no border at all.                */
   & > .inst-btn + .inst-btn {
     border-inline-start: var(--hairline) solid var(--border);
   }
@@ -538,40 +576,43 @@
     border-start-end-radius: var(--group-radius);
     border-end-end-radius: var(--group-radius);
   }
-  /* Элементы флекса подчиняются z-index без position — кольцо фокуса
-     ложится поверх соседей.                                              */
+  /* Flex items obey z-index without position — the focus ring lands over its
+     neighbours.                                                           */
   & > .inst-btn:hover, & > .inst-btn:focus-visible { z-index: 1; }
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Сегментированный контрол — выбор среди равных, в отличие от группы кнопок
+   Segmented control — a choice among equals, unlike a button group
 
-   Разметка: role="radiogroup" + role="radio" + aria-checked. Не tablist:
-   без панели эта роль невалидна, а обещание стрелочной навигации остаётся.
+   Markup: role="radiogroup" + role="radio" + aria-checked. Not tablist: with
+   no panel that role is invalid, while the promise of arrow navigation
+   remains.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-segmented {
-  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  /* Sized by its content: it does not stretch in a column and centres in a
+     row. */
   align-self: var(--flow-self, center);
   display: inline-flex;
   padding: var(--space-1);
   gap: var(--space-1);
-  /* Дорожка относительна: контрол стоит в тулбаре, в шапке экрана и в панели.
-     Выбранный сегмент внутри остаётся на --surface-raised — он ПОДНЯТ над
-     дорожкой, и эта пара не должна зависеть от того, что под контролом. */
+  /* The track is relative: the control stands in a toolbar, in a screen
+     header and in a panel. The selected segment inside stays on
+     --surface-raised — it is RAISED above the track, and that pair must not
+     depend on what lies under the control. */
   background: var(--surface-recessed);
-  /* Дорожка — контрол размера md, поэтому радиус берёт у него и едет за
-     плотностью. Сегмент внутри получает тот же радиус МИНУС поле дорожки:
-     концентричность здесь считается, а не подбирается парой токенов, и
-     потому держится во всех трёх плотностях. */
+  /* The track is an md-sized control, so its radius comes from there and
+     rides density. A segment inside gets that radius MINUS the track's
+     padding: concentricity here is computed, not guessed at with a pair of
+     tokens, and that is why it holds in all three densities. */
   border-radius: var(--radius-control-md);
 
-  /* Ссылка наравне с кнопкой.
-     Значение, у которого есть адрес, не перестаёт быть значением: окно
-     истории переживает перезагрузку и передаётся другому человеку целиком,
-     ссылкой. Пока контрол принимал только `button`, приложение подставляло
-     на его место ряд кнопок — и макет расходился с экраном молча.
-     Носитель состояния у ссылки свой: `aria-current="page"`.              */
+  /* A link on equal footing with a button.
+     A value that has an address does not stop being a value: a history window
+     survives a reload and is handed to another person whole, as a link. While
+     the control accepted only `button`, an application would put a row of
+     buttons in its place — and the mockup would diverge from the screen
+     silently. A link carries its state its own way: `aria-current="page"`. */
   & > :is(button, a) {
     display: inline-flex;
     align-items: center;
@@ -581,43 +622,45 @@
     border-radius: calc(var(--radius-control-md) - var(--space-1));
     font-size: var(--text-sm);
     color: var(--text-secondary);
-    /* Подчёркивание контролу не нужно никогда, поэтому отмена остаётся и
-       после того, как base.css перестал подчёркивать ссылки по умолчанию:
-       под курсором он подчёркивает их до сих пор, и это правильно для
-       ссылки, но не для сегмента.                                         */
+    /* A control never wants an underline, so the cancellation stays even after
+       base.css stopped underlining links by default: under the cursor it
+       still underlines them, and that is right for a link but not for a
+       segment.                                                            */
     text-decoration: none;
     cursor: pointer;
     transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 
-    /* Поверхность, а не только цвет: правило кита — «состояния только
-       поверхностью и рамкой». У сегмента есть свой горизонтальный отступ,
-       значит заливке есть куда лечь. Слой полупрозрачный и потому ложится и
-       на дорожку под невыбранным сегментом, и на приподнятую заливку
-       выбранного: состояния складываются, как у строки задачи.            */
+    /* A surface rather than colour alone: the kit's rule is that states are
+       carried by surface and border only. A segment has inline padding of its
+       own, so there is room for a fill to lie in. The layer is translucent
+       and therefore lands both on the track under an unselected segment and
+       on the raised fill of the selected one: the states add up, as they do
+       on a task row.                                                      */
     &:hover { background: var(--surface-hover); color: var(--text-primary); }
 
-    /* НАЧЕРТАНИЕ НЕ НЕСЁТ СОСТОЯНИЕ — последнее место в ките, где оно его
-       несло. Прежняя запись насчитывала выбранному три признака: поверхность,
-       начертание и рамку. Три не требовалось: закон — «не только цвет», и
-       поверхность с кольцом дают два носителя, ни один из которых не цвет.
+    /* WEIGHT DOES NOT CARRY STATE — this was the last place in the kit where
+       it did. Counting three traits for the selected segment — surface,
+       weight and ring — was one too many: the law says "not colour alone",
+       and surface plus ring are two carriers, neither of which is colour.
 
-       Решающим оказался не счёт признаков, а растеризация. Замерено: ширина
-       ДОРОЖКИ зависит от того, какой сегмент выбран, — 217.16 · 216.94 ·
-       216.64, разброс 0.52px; без медиума все три дают 215.95. То есть выбор
-       сдвигал всё, что стоит за контролом в тулбаре, и заставлял правый
-       скруглённый угол перерастрироваться: край садился на полпикселя, а при
-       плотности 2.0 уходил на целый.
+       What decided it was not the count of traits but rasterisation.
+       Measured: the width of the TRACK depends on which segment is selected —
+       217.16 · 216.94 · 216.64, a spread of 0.52px; without medium all three
+       give 215.95. That is, the selection moved everything standing after the
+       control in a toolbar and forced the trailing rounded corner to
+       re-rasterise: the edge landed on a half pixel, and at a density of 2.0
+       went off by a whole one.
 
-       Ровно это запрещает доктрина радиусов в tokens.css — «дуга упирается в
-       прямую грань на полпикселя мимо сетки, браузер разводит стык
-       сглаживанием». Держать чётные радиусы и одновременно двигать ширину
-       контрола на полпикселя от состояния — противоречие.                  */
+       That is exactly what the radius doctrine in tokens.css forbids — "the
+       arc meets the straight edge half a pixel off the grid, and the browser
+       smooths the join over". Holding even radii while moving the width of a
+       control by half a pixel with its state is a contradiction.          */
     &[aria-checked="true"],
     &[aria-current]:not([aria-current="false"]) {
       background: var(--surface-raised);
       color: var(--text-primary);
-      /* Кольцо рамки, а не тень: box-shadow здесь очерчивает границу, а не
-         поднимает элемент над плоскостью.                                 */
+      /* A ring of border rather than a shadow: box-shadow here traces a
+         boundary, it does not lift the element off the plane.             */
       box-shadow: 0 0 0 var(--hairline) var(--border);
     }
   }
@@ -625,33 +668,36 @@
 
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Чип — видимый фильтр, который включают
+   Chip — a visible filter that gets switched on
 
-   Не бейдж и не тег, хотя ростом со́ всеми троими. Бейдж показывает состояние
-   из словаря кита, тег показывает метку пользователя и умеет сняться, чип
-   ВЫБИРАЕТ. Первые два живут в display/, чип — контрол.
+   Neither a badge nor a tag, though all three are the same height. A badge
+   shows a state from the kit's vocabulary, a tag shows a user's label and can
+   be removed, a chip SELECTS. The first two live in display/; a chip is a
+   control.
 
-   Почему он появился, если рядом стоят три способа выбрать. Ни один не берёт
-   его случай целиком:
+   Why it exists when three ways to choose already stand nearby. None of them
+   takes its case whole:
 
-     сегментированный   2–5 вариантов, одна дорожка, ОДИН выбранный
-     чекбоксы           несколько сразу, но столбиком и с квадратом у каждого
-     селект             сколько угодно, но выбранное СПРЯТАНО в свёрнутом виде
+     segmented    2–5 options, one track, ONE selected
+     checkboxes   several at once, but in a column with a square on each
+     select       any number, but the selection is HIDDEN when collapsed
 
-   Пустая клетка одна: несколько включённых сразу, все на виду, ряд переносится
-   по ширине. Это фильтровальная полоса над очередью или логом — «идёт · упало ·
-   в очереди», четыре-шесть значений, два включены. Домен кита ровно этот,
-   поэтому клетку и стоит закрыть.
+   One empty cell is left: several switched on at once, all in view, the row
+   wrapping by width. That is a filter bar over a queue or a log — "running ·
+   failed · queued", four to six values, two on. The kit's domain is exactly
+   this, which is why the cell is worth closing.
 
-   Разметка: role="listbox" aria-multiselectable="true" на .inst-chips,
-   role="option" aria-selected на каждом чипе. Носитель тот же, что у очереди
-   задач, — пятого способа сказать «выбрано» кит не заводит. Стрелки и пробел
-   даёт instrument.js: множественность он понимает по атрибуту группы.
+   Markup: role="listbox" aria-multiselectable="true" on .inst-chips,
+   role="option" aria-selected on each chip. The carrier is the same as in the
+   task queue — the kit does not invent a fifth way to say "selected". The
+   arrows and Space come from instrument.js: it understands multiplicity from
+   the group's attribute.
 
-   Состояния разведены по РАЗНЫМ каналам и потому читаются вместе: выбор —
-   цветом подписи, наведение — цветом рамки, любое из двух — заливкой. Начертание
-   при выборе НЕ меняется: ряд переносится по ширине, и потолстевшая подпись
-   переложила бы соседей на другую строку в момент нажатия.
+   The states are spread across DIFFERENT channels and therefore read
+   together: selection through the label colour, hover through the border
+   colour, either of the two through a fill. The weight does NOT change on
+   selection: the row wraps by width, and a thickened label would push its
+   neighbours onto another line at the moment of the press.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-chips {
@@ -668,9 +714,9 @@
   padding-inline: var(--space-3);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-sm);
-  /* Пусто, а не утоплено: невыбранных в полосе большинство, и заливка у
-     каждого собрала бы ряд в сплошную серую ленту. Заливку получает тот, с
-     кем что-то происходит.                                                */
+  /* Empty rather than recessed: most of a bar is unselected, and a fill on
+     every one of them would gather the row into a solid grey band. A fill
+     goes to whatever something is happening to.                           */
   background: transparent;
   color: var(--text-secondary);
   font-size: var(--text-xs);

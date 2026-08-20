@@ -1,31 +1,32 @@
 /* ==========================================================================
-   instrument — раскладка и навигация
+   instrument — layout and navigation
 
-   Ярус, которого не было. Кит умел нарисовать что угодно внутри панели и не
-   умел расположить сами панели: оболочка, контейнер, сетка, стопка и ряд
-   жили в лесах живой спецификации, то есть у каждого нового экрана была бы
-   своя раскладка.
+   The tier that was missing. The kit could draw anything inside a panel and
+   could not place the panels themselves: the shell, the container, the grid,
+   the stack and the row lived in the scaffolding of the living specification,
+   which means every new screen would have a layout of its own.
 
-   ── Стратегия адаптивности ──────────────────────────────────────────────
+   ── The strategy for responsiveness ─────────────────────────────────────
 
-   Три уровня, в порядке предпочтения:
+   Three levels, in order of preference:
 
-   1. ИНТРИНСИК. Раскладка перестраивается сама, без единого запроса:
-      auto-fit у сетки, flex-wrap с порогом у сплита. Работает всегда, в том
-      числе там, где контейнера-предка нет.
-   2. @container. Компонент отвечает на ширину СВОЕЙ области, а не окна.
-      Для панельного кита это единственный правильный ответ: одна и та же
-      панель стоит и в узкой колонке инспектора, и во всю ширину дашборда.
-   3. @media. Только оболочка приложения. Она и есть то единственное, что
-      действительно зависит от размера окна.
+   1. INTRINSIC. The layout reflows by itself, without a single query:
+      auto-fit on a grid, flex-wrap with a threshold on a split. It always
+      works, including where there is no container ancestor.
+   2. @container. A component answers to the width of ITS OWN region rather
+      than of the window. For a panel kit this is the only right answer: one
+      and the same panel stands both in a narrow inspector column and across
+      the full width of a dashboard.
+   3. @media. The application shell only. It is the one thing that really does
+      depend on the size of the window.
 
-   Контейнер не должен получать ширину от своего содержимого: container-type
-   отключает интринсик по инлайновой оси. Поэтому им объявлены только те
-   области, ширина которых всегда приходит снаружи.
+   A container must not take its width from its content: container-type
+   disables the intrinsic sizing on the inline axis. So only those regions
+   whose width always arrives from outside are declared as containers.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Пропуск к содержимому — первое, что встречает клавиатура
+   Skip to content — the first thing a keyboard meets
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-skip-link {
@@ -43,9 +44,10 @@
     inline-size: 1px;
     block-size: 1px;
     padding: 0;
-    /* Рамка тоже снимается. Иначе элемент с box-sizing: border-box не может
-       стать тоньше своих рамок, и объявленный 1px рисуется двойкой —
-       расхождение маленькое, но объявление должно быть правдой.            */
+    /* The border comes off too. Otherwise an element with box-sizing:
+       border-box cannot become thinner than its own borders, and a declared
+       1px is drawn as two — a small discrepancy, but a declaration ought to
+       be true.                                                             */
     border-width: 0;
     overflow: hidden;
     clip-path: inset(50%);
@@ -53,10 +55,10 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Оболочка приложения
+   The application shell
 
-   Боковая колонка, шапка, рабочая область. Каждая прокручивается сама:
-   боковая навигация не уезжает, пока читают таблицу.
+   A side column, a header, a work area. Each scrolls on its own: the side
+   navigation does not go anywhere while a table is being read.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-shell {
@@ -67,10 +69,10 @@
   block-size: 100dvh;
 }
 
-/* Оболочка без боковой колонки: шапка и рабочая область во всю ширину.
-   Разделы есть не у каждого инструмента — у монитора аптайма их два, и они
-   помещаются в шапку. Без этого правила колонка забирала свои 232 пикселя
-   и оставляла пустой жёлоб. */
+/* A shell with no side column: the header and the work area take the full
+   width. Not every instrument has sections — an uptime monitor has two, and
+   they fit into the header. Without this rule the column takes its 232 pixels
+   and leaves an empty gutter. */
 .inst-shell:not(:has(> .inst-shell-aside)) {
   grid-template-areas: "header" "main";
   grid-template-columns: minmax(0, 1fr);
@@ -88,20 +90,23 @@
   background: var(--surface-sunken);
 }
 
-/* Собственный заголовок боковой колонки: имя приложения над разделами.
+/* The side column's own heading: the application name above the sections.
 
-   Он в ките, а не у потребителя, ровно из-за одной строки — отбивки снизу.
-   В КОЛОНКЕ она обязательна: без неё имя встаёт в ряд с пунктами и делается
-   первым из них. В РЯДУ (узкий экран) она же смещает имя вверх на половину
-   себя, и логотип с пунктами перестают стоять на одной линии — расхождение
-   в шесть пикселей, которое видно сразу и не находится никогда.
+   It is in the kit rather than at the consumer's, for the sake of exactly one
+   line — the offset below. In a COLUMN it is mandatory: without it the name
+   joins the row of items and becomes the first of them. In a ROW (a narrow
+   screen) that same offset lifts the name by half of itself, and the logo
+   stops standing on one line with the items — a discrepancy of six pixels,
+   visible at once and never findable.
 
-   Каждый потребитель напишет этот класс сам и попадёт в ту же яму.       */
+   Every consumer would write this class themselves and fall into the same
+   hole.                                                                   */
 .inst-shell-brand {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  /* Не ниже цели нажатия: имя приложения — ссылка, как любая другая. */
+  /* No shorter than a tap target: the application name is a link like any
+     other. */
   min-block-size: var(--control-h-md);
   margin-block-end: var(--space-5);
   padding-inline: var(--space-3);
@@ -116,10 +121,10 @@
   grid-area: header;
   display: flex;
   align-items: center;
-  /* Переносится обязательно: в шапке живут крошки и несколько контролов, и
-     без переноса они на узком экране выталкивают документ за вьюпорт —
-     появляется горизонтальная прокрутка, из-за которой 100dvh оболочки
-     перестаёт помещаться по высоте.                                       */
+  /* Wrapping is mandatory: the header holds breadcrumbs and several
+     controls, and without it they push the document past the viewport on a
+     narrow screen — a horizontal scrollbar appears, and the shell's 100dvh
+     stops fitting vertically.                                             */
   flex-wrap: wrap;
   gap: var(--space-3) var(--gap-inline);
   padding: var(--pad-block-y) var(--pad-panel);
@@ -131,58 +136,60 @@
   grid-area: main;
   min-block-size: 0;
   overflow: auto;
-  /* Вертикальный воздух даёт рабочая область, горизонтальный — .inst-container
-     внутри неё. Без этого заголовок экрана прилипал к линии шапки.       */
+  /* Vertical air comes from the work area, horizontal from .inst-container
+     inside it. Without this the screen title sticks to the header rule.   */
   padding-block: var(--pad-panel);
-  /* Нижний отступ ПРОКРУЧИВАЕМОЙ области объявляется наружу.
+  /* The bottom padding of the SCROLLING region is declared outwards.
 
-     `position: sticky` закрепляется относительно поля ПАДДИНГА, а не
-     границы. Поэтому закреплённая внизу полоса действий останавливается на
-     8px выше видимого низа, и под ней остаётся живая щель в высоту отступа
-     — сквозь неё видно, как едет содержимое. Полоса перестаёт быть дном.
+     `position: sticky` pins against the PADDING edge, not the border edge. So
+     an action bar pinned to the bottom stops 8px above the visible bottom,
+     and a live slit the height of the padding is left under it — through
+     which the content can be seen moving. The bar stops being a floor.
 
-     Знает это только тот, кто отступ поставил. Отсюда переменная: полоса
-     внутри вычтет её сама и закрепится вровень.                          */
+     Only whoever set the padding knows about it. Hence the variable: the bar
+     inside subtracts it itself and pins flush.                           */
   --scroll-pad-end: var(--pad-panel);
-  /* Область, по ширине которой отвечают компоненты внутри. */
+  /* The region whose width the components inside answer to. */
   container: app / inline-size;
 }
 
-/* Кнопка вызова колонки — .inst-shell-nav-toggle — живёт НЕ здесь, а в
-   actions.css, хотя по смыслу принадлежит оболочке.
+/* The button that opens the column — .inst-shell-nav-toggle — lives NOT here
+   but in actions.css, although by meaning it belongs to the shell.
 
-   Причина в каскаде, и она стоит того, чтобы быть записанной. Кнопка несёт
-   .inst-btn с `display: inline-flex`, объявленный в слое kit.components,
-   а этот файл импортирован как layer(kit.layout) — то есть РАНЬШЕ. Порядок
-   слоёв бьёт специфичность: никакой селектор отсюда `display: none` не
-   отстоит, и на широком экране бургер оставался виден.
+   The reason is the cascade, and it is worth writing down. The button carries
+   .inst-btn with `display: inline-flex`, declared in the kit.components
+   layer, while this file is imported as layer(kit.layout) — that is, EARLIER.
+   Layer order beats specificity: no selector from here can defend a
+   `display: none`, and the burger stays visible on a wide screen.
 
-   Вложенный `@layer kit.components { … }` внутри этого файла не помогает:
-   импорт в слой вкладывает ВСЁ содержимое, поэтому получается подслой
-   kit.layout.kit.components, который по-прежнему внутри kit.layout.
-   Единственный выход — объявить правило в файле, который импортирован в
-   нужный слой.                                                           */
+   A nested `@layer kit.components { … }` inside this file does not help:
+   importing into a layer nests ALL of the content, so what comes out is a
+   sub-layer kit.layout.kit.components, which is still inside kit.layout. The
+   only way out is to declare the rule in a file imported into the layer that
+   is wanted.                                                             */
 
-/* Единственный порог во всём ките, и один из двух его @media. Оболочка и
-   есть то единственное, что действительно зависит от размера окна. Второй
-   @media стоит в actions.css у .inst-shell-nav-toggle: он на ЭТОМ ЖЕ
-   пороге и про то же событие, а разнесён каскадом — см. комментарий там.
+/* The only breakpoint in the whole kit, and one of its two @media rules. The
+   shell is the one thing that really does depend on the size of the window.
+   The second @media stands in actions.css on .inst-shell-nav-toggle: it is on
+   THIS SAME breakpoint and about the same event, and it is separated by the
+   cascade — see the comment there.
 
-   ДВА поведения, и выбор между ними не вкусовой, а по ДЛИНЕ навигации.
+   TWO behaviours, and the choice between them is not a matter of taste but of
+   the LENGTH of the navigation.
 
-   Умолчание — горизонтальная полоса. Работает без единой строки JS и потому
-   не может «не открыться»: у приложения, которое ничего не подключило,
-   навигация на телефоне всё равно есть. Годится примерно до восьми пунктов.
+   The default is a horizontal bar. It works without a line of JS and
+   therefore cannot "fail to open": an application that included nothing still
+   has navigation on a phone. Good for roughly up to eight items.
 
-   Вариант --drawer — выезжающий ящик. Нужен, как только пунктов больше:
-   семьдесят один пункт в горизонтальной ленте — это лента шириной почти
-   восемь тысяч пикселей без заголовков групп, то есть не «неудобно», а
-   неработающая навигация. Проверено на собственном справочнике.
+   The --drawer variant is a sliding drawer. It is wanted as soon as there are
+   more items: seventy-one items in a horizontal strip is a strip almost eight
+   thousand pixels wide with no group headings — that is not "inconvenient",
+   that is navigation that does not work. Checked on the kit's own reference.
 
-   Ящик стоит одной строки JS — переключить aria-expanded на кнопке, — и это
-   ровно тот же контракт, что у модалки с showModal(). Ловушка фокуса и
-   Escape тоже на слое приложения: кит рисует состояние, но не выдумывает
-   его.                                                                   */
+   The drawer costs one line of JS — toggling aria-expanded on the button —
+   and that is exactly the same contract as a modal with showModal(). The
+   focus trap and Escape are also the application layer's: the kit draws the
+   state but does not invent it.                                          */
 @media (width < 60rem) {
   .inst-shell {
     grid-template-areas: "header" "aside" "main";
@@ -190,11 +197,11 @@
     grid-template-rows: auto auto minmax(0, 1fr);
   }
 
-  /* ── Умолчание: горизонтальная полоса ──────────────────────────────────
-     Внутренние правила намеренно исключают ящик. Пока они применялись ко
-     всякой узкой колонке, приложение, показавшее её иначе, получало
-     вертикальную панель с навигацией, выложенной В СТРОКУ, и без подписей
-     групп: два механизма накладывались друг на друга.                    */
+  /* ── The default: a horizontal bar ─────────────────────────────────────
+     The inner rules deliberately exclude the drawer. Applied to every narrow
+     column, they give an application that shows the column some other way a
+     vertical panel with its navigation laid out IN A ROW and with no group
+     labels: two mechanisms landing on top of each other.                 */
   .inst-shell-aside:not(.inst-shell-aside--drawer) {
     flex-direction: row;
     align-items: center;
@@ -205,8 +212,8 @@
     border-inline-end: none;
     border-block-end: var(--hairline) solid var(--border);
 
-    /* Отбивка заголовка снимается: в ряду она не отделяет, а сбивает
-       выравнивание по центру на половину себя. */
+    /* The heading's offset comes off: in a row it does not separate, it
+       knocks the centring off by half of itself. */
     & .inst-shell-brand { margin-block-end: 0; }
     & .inst-nav { flex-direction: row; }
     & .inst-nav-group { flex-direction: row; }
@@ -215,25 +222,28 @@
     & .inst-nav-item { white-space: nowrap; }
   }
 
-  /* ── Вариант: выезжающий ящик ──────────────────────────────────────────
-     Колонка уходит из сетки в фиксированный слой, поэтому ряд «aside»
-     схлопывается сам и отдельного grid-template не требует.
+  /* ── The variant: a sliding drawer ─────────────────────────────────────
+     The column leaves the grid for a fixed layer, so the "aside" track
+     collapses by itself and no separate grid-template is needed.
 
-     Вертикаль и подписи групп остаются — в этом весь смысл варианта.     */
+     The vertical arrangement and the group labels stay — that is the whole
+     point of the variant.                                                */
   .inst-shell-aside--drawer {
     position: fixed;
     inset-block: 0;
     inset-inline-start: 0;
     z-index: var(--z-modal);
     inline-size: min(calc(var(--aside-w) + var(--space-8)), 86vw);
-    /* Ящик лежит НА странице, а не в ней, поэтому поверхность приподнятая,
-       а не утопленная: утопленная читалась бы как часть фона.            */
+    /* The drawer lies ON the page rather than in it, so its surface is
+       raised rather than sunken: a sunken one would read as part of the
+       background.                                                        */
     background: var(--surface-raised);
     border-inline-end: var(--hairline) solid var(--border);
     box-shadow: var(--shadow-modal);
     translate: -100% 0;
-    /* visibility, а не display: под display переход не доигрывает, а без
-       неё закрытый ящик остаётся достижимым с клавиатуры за краем экрана. */
+    /* visibility rather than display: under display the transition does not
+       play out, and without either a closed drawer stays reachable from the
+       keyboard beyond the edge of the screen. */
     visibility: hidden;
     transition: translate var(--dur-3) var(--ease-out),
                 visibility var(--dur-3);
@@ -242,8 +252,8 @@
   .inst-shell:has(.inst-shell-nav-toggle[aria-expanded="true"]) {
     & .inst-shell-aside--drawer { translate: 0 0; visibility: visible; }
 
-    /* Подложка. Тот же --scrim, что у модалки: это то же сообщение —
-       «фон сейчас не ваш».                                              */
+    /* The backdrop. The same --scrim as the modal's: it is the same message
+       — "the background is not yours right now".                        */
     &::after {
       content: "";
       position: fixed;
@@ -255,10 +265,10 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Контейнер — потолок ширины
+   Container — the ceiling on width
 
-   Ограничивает не «дизайн», а меру читаемости: строка длиннее ~90 знаков
-   теряется на возврате к началу.
+   What it limits is not "the design" but the measure of legibility: a line
+   longer than ~90 characters is lost on the way back to its start.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-container {
@@ -274,12 +284,13 @@
 .inst-container--full   { --container-max: none; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Примитивы потока
+   Flow primitives
 
-   Три штуки, и у каждой три шага зазора, названные намерением, а не
-   числом. Это осознанный отказ от утилит вида `mt-3`: шкала кита нарочно
-   разрежена сверху, чтобы «чуть побольше» не было доступным решением, а
-   двести утилит отступов возвращают его первым классом.
+   Three of them, each with three steps of gap named by intent rather than by
+   number. This is a deliberate refusal of `mt-3`-style utilities: the kit's
+   scale is thinned out at the top on purpose, so that "a bit more" is not an
+   available decision, and two hundred spacing utilities bring it back as a
+   first-class one.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-stack {
@@ -290,36 +301,38 @@
 .inst-stack--tight { gap: var(--gap-row); }
 .inst-stack--loose { gap: var(--gap-section); }
 
-/* Растяжение по ширине остаётся умолчанием, и это правильно: в стопке стоят
-   карточки, панели, поля и шапки экрана — им ширина колонки и нужна.
+/* Stretching to the width stays the default, and rightly so: a stack holds
+   cards, panels, fields and screen headers — the width of the column is
+   exactly what they want.
 
-   Но у колоночного флекса stretch распространяется и на то, что меряется
-   СОДЕРЖИМЫМ. Бейдж, тег и кнопка в стопке разъезжались бы на всю её ширину:
-   кнопка во всю ширину карточки — тот же признак самодельного кита, что и
-   иконочная кнопка прямоугольником 32×28.
+   But in a column flex, stretch reaches things sized by their CONTENT too. A
+   badge, a tag and a button in a stack would spread across its whole width: a
+   button the full width of a card is the same mark of a home-made kit as an
+   icon button drawn as a 32×28 rectangle.
 
-   КАНАЛ, А НЕ СПИСОК. Колонка объявляет своим детям намерение, а читает его
-   тот, кого оно касается: `align-self: var(--flow-self, center)` стоит в
-   правиле каждого инлайнового компонента, рядом с его `display: inline-flex`.
-   Так «я меряюсь содержимым» остаётся свойством компонента, а не знанием
-   раскладки о пятнадцати чужих именах в другом файле.
+   A CHANNEL, NOT A LIST. The column declares an intent to its children, and
+   the one it concerns reads it: `align-self: var(--flow-self, center)` stands
+   in the rule of every inline component, beside its `display: inline-flex`.
+   That way "I am sized by my content" stays a property of the component
+   rather than the layout's knowledge of fifteen other names in another file.
 
-   Запасное значение — center, и потому в ряду и в тулбаре ничего не меняется:
-   канал там не объявлен, компонент центрируется, как и должен.
+   The fallback is center, which is why nothing changes in a row or a toolbar:
+   the channel is not declared there, and the component centres as it should.
 
-   inherits: false — вся суть, и без него приём не работает. Обычное
-   пользовательское свойство протекает вглубь: кнопка внутри кластера внутри
-   стопки получила бы `start` и встала бы по верху ряда. Незаследуемое
-   свойство доходит ровно до прямого ребёнка, которому его объявили, а глубже
-   отдаёт запасное значение — то есть делает то же, что делал комбинатор `>`,
-   но для потребителя, а не для селектора.
+   inherits: false is the whole of it, and without that the device does not
+   work. An ordinary custom property leaks downwards: a button inside a
+   cluster inside a stack would receive `start` and stand at the top of the
+   row. A non-inheriting property reaches exactly the direct child it was
+   declared for, and deeper down gives the fallback — that is, it does what
+   the `>` combinator used to do, but for the consumer rather than for the
+   selector.
 
-   Контейнеров закрытый список, и это ВСЕ колонки кита, а не одна стопка:
-   форма, поле и секция — тоже колонки, и каждая растягивала бы контрол
-   заново.
+   The list of containers is closed, and it is EVERY column of the kit rather
+   than the stack alone: a form, a field and a section are columns too, and
+   each of them would stretch a control all over again.
 
-   Объявление на `> *`, а не на `:where(...)`: специфичность здесь не важна,
-   потому что решает не оно, а запасное значение у потребителя. */
+   Declared on `> *` rather than on `:where(...)`: specificity does not matter
+   here, because what decides is not this but the fallback at the consumer. */
 @property --flow-self {
   syntax: "*";
   inherits: false;
@@ -337,11 +350,11 @@
 }
 .inst-cluster--tight { gap: var(--space-2); }
 .inst-cluster--loose { gap: var(--pad-panel); }
-/* Прижать хвост группы к противоположному краю. */
+/* Push the tail of a group to the opposite edge. */
 .inst-cluster-spacer { margin-inline-start: auto; }
 
-/* Сетка карточек. Перестраивается сама, без запросов: min() не даёт
-   колонке вылезти за контейнер на узком экране.                          */
+/* A grid of cards. It reflows by itself, with no queries: min() keeps a
+   column from spilling out of the container on a narrow screen.          */
 .inst-grid {
   display: grid;
   gap: var(--pad-panel);
@@ -350,8 +363,8 @@
 .inst-grid--wide { --col-min: 380px; }
 .inst-grid--tight { --col-min: 180px; }
 
-/* Сплит: боковая часть желаемой ширины плюс основная. Переносится сам,
-   когда основной части перестаёт хватать порога, — без единого запроса. */
+/* A split: a side part at its wanted width plus the main one. It wraps by
+   itself once the main part runs below its threshold — with no queries. */
 .inst-split {
   display: flex;
   flex-wrap: wrap;
@@ -364,7 +377,7 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Шапка экрана и секция
+   Screen header and section
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-page-header {
@@ -392,10 +405,11 @@
   gap: var(--gap-row);
 }
 
-/* Разделы отбиваются друг от друга ЧЕТВЁРТОЙ ступенью ритма. Просвет внутри
-   раздела — --gap-row, между разделами — он же на четыре ступени выше, то есть
-   вчетверо больше. Без этой отбивки соседние разделы стояли на том же просвете,
-   что строки внутри них, и граница между ними не читалась.                  */
+/* Sections are set apart from each other by the FOURTH step of the rhythm.
+   The gap inside a section is --gap-row; between sections it is the same
+   thing four steps up, that is four times larger. Without that offset
+   neighbouring sections stand on the same gap as the rows inside them, and
+   the boundary between them does not read.                                 */
 .inst-section + .inst-section { margin-block-start: var(--gap-section); }
 
 .inst-section-head {
@@ -404,24 +418,26 @@
   gap: var(--gap-inline);
 }
 
-/* Подпись секции — обычное предложение и тише данных, как и заголовок
-   панели. Капса здесь нет по той же причине, что и везде.                */
-/* Подпись группы, а не заголовок области. Разные работы, и звучат они по
-   разному регистру, а не по разному кеглю:
-     имя панели      14/600 основным      — его ищут глазами на дашборде
-     подпись группы  12.5/400 приглушённым — она обслуживает то, что под ней
-     сами данные     14/400 основным
-   Ярлык над рядом карточек тише и мельче имени целой панели, а имя панели
-   отличается от данных весом. Ступень кегля ВВЕРХ не берёт ни один из них:
-   шесть панелей дали бы шесть точек притяжения вместо данных.             */
+/* A section label is sentence case and quieter than the data, like a panel
+   title. There are no all caps here for the same reason as anywhere else. */
+/* A group label, not the heading of a region. Different jobs, and they sound
+   different by register rather than by size:
+     panel name     14/600 primary   — it is what the eye hunts for on a board
+     group label    12.5/400 muted   — it serves what stands under it
+     the data       14/400 primary
+   A label above a row of cards is quieter and smaller than the name of a
+   whole panel, and a panel name differs from the data by weight. Neither of
+   them takes a step UP in size: six panels would give six points of
+   attraction instead of the data.                                         */
 .inst-section-title { font-size: var(--text-xs); font-weight: var(--weight-normal); color: var(--text-muted); }
 .inst-section-actions { margin-inline-start: auto; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Навигация
+   Navigation
 
-   Текущий пункт помечен не только цветом: у края стоит несущая метка.
-   Разметка: <nav><ul>, текущий пункт несёт aria-current="page".
+   The current item is marked by more than colour: a load-bearing mark stands
+   at its edge. Markup: <nav><ul>, and the current item carries
+   aria-current="page".
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-nav { display: flex; flex-direction: column; gap: var(--space-1); }
@@ -460,7 +476,7 @@
 
 .inst-nav-count { margin-inline-start: auto; }
 
-/* ── Крошки ─────────────────────────────────────────────────────────────── */
+/* ── Breadcrumbs ─────────────────────────────────────────────────────────── */
 
 .inst-crumbs {
   display: flex;
@@ -484,14 +500,15 @@
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   }
 
-  /* Своего сброса ссылке здесь больше не нужно: наследование цвета и
-     подчёркивание под курсором теперь и есть умолчание base.css. Крошки —
-     единственная хромированная часть кита, где ссылка стоит СРЕДИ ТЕКСТА,
-     поэтому подчёркивание на наведении ей идёт, а не мешает.              */
-  /* Звено — настоящая цель нажатия. Без своей высоты оно 18px, и вместе с
-     зазором до соседа даёт 21.5 при норме 24: замерено на чужом интерфейсе.
-     Растёт ОБЛАСТЬ, а не кегль — тот же приём, что у флажка и крестика тега:
-     форма кита от доступности не толстеет. */
+  /* A link needs no reset of its own here: inheriting the colour and
+     underlining under the cursor is the base.css default now. Breadcrumbs are
+     the one piece of chrome in the kit where a link stands AMONG TEXT, so a
+     hover underline suits it rather than getting in the way.              */
+  /* A crumb is a real tap target. Without a height of its own it is 18px,
+     and together with the gap to its neighbour that gives 21.5 against a norm
+     of 24: measured on somebody else's interface. The AREA grows, not the
+     type size — the same device as the checkbox and the tag cross: the kit's
+     shapes do not fatten for accessibility. */
   & a {
     display: inline-flex;
     align-items: center;
@@ -503,10 +520,10 @@
   & [aria-current="page"] { color: var(--text-primary); }
 }
 
-/* ── Вкладки ────────────────────────────────────────────────────────────────
-   На ссылках: переключение экрана — это роутинг, и JS ему не нужен.
-   role="tablist" ставится ТОЛЬКО если вкладки настоящие, то есть
-   переключают панели внутри одной страницы.
+/* ── Tabs ───────────────────────────────────────────────────────────────────
+   Built on links: switching a screen is routing, and routing needs no JS.
+   role="tablist" is set ONLY when the tabs are real, that is when they switch
+   panels within one page.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-tabs {
@@ -532,34 +549,37 @@
   white-space: nowrap;
   cursor: pointer;
 
-  /* Наведение показывает ПОЛОСУ, а не только цвет: правило кита — «состояния
-     только поверхностью и рамкой». Поверхность вкладке не подходит — у неё
-     нет горизонтального отступа, и заливка облепила бы буквы; зато полоса у
-     неё уже есть, и подсветить её нейтралью значит показать заранее ровно
-     то, что сделает выбор. Тон другой, чем у выбранной (--accent-solid),
-     поэтому спутать нельзя.                                               */
+  /* Hover shows the BAR rather than colour alone: the kit's rule is that
+     states are carried by surface and border only. A surface does not suit a
+     tab — it has no inline padding, and a fill would cling to the letters;
+     but a bar it already has, and lighting that bar up in a neutral shows in
+     advance exactly what selecting will do. The tone differs from the
+     selected one (--accent-solid), so the two cannot be confused.         */
   &:hover { color: var(--text-primary); border-block-end-color: var(--border-strong); }
 
-  /* Подчёркивание — носитель наравне с цветом.
+  /* The underline is a carrier on equal footing with colour.
 
-     НАЧЕРТАНИЕ НЕ МЕНЯЕТСЯ, и это исправление, а не упрощение. Закон у кита
-     уже записан дважды — у пункта меню («смена веса меняет ШИРИНУ подписи, и
-     пункт дёргался в момент выбора, ровно тогда, когда на него смотрят») и у
-     чипа. Вкладка была третьим местом и единственным, где закон не применили,
-     — при том что здесь он нужнее всего: пункты меню стоят столбиком и друг
-     друга не двигают, а вкладки стоят В РЯД.
+     THE WEIGHT DOES NOT CHANGE, and that is a fix rather than a
+     simplification. The law is already written down twice in this kit — on
+     the menu item ("changing the weight changes the WIDTH of the label, and
+     the item twitches at the moment of selection, precisely when it is being
+     looked at") and on the chip. The tab was the third place and the only one
+     where the law was not applied — while here it is wanted most of all: menu
+     items stand in a column and do not move each other, tabs stand IN A ROW.
 
-     Замерено на справочнике: выбранная «Активные» с медиумом 65px, без него
-     63, и обе следующие вкладки уезжают вправо на 2 и 3 пикселя. Выбор мышью
-     сдвигает под курсором то, во что целятся.
+     Measured on the reference: a selected "Active" is 65px with medium and 63
+     without, and both following tabs move 2 and 3 pixels along. Selecting
+     with the mouse shifts, under the cursor, the very thing being aimed at.
 
-     Носителей остаётся два, и этого хватает: от обычной выбранная отличается
-     НАЛИЧИЕМ полосы (форма, а не цвет), от наведённой — её тоном. У макета
-     Anthropic здесь то же самое, 400 во всех трёх состояниях.
+     Two carriers remain and that is enough: from an ordinary tab the selected
+     one differs by the PRESENCE of the bar (shape, not colour), and from a
+     hovered one by its tone. The Anthropic mockup does the same here, 400 in
+     all three states.
 
-     У сегментированного вес пока остаётся: там сдвиг вдвое меньше (1px, один
-     сосед), и его комментарий называет начертание третьим признаком нарочно.
-     Отдельное решение, не побочный эффект этого.                          */
+     On the segmented control the weight stays for now: there the shift is
+     half as big (1px, one neighbour), and its comment names the weight as a
+     third trait deliberately. A separate decision, not a side effect of this
+     one.                                                                  */
   &[aria-current]:not([aria-current="false"]),
   &[aria-selected="true"] {
     color: var(--text-primary);
@@ -568,19 +588,21 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Рельс разделов
+   Section rail
 
-   Вертикальная навигация одними значками. Не вариант .inst-nav, а свой
-   компонент, и разница не в направлении: у пункта навигации подпись есть
-   ВСЕГДА и она несёт смысл, а рельс опознают по форме глифа. Из этого
-   следует всё остальное — значок крупнее, подпись уходит в подсказку и в
-   aria-label, счётчик садится на глиф, а ширина равна цели нажатия.
+   Vertical navigation made of glyphs alone. Not a variant of .inst-nav but a
+   component of its own, and the difference is not the direction: a navigation
+   item ALWAYS has a label and the label carries the meaning, while a rail is
+   recognised by the shape of its glyph. Everything else follows — the glyph
+   is larger, the label moves into a tooltip and into aria-label, the count
+   sits on the glyph, and the width equals the tap target.
 
-   Дыра всплыла на двух разных настоящих интерфейсах.
+   The gap surfaced on two different real interfaces.
 
-   Разметка: <nav class="inst-rail"><a class="inst-rail-item" aria-label="…">
-   Подпись ОБЯЗАТЕЛЬНА в aria-label: значок без имени не имеет доступного
-   имени вовсе, и рельс для скринридера становится рядом пустых кнопок.
+   Markup: <nav class="inst-rail"><a class="inst-rail-item" aria-label="…">
+   The label is MANDATORY in aria-label: a glyph without a name has no
+   accessible name at all, and to a screen reader the rail becomes a row of
+   empty buttons.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-rail {
@@ -588,15 +610,15 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
-  /* Ширина ИНТРИНСИК: отступ плюс кнопка. Фиксированный токен здесь был бы
-     третьим числом, которое обязано совпасть с двумя другими, — и он же не
-     реагировал бы на плотность, оставляя кнопку болтаться в широком рельсе. */
+  /* The width is INTRINSIC: padding plus button. A fixed token here would be
+     a third number obliged to agree with two others — and it would not answer
+     to density either, leaving the button loose in a wide rail. */
   padding: var(--space-3);
   background: var(--surface-sunken);
 }
 
-/* Разрыв между группами: то, что внизу (учётная запись, параметры), прижато
-   к низу, а не отбито отступом. */
+/* The break between groups: what belongs at the bottom (the account, the
+   settings) is pushed there rather than set off with a margin. */
 .inst-rail-spacer { margin-block-start: auto; }
 
 .inst-rail-item {
@@ -604,10 +626,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Кнопка КРУПНЕЕ цели нажатия, и это не щедрость. Значок рельса 24px, а
-     --tap-min ровно 24: глиф заполнил бы кнопку целиком, без единого пикселя
-     поля. Поймал гейт пропорций отношением 1.000 при полосе 0.50–0.75.
-     --control-h-lg даёт 0.63 и реагирует на плотность. */
+  /* The button is LARGER than the tap target, and that is not generosity. A
+     rail glyph is 24px and --tap-min is exactly 24: the glyph would fill the
+     button entirely, without a single pixel of padding. The proportion gate
+     caught it at a ratio of 1.000 against a band of 0.50–0.75.
+     --control-h-lg gives 0.63 and answers to density. */
   inline-size: var(--control-h-lg);
   block-size: var(--control-h-lg);
   border-radius: var(--radius-md);
@@ -615,16 +638,18 @@
   cursor: pointer;
   transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 
-  /* Значок без подписи КРУПНЕЕ обычного: он не сопровождает слово, а
-     заменяет его, и меряется против цели нажатия, а не против прописной. */
+  /* A glyph with no label is LARGER than an ordinary one: it does not
+     accompany a word, it replaces one, and it is measured against the tap
+     target rather than against a capital. */
   --icon-size: var(--size-icon-lg);
 
   &:hover { background: var(--surface-hover); color: var(--text-primary); }
 
-  /* Выбранный несёт ДВА носителя: заливку и метку у края. Одной заливки мало
-     — на приглушённой поверхности рельса она едва отличается от наведения, а
-     метка у края видна периферийным зрением и не спорит с глифом. Тот же
-     --size-marker и то же место, что у текущего пункта навигации. */
+  /* The selected item carries TWO carriers: a fill and a mark at the edge. A
+     fill alone is not enough — on the rail's muted surface it barely differs
+     from hover, while a mark at the edge is visible to peripheral vision and
+     does not argue with the glyph. The same --size-marker in the same place
+     as on the current navigation item. */
   &[aria-current]:not([aria-current="false"]) {
     background: var(--surface-selected);
     color: var(--accent-text);
@@ -640,8 +665,8 @@
   }
 }
 
-/* Счётчик садится в угол глифа и наружу от него: изнутри он закрыл бы форму,
-   по которой раздел и опознают. */
+/* The count sits in the corner of the glyph and outside it: from within it
+   would cover the shape the section is recognised by. */
 .inst-rail-count {
   position: absolute;
   inset-block-end: calc(var(--space-1) * -1);
@@ -650,14 +675,16 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Строка состояния
+   Status bar
 
-   Полоса высотой В СТРОКУ с группами по краям: ветка и ошибки слева, режим
-   и кодировка справа. Тулбар сюда не годится и не должен: он держит КОНТРОЛЫ
-   и потому высок (--control-h-*), а здесь стоят показания, которые читают, а
-   не нажимают, — хотя нажать почти каждое можно.
+   A bar ONE LINE tall with groups at its edges: the branch and the errors at
+   the leading side, the mode and the encoding at the trailing one. A toolbar
+   does not suit this and should not: a toolbar holds CONTROLS and is
+   therefore tall (--control-h-*), while what stands here are readings, meant
+   to be read rather than pressed — even though almost every one of them can
+   be pressed.
 
-   Дыра всплыла на двух разных настоящих интерфейсах.
+   The gap surfaced on two different real interfaces.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-statusbar {
@@ -665,9 +692,9 @@
   align-items: center;
   gap: var(--space-2);
   padding-inline: var(--space-3);
-  /* Высота набирается кеглем и отступом, а не --control-h-*: полоса обязана
-     остаться в строку, иначе она съедает низ экрана у инструмента, ради
-     которого экран и открыт. */
+  /* The height is made up of type size and padding rather than --control-h-*:
+     the bar has to stay one line tall, or it eats the bottom of the screen
+     from the instrument the screen was opened for. */
   min-block-size: calc(var(--control-h-xs) + var(--space-2));
   background: var(--surface-sunken);
   border-block-start: var(--hairline) solid var(--border-subtle);
@@ -682,37 +709,40 @@
   align-items: center;
   gap: var(--space-2);
   padding-inline: var(--space-2);
-  /* Область до нормы, форма прежняя — полоса от доступности не толстеет. */
+  /* The area up to the norm, the shape unchanged — the bar does not fatten
+     for accessibility. */
   min-block-size: var(--control-h-xs);
   border-radius: var(--radius-xs);
   color: inherit;
   white-space: nowrap;
   text-decoration: none;
 
-  /* Значок в полосе мельче обычного: кегль здесь --text-2xs, и мера значка
-     считается против ЕГО прописной, а не против базовой. */
+  /* A glyph in the bar is smaller than usual: the type size here is
+     --text-2xs, and the glyph is measured against ITS capital rather than
+     against the base one. */
   --icon-size: var(--size-icon-sm);
 }
 
-/* Нажимаемое показание отзывается, нечитаемое молчит: у <span> ховера нет. */
+/* A pressable reading answers, an unpressable one stays silent: a <span> has
+   no hover. */
 .inst-statusbar-item:is(button, a):hover { background: var(--surface-hover); color: var(--text-primary); }
 
 .inst-statusbar-item[data-tone] { color: var(--tone-ink); }
 
-/* ── Вкладки-чипы ───────────────────────────────────────────────────────────
+/* ── Chip tabs ──────────────────────────────────────────────────────────────
 
-   Второй вид вкладки, и он не украшение, а другая работа.
+   The second kind of tab, and it is not decoration but a different job.
 
-   Вкладка-полоса переключает РАЗДЕЛ: разделов немного, они заданы заранее и не
-   закрываются. Вкладка-чип держит ОТКРЫТЫЙ ДОКУМЕНТ: их сколько угодно, они
-   появляются и закрываются по ходу дела, у каждой есть свой значок и своё
-   состояние «не сохранено».
+   A bar tab switches a SECTION: there are few sections, they are set in
+   advance and they do not close. A chip tab holds an OPEN DOCUMENT: there can
+   be any number of them, they appear and close as work goes on, and each has
+   a glyph of its own and its own "unsaved" state.
 
-   Полоса под таким рядом перестаёт работать: она рисует одну линию под всеми,
-   и на двадцати вкладках выбранную приходится искать. Заливка выбранной
-   читается сразу и на любой длине ряда.
+   A bar under such a row stops working: it draws one line under all of them,
+   and across twenty tabs the selected one has to be hunted for. A fill on the
+   selected one reads at once, at any length of row.
 
-   Дыра всплыла на двух разных настоящих интерфейсах.                        */
+   The gap surfaced on two different real interfaces.                        */
 
 .inst-tabs--chips {
   gap: var(--space-1);
@@ -720,14 +750,16 @@
   border-block-end: none;
 
   & > .inst-tab {
-    /* ЧИП ЦЕЛИКОМ, а не приклеенный к низу. Скруглены только верхние углы
-       плюс метка снизу — это вкладка-полоса, переодетая в заливку; чип не
-       прирастает к содержимому, он ЛЕЖИТ на полосе. Скругление берётся у
-       контрола: чип и есть контрол, и в плотном режиме скругляется слабее.
+    /* A CHIP ALL ROUND, not something glued to the bottom. Top corners
+       rounded plus a mark below is a bar tab dressed up as a fill; a chip
+       does not grow into the content, it LIES on the bar. The radius comes
+       from the control scale: a chip IS a control, and in compact density it
+       rounds less.
 
-       Высота — из лестницы контролов, а не из отступа. Отступ по вертикали
-       набирал 8 сверху и 8 снизу поверх строки, и ряд вкладок выходил выше
-       кнопки рядом: чип читался кирпичом, а не контролом. */
+       The height comes from the control ladder rather than from padding.
+       Vertical padding of 8 above and 8 below on top of a line makes the row
+       of tabs taller than the button beside it: the chip reads as a brick
+       rather than as a control. */
     position: relative;
     min-block-size: var(--control-h-sm);
     padding-block: 0;
@@ -736,28 +768,30 @@
     border-block-end: none;
     border-radius: var(--radius-control-md);
 
-    /* Фон чипа объявлен переменной: под него подмешивается градиент, которым
-       текст уходит под крестик, и градиенту нужно знать, к какому цвету
-       сходиться. */
+    /* The chip background is declared as a variable: a gradient is mixed under
+       it to carry the text beneath the close cross, and the gradient needs to
+       know which colour to converge on. */
     --tab-bg: var(--surface-raised);
   }
 
   & > .inst-tab:hover { background: var(--surface-hover); }
 
-  /* Выбранный берёт МЯГКУЮ обратную поверхность: тёмную в светлой теме,
-     светлую в тёмной. Приподнятая не работает — ряд лежит на той же
-     приподнятой, и выбранный отличался бы на шаг светлоты, то есть почти
-     ничем. Полная инверсия работает слишком: она для подсказки, которая
-     мелькнула, а вкладка стоит всё время.
+  /* The selected chip takes a SOFT inverse surface: dark in a light theme,
+     light in a dark one. A raised one does not work — the row lies on that
+     same raised surface, and the selected chip would differ by one step of
+     lightness, that is by almost nothing. A full inversion works too well:
+     that is for a hint that flashed by, and a tab stands there all the time.
 
-     Носителей по-прежнему два и ни один не цвет: поверхность и начертание. */
-  /* Начертание возвращается ИМЕННО ЧИПУ. У вкладки-полосы его сняли: там
-     носителем работает наличие полосы, а сдвиг соседей по ряду был замерен и
-     оказался в 2–3 пикселя. У чипа полосы нет, носителей всего два — заливка
-     и вес, — и снять вес значило бы оставить один цвет.
+     There are still two carriers and neither is colour: surface and weight. */
+  /* The weight comes back to THE CHIP specifically. On a bar tab it was taken
+     away: there the presence of the bar does the carrying, and the shift of
+     neighbours along the row was measured at 2–3 pixels. A chip has no bar,
+     it has only two carriers — the fill and the weight — and removing the
+     weight would leave colour alone.
 
-     Сдвиг тут тоже есть, и он принят сознательно: у чипа своя заливка, и она
-     растёт вместе с подписью, поэтому дёргается ОДИН чип, а не ряд за ним. */
+     There is a shift here too, and it is accepted knowingly: a chip has a
+     fill of its own that grows with the label, so what twitches is ONE chip
+     rather than the row behind it. */
   & > .inst-tab[aria-selected="true"],
   & > .inst-tab[aria-current]:not([aria-current="false"]) {
     font-weight: var(--weight-medium);
@@ -766,15 +800,17 @@
     color: var(--text-on-inverse);
   }
 
-  /* ── Крестик как оверлей ────────────────────────────────────────────────
+  /* ── The close cross as an overlay ──────────────────────────────────────
 
-     В потоке крестик отнимал бы у подписи место постоянно, хотя нужен он
-     редко: имя файла читают всё время, закрывают вкладку один раз. Поэтому он
-     всплывает у дальнего края поверх подписи и только под курсором.
+     In the flow the cross would take room from the label permanently, while
+     it is wanted rarely: a file name is read all the time, a tab is closed
+     once. So it surfaces at the far edge over the label, and only under the
+     cursor.
 
-     Подпись при этом не обрывается на полуслове — под крестиком лежит
-     градиент к фону чипа, и она уходит в него. Отсюда и --tab-bg: градиенту
-     нужен цвет, к которому сходиться, а он у выбранного и обычного разный.  */
+     The label does not break off mid-word while it does — under the cross
+     lies a gradient to the chip's background, and the label fades into it.
+     Hence --tab-bg: the gradient needs a colour to converge on, and it
+     differs between a selected chip and an ordinary one.                    */
   & > .inst-tab::after {
     content: "";
     position: absolute;
@@ -798,8 +834,8 @@
     transition: opacity var(--dur-1) var(--ease-out);
   }
 
-  /* Показывается вместе с градиентом — и под курсором, и с клавиатуры:
-     невидимая кнопка, до которой доехал Tab, это ловушка. */
+  /* Shown together with the gradient — under the cursor and from the keyboard
+     alike: an invisible button that Tab has reached is a trap. */
   & > .inst-tab:hover::after,
   & > .inst-tab:focus-within::after { opacity: 1; }
 
@@ -807,11 +843,12 @@
   & > .inst-tab:focus-within > .inst-tab-close,
   & > .inst-tab[data-state="modified"] > .inst-tab-close { opacity: 1; }
 
-  /* Несохранённое — состояние, а не действие: точка видна всегда, и место под
-     неё РЕЗЕРВИРУЕТСЯ. Без резерва она вставала поверх последних букв имени, а
-     градиент под ней прятал их насовсем: под курсором так и задумано — там
-     оверлей и уходит он вместе с курсором, — но постоянное состояние не имеет
-     права постоянно съедать имя файла, ради которого вкладка существует. */
+  /* Unsaved is a state, not an action: the dot is always visible, and room
+     for it is RESERVED. Without the reservation it stands over the last
+     letters of the name and the gradient under it hides them for good — under
+     the cursor that is intended, because there it is an overlay and it leaves
+     with the cursor, but a permanent state has no right to permanently eat
+     the file name the tab exists for. */
   & > .inst-tab[data-state="modified"] {
     padding-inline-end: calc(var(--pad-panel) + var(--control-h-xs));
   }
@@ -823,21 +860,21 @@
   }
 }
 
-/* Крестик — НАСТОЯЩАЯ кнопка внутри вкладки, а не глиф на ней: закрывают
-   вкладку с клавиатуры, и цель нажатия у крестика своя.
+/* The cross is a REAL button inside the tab, not a glyph on it: tabs are
+   closed from the keyboard, and the cross has a tap target of its own.
 
-   Область растёт невидимым ::before до --tap-min, форма остаётся мелкой —
-   тот же приём, что у крестика тега.                                       */
+   The area grows to --tap-min through an invisible ::before while the shape
+   stays small — the same device as the tag cross.                          */
 .inst-tab-close {
   position: relative;
   flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* КВАДРАТ с полем вокруг глифа, а не глиф размером с себя. Крестик в 10px
-     это цель в 10px и заливка наведения размером с сам знак — по такой не
-     видно, что навёл, и попасть в неё трудно. Коробка берётся из лестницы
-     контролов, глиф внутри остаётся служебным. */
+  /* A SQUARE with padding around the glyph, not a glyph the size of itself.
+     A 10px cross is a 10px target with a hover fill the size of the sign —
+     one cannot see what has been hovered and it is hard to hit. The box comes
+     from the control ladder, the glyph inside stays utilitarian. */
   inline-size: var(--control-h-xs);
   block-size: var(--control-h-xs);
   --icon-size: var(--size-chevron);
@@ -845,8 +882,8 @@
   color: var(--text-muted);
   cursor: pointer;
 
-  /* Область до нормы WCAG растёт невидимым ::before: форма от доступности не
-     толстеет — тот же приём, что у крестика тега. */
+  /* The area grows to the WCAG norm through an invisible ::before: the shape
+     does not fatten for accessibility — the same device as the tag cross. */
   &::before {
     content: "";
     position: absolute;
@@ -859,8 +896,9 @@
   &:hover { background: var(--surface-active); color: var(--text-primary); }
 }
 
-/* Несохранённое: на месте крестика точка, пока по нему не навели. Состояние
-   живёт на вкладке атрибутом, потому что меняется в течение её жизни. */
+/* Unsaved: a dot in place of the cross until the cross is hovered. The state
+   lives on the tab as an attribute, because it changes over the tab's
+   lifetime. */
 .inst-tab[data-state="modified"] > .inst-tab-close {
   color: var(--accent-mark);
 
@@ -878,7 +916,7 @@
   &:hover::after { content: none; }
 }
 
-/* ── Постраничная навигация ─────────────────────────────────────────────── */
+/* ── Pagination ──────────────────────────────────────────────────────────── */
 
 .inst-pager {
   display: flex;
@@ -891,7 +929,8 @@
 }
 
 .inst-pager-item {
-  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  /* Sized by its content: it does not stretch in a column and centres in a
+     row. */
   align-self: var(--flow-self, center);
   display: inline-flex;
   align-items: center;
@@ -917,17 +956,17 @@
   &[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
 }
 
-/* --text-muted, а не --text-faint. Многоточие здесь ЧИТАЮТ: оно сообщает, что
-   между страницами есть пропущенные, — то есть это данные, а не украшение.
-   На декоративном ярусе (порог 3:1) оно давало 3.62 в четырёх темах из шести.
-   Ровно тот же промах, что когда-то с прочерком «значения нет» в справочнике.
-   Нашёл обход всех страниц headless: в списке пар текстового гейта этой не
-   было, потому что список составляет человек. */
+/* --text-muted, not --text-faint. The ellipsis here is READ: it says there
+   are skipped pages between these two — that is data, not decoration. On the
+   decorative tier (threshold 3:1) it gives 3.62 in four themes out of six.
+   Exactly the same miss as the "no value" dash in the reference once was.
+   Found by the headless sweep over every page: this pair was not in the text
+   gate's list, because that list is compiled by a human. */
 .inst-pager-gap { padding-inline: var(--space-2); color: var(--text-muted); font-size: var(--text-xs); }
 
-/* ── Шаги мастера ───────────────────────────────────────────────────────────
-   Состояние несёт СЛОВО под подписью, а не только цвет полосы: «готово»,
-   «сейчас», «дальше» читаются и на распечатке.
+/* ── Wizard steps ───────────────────────────────────────────────────────────
+   The state is carried by a WORD under the label rather than by the colour of
+   a bar alone: "done", "current", "next" are readable on a print-out too.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-stepper {
