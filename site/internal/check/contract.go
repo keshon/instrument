@@ -35,8 +35,6 @@ var requiredByShape = map[int][]string{
 // meant to leave and cannot yet, and saying so here is cheaper than discovering
 // it while migrating a page:
 //
-//	when     — belongs in the section index, and docs/components/actions/ has
-//	           no index.md at all: four pages and no page above them.
 //	related  — meant to be derived from the registry, but a registry entry
 //	           carries one field, `axes`. There are no relations in it to
 //	           derive from; that line of DOCS-SHAPE.md was written on an
@@ -49,6 +47,11 @@ var requiredByShape = map[int][]string{
 var goneInShape2 = map[string]string{
 	"usage": "the markup moved into the demo frame and the code panel",
 	"a11y":  "merged into the markup contract",
+	// A page cannot migrate before its section has an index, and that is the
+	// point rather than a snag: "take another one instead" is a statement about
+	// NEIGHBOURS, and repeated on each of four pages it drifts from them by one
+	// line per edit. The gate makes the destination exist first.
+	"when": "moved to the section index, where the comparison of neighbours stands in one place",
 }
 
 func underContract(dir string) bool {

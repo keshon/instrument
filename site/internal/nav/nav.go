@@ -24,7 +24,7 @@ var sections = []struct {
 	{"layout", []string{
 		"shell", "container", "flow", "split", "page-header", "section",
 	}},
-	{"components/actions", nil},
+	{"components/actions", []string{"index", "button", "button-group", "segmented", "chip"}},
 	{"components/inputs", []string{
 		"input", "select", "toggles", "slider", "num-field", "search",
 		"choice-card", "file", "inserts", "form",
@@ -70,9 +70,15 @@ func Build(lang i18n.Lang, pages []*content.Page) []Section {
 		if len(items) == 0 {
 			continue
 		}
-		rank := map[string]int{}
+		// Индекс раздела стоит первым всегда, назван он в порядке или нет:
+		// это страница НАД остальными, и место ей соответствующее. Ставить его
+		// в каждый список руками значило бы завести правило, которое забудут
+		// на первом же новом разделе.
+		rank := map[string]int{"index": -1}
 		for i, slug := range s.order {
-			rank[slug] = i
+			if slug != "index" {
+				rank[slug] = i
+			}
 		}
 		sort.Slice(items, func(i, j int) bool {
 			ri, oki := rank[items[i].Slug]
