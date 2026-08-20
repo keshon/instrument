@@ -812,7 +812,12 @@ func pagesOf(docs string) []string {
 			if err != nil || d.IsDir() {
 				return nil
 			}
-			if strings.HasSuffix(p, ".md") && !strings.HasSuffix(p, ".en.md") {
+			// Перевод — такая же страница, и разметка в нём такая же живая:
+			// читатель копирует её из справочника и получает работающий
+			// компонент или неработающий. Исключить `.en.md` значит отпустить
+			// ARIA-контракт ровно на тех страницах, которые пишутся заново и
+			// потому ошибаются чаще оригинала.
+			if strings.HasSuffix(p, ".md") {
 				pageCache = append(pageCache, p)
 			}
 			return nil

@@ -277,7 +277,18 @@ window.kitAudit = (function () {
     return { проверено: boxes.length, нарушений: bad.length, список: bad };
   }
 
-  var THEMES = ['', 'light-neutral', 'light-cool', 'dark', 'dark-soft'];
+  /* Все пять тем названы ПОИМЁННО, включая нейтральную.
+   *
+   * Соблазн начать список пустой строкой — «умолчание» — обходится в целую
+   * тему: у корня --tint: 0, то есть снятый атрибут вычисляется ровно в
+   * light-neutral, и пара «умолчание + light-neutral» меряет одно и то же
+   * дважды. Светлая тёплая при этом не меряется вовсе, хотя именно у неё
+   * уклон нейтрали ненулевой (--tint: 2) и именно она может увести
+   * приглушённый текст под порог.
+   *
+   * Замерено: у корня и у light-neutral фон страницы oklch(0.976 0 75) —
+   * побайтово один; у light он oklch(0.976 0.006 75). */
+  var THEMES = ['light-neutral', 'light', 'light-cool', 'dark', 'dark-soft'];
   var DENSITIES = ['', 'compact', 'comfortable'];
 
 
@@ -422,10 +433,10 @@ window.kitAudit = (function () {
 
     var res = { контраст: {}, цели: {}, пропорции: {}, всего: 0 };
     THEMES.forEach(function (t) {
-      t ? html.setAttribute('data-theme', t) : html.removeAttribute('data-theme');
+      html.setAttribute('data-theme', t);
       flush();
       var v = contrast(sel);
-      res.контраст[t || 'умолчание'] = v;
+      res.контраст[t] = v;
       res.всего += v.проверено;
     });
     theme0 ? html.setAttribute('data-theme', theme0) : html.removeAttribute('data-theme');
@@ -433,7 +444,12 @@ window.kitAudit = (function () {
     DENSITIES.forEach(function (d) {
       d ? html.setAttribute('data-density', d) : html.removeAttribute('data-density');
       flush();
-      res.цели[d || 'обычная'] = targets(sel);
+      var v = targets(sel);
+      res.цели[d || 'обычная'] = v;
+      // Цели входят в общий счёт наравне с контрастом: итоговая строка
+      // обещает «и цели в 3 плотностях», и без этой строки она обещала
+      // больше, чем считала.
+      res.всего += v.проверено;
     });
     DENSITIES.forEach(function (d) {
       d ? html.setAttribute('data-density', d) : html.removeAttribute('data-density');
@@ -470,7 +486,8 @@ window.kitAudit = (function () {
     console.log('%cinstrument · проверка по пикселям', 'font-weight:bold');
     console.table(свод);
     if (!падений) {
-      console.log('%c· ' + res.всего + ' замеров контраста в 5 темах и цели в 3 плотностях — чисто',
+      console.log('%c· ' + res.всего + ' замеров: контраст в ' + THEMES.length +
+                  ' темах, цели и пропорции в ' + DENSITIES.length + ' плотностях — чисто',
                   'color:green');
       return;
     }

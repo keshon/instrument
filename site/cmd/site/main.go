@@ -75,7 +75,21 @@ func main() {
 	for n, s := range styles {
 		sources["site/"+n] = s
 	}
-	for _, dir := range []string{*kit, "internal"} {
+	// Правило комментария одно на весь репозиторий, значит и зона у гейта
+	// одна. Пока сюда не входили `tools` и `cmd`, правило держалось на
+	// внимательности ровно там, где живут сами проверки: 4 384 строки Go и
+	// две команды на JS оставались снаружи, и «Раньше все три размера брали
+	// --radius-md» проходило молча.
+	//
+	// Каталог инструментов ищется рядом с китом, а не задаётся флагом: он
+	// лежит на одном уровне с `src`, и второй флаг разошёлся бы с первым.
+	tools := filepath.Join(filepath.Dir(*kit), "tools")
+	for _, dir := range []string{*kit, "internal", "cmd", tools} {
+		// Отсутствующий каталог — не ошибка: сайт собирается из своего
+		// модуля, и снаружи его дерева может не оказаться ничего.
+		if _, err := os.Stat(dir); err != nil {
+			continue
+		}
 		if err := collectSources(sources, dir); err != nil {
 			log.Fatalf("не прочитать исходники: %v", err)
 		}
@@ -137,8 +151,11 @@ func collectSources(out map[string]string, dir string) error {
 		if err != nil || d.IsDir() {
 			return err
 		}
+		// `.mjs` в списке потому, что бегунок пиксельной проверки написан
+		// именно так, и без этого расширения он был бы единственным файлом
+		// репозитория, где комментарий не сторожит никто.
 		switch filepath.Ext(p) {
-		case ".css", ".js", ".go":
+		case ".css", ".js", ".mjs", ".go":
 		default:
 			return nil
 		}
