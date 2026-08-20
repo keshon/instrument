@@ -5,7 +5,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "tabs",
+      "panel",
+      "step"
+    ]
   },
   "approval": {
     "axes": {
@@ -18,7 +23,13 @@
       "inst-approval-head": {
         "forced": "glyph"
       }
-    }
+    },
+    "related": [
+      "dialog",
+      "failure",
+      "diff",
+      "banner"
+    ]
   },
   "avatar": {
     "axes": {
@@ -31,7 +42,11 @@
       "inst-avatars": {
         "flow": "inline"
       }
-    }
+    },
+    "related": [
+      "badge",
+      "tag"
+    ]
   },
   "badge": {
     "axes": {
@@ -46,7 +61,11 @@
       }
     },
     "related": [
-      "chip"
+      "chip",
+      "tag",
+      "states",
+      "change",
+      "avatar"
     ]
   },
   "banner": {
@@ -55,7 +74,15 @@
       "print": "keep",
       "page": "whole",
       "forced": "none"
-    }
+    },
+    "related": [
+      "dialog",
+      "note",
+      "toast",
+      "failure",
+      "approval",
+      "statusbar"
+    ]
   },
   "breadcrumbs": {
     "axes": {
@@ -63,7 +90,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "nav",
+      "tabs",
+      "page-header"
+    ]
   },
   "budget": {
     "axes": {
@@ -71,7 +103,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "meter",
+      "metric",
+      "ring"
+    ]
   },
   "button": {
     "axes": {
@@ -108,7 +145,11 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "timeline",
+      "lane"
+    ]
   },
   "card": {
     "axes": {
@@ -118,7 +159,10 @@
       "forced": "border"
     },
     "related": [
-      "choice-card"
+      "choice-card",
+      "panel",
+      "table",
+      "metric"
     ]
   },
   "change": {
@@ -127,7 +171,11 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "badge",
+      "diff"
+    ]
   },
   "chip": {
     "axes": {
@@ -169,7 +217,11 @@
       "inst-copy": {
         "print": "hide"
       }
-    }
+    },
+    "related": [
+      "log",
+      "diff"
+    ]
   },
   "container": {
     "axes": {
@@ -177,7 +229,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "flow",
+      "split",
+      "shell"
+    ]
   },
   "dialog": {
     "axes": {
@@ -185,7 +242,14 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "sheet",
+      "popover",
+      "banner",
+      "approval",
+      "toast"
+    ]
   },
   "diff": {
     "axes": {
@@ -193,7 +257,12 @@
       "print": "keep",
       "page": "whole",
       "forced": "border"
-    }
+    },
+    "related": [
+      "change",
+      "code",
+      "approval"
+    ]
   },
   "empty": {
     "axes": {
@@ -201,7 +270,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "pagination",
+      "skeleton",
+      "failure"
+    ]
   },
   "failure": {
     "axes": {
@@ -217,7 +291,13 @@
       "inst-failure-head": {
         "forced": "glyph"
       }
-    }
+    },
+    "related": [
+      "banner",
+      "empty",
+      "toast",
+      "approval"
+    ]
   },
   "file": {
     "axes": {
@@ -237,7 +317,11 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "container",
+      "split"
+    ]
   },
   "form": {
     "axes": {
@@ -264,7 +348,13 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "sparkline",
+      "lane",
+      "meter",
+      "run"
+    ]
   },
   "input": {
     "axes": {
@@ -311,7 +401,12 @@
       "inst-prop": {
         "page": "whole"
       }
-    }
+    },
+    "related": [
+      "table",
+      "metric",
+      "tree"
+    ]
   },
   "lane": {
     "axes": {
@@ -327,7 +422,13 @@
       "inst-lane-span": {
         "forced": "fill"
       }
-    }
+    },
+    "related": [
+      "calendar",
+      "task",
+      "timeline",
+      "history"
+    ]
   },
   "legend": {
     "axes": {
@@ -335,7 +436,11 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "meter",
+      "sparkline"
+    ]
   },
   "log": {
     "axes": {
@@ -348,7 +453,13 @@
       "inst-log-line": {
         "page": "whole"
       }
-    }
+    },
+    "related": [
+      "pagination",
+      "code",
+      "timeline",
+      "step"
+    ]
   },
   "menu": {
     "axes": {
@@ -367,7 +478,10 @@
     "related": [
       "button",
       "button-group",
-      "select"
+      "select",
+      "popover",
+      "nav",
+      "toolbar"
     ]
   },
   "meter": {
@@ -398,7 +512,17 @@
       }
     },
     "related": [
-      "slider"
+      "slider",
+      "ring",
+      "sparkline",
+      "legend",
+      "budget",
+      "metric",
+      "steps",
+      "skeleton",
+      "spinner",
+      "history",
+      "run"
     ]
   },
   "metric": {
@@ -407,7 +531,15 @@
       "print": "keep",
       "page": "whole",
       "forced": "none"
-    }
+    },
+    "related": [
+      "meter",
+      "ring",
+      "sparkline",
+      "kv",
+      "card",
+      "budget"
+    ]
   },
   "nav": {
     "axes": {
@@ -415,7 +547,15 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "tabs",
+      "breadcrumbs",
+      "tree",
+      "shell",
+      "menu",
+      "rail"
+    ]
   },
   "note": {
     "axes": {
@@ -423,7 +563,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "glyph"
-    }
+    },
+    "related": [
+      "tooltip",
+      "banner",
+      "toast"
+    ]
   },
   "num-field": {
     "axes": {
@@ -449,7 +594,12 @@
       "inst-page-actions": {
         "print": "hide"
       }
-    }
+    },
+    "related": [
+      "breadcrumbs",
+      "toolbar",
+      "section"
+    ]
   },
   "pagination": {
     "axes": {
@@ -462,7 +612,12 @@
       "inst-pager-item": {
         "flow": "inline"
       }
-    }
+    },
+    "related": [
+      "table",
+      "empty",
+      "log"
+    ]
   },
   "panel": {
     "axes": {
@@ -470,7 +625,12 @@
       "print": "keep",
       "page": "whole",
       "forced": "border"
-    }
+    },
+    "related": [
+      "card",
+      "section",
+      "accordion"
+    ]
   },
   "popover": {
     "axes": {
@@ -478,7 +638,13 @@
       "print": "hide",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "menu",
+      "tooltip",
+      "dialog",
+      "sheet"
+    ]
   },
   "rail": {
     "axes": {
@@ -486,7 +652,11 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "shell",
+      "nav"
+    ]
   },
   "ring": {
     "axes": {
@@ -494,7 +664,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "meter",
+      "metric",
+      "budget"
+    ]
   },
   "run": {
     "axes": {
@@ -502,7 +677,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "task",
+      "meter",
+      "history"
+    ]
   },
   "search": {
     "axes": {
@@ -523,7 +703,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "toolbar",
+      "panel",
+      "page-header"
+    ]
   },
   "segmented": {
     "axes": {
@@ -582,7 +767,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "dialog",
+      "popover",
+      "shell"
+    ]
   },
   "shell": {
     "axes": {
@@ -598,7 +788,15 @@
       "inst-skip-link": {
         "print": "hide"
       }
-    }
+    },
+    "related": [
+      "nav",
+      "sheet",
+      "split",
+      "container",
+      "rail",
+      "statusbar"
+    ]
   },
   "skeleton": {
     "axes": {
@@ -606,7 +804,12 @@
       "print": "hide",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "spinner",
+      "empty",
+      "meter"
+    ]
   },
   "slider": {
     "axes": {
@@ -627,7 +830,13 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "meter",
+      "metric",
+      "legend",
+      "history"
+    ]
   },
   "spinner": {
     "axes": {
@@ -635,7 +844,12 @@
       "print": "hide",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "skeleton",
+      "meter",
+      "states"
+    ]
   },
   "split": {
     "axes": {
@@ -643,7 +857,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "shell",
+      "flow",
+      "container"
+    ]
   },
   "states": {
     "axes": {
@@ -656,7 +875,12 @@
       "inst-caret": {
         "print": "hide"
       }
-    }
+    },
+    "related": [
+      "badge",
+      "spinner",
+      "task"
+    ]
   },
   "statusbar": {
     "axes": {
@@ -664,7 +888,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "shell",
+      "toolbar",
+      "banner"
+    ]
   },
   "step": {
     "axes": {
@@ -681,7 +910,13 @@
         "print": "hide",
         "flow": "inline"
       }
-    }
+    },
+    "related": [
+      "steps",
+      "accordion",
+      "task",
+      "log"
+    ]
   },
   "steps": {
     "axes": {
@@ -689,7 +924,13 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "tabs",
+      "step",
+      "meter",
+      "timeline"
+    ]
   },
   "table": {
     "axes": {
@@ -697,7 +938,15 @@
       "print": "keep",
       "page": "flow",
       "forced": "selection"
-    }
+    },
+    "related": [
+      "pagination",
+      "kv",
+      "card",
+      "task",
+      "timeline",
+      "tree"
+    ]
   },
   "tabs": {
     "axes": {
@@ -715,7 +964,11 @@
       }
     },
     "related": [
-      "segmented"
+      "segmented",
+      "nav",
+      "breadcrumbs",
+      "steps",
+      "accordion"
     ]
   },
   "tag": {
@@ -727,7 +980,9 @@
     },
     "related": [
       "chip",
-      "inserts"
+      "inserts",
+      "badge",
+      "avatar"
     ]
   },
   "task": {
@@ -744,7 +999,15 @@
         "role": "option",
         "state": "aria-selected"
       }
-    }
+    },
+    "related": [
+      "states",
+      "table",
+      "step",
+      "tree",
+      "run",
+      "lane"
+    ]
   },
   "timeline": {
     "axes": {
@@ -752,7 +1015,14 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "steps",
+      "log",
+      "table",
+      "calendar",
+      "lane"
+    ]
   },
   "toast": {
     "axes": {
@@ -760,7 +1030,13 @@
       "print": "hide",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "banner",
+      "note",
+      "failure",
+      "dialog"
+    ]
   },
   "toggles": {
     "axes": {
@@ -797,7 +1073,11 @@
     "related": [
       "button",
       "button-group",
-      "search"
+      "search",
+      "page-header",
+      "menu",
+      "section",
+      "statusbar"
     ]
   },
   "tooltip": {
@@ -818,7 +1098,11 @@
       "inst-tooltip-text": {
         "print": "hide"
       }
-    }
+    },
+    "related": [
+      "popover",
+      "note"
+    ]
   },
   "tree": {
     "axes": {
@@ -844,6 +1128,12 @@
       "inst-tree-twist": {
         "forced": "glyph"
       }
-    }
+    },
+    "related": [
+      "nav",
+      "task",
+      "kv",
+      "table"
+    ]
   }
 }
