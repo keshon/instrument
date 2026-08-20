@@ -25,6 +25,11 @@ var sectionDefs = []SectionDef{
 	{"rules", 120, []string{"Правила", "Rules"}},
 	{"a11y", 130, []string{"Доступность", "Accessibility"}},
 	{"customization", 140, []string{"Настройка", "Customization", "Свой вариант"}},
+	// Shape 2. The markup contract absorbs what shape 1 kept apart as
+	// «Использование» and «Доступность»: both said the same thing — what has
+	// to be written for the component to work rather than to lie — and on
+	// fifty pages that came to 1 480 lines of one rule told twice.
+	{"contract", 145, []string{"Контракт", "Contract", "Контракт разметки", "Markup contract"}},
 	{"api", 150, []string{"API", "Справочник", "API Reference"}},
 	{"related", 160, []string{"Связанное", "Related"}},
 }

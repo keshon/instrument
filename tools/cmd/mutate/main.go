@@ -332,6 +332,21 @@ var mutations = []mutation{
 		"func main() {",
 		"// Раньше здесь стоял отдельный порог для крупного кегля.\nfunc main() {",
 		"tools/** entered the gate's zone; without a mutation that rested on nothing"},
+	// Two page-contract dictionaries live side by side while the pages migrate
+	// one at a time, and the risk of that arrangement is specific: a page that
+	// declares the new shape while keeping the old sections satisfies neither
+	// dictionary and nobody notices, because the gate that used to judge it now
+	// judges something else.
+	//
+	// The mutation declares shape 2 on a page written under shape 1 and demands
+	// that the gate say so. It fires on both halves of the new rule at once —
+	// the missing markup contract and the sections shape 2 no longer keeps —
+	// and that is honest while no page has migrated yet. The half that
+	// separates them lands together with the first migrated page.
+	{"a page declares shape 2 without moving to it", "site", "docs/components/actions/button.md",
+		"layout: component\nsource: src/actions.css",
+		"layout: component\nshape: 2\nsource: src/actions.css",
+		"a half-migrated page passes neither dictionary, and the gate has to name which one it fails"},
 }
 
 func main() {
