@@ -15,6 +15,8 @@ rem     check dist               rebuild dist/ from src/
 rem     check site               build the documentation site
 rem     check serve [port]       build and serve; default :4322
 rem     check pixels [/section/] rendered-pixel audit; needs Chrome and a server
+rem     check behavior [/sect/]  keyboard contract of instrument.js; same needs
+rem     check behavior --mutate  the behaviour checks, checked
 rem     check fmt                gofmt over both modules
 rem     check figma <args>       Figma dump reader. NOT a check
 rem     check help               this list
@@ -55,6 +57,7 @@ if /i "%~1"=="dist"   goto build
 if /i "%~1"=="site"   goto site
 if /i "%~1"=="serve"  goto serve
 if /i "%~1"=="pixels" goto pixels
+if /i "%~1"=="behavior" goto behavior
 if /i "%~1"=="figma"  goto figma
 if /i "%~1"=="fmt"    goto fmt
 if /i "%~1"=="help"   goto usage
@@ -86,6 +89,8 @@ echo   check dist               rebuild dist/ from src/
 echo   check site               build the documentation site
 echo   check serve [port]       build and serve; default :4322
 echo   check pixels [/section/] rendered-pixel audit; needs "check serve" running
+echo   check behavior [/sect/]  keyboard contract of instrument.js; same needs
+echo   check behavior --mutate  break one promise, demand the check goes red
 echo.
 echo   check fmt                gofmt over both modules. CI runs it; "all" does not
 echo   check figma ^<args^>       read a Figma "Copy as CSS" dump. NOT a check:
@@ -223,6 +228,24 @@ echo.
 echo   Needs "check serve" running in another window on :%INSTRUMENT_PORT%.
 echo.
 node tools\audit-run.mjs --base http://localhost:%INSTRUMENT_PORT% %2
+if errorlevel 1 set /a fails+=1
+goto done
+
+rem -- what instrument.js promises the KEYBOARD, on the rendered page.
+rem
+rem Out of "all" for the same reason as `pixels`: a live server and Chrome.
+rem Every other gate reads text and therefore cannot see markup that is right
+rem on load and wrong a keystroke later -- a collapsed tree node taking the
+rem only Tab stop with it was published in the reference itself.
+rem
+rem   check behavior                   every page
+rem   check behavior /agent/           one section
+rem   check behavior --mutate          the checks, checked
+:behavior
+echo.
+echo   Needs "check serve" running in another window on :%INSTRUMENT_PORT%.
+echo.
+node tools\behavior-run.mjs --base http://localhost:%INSTRUMENT_PORT% %2 %3
 if errorlevel 1 set /a fails+=1
 goto done
 

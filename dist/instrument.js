@@ -902,6 +902,30 @@ function onInput(e) {
   if (t instanceof HTMLElement && t.matches?.('.inst-slider')) syncSlider(t);
 }
 
+/* Поповер открылся — в раскладке появились пункты, которых в ней не было.
+ *
+ * Открытие поповера не правит childList, поэтому наблюдатель на него не
+ * просыпается, а itemsOf() отсеивает закрытое по offsetParent. Без этой
+ * подписки у пунктов меню до первого focusin стоит родной tabIndex 0: Tab
+ * останавливается на каждом, и группа перестаёт быть одним контролом ровно
+ * там, где реестр выдал ей освобождение под обещание обратного.
+ *
+ * Слушатель ставится в фазе ПЕРЕХВАТА: toggle не всплывает, и на корне его
+ * иначе не поймать. Это дешевле, чем attributes: true на весь документ, —
+ * такой наблюдатель просыпался бы на каждый tabindex, который кит пишет сам,
+ * то есть на собственные правки.
+ *
+ * Сторожит tools/behavior.js, раздел popover: он открывает поповер и читает
+ * группу НЕ ставя фокус. Первый же Tab внутрь чинит пункты сам, поэтому
+ * проверка, которая сначала фокусируется, увидит порядок там, где его нет. */
+function onToggle(e) {
+  const el = e.target;
+  if (!(el instanceof Element)) return;
+  // newState приходит от поповера; у <details> toggle в части браузеров всё
+  // ещё обычное событие — там открытость спрашивается у самого элемента.
+  if (e.newState === 'open' || (!e.newState && el.open === true)) refresh(el);
+}
+
 function onPointerDown(e) {
   const axis = e.target.closest?.('.inst-num-axis');
   if (axis && e.button === 0) onAxisDown(e, axis);
@@ -919,7 +943,20 @@ export function refresh(root = document) {
   for (const t of root.querySelectorAll?.('.inst-table') || []) syncSelectAll(t);
 }
 
-let observer = null;
+/* Наблюдатель на КАЖДЫЙ корень, а не один на модуль.
+ *
+ * start(root) объявлен как API на произвольный корень, и живых корней бывает
+ * два: диалог со своим поддеревом, панель предпросмотра, стенд. Один
+ * наблюдатель на модуль означал бы, что второй start() забирает ссылку у
+ * первого: колбэк первого корня зовёт disconnect() у ЧУЖОГО наблюдателя и
+ * подписывает его на свою цель, первый корень перестаёт обновляться молча, а
+ * stop() до осиротевшего не дотягивается — держать его больше нечем.
+ *
+ * Ключ — сам корень, поэтому повторный start() на том же корне не плодит
+ * второго наблюдателя: старый снимается там же, где заводится новый.
+ *
+ * Сторожит tools/behavior.js, раздел roots. */
+const observers = new Map();
 
 /** Подключить поведение. Вызывается сам при загрузке модуля.
  *
@@ -936,6 +973,7 @@ export function start(root = document, { observe = true } = {}) {
   root.addEventListener('change', onChange);
   root.addEventListener('input', onInput);
   root.addEventListener('pointerdown', onPointerDown);
+  root.addEventListener('toggle', onToggle, true);
   refresh(root);
 
   // Группы прибывают во время работы — это агентный интерфейс, в нём строки
@@ -943,9 +981,11 @@ export function start(root = document, { observe = true } = {}) {
   // refresh() руками после каждого рендера, и не забывается.
   const target = root.body || root;
   if (observe && target && typeof MutationObserver === 'function') {
+    observers.get(root)?.disconnect();
     let queued = false;
-    const watch = () => observer.observe(target, { childList: true, subtree: true });
-    observer = new MutationObserver(() => {
+    let mo;
+    const watch = () => mo.observe(target, { childList: true, subtree: true });
+    mo = new MutationObserver(() => {
       if (queued) return;
       queued = true;
       queueMicrotask(() => {
@@ -959,11 +999,12 @@ export function start(root = document, { observe = true } = {}) {
         //
         // disconnect() заодно выбрасывает очередь записей, поэтому после
         // подписки заново прошлые правки не всплывают.
-        observer.disconnect();
+        mo.disconnect();
         refresh(root);
         watch();
       });
     });
+    observers.set(root, mo);
     watch();
   }
 }
@@ -976,8 +1017,9 @@ export function stop(root = document) {
   root.removeEventListener('change', onChange);
   root.removeEventListener('input', onInput);
   root.removeEventListener('pointerdown', onPointerDown);
-  observer?.disconnect();
-  observer = null;
+  root.removeEventListener('toggle', onToggle, true);
+  observers.get(root)?.disconnect();
+  observers.delete(root);
 }
 
 /* Самозапуск — и способ от него отказаться.
