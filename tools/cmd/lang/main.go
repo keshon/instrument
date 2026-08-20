@@ -27,28 +27,9 @@ import (
 	"unicode"
 )
 
-// Как читать файл зоны.
-//
-// whole — кириллицы нет вообще. strings — кириллицы нет в СТРОКОВЫХ ЛИТЕРАЛАХ,
-// комментарии не в счёт.
-//
-// Второй режим нужен ровно потому, что dist/instrument.js — копия src/kit.js
-// со всеми его комментариями, а src/ переводится шагом позже. Ждать шага 2,
-// чтобы начать сторожить фразы, которые кит ГОВОРИТ человеку, значило бы
-// оставить единственную зону, видимую постороннему, без охраны на пятнадцать
-// сеансов. Разделение честное: строка уезжает в aria-label, комментарий не
-// уезжает никуда.
-type mode int
-
-const (
-	whole mode = iota
-	literals
-)
-
 type zone struct {
 	name  string
 	paths []string // файлы и каталоги, относительно корня репозитория
-	mode  mode
 	on    bool
 	step  string // шаг переезда, на котором зона включается
 	why   string
@@ -56,17 +37,8 @@ type zone struct {
 
 var zones = []zone{
 	{
-		name:  "публичные строки кита",
-		paths: []string{"dist/instrument.js"},
-		mode:  literals,
-		on:    true,
-		step:  "1",
-		why:   "уезжают в aria-label и в объявления скринридеру",
-	},
-	{
 		name:  "манифест пакета",
 		paths: []string{"package.json"},
-		mode:  whole,
 		on:    true,
 		step:  "1",
 		why:   "description виден в реестре npm",
@@ -74,7 +46,6 @@ var zones = []zone{
 	{
 		name:  "знаки",
 		paths: []string{"assets"},
-		mode:  whole,
 		on:    true,
 		step:  "1",
 		why:   "файлы уезжают в пакет вместе с комментариями внутри",
@@ -103,8 +74,16 @@ var zones = []zone{
 			"src/base.css",
 			"src/surfaces.css",
 			"src/table.css",
+			// Поведение и его сборка. До перевода kit.js эта зона стерегла
+			// только СТРОКОВЫЕ ЛИТЕРАЛЫ собранного модуля: комментарии в нём
+			// были копией русских комментариев исходника, а ждать перевода
+			// всего кита, чтобы начать сторожить фразы, которые кит ГОВОРИТ
+			// человеку, значило бы оставить единственную зону, видимую
+			// постороннему, без охраны на пятнадцать сеансов. Теперь файл
+			// английский целиком, и различать нечего.
+			"src/kit.js",
+			"dist/instrument.js",
 		},
-		mode: whole,
 		on:   true,
 		step: "2",
 		why:  "переведённый файл не возвращается к русскому по привычке",
@@ -112,35 +91,30 @@ var zones = []zone{
 	{
 		name:  "исходники кита целиком",
 		paths: []string{"src", "dist/instrument.js", "dist/instrument.css"},
-		mode:  whole,
 		step:  "2",
 		why:   "src/ уезжает в пакет полем files",
 	},
 	{
 		name:  "инструменты",
 		paths: []string{"tools"},
-		mode:  whole,
 		step:  "3",
 		why:   "вывод гейтов живёт в тех же строках, что и код",
 	},
 	{
 		name:  "сайт",
 		paths: []string{"site"},
-		mode:  whole,
 		step:  "3",
 		why:   "",
 	},
 	{
 		name:  "документация",
 		paths: []string{"docs/start", "docs/foundations", "docs/components", "docs/agent", "docs/layout", "docs/blocks", "docs/about"},
-		mode:  whole,
 		step:  "4",
 		why:   "русский переезжает в *.ru.md разворотом базового языка",
 	},
 	{
 		name:  "корень",
 		paths: []string{"README.md", "CONTRIBUTING.md", "ROADMAP.md"},
-		mode:  whole,
 		step:  "6",
 		why:   "CHANGELOG.md не переводится: переведённая летопись — переписанная",
 	},
@@ -202,9 +176,6 @@ func (z zone) scan(path, root string) []string {
 			rel = filepath.ToSlash(r)
 		}
 		text := strings.ReplaceAll(string(b), "\r\n", "\n")
-		if z.mode == literals {
-			text = onlyJSLiterals(text)
-		}
 		for i, line := range strings.Split(text, "\n") {
 			if w := cyrillicIn(line); w != "" {
 				out = append(out, fmt.Sprintf("%s:%d: %s — зона «%s»", rel, i+1, w, z.name))
@@ -235,81 +206,4 @@ func cyrillicIn(line string) string {
 		return "«" + line[start:] + "»"
 	}
 	return ""
-}
-
-// onlyJSLiterals гасит всё, кроме строковых литералов, сохраняя номера строк.
-//
-// Разбор посимвольный, а не регулярным выражением: у комментария и литерала
-// общие символы, и регулярка, не помнящая, где она находится, принимает
-// апостроф внутри комментария за начало строки и глотает половину файла.
-// Подстановка ${...} внутри шаблона не разбирается — код внутри неё
-// кириллицы не содержит по тем же правилам, что и код снаружи. Регулярное
-// выражение литералом не считается: человек его не слышит, а шагом 2 зона
-// всё равно переходит в режим whole, где не считается уже ничего.
-func onlyJSLiterals(src string) string {
-	var out strings.Builder
-	out.Grow(len(src))
-
-	keep := func(r rune) {
-		if r == '\n' {
-			out.WriteRune('\n')
-			return
-		}
-		out.WriteRune(r)
-	}
-	drop := func(r rune) {
-		if r == '\n' {
-			out.WriteRune('\n')
-			return
-		}
-		out.WriteRune(' ')
-	}
-
-	rs := []rune(src)
-	for i := 0; i < len(rs); i++ {
-		r := rs[i]
-		switch {
-		case r == '/' && i+1 < len(rs) && rs[i+1] == '/':
-			for ; i < len(rs) && rs[i] != '\n'; i++ {
-				drop(rs[i])
-			}
-			i--
-		case r == '/' && i+1 < len(rs) && rs[i+1] == '*':
-			drop(rs[i])
-			i++
-			for ; i < len(rs); i++ {
-				drop(rs[i])
-				if rs[i] == '/' && rs[i-1] == '*' {
-					break
-				}
-			}
-		case r == '\'' || r == '"' || r == '`':
-			quote := r
-			drop(rs[i])
-			i++
-			for ; i < len(rs); i++ {
-				if rs[i] == '\\' && i+1 < len(rs) {
-					keep(rs[i])
-					i++
-					keep(rs[i])
-					continue
-				}
-				if rs[i] == quote {
-					drop(rs[i])
-					break
-				}
-				// Незакрытая кавычка до конца строки — это не литерал, а
-				// апостроф в тексте: делить регулярное выражение и деление
-				// эта команда не умеет и не обязана.
-				if rs[i] == '\n' && quote != '`' {
-					drop(rs[i])
-					break
-				}
-				keep(rs[i])
-			}
-		default:
-			drop(r)
-		}
-	}
-	return out.String()
 }
