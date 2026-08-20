@@ -41,6 +41,12 @@ group-en: "Actions"
   <span class="inst-chip" role="option" aria-selected="false" aria-disabled="true" tabindex="-1">отменено</span>
 </div>
 ```
+```js target
+chips.addEventListener('inst:select', (e) => {
+  const on = e.detail.selected ? 'включён' : 'выключен';
+  console.log(`фильтр ${e.detail.value} ${on}`);
+});
+```
 
 ## Контракт
 
@@ -123,17 +129,7 @@ group-en: "Actions"
 ### События
 
 `inst:select` всплывает с переключённого чипа. В `detail.selected` — стало
-включено или выключено.
-
-```js
-chips.addEventListener('inst:select', (e) => {
-  const on = e.detail.selected ? 'включён' : 'выключен';
-  console.log(`фильтр ${e.detail.value} ${on}`);
-});
-```
-
-Отменённое событие оставляет разметку нетронутой: приложение взяло состояние на
-себя и поставит `aria-selected` само.
+включено или выключено; код — на вкладке JS у примера в шапке.
 
 ### Опции
 

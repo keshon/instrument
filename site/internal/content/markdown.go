@@ -126,6 +126,11 @@ type codeRenderer struct {
 	heroDemoOn bool
 	section    string // id открытого раздела: ссылкам «Связанного» нужен свой класс
 	ids        map[string]int
+
+	// Ограды, уже съеденные предыдущим примером как его дополнительные цели.
+	// Обход идёт по одному узлу, а цели собираются вперёд по соседям — без
+	// отметки та же ограда отрисовалась бы второй раз, уже сама по себе.
+	eaten map[ast.Node]bool
 }
 
 func (r *codeRenderer) uniq(id string) string {
@@ -309,11 +314,51 @@ func ctxClass(ctx bool) string {
 var (
 	previewRe = regexp.MustCompile(`(^|\s)preview(\s|$)`)
 	contextRe = regexp.MustCompile(`(^|\s)context(\s|$)`)
+
+	// Дополнительная цель примера: ограда сразу за живым примером, помеченная
+	// словом target. Подпись берётся из target=Имя, иначе из языка ограды.
+	targetRe = regexp.MustCompile(`(^|\s)target(=(\S+))?(\s|$)`)
 )
+
+// codeTarget — одна цель панели кода: тот же компонент на другом языке.
+type codeTarget struct {
+	lang  string
+	label string
+	raw   string
+	id    string
+}
+
+// Подпись цели по языку ограды. Список открыт намеренно: новая цель — это
+// строка здесь и ограда на странице, а не правка разметки примера.
+//
+// React и Svelte стоят в списке ДО появления адаптеров, и это не обещание
+// читателю: вкладка рисуется только тогда, когда на странице есть ограда с
+// таким языком. Пустой вкладки не бывает, а место для неё готово.
+var targetLabels = map[string]string{
+	"html":   "HTML",
+	"js":     "JS",
+	"jsx":    "React",
+	"tsx":    "React",
+	"svelte": "Svelte",
+	"vue":    "Vue",
+}
+
+func targetLabel(lang, info string) string {
+	if m := targetRe.FindStringSubmatch(info); m != nil && m[3] != "" {
+		return m[3]
+	}
+	if l, ok := targetLabels[lang]; ok {
+		return l
+	}
+	return lang
+}
 
 func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
 	if !entering {
 		return ast.WalkContinue, nil
+	}
+	if r.eaten[n] {
+		return ast.WalkSkipChildren, nil
 	}
 	node := n.(*ast.FencedCodeBlock)
 
@@ -392,12 +437,49 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 		// Класс .demo-stage остаётся: на нём висит два десятка правил со
 		// :has() — штриховка подложки, воздух, собранный экран. Снять его
 		// значило бы переписать их все заодно с рамой.
+		// Цели собираются ВПЕРЁД по соседям: ограда с пометкой target,
+		// стоящая сразу за живым примером, — это тот же пример на другом
+		// языке, а не отдельный блок кода. Обход у goldmark потоковый, узел
+		// приходит по одному, поэтому съеденное помечается.
+		targets := []codeTarget{{lang: lang, label: targetLabel(lang, info), raw: raw, id: id + "-0"}}
+		for sib, k := n.NextSibling(), 1; sib != nil; sib, k = sib.NextSibling(), k+1 {
+			fence, ok := sib.(*ast.FencedCodeBlock)
+			if !ok {
+				break
+			}
+			sinfo := ""
+			if fence.Info != nil {
+				sinfo = string(fence.Info.Segment.Value(source))
+			}
+			if !targetRe.MatchString(sinfo) {
+				break
+			}
+			var b bytes.Buffer
+			fl := fence.Lines()
+			for i := 0; i < fl.Len(); i++ {
+				seg := fl.At(i)
+				b.Write(seg.Value(source))
+			}
+			slang := string(fence.Language(source))
+			targets = append(targets, codeTarget{
+				lang: slang, label: targetLabel(slang, sinfo), raw: b.String(),
+				id: fmt.Sprintf("%s-%d", id, k),
+			})
+			if r.eaten == nil {
+				r.eaten = map[ast.Node]bool{}
+			}
+			r.eaten[sib] = true
+			if slang == "js" || slang == "javascript" {
+				r.page.HasJS = true
+			}
+		}
+
 		fmt.Fprintf(w, `<figure class="demo%s" data-demo>`+
 			`<figcaption class="demo-label">%s</figcaption>`+
 			`<div class="demo-frame demo-stage inst-theme">`+
 			`<div class="demo-root%s">%s</div></div>`,
 			hero, label, ctxClass(ctx), raw)
-		writeCode(w, raw, lang, true, lg)
+		writeTargets(w, targets, lg)
 		w.WriteString(`</figure>`)
 		return ast.WalkSkipChildren, nil
 	}
@@ -406,38 +488,63 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 	return ast.WalkSkipChildren, nil
 }
 
-func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
-	if inDemo {
-		// Код стоит ПОД рамой, а не внутри неё: в раме варианты компонента,
-		// и всё, что туда попадает, читается как его часть.
-		//
-		// Переключателя целей здесь пока нет, и это не забывчивость. Цель
-		// сегодня одна — HTML; вкладка, у которой нет второй, обещает
-		// выбор, которого не существует, а кит запрещает такие обещания
-		// сам себе. Переключатель заводится вместе со второй целью.
-		// Аккордеон КИТА, а не своя раскладушка. Своя была написана и оказалась
-		// невыполненным обещанием: подпись «Разметка» нажималась, но не
-		// выглядела нажимаемой — ни шеврона, ни высоты контрола, ни подсветки.
-		// Кит это уже решил, и решил лучше.
-		//
-		// Не --flush: тот вариант для раскладушки ВНУТРИ чужой рамы, где своя
-		// рамка была бы второй в пикселе от первой. Здесь код стоит отдельным
-		// блоком под рамой, и рамка с радиусом ему принадлежат. Заодно
-		// возвращается радиус самому коду: его даёт overflow: hidden хозяина,
-		// и .code-block--demo обнуляет свой не зря.
-		fmt.Fprintf(w, `<details class="inst-accordion-item demo-code">`+
-			`<summary class="inst-accordion-head">%s</summary>`,
-			i18n.T(lg, "demo.markup"))
+// writeTargets рисует панель кода примера: подпись-раскладушку и, если целей
+// больше одной, полосу вкладок кита над блоками кода.
+//
+// ВКЛАДКА РИСУЕТСЯ ТОЛЬКО ТОГДА, КОГДА ЗА НЕЙ ЕСТЬ КОД. Три равноправные
+// вкладки HTML/JS/React были бы нарисованным обещанием: React не существует,
+// а `## JS` встречается на восемнадцати страницах из пятидесяти — на прочих
+// вкладка сказала бы «то же, что в HTML» или оказалась пустой. Кит запрещает
+// такие обещания сам себе, и справочник кита не исключение.
+//
+// Полоса — китовый role="tablist" целиком: instrument.js уже выполняет его
+// контракт (стрелки, Home и End, бегущий tabindex) и сам переключает панели по
+// aria-controls. Своя полоса означала бы третью реализацию переключателя в
+// репозитории, где уже есть две проверенные.
+func writeTargets(w util.BufWriter, targets []codeTarget, lg i18n.Lang) {
+	head := i18n.T(lg, "demo.markup")
+	if len(targets) > 1 {
+		head = i18n.T(lg, "demo.code")
 	}
+	fmt.Fprintf(w, `<details class="inst-accordion-item demo-code">`+
+		`<summary class="inst-accordion-head">%s</summary>`, head)
+
+	if len(targets) > 1 {
+		fmt.Fprintf(w, `<div class="inst-tabs demo-targets" role="tablist" aria-label="%s">`,
+			i18n.T(lg, "demo.code"))
+		for i, t := range targets {
+			sel, tab := "false", "-1"
+			if i == 0 {
+				sel, tab = "true", "0"
+			}
+			fmt.Fprintf(w, `<button class="inst-tab" type="button" role="tab" id="%s-tab"`+
+				` aria-selected="%s" aria-controls="%s" tabindex="%s">%s</button>`,
+				t.id, sel, t.id, tab, escape(t.label))
+		}
+		w.WriteString(`</div>`)
+	}
+
+	for i, t := range targets {
+		attrs := ""
+		if len(targets) > 1 {
+			attrs = fmt.Sprintf(` id="%s" role="tabpanel" aria-labelledby="%s-tab" tabindex="0"`, t.id, t.id)
+			if i > 0 {
+				attrs += " hidden"
+			}
+		}
+		fmt.Fprintf(w, `<div class="code-block code-block--demo"%s>%s<pre><code class="lang-%s">%s</code></pre></div>`,
+			attrs, copyButton(t.raw, lg), escape(t.lang), highlight(t.raw, t.lang))
+	}
+	w.WriteString(`</details>`)
+}
+
+func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
 	cls := "code-block"
 	if inDemo {
 		cls += " code-block--demo"
 	}
 	fmt.Fprintf(w, `<div class="%s">%s<pre><code class="lang-%s">%s</code></pre></div>`,
 		cls, copyButton(raw, lg), escape(lang), highlight(raw, lang))
-	if inDemo {
-		w.WriteString(`</details>`)
-	}
 }
 
 func writeAPI(w util.BufWriter, p *Page) {
