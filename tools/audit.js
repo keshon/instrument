@@ -1,27 +1,30 @@
-/* Проверка кита по ОТРИСОВАННЫМ пикселям.
+/* Auditing the kit by RENDERED pixels.
  *
- * Гейт кита текстовый: contrast и targets читают tokens.css и считают пары,
- * ПЕРЕЧИСЛЕННЫЕ В САМОЙ ПРОВЕРКЕ. Это ловит расхождение кита с документацией
- * и работает в CI без браузера — но не знает, что сложилось на экране после
- * вложения, наложения полупрозрачностей и каскада приложения.
+ * The kit's own gate is textual: contrast and targets read tokens.css and walk
+ * the pairs LISTED INSIDE THE CHECK ITSELF. That catches the kit drifting away
+ * from its documentation and runs in CI without a browser — but it knows
+ * nothing about what ended up on screen after nesting, stacked translucency
+ * and the application's cascade.
  *
- * Дважды за историю кита текстовая проверка была зелёной, пока в браузере
- * было сломано: `*` внутри комментария закрыл его раньше времени и молча унёс
- * и нейтральный тон, и правило области нажатия. Порогов это не нарушало,
- * потому что в списке пар стояли токены, а не то, что реально нарисовалось.
+ * Twice in the kit's history the textual check stayed green while the browser
+ * was broken: a `*` inside a comment closed it early and silently carried off
+ * both the neutral tone and the tap-area rule. No threshold was violated,
+ * because the list of pairs held tokens rather than what actually got painted.
  *
- * Здесь наоборот: обход каждого узла с текстом, настоящий цвет и настоящий
- * фон со сборкой альфы по предкам. Любую запись цвета — oklch, color-mix,
- * light-dark — приводит к sRGB сам браузер через канву.
+ * Here it is the other way round: walk every node that carries text, take the
+ * real colour and the real background with alpha composited up the ancestors.
+ * Any colour notation — oklch, color-mix, light-dark — is resolved to sRGB by
+ * the browser itself, through a canvas.
  *
- * ПРИМЕНЕНИЕ. Откройте свой экран, вставьте файл в консоль:
+ * USE. Open your own screen and paste the file into the console:
  *
- *     kitAudit.run()          вся страница, 5 тем и 3 плотности
- *     kitAudit.run('#main')   только часть
- *     kitAudit.contrast()     один прогон в текущей теме
- *     kitAudit.targets()      один прогон в текущей плотности
+ *     kitAudit.run()          the whole page, 5 themes and 3 densities
+ *     kitAudit.run('#main')   a part of it
+ *     kitAudit.contrast()     one pass in the current theme
+ *     kitAudit.targets()      one pass in the current density
  *
- * Проверяет ВАШИ экраны, а не примеры из документации, — в этом весь смысл.
+ * It checks YOUR screens rather than the examples in the documentation — that
+ * is the entire point.
  */
 window.kitAudit = (function () {
   'use strict';
@@ -30,16 +33,17 @@ window.kitAudit = (function () {
   cv.width = cv.height = 1;
   var ctx = cv.getContext('2d', { willReadFrequently: true });
 
-  /* Разбор любой записи цвета: рисуем на канве и читаем пиксель. Так oklch,
-     color-mix и light-dark разрешает браузер, а не мы. */
+  /* Parsing any colour notation: paint it on a canvas and read the pixel. That
+     way oklch, color-mix and light-dark are resolved by the browser, not us. */
   function rgba(css) {
     ctx.clearRect(0, 0, 1, 1);
     ctx.fillStyle = '#000';
-    ctx.fillStyle = css;                 // невалидное значение оставит чёрный
+    ctx.fillStyle = css;                 // an invalid value leaves black
     ctx.fillRect(0, 0, 1, 1);
     var d = ctx.getImageData(0, 0, 1, 1).data;
-    // Канва уже вмешала альфу в чёрный фон, поэтому берём её из нормализованной
-    // записи отдельно: цвет нам нужен ЧИСТЫЙ, композицию делаем сами.
+    // The canvas has already mixed alpha into the black backdrop, so take it
+    // from the normalised notation separately: we need the colour PURE and do
+    // the compositing ourselves.
     var s = ctx.fillStyle;
     var m = /rgba?\([^)]*?([\d.]+)\s*\)$/.exec(s) || /\/\s*([\d.]+%?)\s*\)/.exec(s);
     var a = 1;
@@ -61,8 +65,8 @@ window.kitAudit = (function () {
     return (l[0] + 0.05) / (l[1] + 0.05);
   }
 
-  /* Настоящий фон под элементом: вверх по предкам, пока не наберётся
-     непрозрачность. Полупрозрачные слои складываются в порядке рисования. */
+  /* The real background under an element: up the ancestors until opacity adds
+     up. Translucent layers are composited in paint order. */
   function bgOf(el) {
     var stack = [];
     for (var n = el; n && n.nodeType === 1; n = n.parentElement) {
@@ -74,8 +78,8 @@ window.kitAudit = (function () {
     return out;
   }
 
-  /* Свой видимый текст, а не текст потомков: иначе один и тот же абзац
-     проверялся бы столько раз, сколько над ним обёрток. */
+  /* Its own visible text, not the text of descendants: otherwise the same
+     paragraph would be checked once per wrapper above it. */
   function ownText(el) {
     for (var i = 0; i < el.childNodes.length; i++) {
       var n = el.childNodes[i];
@@ -99,20 +103,22 @@ window.kitAudit = (function () {
       var r = el.getBoundingClientRect();
       if (!r.width || !r.height) continue;
 
-      // ПРОЗРАЧНАЯ подпись — не нарушение, а приём, и он описан в конституции.
-      // Занятая кнопка гасит текст цветом, а не убирает его из потока: подпись
-      // держит ширину, чтобы полоса действий не дёргалась под курсором, и
-      // остаётся скринридеру. Меряя её, проверка честно получала 1.00 и валила
-      // кнопку за то, что та сделана правильно.
+      // A TRANSPARENT label is not a violation but a technique, and the design
+      // principles describe it. A busy button dims its text with colour rather
+      // than pulling it out of flow: the label holds the width so the action
+      // bar does not twitch under the cursor, and it stays available to a
+      // screen reader. Measuring it, the check honestly got 1.00 and failed
+      // the button for being built correctly.
       //
-      // Отличать по alpha, а не по «color: transparent»: браузер возвращает
-      // вычисленное значение, и rgba(0,0,0,0) от прозрачного акцента не
-      // отличается — оба означают «этих пикселей на экране нет».
+      // Tell it apart by alpha rather than by `color: transparent`: the
+      // browser returns the computed value, and rgba(0,0,0,0) is
+      // indistinguishable from a transparent accent — both mean "these pixels
+      // are not on screen".
       if (rgba(cs.color)[3] === 0) continue;
 
       var size = parseFloat(cs.fontSize);
       var weight = parseInt(cs.fontWeight, 10) || 400;
-      // Порог 3:1 — только для КРУПНОГО текста по определению WCAG.
+      // The 3:1 threshold is for LARGE text only, by the WCAG definition.
       var large = size >= 24 || (size >= 18.66 && weight >= 700);
       var need = large ? 3 : 4.5;
 
@@ -121,26 +127,21 @@ window.kitAudit = (function () {
       checked++;
       if (got < need - 0.01) {
         bad.push({
-          где: el.className || el.tagName,
-          текст: el.textContent.trim().slice(0, 48),
-          кегль: Math.round(size * 10) / 10,
-          нужно: need,
-          получилось: Math.round(got * 100) / 100
+          where: el.className || el.tagName,
+          text: el.textContent.trim().slice(0, 48),
+          size: Math.round(size * 10) / 10,
+          need: need,
+          got: Math.round(got * 100) / 100
         });
       }
     }
-    return { проверено: checked, нарушений: bad.length, список: bad };
+    return { checked: checked, failed: bad.length, list: bad };
   }
 
   var SEL = 'button, a[href], input:not([type="hidden"]), select, textarea, summary,' +
             '[role="option"], [role="radio"], [role="menuitem"], [role="tab"],' +
             '[tabindex]:not([tabindex="-1"])';
 
-  /* The inline exception, and the only one of the four that applies to a kit:
-     a target inside a line of text is exempt. A link in a sentence cannot be
-     given a tap area without pushing the line apart, which is why the criterion
-     lets it go. Detected structurally — inline-level box whose parent carries
-     text of its own — not by guessing from the class name. */
   /* The area a target really offers to a finger.
      A kit keeps small controls SMALL on purpose — a checkbox glyph is 13px —
      and grows an invisible ::before to the tap minimum instead. Measuring the
@@ -161,32 +162,39 @@ window.kitAudit = (function () {
     return { w: w, h: h, rect: r };
   }
 
-  /* ПЛОСКОСТЬ, в которой лежит элемент: сам открытый поповер или модалка,
-     а для всего остального — null, то есть страница.
+  /* The PLANE an element lies in: the open popover or modal itself, and null —
+     that is, the page — for everything else.
 
-     Возвращается именно узел, а не «да/нет». Двух причин достаточно, и обе
-     измерены. Открытый поповер лежит в верхнем слое и плавает НАД страницей:
-     палец, целящийся в пункт меню, ни во что под ним не попадёт, и мерить
-     расстояние между слоями значит мерить то, чего на экране нет. А два
-     РАЗНЫХ открытых поповера — это две разные плавающие панели, и соседями
-     они друг другу тоже не приходятся.
+     What comes back is the node rather than a yes/no. Two reasons are enough,
+     and both are measured. An open popover sits in the top layer and floats
+     ABOVE the page: a finger aiming at a menu item will hit nothing underneath
+     it, and measuring the distance between layers means measuring something
+     that is not on screen. And two DIFFERENT open popovers are two different
+     floating panels, so they are not neighbours to each other either.
 
-     Второе важнее, чем кажется: бегунок раскрывает ВСЕ поповеры страницы
-     разом, чего в жизни не бывает, и без разделения по плоскостям три демо-
-     меню на одной странице начинают мерить расстояние друг до друга. */
+     The second reason matters more than it looks: the runner opens EVERY
+     popover on the page at once, which never happens in life, and without
+     splitting by plane three demo menus on one page start measuring the
+     distance to each other. */
   function planeOf(el) {
     return el.closest('[popover]:popover-open, dialog[open]');
   }
 
+  /* The inline exception, and the only one of the four that applies to a kit:
+     a target inside a line of text is exempt. A link in a sentence cannot be
+     given a tap area without pushing the line apart, which is why the criterion
+     lets it go. Detected structurally — inline-level box whose parent carries
+     text of its own — not by guessing from the class name. */
   function inlineInText(el) {
     if (getComputedStyle(el).display !== 'inline') return false;
 
-    /* Текст ищется у ближайшего БЛОЧНОГО предка, а не у непосредственного.
-       Инлайновые обёртки для этого правила прозрачны: <strong><a>…</a></strong>
-       внутри абзаца — это ссылка в строке текста, хотя у самой обёртки, кроме
-       ссылки, внутри ничего нет. Пока смотрели на непосредственного родителя,
-       такая ссылка теряла освобождение и падала как самостоятельная цель —
-       ложное срабатывание на титульной странице справочника. */
+    /* The text is looked for on the nearest BLOCK ancestor rather than on the
+       immediate one. Inline wrappers are transparent to this rule:
+       <strong><a>…</a></strong> inside a paragraph is a link in a line of
+       text, even though the wrapper itself holds nothing but the link. Look at
+       the immediate parent instead and such a link loses its exemption and
+       fails as a standalone target — a false positive on the front page of the
+       reference. */
     var host = el.parentElement;
     while (host && getComputedStyle(host).display === 'inline') host = host.parentElement;
     if (!host) return false;
@@ -194,10 +202,11 @@ window.kitAudit = (function () {
     return own.length > 0;
   }
 
-  /* Цели нажатия, WCAG 2.2 AA (2.5.8), норма 24×24.
-     У критерия есть исключение по РАССТОЯНИЮ: цель меньше нормы засчитывается,
-     если круг диаметром 24 в её центре не пересекает круг соседа, то есть при
-     S + G >= 24. Без него плотный режим был бы нарушением по построению. */
+  /* Tap targets, WCAG 2.2 AA (2.5.8), the minimum being 24×24.
+     The criterion has a DISTANCE exception: a target below the minimum counts
+     if a 24-diameter circle at its centre does not cross a neighbour's circle,
+     that is when S + G >= 24. Without it the compact mode would be a violation
+     by construction. */
   function targets(sel) {
     var els = [].slice.call(root(sel).querySelectorAll(SEL)).filter(function (e) {
       var cs = getComputedStyle(e);
@@ -217,18 +226,18 @@ window.kitAudit = (function () {
       // catch it would start excusing genuinely too-small controls.
       if (cs.clipPath.indexOf('inset(50%') === 0) return false;
 
-      // Целей у ЗАКРЫТОГО поповера нет, даже пока он ещё виден.
+      // A CLOSED popover has no targets, even while it is still visible.
       //
-      // Поповеры типа auto образуют стек: открытие соседнего закрывает
-      // предыдущий. Бегунок раскрывает их все подряд, значит открытым
-      // остаётся последний, а прочие закрываются — и с
-      // transition-behavior: allow-discrete продолжают рисоваться, пока
-      // гаснут. Коробка у них при этом настоящая, позиция — умолчание
-      // поповера, то есть все они складываются в одну стопку по центру.
+      // Popovers of type auto form a stack: opening a sibling closes the
+      // previous one. The runner opens them all in turn, so the last one stays
+      // open and the rest close — and with
+      // transition-behavior: allow-discrete they keep being painted while they
+      // fade. Their box is real meanwhile, and their position is the popover
+      // default, so they all pile up in one stack at the centre.
       //
-      // Так и набирались 244 «нарушения» на восьмидесяти пяти страницах:
-      // мерилось расстояние между пунктами меню, которых на экране в этот
-      // момент уже нет, а те, что остались, стояли друг на друге.
+      // That is how 244 "violations" accumulated across eighty-five pages: the
+      // distance was measured between menu items that are no longer on screen,
+      // while the ones that remained stood on top of each other.
       var pop = e.closest('[popover]');
       if (pop && !pop.matches(':popover-open')) return false;
 
@@ -246,67 +255,72 @@ window.kitAudit = (function () {
       for (var j = 0; j < boxes.length; j++) {
         var o = boxes[j];
         if (o.e === e || e.contains(o.e) || o.e.contains(e)) continue;
-        // Соседство — вопрос ПЛОСКОСТИ, и у каждой всплывающей панели она своя.
+        // Neighbourhood is a question of PLANE, and every floating panel has
+        // its own.
         //
-        // Проверка ниже ловила только ПЕРЕКРЫТИЕ, а этого мало: край поповера
-        // может оказаться в шести сотых пикселя от ссылки в навигации под ним,
-        // не накрыв её. Так и вышло — 244 ложных нарушения на восьмидесяти
-        // пяти страницах, все про переключатель плотности в открытом меню.
+        // The test below caught OVERLAP only, and that is not enough: the edge
+        // of a popover can land six hundredths of a pixel from a navigation
+        // link underneath without covering it. Which is exactly what happened
+        // — 244 false violations across eighty-five pages, all of them about
+        // the density switch inside an open menu.
         if (planeOf(e) !== planeOf(o.e)) continue;
         var dx = Math.max(0, Math.max(r.left - o.r.right, o.r.left - r.right));
         var dy = Math.max(0, Math.max(r.top - o.r.bottom, o.r.top - r.bottom));
-        // Перекрывшиеся коробки — тоже слои, а не соседи: закреплённая шапка,
-        // проехавшая над карточкой, читается как расстояние ноль и валит всё
-        // под собой.
+        // Overlapping boxes are layers too, not neighbours: a sticky header
+        // that has scrolled over a card reads as distance zero and fails
+        // everything underneath it.
         if (dx === 0 && dy === 0) continue;
         gap = Math.min(gap, Math.sqrt(dx * dx + dy * dy));
       }
       var s = Math.min(boxes[i].w, boxes[i].h);
-      // Допуск на субпиксель: у дробных ширин зазор выходит 1.9999 вместо 2,
-      // и ровно проходящая норма 22+2 ложно падала бы каждый раз.
+      // Subpixel tolerance: with fractional widths the gap comes out as 1.9999
+      // instead of 2, and a 22+2 that passes exactly would fail every time.
       if (gap !== Infinity && s + gap < 23.9) {
         bad.push({
-          где: e.className || e.tagName,
-          текст: (e.textContent || e.getAttribute('aria-label') || '').trim().slice(0, 32),
-          размер: Math.round(boxes[i].w) + '×' + Math.round(boxes[i].h),
-          зазор: Math.round(gap * 10) / 10,
-          сумма: Math.round((s + gap) * 10) / 10
+          where: e.className || e.tagName,
+          text: (e.textContent || e.getAttribute('aria-label') || '').trim().slice(0, 32),
+          box: Math.round(boxes[i].w) + '×' + Math.round(boxes[i].h),
+          gap: Math.round(gap * 10) / 10,
+          sum: Math.round((s + gap) * 10) / 10
         });
       }
     }
-    return { проверено: boxes.length, нарушений: bad.length, список: bad };
+    return { checked: boxes.length, failed: bad.length, list: bad };
   }
 
-  /* Все пять тем названы ПОИМЁННО, включая нейтральную.
+  /* All five themes are named EXPLICITLY, the neutral one included.
    *
-   * Соблазн начать список пустой строкой — «умолчание» — обходится в целую
-   * тему: у корня --tint: 0, то есть снятый атрибут вычисляется ровно в
-   * light-neutral, и пара «умолчание + light-neutral» меряет одно и то же
-   * дважды. Светлая тёплая при этом не меряется вовсе, хотя именно у неё
-   * уклон нейтрали ненулевой (--tint: 2) и именно она может увести
-   * приглушённый текст под порог.
+   * The temptation to start the list with an empty string — "the default" —
+   * costs a whole theme: the root carries --tint: 0, so a removed attribute
+   * computes to exactly light-neutral, and the pair "default + light-neutral"
+   * measures the same thing twice. The warm light theme is then not measured
+   * at all, even though it is the one whose neutral tint is non-zero
+   * (--tint: 2) and the one that can push muted text below the threshold.
    *
-   * Замерено: у корня и у light-neutral фон страницы oklch(0.976 0 75) —
-   * побайтово один; у light он oklch(0.976 0.006 75). */
+   * Measured: at the root and at light-neutral the page background is
+   * oklch(0.976 0 75) — byte for byte the same; at light it is
+   * oklch(0.976 0.006 75). */
   var THEMES = ['light-neutral', 'light', 'light-cool', 'dark', 'dark-soft'];
   var DENSITIES = ['', 'compact', 'comfortable'];
-  /* Пустая строка — снятый атрибут, то есть петроль: отдельного
-     [data-accent="petrol"] в ките нет, умолчание и есть он. */
+  /* The empty string is a removed attribute, that is petrol: the kit has no
+     separate [data-accent="petrol"], the default is it. */
   var ACCENTS = ['', 'graphite', 'indigo', 'clay'];
   var SCALES = ['', '15', '16', '17', '18'];
 
 
-  /* ── Пропорции: влезает ли текст в свою коробку ─────────────────────────
+  /* ── Proportion: does the text fit its box ──────────────────────────────
    *
-   * Границу между этой проверкой и текстовым гейтом стоит назвать прямо.
-   * cmd/proportion сторожит ОТНОШЕНИЯ токенов — лестницу кеглей, форму
-   * контрола, чётность радиусов; всё это считается из tokens.css и не зависит
-   * от шрифта. А влезет ли «Лимит токенов» в свои 92 пикселя, зависит от
-   * гарнитуры, начертания и языка — то есть измеримо только на отрисованном.
+   * The border between this check and the textual gate is worth naming
+   * outright. cmd/proportion guards the RATIOS between tokens — the type
+   * ladder, the shape of a control, the parity of radii; all of it is computed
+   * from tokens.css and does not depend on the font. Whether "Token limit"
+   * fits into its 92 pixels depends on the family, the weight and the
+   * language — that is, it is measurable only on what was rendered.
    *
-   * Ровно этого не увидел ни один из четырёх гейтов, когда база кегля выросла
-   * с 13 на 14: колонка подписей переполнилась, подпись легла в две строки и
-   * порвала выравнивание формы, а проверки остались зелёными.
+   * This is precisely what none of the four gates saw when the base type size
+   * grew from 13 to 14: the label column overflowed, the label wrapped onto
+   * two lines and tore the alignment of the form apart, and the checks stayed
+   * green.
    */
 
   var LABELS = '.inst-label,.inst-prop-label,.inst-kv > dt,.inst-metric-label,' +
@@ -316,17 +330,18 @@ window.kitAudit = (function () {
     var bad = [], checked = 0;
     var root0 = root(sel);
 
-    /* Подпись, которой не хватило места.
-       Мерить канвой нельзя: measureText и раскладка расходятся на пиксель-полтора
-       из-за хинтинга и субпиксельных долей, и на коротких строках это давало
-       ложные срабатывания там, где колонка меряется содержимым и переполниться
-       не может в принципе. Спрашиваем вердикт у самого браузера.
+    /* A label that ran out of room.
+       Measuring with a canvas will not do: measureText and layout disagree by
+       a pixel and a half because of hinting and subpixel fractions, and on
+       short strings that produced false positives where the column is measured
+       by its content and cannot overflow in principle. Ask the browser itself
+       for the verdict.
 
-       Случая два, и они разные.
-       ОБРЕЗКА: подписи запрещено переноситься (nowrap или многоточие), и она
-       вылезла за свою коробку — scrollWidth больше clientWidth.
-       ПЕРЕНОС: подпись стоит в колонке ФИКСИРОВАННОЙ ширины, переноситься ей
-       не запрещено, и она легла в две строки, сдвинув соседей по сетке. */
+       There are two cases, and they are different.
+       CLIPPING: the label is forbidden to wrap (nowrap or an ellipsis) and it
+       has escaped its box — scrollWidth exceeds clientWidth.
+       WRAPPING: the label sits in a column of FIXED width, is not forbidden to
+       wrap, and has laid out over two lines, pushing its grid neighbours. */
     var labels = root0.querySelectorAll(LABELS);
     for (var i = 0; i < labels.length; i++) {
       var el = labels[i];
@@ -341,27 +356,29 @@ window.kitAudit = (function () {
       var single = cs.whiteSpace === 'nowrap' || cs.textOverflow === 'ellipsis';
       if (single) {
         var cut = el.scrollWidth > el.clientWidth + 1;
-        /* Строке свойства обрезка РАЗРЕШЕНА: имя свойства бывает длиннее любой
-           разумной колонки, и конституция это принимает — но требует за это
-           `title`, иначе полное имя прочитать нечем. Значит, здесь проверяется
-           не сама обрезка, а уплаченная за неё цена. */
+        /* A property row is ALLOWED to clip: a property name can be longer
+           than any sensible column, and the design principles accept that —
+           but they charge a `title` for it, otherwise there is no way to read
+           the full name. So what is checked here is not the clipping itself
+           but the price paid for it. */
         if (el.matches('.inst-prop-label')) {
           if (cut && !el.getAttribute('title')) {
-            bad.push({ вид: 'обрезано без title', где: el.className || el.tagName,
-                       текст: txt.slice(0, 40) });
+            bad.push({ kind: 'clipped without title', where: el.className || el.tagName,
+                       text: txt.slice(0, 40) });
           }
           continue;
         }
         if (cut) {
-          bad.push({ вид: 'обрезано', где: el.className || el.tagName,
-                     текст: txt.slice(0, 40),
-                     нужно: el.scrollWidth, есть: el.clientWidth });
+          bad.push({ kind: 'clipped', where: el.className || el.tagName,
+                     text: txt.slice(0, 40),
+                     need: el.scrollWidth, have: el.clientWidth });
         }
         continue;
       }
 
-      /* Фиксированной считаем ту колонку, чью ширину задаёт сетка, а не
-         содержимое: у строки свойства и у списка пар это --label-col. */
+      /* Fixed means the column whose width is set by the grid rather than by
+         its content: for a property row and a key-value list that is
+         --label-col. */
       var fixed = el.matches('.inst-label, .inst-prop-label') ||
                   (el.tagName === 'DT' && el.parentElement &&
                    el.parentElement.classList.contains('inst-kv') &&
@@ -371,37 +388,38 @@ window.kitAudit = (function () {
       var lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.4;
       var lines = Math.round(r.height / lh);
       if (lines > 1) {
-        bad.push({ вид: 'перенос', где: el.className || el.tagName,
-                   текст: txt.slice(0, 40), строк: lines,
-                   колонка: Math.round(el.clientWidth) });
+        bad.push({ kind: 'wrapped', where: el.className || el.tagName,
+                   text: txt.slice(0, 40), lines: lines,
+                   column: Math.round(el.clientWidth) });
       }
     }
 
-    /* Значок против прописной подписи, рядом с которой он стоит. Значок
-       меряется не коробкой, а чернилами: по спрайту кита они занимают 9.02
-       из 16, то есть 0.564 коробки.
+    /* An icon against the cap height of the label it stands next to. The icon
+       is measured by its ink rather than by its box: across the kit's sprite
+       the ink takes 9.02 of 16, that is 0.564 of the box.
 
-       Полоса 0.95…1.07 — не вкус, а замер: 106 035 отношений по всем 85
-       страницам во всех пятнадцати ячейках масштаба и плотности лежат в
-       0.974…1.041. Прежние 0.88…1.16 пускали 1.16 при наблюдаемом
-       максимуме 1.041 и стояли на три тысячных под единственным выбросом —
-       то есть были подогнаны под дефект, а не выведены из корпуса.
+       The band 0.95…1.07 is not taste but a measurement: 106 035 ratios over
+       all 85 pages in all fifteen cells of scale and density lie within
+       0.974…1.041. The earlier 0.88…1.16 admitted 1.16 against an observed
+       maximum of 1.041 and sat three thousandths below the single outlier —
+       that is, it was fitted to a defect rather than derived from the corpus.
 
-       Запас с каждой стороны около 0.025, и он МЕНЬШЕ шага, которым эта
-       величина умеет двигаться: коробка и прописная целые, и один
-       устройственный пиксель прописной сдвигает отношение примерно на 0.1.
-       Это не хрупкость полосы, а её смысл: значок, не шагнувший вместе с
-       кеглем, — ровно тот дефект, ради которого проверка написана, и
-       промолчать о нём полоса не должна. */
+       The margin on each side is about 0.025, and it is SMALLER than the step
+       this quantity can move by: the box and the cap height are integers, and
+       one device pixel of cap height shifts the ratio by roughly 0.1. That is
+       not fragility of the band but its point: an icon that failed to step up
+       with the type size is exactly the defect the check exists for, and the
+       band must not stay quiet about it. */
     var icons = root0.querySelectorAll('.inst-icon');
     for (var j = 0; j < icons.length; j++) {
       var ic = icons[j];
-      /* Служебный глиф в эту меру не попадает. .inst-icon--sm — это размер
-         ШЕВРОНА (--size-chevron), и он обязан быть мельче прописной: он не
-         содержимое строки, а указатель на раскрытие. Своя полоса у него уже
-         есть в текстовом гейте (cmd/proportion, «шеврон к базе кегля»), и
-         мерить его здесь второй, чужой мерой значит выдавать верную работу за
-         нарушение. */
+      /* A utility glyph is out of scope for this measure. .inst-icon--sm is
+         the size of the CHEVRON (--size-chevron), and it has to be smaller
+         than the cap height: it is not content of the line but a pointer at
+         disclosure. It already has a band of its own in the textual gate
+         (cmd/proportion, "chevron against the base type size"), and measuring
+         it here by a second, foreign measure means reporting correct work as a
+         violation. */
       if (ic.classList.contains('inst-icon--sm')) continue;
       var host = ic.parentElement;
       if (!host) continue;
@@ -409,7 +427,7 @@ window.kitAudit = (function () {
       for (var n = host.firstChild; n; n = n.nextSibling) {
         if (n.nodeType === 3) hostText += n.textContent.trim();
       }
-      if (!hostText) continue;           /* значок один — сравнивать не с чем */
+      if (!hostText) continue;           /* a lone icon — nothing to compare */
       var ics = getComputedStyle(ic), hcs = getComputedStyle(host);
       var box = parseFloat(ics.width);
       if (!box) continue;
@@ -422,17 +440,17 @@ window.kitAudit = (function () {
       var d = ink / cap;
       if (d < 0.95 || d > 1.07) {
         bad.push({
-          где: host.className || host.tagName,
-          текст: hostText.slice(0, 24),
-          коробка: box,
-          чернила: Math.round(ink * 10) / 10,
-          прописная: Math.round(cap * 10) / 10,
-          отношение: Math.round(d * 100) / 100
+          where: host.className || host.tagName,
+          text: hostText.slice(0, 24),
+          box: box,
+          ink: Math.round(ink * 10) / 10,
+          cap: Math.round(cap * 10) / 10,
+          ratio: Math.round(d * 100) / 100
         });
       }
     }
 
-    return { проверено: checked, нарушений: bad.length, список: bad };
+    return { checked: checked, failed: bad.length, list: bad };
   }
 
   function run(sel) {
@@ -440,9 +458,10 @@ window.kitAudit = (function () {
     var theme0 = html.getAttribute('data-theme');
     var dens0 = html.getAttribute('data-density');
 
-    /* Смена темы в ките АНИМИРОВАНА. Прочитанный в тот же кадр цвет — это
-       интерполяция, а не итог: первый прогон этой проверки дал 16 ложных
-       нарушений в тёмных темах именно так. Глушим переходы на время замера. */
+    /* Switching the theme in the kit is ANIMATED. A colour read in the same
+       frame is an interpolation rather than the result: the first pass of this
+       check produced 16 false violations in the dark themes exactly that way.
+       Kill transitions for the duration of the measurement. */
     var kill = document.createElement('style');
     kill.textContent = '*,*::before,*::after{transition:none!important;animation:none!important}';
     document.head.appendChild(kill);
@@ -451,32 +470,33 @@ window.kitAudit = (function () {
     var accent0 = html.getAttribute('data-accent');
     var scale0 = html.getAttribute('data-scale');
 
-    /* Матрица, а не одна ячейка.
+    /* A matrix rather than a single cell.
      *
-     * Проверка меряла 5 тем при ОДНОМ акценте и 3 плотности при ОДНОМ
-     * масштабе — примерно шесть ячеек из трёхсот. Единственное, что видит
-     * настоящие пиксели, смотрело в дырку.
+     * The check used to measure 5 themes at ONE accent and 3 densities at ONE
+     * scale — roughly six cells out of three hundred. The only thing that sees
+     * real pixels was looking through a keyhole.
      *
-     * Оси разведены по тому, от чего зависит величина, а не сведены в одну
-     * общую матрицу: цвет не зависит от масштаба, геометрия не зависит от
-     * темы, и перемножать всё на всё значило бы умножить время прогона на
-     * двадцать ради повторения одних и тех же чисел.
+     * The axes are split by what a quantity depends on rather than merged into
+     * one common matrix: colour does not depend on scale, geometry does not
+     * depend on theme, and multiplying everything by everything would multiply
+     * the runtime twentyfold to repeat the same numbers.
      *
-     * Контраст — по теме × акценту: акцент переопределяет --accent-*, и
-     * подпись на акцентной заливке в каждой теме своя.
-     * Цели и пропорции — по масштабу × плотности: обе оси двигают геометрию,
-     * и обе округляются до целых пикселей независимо друг от друга. Ровно на
-     * этом произведении и нашёлся значок, отставший от кегля на масштабе 15.
+     * Contrast goes by theme × accent: an accent redefines --accent-*, and a
+     * label on an accent fill is different in every theme.
+     * Targets and proportion go by scale × density: both axes move geometry,
+     * and both round to whole pixels independently of each other. It was
+     * exactly this product that turned up the icon lagging behind the type
+     * size at scale 15.
      */
-    var res = { контраст: {}, цели: {}, пропорции: {}, всего: 0 };
+    var res = { contrast: {}, targets: {}, proportion: {}, total: 0 };
     THEMES.forEach(function (t) {
       html.setAttribute('data-theme', t);
       ACCENTS.forEach(function (a) {
         a ? html.setAttribute('data-accent', a) : html.removeAttribute('data-accent');
         flush();
         var v = contrast(sel);
-        res.контраст[t + ' · ' + (a || 'петроль')] = v;
-        res.всего += v.проверено;
+        res.contrast[t + ' · ' + (a || 'petrol')] = v;
+        res.total += v.checked;
       });
     });
     theme0 ? html.setAttribute('data-theme', theme0) : html.removeAttribute('data-theme');
@@ -487,16 +507,16 @@ window.kitAudit = (function () {
       DENSITIES.forEach(function (d) {
         d ? html.setAttribute('data-density', d) : html.removeAttribute('data-density');
         flush();
-        var key = (sc || '14') + ' · ' + (d || 'обычная');
-        // Цели входят в общий счёт наравне с контрастом: итоговая строка
-        // обещает «и цели», и без этой строки она обещала больше, чем
-        // считала.
+        var key = (sc || '14') + ' · ' + (d || 'default');
+        // Targets go into the overall count alongside contrast: the closing
+        // line promises "and targets", and without this line it promised more
+        // than it counted.
         var v = targets(sel);
-        res.цели[key] = v;
-        res.всего += v.проверено;
+        res.targets[key] = v;
+        res.total += v.checked;
         var pr = proportion(sel);
-        res.пропорции[key] = pr;
-        res.всего += pr.проверено;
+        res.proportion[key] = pr;
+        res.total += pr.checked;
       });
     });
     dens0 ? html.setAttribute('data-density', dens0) : html.removeAttribute('data-density');
@@ -509,49 +529,49 @@ window.kitAudit = (function () {
   }
 
   function report(res) {
-    var падений = 0, свод = {};
-    Object.keys(res.контраст).forEach(function (k) {
-      var v = res.контраст[k];
-      падений += v.нарушений;
-      свод['тема ' + k] = v.нарушений + ' из ' + v.проверено;
+    var failures = 0, summary = {};
+    Object.keys(res.contrast).forEach(function (k) {
+      var v = res.contrast[k];
+      failures += v.failed;
+      summary['theme ' + k] = v.failed + ' of ' + v.checked;
     });
-    Object.keys(res.цели).forEach(function (k) {
-      var v = res.цели[k];
-      падений += v.нарушений;
-      свод['цели ' + k] = v.нарушений + ' из ' + v.проверено;
+    Object.keys(res.targets).forEach(function (k) {
+      var v = res.targets[k];
+      failures += v.failed;
+      summary['targets ' + k] = v.failed + ' of ' + v.checked;
     });
-    Object.keys(res.пропорции || {}).forEach(function (k) {
-      var v = res.пропорции[k];
-      падений += v.нарушений;
-      свод['пропорции ' + k] = v.нарушений + ' из ' + v.проверено;
+    Object.keys(res.proportion || {}).forEach(function (k) {
+      var v = res.proportion[k];
+      failures += v.failed;
+      summary['proportion ' + k] = v.failed + ' of ' + v.checked;
     });
-    console.log('%cinstrument · проверка по пикселям', 'font-weight:bold');
-    console.table(свод);
-    if (!падений) {
-      console.log('%c· ' + res.всего + ' замеров: контраст в ' + THEMES.length +
-                  '×' + ACCENTS.length + ' темах и акцентах, цели и пропорции в ' +
-                  SCALES.length + '×' + DENSITIES.length + ' масштабах и плотностях — чисто',
+    console.log('%cinstrument · pixel audit', 'font-weight:bold');
+    console.table(summary);
+    if (!failures) {
+      console.log('%c· ' + res.total + ' measurements: contrast over ' + THEMES.length +
+                  '×' + ACCENTS.length + ' themes and accents, targets and proportion over ' +
+                  SCALES.length + '×' + DENSITIES.length + ' scales and densities — clean',
                   'color:green');
       return;
     }
-    Object.keys(res.контраст).forEach(function (k) {
-      if (res.контраст[k].нарушений) {
-        console.group('контраст, тема ' + k);
-        console.table(res.контраст[k].список);
+    Object.keys(res.contrast).forEach(function (k) {
+      if (res.contrast[k].failed) {
+        console.group('contrast, theme ' + k);
+        console.table(res.contrast[k].list);
         console.groupEnd();
       }
     });
-    Object.keys(res.цели).forEach(function (k) {
-      if (res.цели[k].нарушений) {
-        console.group('цели, плотность ' + k);
-        console.table(res.цели[k].список);
+    Object.keys(res.targets).forEach(function (k) {
+      if (res.targets[k].failed) {
+        console.group('targets, density ' + k);
+        console.table(res.targets[k].list);
         console.groupEnd();
       }
     });
-    Object.keys(res.пропорции || {}).forEach(function (k) {
-      if (res.пропорции[k].нарушений) {
-        console.group('пропорции, плотность ' + k);
-        console.table(res.пропорции[k].список);
+    Object.keys(res.proportion || {}).forEach(function (k) {
+      if (res.proportion[k].failed) {
+        console.group('proportion, density ' + k);
+        console.table(res.proportion[k].list);
         console.groupEnd();
       }
     });

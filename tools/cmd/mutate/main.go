@@ -1,28 +1,30 @@
-// Команда mutate проверяет ПРОВЕРКИ: ломает по одному инварианту и требует,
-// чтобы соответствующий гейт упал.
+// Command mutate checks the CHECKS: it breaks one invariant at a time and
+// demands that the matching gate go red.
 //
-// ЗАЧЕМ ОНА ЕСТЬ. Гейт бывает зелёным и пустым, и чтением это не выявляется.
-// Так «лестница весов кнопки» проходила всегда: она сравнивала светлоту двух
-// цветов как непрозрачных, а утопления кита — плёнки, и у плёнки бралась её
-// собственная светлота, то есть ноль. Перепад против любой подложки выходил
-// огромным. Проверка существовала, отчитывалась зелёным и не проверяла ничего
-// — пока умолчание кнопки в тёмных темах не перестало отличаться от фона.
+// WHY IT EXISTS. A gate can be green and empty, and reading it will not reveal
+// that. The "button weight ladder" passed that way forever: it compared the
+// lightness of two colours as if they were opaque, while the kit's recessed
+// surfaces are films, and a film contributed its own lightness, that is zero.
+// The step against any backdrop came out enormous. The check existed, reported
+// green and verified nothing — right up until the default button in the dark
+// themes stopped differing from the background.
 //
-// Отсюда правило: проверка, которую никогда не видели красной, не проверка, а
-// украшение. Каждая мутация ниже — это ответ на вопрос «а если сломать?»,
-// заданный машине, а не памяти.
+// Hence the rule: a check nobody has ever seen red is not a check but
+// decoration. Every mutation below is the question "and what if I break it?"
+// asked of a machine rather than of memory.
 //
-// КАК ЭТО РАБОТАЕТ. Дерево копируется во временный каталог, в копии портится
-// ровно одна вещь, гейт запускается против копии и ОБЯЗАН вернуть ненулевой
-// код. Пойманная мутация — строка «поймана»; непойманная — дыра в гейте, и
-// команда падает.
+// HOW IT WORKS. The tree is copied into a temporary directory, exactly one
+// thing is spoilt in the copy, the gate is run against the copy and MUST
+// return a non-zero code. A caught mutation is a "caught" line; a missed one
+// is a hole in the gate, and the command fails.
 //
-// Контрольный прогон идёт первым: на нетронутой копии все гейты обязаны быть
-// зелёными. Без него стенд мерил бы не мутации, а собственный шум.
+// The control pass comes first: on an untouched copy every gate has to be
+// green. Without it the harness would measure its own noise rather than the
+// mutations.
 //
-//	go run ./cmd/mutate        весь список
-//	go run ./cmd/mutate -v     с выводом упавшего гейта
-//	go run ./cmd/mutate -only contrast   только мутации одного гейта
+//	go run ./cmd/mutate        the whole list
+//	go run ./cmd/mutate -v     with the output of the failing gate
+//	go run ./cmd/mutate -only contrast   only the mutations of one gate
 package main
 
 import (
@@ -35,14 +37,14 @@ import (
 	"strings"
 )
 
-// Гейт: имя, пакет и то, как ему объяснить, где лежит дерево.
+// A gate: its name, its package, and how to tell it where the tree is.
 //
-// mod — модуль, из которого гейт собирается; пусто значит tools. perRun —
-// собирать заново на КАЖДУЮ мутацию, а не один раз в начале. Второе нужно
-// ровно одному гейту: сборка сайта носит стили и шаблоны внутри себя через
-// go:embed, и мутация в них видна только пересобранному двоичному файлу.
-// Собирать так всех значило бы платить сборкой за каждую из сорока четырёх
-// мутаций ради одной.
+// mod is the module the gate is built from; empty means tools. perRun means
+// rebuild for EVERY mutation rather than once at the start. Exactly one gate
+// needs that: the site build carries its styles and templates inside itself
+// through go:embed, and a mutation in them is visible only to a rebuilt
+// binary. Building them all that way would mean paying a build for each of
+// forty-odd mutations for the sake of one.
 type gate struct {
 	pkg    string
 	mod    string
@@ -62,18 +64,18 @@ var gates = map[string]gate{
 		return []string{"-src", t + "/src", "-docs", t + "/docs", "-registry", t + "/components.json"}
 	}},
 	"lang": {"./cmd/lang", "", false, func(t string) []string { return []string{"-root", t} }},
-	// Сборка сайта — самый крупный гейт по объёму замера и до сих пор
-	// единственный, ни одной мутации на который не стояло. Он собирается из
-	// СКОПИРОВАННОГО дерева и запускается в нём же: пути internal, cmd и
-	// tools он ищет от своего каталога, а стили держит внутри двоичного
-	// файла — снаружи мутировать в нём нечего.
+	// The site build is the largest gate by volume of measurement and until
+	// recently the only one with no mutation standing against it at all. It is
+	// built from the COPIED tree and run inside it: it looks for internal, cmd
+	// and tools relative to its own directory, and it keeps its styles inside
+	// the binary — there is nothing to mutate in it from outside.
 	"site": {"./cmd/site", "site", true, func(t string) []string {
 		return []string{"-docs", "../docs", "-kit", "../src", "-assets", "../assets", "-out", t + "/site-out"}
 	}},
 }
 
-// mutation — одна поломка. from обязан существовать в файле: мутация, которая
-// ничего не заменила, дала бы ложное «поймана» на нетронутом дереве.
+// A mutation is one breakage. `from` has to exist in the file: a mutation that
+// replaced nothing would produce a false "caught" on an untouched tree.
 type mutation struct {
 	name string
 	gate string
@@ -83,246 +85,263 @@ type mutation struct {
 	why  string
 }
 
+// RUSSIAN INSIDE THE TABLE IS DATA, NOT TEXT — and it is here on purpose.
+//
+// Two kinds, and neither translates with the rest of the file.
+//
+// An ANCHOR (`from`) points at documentation that is still Russian: step 4 of
+// the migration has not happened, and an anchor translated ahead of the page
+// it points at would stop matching. When those pages turn English the anchors
+// follow them, in the same commit.
+//
+// A PAYLOAD (`to`) is the very string a gate has to reject. cmd/lang exists to
+// find Cyrillic in a translated zone, and check.Comments looks for Russian
+// chronicle phrases — feeding them English would test nothing.
+//
+// This is why tools/cmd/mutate/main.go is named in the exception list of
+// cmd/lang: the file cannot be free of Cyrillic while it is doing its job.
 var mutations = []mutation{
 	// ── contrast ───────────────────────────────────────────────────────────
-	{"текст: muted подняли до нечитаемого", "contrast", "src/tokens.css",
+	{"text: muted raised until unreadable", "contrast", "src/tokens.css",
 		"--text-muted:     light-dark(var(--n-8),  var(--n-6));",
 		"--text-muted:     light-dark(var(--n-5),  var(--n-6));",
-		"подпись перестаёт брать 4.5:1 на панели"},
-	{"стопка: панель сравнялась со страницей", "contrast", "src/tokens.css",
+		"a label stops taking 4.5:1 on a panel"},
+	{"stack: the panel levelled with the page", "contrast", "src/tokens.css",
 		"--surface-page:     light-dark(var(--n-1), var(--n-13));",
 		"--surface-page:     light-dark(var(--n-0), var(--n-13));",
-		"глубина передаётся порядком светлоты, а ступени не стало"},
-	{"кнопка сравнялась с подложкой", "contrast", "src/tokens.css",
+		"depth is carried by the order of lightness, and the step is gone"},
+	{"button levelled with its backdrop", "contrast", "src/tokens.css",
 		"--surface-recessed:        light-dark(oklch(0 0 0 / 0.060), oklch(1 0 0 / 0.050));",
 		"--surface-recessed:        light-dark(oklch(0 0 0 / 0.002), oklch(1 0 0 / 0.002));",
-		"ровно тот дефект, из-за которого стенд и написан"},
-	{"лестница перевёрнута: мягкая громче умолчания", "contrast", "src/tokens.css",
+		"precisely the defect this harness was written for"},
+	{"ladder inverted: soft louder than default", "contrast", "src/tokens.css",
 		"--surface-recessed-hover:  light-dark(oklch(0 0 0 / 0.025), oklch(1 0 0 / 0.015));",
 		"--surface-recessed-hover:  light-dark(oklch(0 0 0 / 0.025), oklch(1 0 0 / 0.090));",
-		"третья ступень звучит громче второй, а модуль разницы этого не видит"},
-	{"лестница: наведение сравнялось с умолчанием", "contrast", "src/tokens.css",
+		"the third step sounds louder than the second, and an absolute difference cannot see it"},
+	{"ladder: hover levelled with default", "contrast", "src/tokens.css",
 		"--surface-recessed-hover:  light-dark(oklch(0 0 0 / 0.025), oklch(1 0 0 / 0.015));",
 		"--surface-recessed-hover:  light-dark(oklch(0 0 0 / 0.058), oklch(1 0 0 / 0.048));",
-		"два веса кнопки дают один вид"},
-	{"текст красят токеном без пары", "contrast", "src/base.css",
+		"two weights of a button produce one look"},
+	{"text painted with a token that has no pair", "contrast", "src/base.css",
 		"body {",
 		".mut-probe { color: var(--n-7); }\nbody {",
-		"цвет текста, которого нет ни в одной паре, — порог, который никто не мерил"},
+		"a text colour absent from every pair is a threshold nobody measured"},
 
 	// ── targets ────────────────────────────────────────────────────────────
-	{"высота контрола ушла под норму", "targets", "src/tokens.css",
+	{"control height pushed below the minimum", "targets", "src/tokens.css",
 		"--control-h-sm: 26px;",
 		"--control-h-sm: 14px;",
-		"цель нажатия меньше 24 и без зазора, компенсирующего размер"},
+		"a tap target under 24 and without the gap that compensates for the size"},
 
 	// ── proportion ─────────────────────────────────────────────────────────
-	{"ступени кегля слились", "proportion", "src/tokens.css",
+	{"type steps merged", "proportion", "src/tokens.css",
 		"--text-xs:  0.78125rem;",
 		"--text-xs:  0.86rem;",
-		"шкала объявляет размер, которого не видно"},
-	{"радиус стал нечётным", "proportion", "src/tokens.css",
+		"the scale declares a size that cannot be seen"},
+	{"radius turned odd", "proportion", "src/tokens.css",
 		"--radius-md: 8px;",
 		"--radius-md: 7px;",
-		"дуга садится мимо устройственной сетки на плотности 1.5"},
-	{"геометрия убывает при росте масштаба", "proportion", "src/tokens.css",
+		"the arc lands off the device grid at density 1.5"},
+	{"geometry shrinks as the scale grows", "proportion", "src/tokens.css",
 		"  --label-col:     120px;",
 		"  --label-col:     8px;",
-		"масштаб идёт только вверх"},
-	{"вертикаль строки шире горизонтали", "proportion", "src/tokens.css",
+		"the scale only goes up"},
+	{"row vertical wider than horizontal", "proportion", "src/tokens.css",
 		"--row-pad-y:   var(--space-3);",
 		"--row-pad-y:   var(--space-6);",
-		"часть вертикального воздуха уже принёс интерлиньяж"},
+		"part of the vertical air was already delivered by the leading"},
 
-	// ── dist: раздел «Запрещено» ───────────────────────────────────────────
-	{"!important в компоненте", "dist", "src/actions.css",
+	// ── dist: the "Forbidden" section ──────────────────────────────────────
+	{"!important in a component", "dist", "src/actions.css",
 		".inst-btn {", ".mut-probe { color: red !important; }\n.inst-btn {",
-		"единственный разрешённый — [hidden] в base.css"},
-	{"вес 700", "dist", "src/actions.css",
+		"the only one allowed is [hidden] in base.css"},
+	{"weight 700", "dist", "src/actions.css",
 		".inst-btn {", ".mut-probe { font-weight: 700; }\n.inst-btn {",
-		"в ките два веса, и 700 кричит громче данных"},
-	{"сырой цвет в компоненте", "dist", "src/actions.css",
+		"the kit has two weights, and 700 shouts louder than the data"},
+	{"raw colour in a component", "dist", "src/actions.css",
 		".inst-btn {", ".mut-probe { color: #333; }\n.inst-btn {",
-		"число вместо семантики — захардкоженная светлая тема"},
-	{"утилита отступа", "dist", "src/layout.css",
+		"a number instead of semantics is a hardcoded light theme"},
+	{"spacing utility", "dist", "src/layout.css",
 		".inst-stack {", ".mt-3 { margin-top: 12px; }\n.inst-stack {",
-		"ритм задают примитивы потока, а не разметка каждого экрана"},
-	{"цвет внутри data-URI", "dist", "src/agent.css",
+		"rhythm is set by the flow primitives, not by the markup of every screen"},
+	{"colour inside a data URI", "dist", "src/agent.css",
 		"stroke='%23000'", "stroke='%23ff0000'",
-		"форма рисуется маской, цвет приходит токеном"},
-	{"картинка фоном, а не маской", "dist", "src/data.css",
+		"the shape is drawn by a mask and coloured by a token"},
+	{"image as a background rather than a mask", "dist", "src/data.css",
 		".inst-tag {", ".mut-probe { background-image: url(\"x.svg\"); }\n.inst-tag {",
-		"фоновая картинка красится собой и не следует теме"},
-	{"просвет мимо яруса ролей", "dist", "src/layout.css",
+		"a background image colours itself and does not follow the theme"},
+	{"gap bypassing the role tier", "dist", "src/layout.css",
 		".inst-cluster {", ".mut-probe { gap: var(--space-8); }\n.inst-cluster {",
-		"крупная ступень шкалы взята напрямую"},
-	{"лишняя фигурная скобка", "dist", "src/motion.css",
+		"a large step of the scale taken directly"},
+	{"stray closing brace", "dist", "src/motion.css",
 		".inst-caret { animation: none; opacity: 1; }",
 		".inst-caret { animation: none; opacity: 1; } }",
-		"остаток файла уходит из слоя и начинает выигрывать у приложения"},
+		"the rest of the file leaves the layer and starts winning against the application"},
 
 	// ── docscheck ──────────────────────────────────────────────────────────
-	{"в примере класс, которого нет", "docscheck", "docs/components/actions/button.md",
+	{"a class in an example that does not exist", "docscheck", "docs/components/actions/button.md",
 		"<button class=\"inst-btn\"", "<button class=\"inst-btn inst-btn--mut\"",
-		"читатель копирует разметку, она молча не работает"},
-	{"число в таблице токенов соврало", "docscheck", "docs/foundations/tokens.md",
+		"a reader copies the markup and it silently does not work"},
+	{"a number in the token table lied", "docscheck", "docs/foundations/tokens.md",
 		"| `--surface-recessed` | чёрный 6% | белый 5% |",
 		"| `--surface-recessed` | чёрный 9% | белый 5% |",
-		"класс на месте, токен на месте, врёт только число"},
-	{"число в таблице плотности соврало", "docscheck", "docs/foundations/density.md",
+		"the class is there, the token is there, only the number lies"},
+	{"a number in the density table lied", "docscheck", "docs/foundations/density.md",
 		"| `--row-pad-y` | `--space-2` | `--space-3` | `--space-4` |",
 		"| `--row-pad-y` | `--space-2` | `--space-3` | `--space-6` |",
-		"таблица режимов разошлась с блоком плотности"},
-	{"число в таблице масштаба соврало", "docscheck", "docs/foundations/scale.md",
+		"the mode table drifted away from the density block"},
+	{"a number in the scale table lied", "docscheck", "docs/foundations/scale.md",
 		"| `--text-sm` | 14 | 15 | 16 | 17 | 18 |",
 		"| `--text-sm` | 14 | 15 | 19 | 17 | 18 |",
-		"кегль в таблице не тот, что в коде"},
-	{"source ведёт в никуда", "docscheck", "docs/components/actions/button.md",
+		"the type size in the table is not the one in the code"},
+	{"source leads nowhere", "docscheck", "docs/components/actions/button.md",
 		"source: src/actions.css", "source: src/nowhere.css",
-		"человек идёт смотреть устройство и попадает в пустоту"},
+		"a person goes to look at how it is built and lands in nothing"},
 
-	// ── docscheck: язык таблиц ─────────────────────────────────────────────
+	// ── docscheck: the language of the tables ──────────────────────────────
 	//
-	// Пять мутаций ниже проверяют одно: гейт сверяет таблицы по СТРУКТУРЕ, а
-	// не по русским словам в шапке и в ячейках. Каждая переводит одно слово и
-	// одновременно врёт числом. Если гейт ослеп на переводе, ложь проходит, и
-	// «документация и кит сходятся полностью» становится отчётом ни о чём.
-	{"шапка таблицы режимов переведена", "docscheck", "docs/foundations/density.md",
+	// The five mutations below check one thing: that the gate matches tables by
+	// STRUCTURE rather than by Russian words in the header and in the cells.
+	// Each translates one word and lies with a number at the same time. If the
+	// gate went blind on the translation the lie passes, and "documentation and
+	// kit agree completely" becomes a report about nothing.
+	{"mode table header translated", "docscheck", "docs/foundations/density.md",
 		"| Токен | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--control-h-xs` | 18px | 20px | 22px |",
 		"| Token | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--control-h-xs` | 18px | 20px | 24px |",
-		"одно слово в шапке гасило сверку всей таблицы"},
-	{"колонка умолчания переведена", "docscheck", "docs/foundations/density.md",
+		"one word in the header used to silence the check over the whole table"},
+	{"default column translated", "docscheck", "docs/foundations/density.md",
 		"| Токен | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--size-check` | 13px | 15px | 17px |",
 		"| Токен | `compact` | default | `comfortable` |\n|---|---|---|---|\n| `--size-check` | 13px | 19px | 17px |",
-		"колонка узнавалась по подписи, а подпись — единственная русская из трёх"},
-	{"код режима в шапке переведён", "docscheck", "docs/foundations/density.md",
+		"the column was recognised by its caption, and the caption was the only Russian one of three"},
+	{"mode code in the header translated", "docscheck", "docs/foundations/density.md",
 		"| Токен | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--pad-panel` | `--space-4` | `--space-5` | `--space-6` |",
 		"| Токен | `плотная` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--pad-panel` | `--space-2` | `--space-5` | `--space-6` |",
-		"код режима — часть кита, и переведённый код обязан быть слышен"},
-	{"ячейка альфы переведена, значение соврало", "docscheck", "docs/foundations/tokens.md",
+		"a mode code is part of the kit, and a translated code has to be heard"},
+	{"alpha cell translated, value lied", "docscheck", "docs/foundations/tokens.md",
 		"| `--surface-recessed` | чёрный 6% | белый 5% |",
 		"| `--surface-recessed` | black 9% | белый 5% |",
-		"перевод ячейки уносил с собой проверку её числа"},
-	{"ячейка альфы не читается", "docscheck", "docs/foundations/tokens.md",
+		"translating a cell used to carry away the check of its number"},
+	{"alpha cell unreadable", "docscheck", "docs/foundations/tokens.md",
 		"| `--surface-recessed-hover` | чёрный 2.5% | белый 1.5% |",
 		"| `--surface-recessed-hover` | тёмный 2.5% | белый 1.5% |",
-		"непонятая ячейка в машинной колонке — это молчание, а не разрешение"},
-	{"таблица токенов в переводе соврала", "docscheck", "docs/foundations/tokens.en.md",
+		"an unparsed cell in a machine column is silence, not permission"},
+	{"token table lied in translation", "docscheck", "docs/foundations/tokens.en.md",
 		"",
 		"---\ntitle: Tokens\n---\n\n| Token | Light | Dark |\n|---|---|---|\n| `--surface-recessed` | black 9% | white 5% |\n",
-		"перевод страницы уносил её таблицы из-под сверки целиком"},
-	{"таблица режимов в переводе соврала", "docscheck", "docs/foundations/density.en.md",
+		"translating a page used to carry its tables out from under the check entirely"},
+	{"mode table lied in translation", "docscheck", "docs/foundations/density.en.md",
 		"",
 		"---\ntitle: Density\n---\n\n| Token | `compact` | default | `comfortable` |\n|---|---|---|---|\n| `--row-pad-y` | `--space-2` | `--space-3` | `--space-6` |\n",
-		"проверка была прибита к русскому имени файла, а не к странице"},
+		"the check was nailed to a Russian file name rather than to a page"},
 
 	// ── registry ───────────────────────────────────────────────────────────
-	{"компонент вне реестра", "registry", "components.json",
+	{"component outside the registry", "registry", "components.json",
 		"\"toolbar\": {", "\"toolbar-renamed\": {",
-		"за компонентом перестаёт следить любая сквозная ось"},
-	{"у оси убрали значение", "registry", "components.json",
+		"no cross-cutting axis watches that component any more"},
+	{"an axis lost its value", "registry", "components.json",
 		"\"flow\": \"inline\",\n      \"print\": \"hide\",\n      \"page\": \"flow\",\n      \"forced\": \"none\"",
 		"\"flow\": \"inline\",\n      \"page\": \"flow\",\n      \"forced\": \"none\"",
-		"пропуск и осознанное «ничего» обязаны различаться"},
-	{"CSS относит класс к печати, реестр молчит", "registry", "src/print.css",
+		"an omission and a deliberate \"nothing\" have to be distinguishable"},
+	{"CSS assigns a class to print, the registry is silent", "registry", "src/print.css",
 		"  .inst-segmented { display: none; }",
 		"  .inst-segmented, .inst-timeline { display: none; }",
-		"список тихо обрастает тем, о чём никто не решал"},
-	{"бесконечная анимация без замедления", "registry", "src/status.css",
+		"the list quietly grows with things nobody decided on"},
+	{"infinite animation without a slowdown", "registry", "src/status.css",
 		".inst-dot {", ".inst-mut-spin { animation: inst-pulse 1s linear infinite; }\n.inst-dot {",
-		"сжатая до 0.01ms бесконечная анимация — это остановка"},
-	{"у пункта группы убрали состояние", "registry", "docs/components/actions/segmented.md",
+		"an infinite animation squeezed to 0.01ms is a stop, not a slowdown"},
+	{"a group item lost its state", "registry", "docs/components/actions/segmented.md",
 		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\">Сетка</button>",
 		"<button type=\"button\" role=\"radio\" tabindex=\"-1\">Сетка</button>",
-		"состояние живёт в атрибуте, а не в классе"},
-	{"два бегущих tabindex в одной группе", "registry", "docs/components/actions/segmented.md",
+		"state lives in an attribute rather than in a class"},
+	{"two roving tabindexes in one group", "registry", "docs/components/actions/segmented.md",
 		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\">Сетка</button>",
 		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Сетка</button>",
-		"Tab пройдёт по каждому пункту, группа перестанет быть одним контролом"},
-	{"мера без aria-valuenow", "registry", "docs/components/charts/meter.md",
+		"Tab would walk every item and the group would stop being one control"},
+	{"a meter without aria-valuenow", "registry", "docs/components/charts/meter.md",
 		"aria-valuenow=\"43\"", "data-mut=\"43\"",
-		"роль обещает число вспомогательной технологии"},
-	{"роль скрипта не объявлена в реестре", "registry", "components.json",
+		"the role promises a number to assistive technology"},
+	{"a scripted role not declared in the registry", "registry", "components.json",
 		"\"role\": \"tablist\",", "\"role\": \"tablist-renamed\",",
-		"скрипт обещает клавиатуру от имени кита, а реестр об этом не знает"},
+		"the script promises a keyboard on the kit's behalf and the registry knows nothing about it"},
 	// ── lang ───────────────────────────────────────────────────────────────
 	//
-	// Зона объявлена переведённой — значит русская строка, вернувшаяся в неё по
-	// привычке, обязана падать здесь, а не у потребителя в aria-label.
-	{"русская строка вернулась в публичные умолчания", "lang", "dist/instrument.js",
+	// A zone is declared translated — so a Russian string that comes back into
+	// it out of habit has to fail here rather than in a consumer's aria-label.
+	{"a Russian string came back into the public defaults", "lang", "dist/instrument.js",
 		"copied: 'Copied',", "copied: 'Скопировано',",
-		"фразу слышит скринридер, и подменить её потребитель обязан сам, а не вынужденно"},
-	{"русская строка в шаблоне метки", "lang", "dist/instrument.js",
+		"a screen reader speaks this phrase, and a consumer should replace it by choice, not out of necessity"},
+	{"a Russian string in the tag template", "lang", "dist/instrument.js",
 		"tagRemoved: (label) => `Tag ${label} removed`,",
 		"tagRemoved: (label) => `Метка ${label} снята`,",
-		"шаблонный литерал — такая же произнесённая фраза, как и обычный"},
-	{"русское описание в манифесте пакета", "lang", "package.json",
+		"a template literal is just as spoken a phrase as a plain one"},
+	{"a Russian description in the package manifest", "lang", "package.json",
 		"\"description\": \"CSS kit for interfaces",
 		"\"description\": \"CSS-кит для интерфейсов",
-		"description виден в реестре npm любому постороннему"},
-	{"русский комментарий уехал в знак", "lang", "assets/logo.svg",
+		"description is visible in the npm registry to any outsider"},
+	{"a Russian comment rode along into a mark", "lang", "assets/logo.svg",
 		"<!-- The mark: a vertical run",
 		"<!-- Знак: вертикальный ряд",
-		"файл уезжает в пакет вместе с комментариями внутри"},
-	{"русский вернулся в переведённый файл", "lang", "src/motion.css",
+		"the file ships inside the package together with the comments in it"},
+	{"Russian came back into a translated file", "lang", "src/motion.css",
 		"  /* Transitions collapse rather than switch off",
 		"  /* Переходы схлопываются, а не выключаются",
-		"шаг 2 идёт двадцать сеансов, и всё это время файл держится только на памяти"},
+		"step 2 runs for twenty sessions, and all that time a file rests on memory alone"},
 
-	{"два бегущих tabindex на переведённой странице", "registry", "docs/components/actions/segmented.en.md",
+	{"two roving tabindexes on a translated page", "registry", "docs/components/actions/segmented.en.md",
 		"",
 		"---\ntitle: Segmented\nsource: src/actions.css\n---\n\n```html preview\n<div class=\"inst-segmented\" role=\"radiogroup\" aria-label=\"View\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"true\" tabindex=\"0\">List</button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Grid</button>\n</div>\n```\n",
-		"перевод пишется заново и ошибается чаще оригинала, а проверялся только оригинал"},
+		"a translation is written from scratch and errs more often than the original, and only the original was checked"},
 
-	// ── сборка сайта ───────────────────────────────────────────────────────
+	// ── the site build ─────────────────────────────────────────────────────
 	//
-	// Самый крупный гейт по объёму замера: контракт страниц, ссылки, спрайт,
-	// токены сайта против кита и правило комментария на весь репозиторий.
-	// Ни одной мутации на него не стояло, то есть про его зелёный цвет было
-	// известно ровно столько же, сколько про любой непроверенный.
-	{"токен сайта, которого нет в ките", "site", "site/internal/render/assets/docs.css",
+	// The largest gate by volume of measurement: the page contract, links, the
+	// sprite, the site's tokens against the kit, and the comment rule across
+	// the whole repository. Not a single mutation stood against it, which means
+	// exactly as much was known about its green colour as about any unchecked
+	// one.
+	{"a site token the kit does not have", "site", "site/internal/render/assets/docs.css",
 		".site-logo:hover { background: var(--surface-hover); }",
 		".site-logo:hover { background: var(--surface-nonesuch); }",
-		"леса сайта берут у кита то, чего кит не обещал"},
-	{"сырой цвет в лесах сайта", "site", "site/internal/render/assets/docs.css",
+		"the site scaffolding takes from the kit something the kit never promised"},
+	{"raw colour in the site scaffolding", "site", "site/internal/render/assets/docs.css",
 		".site-logo:hover { background: var(--surface-hover); }",
 		".site-logo:hover { background: #f3f3f3; }",
-		"число вместо семантики — захардкоженная светлая тема на сайте кита"},
-	{"комментарий-летопись в ките", "site", "src/actions.css",
+		"a number instead of semantics is a hardcoded light theme on the kit's own site"},
+	{"a chronicle comment in the kit", "site", "src/actions.css",
 		".inst-btn {",
 		"/* Раньше здесь стоял другой радиус. */\n.inst-btn {",
-		"история правок вместо «почему так сейчас»"},
-	{"комментарий-летопись в скрипте", "site", "src/kit.js",
+		"the history of edits instead of why it is the way it is now"},
+	{"a chronicle comment in the script", "site", "src/kit.js",
 		"function rovingOwned(group) {",
 		"// Раньше здесь стоял флаг на самом пункте.\nfunction rovingOwned(group) {",
-		"зона гейта — весь репозиторий, а не только CSS"},
-	{"ранний */ внутри пояснения", "site", "src/status.css",
+		"the gate's zone is the whole repository, not just CSS"},
+	{"an early */ inside an explanation", "site", "src/status.css",
 		".inst-dot {",
 		"/* Полоса 1.20*/1.34 задаёт вид. */\n.inst-dot {",
-		"комментарий закрывается раньше времени и съедает следующее правило"},
-	{"комментарий-летопись в инструментах", "site", "tools/cmd/contrast/main.go",
+		"the comment closes early and eats the rule that follows"},
+	{"a chronicle comment in the tools", "site", "tools/cmd/contrast/main.go",
 		"func main() {",
 		"// Раньше здесь стоял отдельный порог для крупного кегля.\nfunc main() {",
-		"tools/** вошли в зону гейта — Д4; без мутации это держалось ни на чём"},
+		"tools/** entered the gate's zone; without a mutation that rested on nothing"},
 }
 
 func main() {
-	verbose := flag.Bool("v", false, "показать вывод упавшего гейта")
-	only := flag.String("only", "", "только мутации одного гейта")
-	keep := flag.Bool("keep", false, "не удалять дерево пропущенной мутации")
-	root := flag.String("root", "..", "корень репозитория")
+	verbose := flag.Bool("v", false, "show the output of the failing gate")
+	only := flag.String("only", "", "only the mutations of one gate")
+	keep := flag.Bool("keep", false, "do not delete the tree of a missed mutation")
+	root := flag.String("root", "..", "repository root")
 	flag.Parse()
 
 	repo, err := filepath.Abs(*root)
 	must(err)
 
-	// Гейты собираются ОДИН раз: тридцать `go run` подряд тратят минуты на
-	// повторную компиляцию одного и того же.
+	// The gates are built ONCE: thirty `go run` calls in a row spend minutes
+	// recompiling the same thing.
 	binDir, err := os.MkdirTemp("", "instrument-gates-")
 	must(err)
 	defer os.RemoveAll(binDir)
 
-	fmt.Println("сборка гейтов…")
+	fmt.Println("building the gates…")
 	bin := map[string]string{}
 	build := func(name, root string) string {
 		g := gates[name]
@@ -334,7 +353,7 @@ func main() {
 		cmd := exec.Command("go", "build", "-o", out, g.pkg)
 		cmd.Dir = filepath.Join(root, mod)
 		if b, err := cmd.CombinedOutput(); err != nil {
-			fmt.Fprintf(os.Stderr, "не собрать %s: %v\n%s", name, err, b)
+			fmt.Fprintf(os.Stderr, "cannot build %s: %v\n%s", name, err, b)
 			os.Exit(1)
 		}
 		return out
@@ -353,10 +372,11 @@ func main() {
 			exe = build(name, tree)
 		}
 		cmd := exec.Command(exe, g.args(tree)...)
-		// Рабочий каталог — модуль гейта В КОПИИ, если модуль назван.
-		// Гейт сайта ищет src, docs и tools от своего каталога: запущенный
-		// из репозитория, он честно проверит репозиторий и не заметит
-		// мутации, а стенд зачтёт это как «инвариант не охраняется».
+		// The working directory is the gate's module IN THE COPY, if a module
+		// is named. The site gate looks for src, docs and tools relative to its
+		// own directory: run from the repository it would honestly check the
+		// repository and never notice the mutation, and the harness would score
+		// that as "the invariant is not guarded".
 		if g.mod != "" {
 			cmd.Dir = filepath.Join(tree, g.mod)
 		} else {
@@ -366,26 +386,26 @@ func main() {
 		return err == nil, string(b)
 	}
 
-	// ── контроль: нетронутое дерево обязано быть зелёным ───────────────────
+	// ── control: an untouched tree has to be green ─────────────────────────
 	base, err := os.MkdirTemp("", "instrument-base-")
 	must(err)
 	defer os.RemoveAll(base)
 	must(seed(repo, base))
 
-	fmt.Println("контроль на нетронутой копии…")
+	fmt.Println("control pass on an untouched copy…")
 	for name := range gates {
 		if *only != "" && *only != name {
 			continue
 		}
 		ok, out := run(name, base)
 		if !ok {
-			fmt.Fprintf(os.Stderr, "\nКОНТРОЛЬ ПРОВАЛЕН: %s красный на нетронутом дереве.\n"+
-				"Стенд мерил бы собственный шум, а не мутации.\n%s", name, out)
+			fmt.Fprintf(os.Stderr, "\nCONTROL FAILED: %s is red on an untouched tree.\n"+
+				"The harness would measure its own noise rather than the mutations.\n%s", name, out)
 			os.Exit(1)
 		}
 	}
 
-	// ── мутации ────────────────────────────────────────────────────────────
+	// ── mutations ──────────────────────────────────────────────────────────
 	fmt.Println()
 	width := 0
 	for _, m := range mutations {
@@ -407,8 +427,8 @@ func main() {
 		applied, err := apply(filepath.Join(tree, m.file), m.from, m.to)
 		if err != nil || !applied {
 			os.RemoveAll(tree)
-			fmt.Printf("  %-*s  ✗ МУТАЦИЯ НЕ ПРИМЕНИЛАСЬ (%s)\n", width, m.name, m.file)
-			fmt.Printf("      искомого текста в файле нет — стенд разошёлся с китом\n")
+			fmt.Printf("  %-*s  ✗ MUTATION DID NOT APPLY (%s)\n", width, m.name, m.file)
+			fmt.Printf("      the text looked for is not in the file — the harness has drifted from the kit\n")
 			missed++
 			continue
 		}
@@ -418,24 +438,25 @@ func main() {
 		pad := strings.Repeat(" ", width-len([]rune(m.name)))
 		if ok {
 			missed++
-			fmt.Printf("  %s%s  ✗ ПРОПУЩЕНА  гейтом %s\n", m.name, pad, m.gate)
+			fmt.Printf("  %s%s  ✗ MISSED    by gate %s\n", m.name, pad, m.gate)
 			fmt.Printf("      %s\n", m.why)
-			// Вывод ЗЕЛЁНОГО гейта показывается наравне с выводом красного:
-			// на вопрос «почему не поймал» отвечают его же слова, а молчание
-			// на этом месте отправляет разбираться вслепую.
+			// The output of the GREEN gate is shown just like the output of a
+			// red one: the question "why did it not catch this" is answered by
+			// the gate's own words, and silence in this place sends you off to
+			// investigate blind.
 			if *verbose {
 				for _, l := range strings.Split(strings.TrimSpace(out), "\n") {
 					fmt.Printf("      %s\n", l)
 				}
 			}
-			// Дерево остаётся по -keep. Пропущенная мутация — это вопрос
-			// «что гейт видел», и ответить на него может только само дерево.
+			// The tree is kept under -keep. A missed mutation is the question
+			// "what did the gate see", and only the tree itself can answer it.
 			if *keep {
-				fmt.Printf("      дерево: %s\n", tree)
+				fmt.Printf("      tree: %s\n", tree)
 				continue
 			}
 		} else {
-			fmt.Printf("  %s%s  · поймана   %s\n", m.name, pad, m.gate)
+			fmt.Printf("  %s%s  · caught    %s\n", m.name, pad, m.gate)
 			if *verbose {
 				for _, l := range strings.Split(strings.TrimSpace(out), "\n") {
 					fmt.Printf("      %s\n", l)
@@ -447,46 +468,46 @@ func main() {
 
 	fmt.Println()
 	if missed > 0 {
-		fmt.Printf("── дыр в гейтах: %d из %d ──\n", missed, ran)
-		fmt.Println("Пропущенная мутация означает, что инвариант объявлен, но не охраняется.")
+		fmt.Printf("── holes in the gates: %d of %d ──\n", missed, ran)
+		fmt.Println("A missed mutation means the invariant is declared but not guarded.")
 		os.Exit(1)
 	}
-	fmt.Printf("· %d мутаций, все пойманы: каждый инвариант из списка охраняется\n", ran)
+	fmt.Printf("· %d mutations, all caught: every invariant on the list is guarded\n", ran)
 }
 
-// seed раскладывает во временном каталоге минимальное дерево, которого хватает
-// всем гейтам: исходники, документация, реестр, версия и манифест.
+// seed lays out in a temporary directory the minimal tree every gate needs:
+// the sources, the documentation, the registry, the version and the manifest.
 func seed(repo, tree string) error {
 	for _, d := range []string{"src", "docs"} {
 		if err := copyTree(filepath.Join(repo, d), filepath.Join(tree, d)); err != nil {
 			return err
 		}
 	}
-	// Сборка сайта собирается и запускается ИЗ КОПИИ: она носит стили и
-	// шаблоны внутри двоичного файла через go:embed, и мутация в них
-	// проявится только у пересобранного. Заодно копируется tools/ — гейт
-	// комментариев ищет его рядом с китом, и без него зона, из-за которой
-	// заводили Д4, снова осталась бы снаружи.
+	// The site build is built and run FROM THE COPY: it carries its styles and
+	// templates inside the binary through go:embed, and a mutation in them
+	// shows up only for a rebuilt one. tools/ is copied along with it — the
+	// comment gate looks for it next to the kit, and without it the zone the
+	// hole was opened for would be outside again.
 	//
-	// site/dist пропускается: девять мегабайт собранного сайта не нужны
-	// никому, а копировать их на каждую из сорока с лишним мутаций значит
-	// платить за это временем каждый раз.
+	// site/dist is skipped: nine megabytes of built site are of no use to
+	// anyone, and copying them for each of forty-odd mutations means paying for
+	// that every time.
 	for _, d := range []string{"site", "tools"} {
 		src := filepath.Join(repo, d)
 		if err := copyTreeExcept(src, filepath.Join(tree, d), filepath.Join(src, "dist")); err != nil {
 			return err
 		}
 	}
-	// Кроме src/ и docs/ страницы ссылаются полем source ещё на два файла —
-	// собранный CSS и читалку по пикселям. Без них docscheck честно падает на
-	// НЕТРОНУТОЙ копии, и контроль это ловит: слепок, в котором чего-то нет,
-	// мерил бы собственную неполноту.
+	// Besides src/ and docs/ the pages point with their source field at two
+	// more files — the built CSS and the pixel reader. Without them docscheck
+	// honestly fails on an UNTOUCHED copy, and the control pass catches it: a
+	// snapshot missing something would measure its own incompleteness.
 	for _, f := range []string{
 		"components.json", "VERSION", "package.json",
 		"tools/audit.js", "dist/instrument.min.css",
-		// Зоны шага 1 переезда: собранный модуль и знаки. Гейт lang смотрит
-		// на ВЫВОД, а не на исходник — русская строка, не дошедшая до dist/,
-		// потребителя не касается.
+		// Zones of migration step 1: the built module and the marks. The lang
+		// gate looks at the OUTPUT rather than at the source — a Russian string
+		// that never reached dist/ is none of a consumer's business.
 		"dist/instrument.js",
 		"assets/logo.svg", "assets/mark.svg", "assets/sprite.svg",
 	} {
@@ -494,18 +515,18 @@ func seed(repo, tree string) error {
 			return err
 		}
 	}
-	// Стол примера живёт в site/, а docscheck читает его ради собственных
-	// свойств демо-сцены. Копируется под своим именем, чтобы не тащить весь
-	// каталог сайта.
+	// The example stage lives in site/, and docscheck reads it for the
+	// properties of the demo scene. It is copied under its own name so that the
+	// whole site directory does not have to come along.
 	return copyFile(filepath.Join(repo, "site", "internal", "render", "assets", "docs.css"),
 		filepath.Join(tree, "stage.css"))
 }
 
 func apply(path, from, to string) (bool, error) {
-	// Пустой from — мутация НОВЫМ файлом: гейт обязан увидеть страницу,
-	// которой в дереве не было. Уже существующий файл здесь значит то же,
-	// что ненайденный текст замены, — стенд разошёлся с китом, — поэтому
-	// это отказ, а не тихая перезапись.
+	// An empty `from` is a mutation BY A NEW FILE: the gate has to see a page
+	// that was not in the tree. An already existing file here means the same as
+	// replacement text that was not found — the harness has drifted from the
+	// kit — so this is a refusal rather than a silent overwrite.
 	if from == "" {
 		if _, err := os.Stat(path); err == nil {
 			return false, nil

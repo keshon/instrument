@@ -1,32 +1,34 @@
 /**
- * audit-run — прогон tools/audit.js по ВСЕМ страницам справочника, headless.
+ * audit-run — running tools/audit.js over EVERY page of the reference,
+ * headless.
  *
- * Зачем. Сам audit.js вставляется в консоль руками, и это правильно для своего
- * экрана: он проверяет ВАШУ композицию, а не примеры. Но у кита есть ещё одна
- * обязанность — не разъезжаться на собственных восьмидесяти страницах, и
- * проверять их руками по одной невозможно, а значит не будут.
+ * Why. audit.js itself is pasted into the console by hand, and that is the
+ * right thing for your own screen: it checks YOUR composition rather than the
+ * examples. But the kit has one more duty — not to fall apart on its own
+ * eighty-odd pages — and checking those by hand one at a time is impossible,
+ * which means it will not happen.
  *
- * Отсюда этот бегунок. Он не заменяет ручной запуск, а закрывает другую дыру:
- * регресс в ките, который виден только на отрисованном и только на какой-то
- * одной из страниц.
+ * Hence this runner. It does not replace the manual pass; it closes a
+ * different hole: a regression in the kit that shows up only on what was
+ * rendered, and only on one particular page.
  *
- * Зависимостей нет намеренно. Chrome умеет отдавать протокол отладки по
- * сокету, а в Node встроен WebSocket — этого достаточно. Ставить браузерный
- * фреймворк ради одного вызова Runtime.evaluate значило бы завести в проекте
- * дерево зависимостей больше самого кита.
+ * There are no dependencies, deliberately. Chrome can serve its debugging
+ * protocol over a socket, and Node ships a WebSocket — that is enough. Pulling
+ * in a browser framework for a single Runtime.evaluate call would mean a
+ * dependency tree larger than the kit itself.
  *
- *   node tools/audit-run.mjs                     весь справочник
- *   node tools/audit-run.mjs /components/         только раздел
- *   node tools/audit-run.mjs --jobs 8             вкладок разом (по умолчанию 4)
- *   node tools/audit-run.mjs --mutate            сама проверка, проверенная
+ *   node tools/audit-run.mjs                     the whole reference
+ *   node tools/audit-run.mjs /components/        one section only
+ *   node tools/audit-run.mjs --jobs 8            tabs at once (4 by default)
+ *   node tools/audit-run.mjs --mutate            the check, checked
  *   node tools/audit-run.mjs --base http://…:4399
  *
- * --mutate задаёт этому гейту тот же вопрос, что cmd/mutate задаёт гейтам на
- * Go: проверка, которую никто не видел красной, — украшение. В cmd/mutate
- * он не помещается — там копируется дерево и запускается двоичный файл, а
- * здесь нужны браузер и живой сервер, — поэтому стенд свой. Кит подменяется
- * перехватом запроса за токенами: страница под проверкой настоящая, отличается
- * один файл.
+ * --mutate asks this gate the same question cmd/mutate asks the Go gates: a
+ * check nobody has seen red is decoration. It does not fit inside cmd/mutate —
+ * there a tree is copied and a binary is run, while here a browser and a live
+ * server are needed — so the harness is its own. The kit is swapped by
+ * intercepting the request for the tokens: the page under test is the real
+ * one, and a single file differs.
  */
 
 import { spawn } from 'node:child_process';
@@ -37,17 +39,17 @@ const args = process.argv.slice(2);
 const baseIdx = args.indexOf('--base');
 const BASE = baseIdx >= 0 ? args[baseIdx + 1] : 'http://localhost:4399';
 const FILTER = args.find((a) => a.startsWith('/')) || '';
-/* Страницы обходятся НЕСКОЛЬКИМИ вкладками разом.
+/* Pages are walked by SEVERAL tabs at once.
  *
- * Вкладка почти всё время ждёт: навигация, шрифты, раскладка — около трети
- * прогона уходит на ожидание, в которое процессор не занят ничем. Замер при
- * этом независим постранично: каждая вкладка крутит атрибуты на СВОЁМ
- * документе, и делить между ними нечего.
+ * A tab spends most of its time waiting: navigation, fonts, layout — about a
+ * third of the run goes into waiting with the processor doing nothing. The
+ * measurement is independent per page meanwhile: every tab turns attributes on
+ * ITS OWN document, and there is nothing to share.
  *
- * Четыре — замеренное, а не «побольше». Полный прогон: одна вкладка 4 мин,
- * четыре — 1:08, восемь — 1:32. Дальше упор не в ожидание, а в раскладку:
- * каждая вкладка на смене темы или масштаба заставляет пересчитать документ
- * целиком, и восьми на это уже не хватает процессора. */
+ * Four is measured rather than "a bit more". A full pass: one tab 4 min, four
+ * 1:08, eight 1:32. Beyond that the limit is not waiting but layout: on every
+ * theme or scale switch each tab forces a full recalculation of the document,
+ * and there is no longer enough processor for eight of them. */
 const MUTATE = args.includes('--mutate');
 const jobsIdx = args.indexOf('--jobs');
 const JOBS = Math.max(1, jobsIdx >= 0 ? Number(args[jobsIdx + 1]) || 4 : 4);
@@ -61,15 +63,15 @@ const CHROME = [
 ].find((p) => existsSync(p));
 
 if (!CHROME) {
-  console.error('Chrome не найден. Укажите путь в CHROME внутри audit-run.mjs.');
+  console.error('Chrome not found. Set the path in CHROME inside audit-run.mjs.');
   process.exit(1);
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/* Список страниц берётся из НАВИГАЦИИ САЙТА, а не из каталога docs: так
-   проверяется ровно то, что читатель может открыть, и новая страница попадает
-   под проверку сама, без правки этого файла. */
+/* The page list comes from the SITE NAVIGATION rather than from the docs
+   directory: that way exactly what a reader can open is what gets checked, and
+   a new page falls under the check by itself, without editing this file. */
 async function pages() {
   const html = await (await fetch(BASE + '/')).text();
   const hrefs = [...html.matchAll(/href="(\/[^"#]*?)"/g)].map((m) => m[1]);
@@ -84,13 +86,13 @@ async function launch() {
     '--headless=new',
     `--remote-debugging-port=${PORT}`,
     '--disable-gpu',
-    /* Фоновая вкладка в Chrome тормозится: таймеры разрежаются, а
-       requestAnimationFrame в невидимой вкладке может не сработать вовсе.
-       При одной вкладке это незаметно, при четырёх прогон встаёт намертво —
-       ожидание кадра, который не придёт, упирается в срок команды.
+    /* A background tab in Chrome is throttled: timers are thinned out, and
+       requestAnimationFrame in an invisible tab may never fire at all. With one
+       tab that goes unnoticed; with four the run wedges solid — waiting for a
+       frame that will not come runs into the command timeout.
 
-       Флаги снимают именно торможение, а не что-то ещё: вкладки остаются
-       невидимыми, но живыми. */
+       The flags remove the throttling and nothing else: the tabs stay
+       invisible but alive. */
     '--disable-background-timer-throttling',
     '--disable-backgrounding-occluded-windows',
     '--disable-renderer-backgrounding',
@@ -109,23 +111,23 @@ async function launch() {
     await sleep(100);
   }
   proc.kill();
-  throw new Error('Chrome не поднялся на порту ' + PORT);
+  throw new Error('Chrome did not come up on port ' + PORT);
 }
 
-/* Тонкий клиент протокола: открыть вкладку, выполнить выражение, вернуть
-   значение. Больше от отладочного протокола здесь ничего не нужно.
+/* A thin protocol client: open a tab, evaluate an expression, return the
+   value. Nothing else is needed from the debugging protocol here.
 
-   У каждой команды СВОЙ СРОК, и вкладка закрывается через finally. Без этих
-   двух вещей бегунок вставал намертво: ответ, который не пришёл, оставлял
-   промис висеть навсегда, а вкладка и сокет утекали при любом выходе мимо
-   последних строк. Проверка, которая молча замирает на середине, хуже
-   упавшей — та хотя бы называет страницу. */
+   Every command has ITS OWN deadline, and the tab is closed through finally.
+   Without those two things the runner wedged solid: an answer that never came
+   left a promise hanging forever, and the tab and the socket leaked on any
+   exit past the last lines. A check that quietly freezes halfway is worse than
+   one that fails — the failing one at least names the page. */
 const CMD_TIMEOUT = 90_000;
 
 async function evalInPage(url, expr, swap) {
-  /* Обычно вкладка открывается СРАЗУ на нужном адресе. Пустая с последующим
-     переходом нужна одному случаю: перехватчик запроса, поставленный после
-     навигации, перехватывать уже нечего. */
+  /* Normally the tab opens STRAIGHT at the address wanted. A blank one
+     followed by a navigation is needed for one case only: an interceptor
+     installed after the navigation has nothing left to intercept. */
   const tab = await (await fetch(
     `http://127.0.0.1:${PORT}/json/new?${encodeURIComponent(swap ? 'about:blank' : url)}`,
     { method: 'PUT' },
@@ -136,7 +138,7 @@ async function evalInPage(url, expr, swap) {
     ws = new WebSocket(tab.webSocketDebuggerUrl);
     await withTimeout(
       new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; }),
-      CMD_TIMEOUT, 'сокет не открылся');
+      CMD_TIMEOUT, 'socket did not open');
 
     let id = 0;
     const pending = new Map();
@@ -148,7 +150,7 @@ async function evalInPage(url, expr, swap) {
     };
     const send = (method, params) => withTimeout(
       new Promise((res) => { const i = ++id; pending.set(i, res); ws.send(JSON.stringify({ id: i, method, params })); }),
-      CMD_TIMEOUT, method + ' не ответил');
+      CMD_TIMEOUT, method + ' did not answer');
 
     await send('Page.enable', {});
     await send('Runtime.enable', {});
@@ -165,22 +167,23 @@ async function evalInPage(url, expr, swap) {
       });
       const loaded = new Promise((res) => events.set('Page.loadEventFired', res));
       await send('Page.navigate', { url });
-      await withTimeout(loaded, CMD_TIMEOUT, 'страница не загрузилась');
+      await withTimeout(loaded, CMD_TIMEOUT, 'page did not load');
     }
 
-    /* Страницу спрашивают, кто она, и только потом меряют.
+    /* The page is asked who it is, and only then measured.
      *
-     * Плоские 450 мс были ставкой на то, что за это время всё успеет, и при
-     * одной вкладке ставка обычно проходила. При четырёх она не проходит:
-     * первый же прогон уронил страницу на `document.body` равном null.
+     * A flat 450 ms was a bet that everything would be ready by then, and with
+     * one tab the bet usually paid. With four it does not: the very first pass
+     * dropped a page on `document.body` being null.
      *
-     * Ошибка при этом громкая только по везению. Чуть более поздний момент
-     * даёт документ с телом и без содержимого — ноль замеров, ноль нарушений
-     * и слово «чисто». Ровно так же читается и 404: верный адрес, разобранный
-     * документ, девятнадцать байт «404 page not found».
+     * The error is loud only by luck, at that. A slightly later moment yields
+     * a document with a body and no content — zero measurements, zero
+     * violations and the word "clean". A 404 reads exactly the same way: a
+     * valid address, a parsed document, nineteen bytes of "404 page not
+     * found".
      *
-     * Поэтому спрашивается признак, от которого проверка зависит: тег модуля,
-     * которым страница поднимает кит. Страницы без него у справочника нет. */
+     * So what is asked for is the marker the check depends on: the module tag
+     * the page raises the kit with. The reference has no page without it. */
     for (let i = 0; i < 100; i++) {
       const at = await send('Runtime.evaluate', {
         expression: `document.readyState === 'complete' && !!document.body &&
@@ -189,17 +192,17 @@ async function evalInPage(url, expr, swap) {
       });
       const href = at.result?.result?.value;
       if (typeof href === 'string' && href.startsWith(url)) break;
-      if (i === 99) throw new Error(`страница так и не стала ${url}: ${href}`);
+      if (i === 99) throw new Error(`page never became ${url}: ${href}`);
       await sleep(100);
     }
-    // Шрифты и раскладка: измеряются ПИКСЕЛИ, и кегль, набранный запасным
-    // шрифтом, даст другую прописную и другие цели.
+    // Fonts and layout: PIXELS are what gets measured, and type set in a
+    // fallback font gives a different cap height and different targets.
     await send('Runtime.evaluate', {
       expression: `(async () => {
         try { await document.fonts.ready; } catch {}
-        // Таймер, а не кадр: кадра во вкладке, которую никто не показывает,
-        // можно ждать вечно — и один прогон уже прождал по девяносто секунд
-        // на двух страницах.
+        // A timer rather than a frame: a frame in a tab nobody is showing can
+        // be waited for forever — and one pass already waited ninety seconds
+        // each on two pages.
         await new Promise(r => setTimeout(r, 60));
       })()`,
       awaitPromise: true,
@@ -213,16 +216,16 @@ async function evalInPage(url, expr, swap) {
     return out.result?.result?.value;
   } finally {
     try { ws?.close(); } catch {}
-    // Вкладку закрываем ВСЕГДА. Утёкшая остаётся живой в headless-браузере и
-    // продолжает есть память; на восьмидесяти страницах это кончается тем,
-    // что тормозит уже сам Chrome, а виноватой выглядит проверка.
+    // The tab is ALWAYS closed. A leaked one stays alive in the headless
+    // browser and keeps eating memory; over eighty pages that ends with Chrome
+    // itself slowing down while the check looks to blame.
     try { await fetch(`http://127.0.0.1:${PORT}/json/close/${tab.id}`); } catch {}
   }
 }
 
-/* Очередь на n одновременных работ. Результат возвращается В ПОРЯДКЕ ВХОДА,
-   а не завершения: страницы обходятся вперемешку, а отчёт обязан читаться
-   одинаково от прогона к прогону. */
+/* A queue of n concurrent jobs. Results come back IN INPUT ORDER rather than
+   in completion order: pages are walked out of order, and the report has to
+   read the same way from run to run. */
 async function pool(items, n, fn) {
   const out = new Array(items.length);
   let next = 0;
@@ -240,69 +243,69 @@ function withTimeout(p, ms, what) {
   let t;
   return Promise.race([
     p.finally(() => clearTimeout(t)),
-    new Promise((_, rej) => { t = setTimeout(() => rej(new Error(what + ` за ${ms / 1000}с`)), ms); }),
+    new Promise((_, rej) => { t = setTimeout(() => rej(new Error(what + ` after ${ms / 1000}s`)), ms); }),
   ]);
 }
 
 const EXPR = (auditSrc) => `(async () => {
   ${auditSrc}
-  // Поповеры и меню закрыты по умолчанию, а закрытого нет в раскладке —
-  // проверка их просто не увидит. Раскрываем всё, что умеет раскрываться.
+  // Popovers and menus are closed by default, and what is closed is not in
+  // layout — the check simply will not see them. Open everything that opens.
   //
-  // Открытым останется ОДИН: поповеры типа auto образуют стек, и открытие
-  // соседнего закрывает предыдущий. Это ограничение платформы, а не недосмотр,
-  // и обойти его можно было бы только прогоном на каждый поповер по
-  // отдельности — то есть умножив полный обход тем и плотностей на число
-  // поповеров страницы.
+  // ONE will stay open: popovers of type auto form a stack, and opening a
+  // sibling closes the previous one. That is a platform constraint rather than
+  // an oversight, and the only way round it would be a pass per popover — that
+  // is, multiplying the full sweep of themes and densities by the number of
+  // popovers on the page.
   //
-  // Важно другое: закрытые при этом ПРОДОЛЖАЮТ рисоваться, пока гаснут
-  // (transition-behavior: allow-discrete), и коробка у них настоящая. Целей у
-  // них нет — audit.js их отсеивает по :popover-open, иначе меряется
-  // расстояние между пунктами меню, которых на экране уже нет.
+  // What matters more: the closed ones KEEP being painted while they fade
+  // (transition-behavior: allow-discrete), and their box is real. They have no
+  // targets — audit.js filters them out by :popover-open, otherwise the
+  // distance gets measured between menu items that are no longer on screen.
   document.querySelectorAll('[popover]').forEach(p => { try { p.showPopover(); } catch {} });
   document.querySelectorAll('details:not([open])').forEach(d => d.open = true);
   await new Promise(r => setTimeout(r, 120));
   const r = await window.kitAudit.run();
   const pack = o => Object.fromEntries(Object.entries(o).map(([k, v]) =>
-    [k, { нарушений: v.нарушений, проверено: v.проверено, список: v.список.slice(0, 6) }]));
-  return { контраст: pack(r.контраст), цели: pack(r.цели), пропорции: pack(r.пропорции || {}), всего: r.всего };
+    [k, { failed: v.failed, checked: v.checked, list: v.list.slice(0, 6) }]));
+  return { contrast: pack(r.contrast), targets: pack(r.targets), proportion: pack(r.proportion || {}), total: r.total };
 })()`;
 
-/* Каждая мутация ломает ровно одно и называет раздел, который обязан
-   упасть. `from` обязан существовать в токенах: замена, ничего не заменившая,
-   дала бы даровое «поймана» на нетронутом файле. */
+/* Every mutation breaks exactly one thing and names the section that has to
+   fail. `from` has to exist in the tokens: a replacement that replaced nothing
+   would hand out a free "caught" on an untouched file. */
 const MUTATIONS = [
   {
-    name: 'значок отстал от кегля на масштабе 15',
-    section: 'пропорции',
+    name: 'icon lagging behind the type size at scale 15',
+    section: 'proportion',
     page: '/layout/statusbar/',
-    from: 'ступени после округления совпадают. */\n  --size-icon-sm:  16px;',
-    to: 'ступени после округления совпадают. */\n  --size-icon-sm:  14px;',
-    why: 'ровно тот дефект, из-за которого полосу пересчитывали; ловится ТОЛЬКО свипом по масштабам',
+    from: 'steps coincide after rounding. */\n  --size-icon-sm:  16px;',
+    to: 'steps coincide after rounding. */\n  --size-icon-sm:  14px;',
+    why: 'exactly the defect the band was recomputed for; caught ONLY by the scale sweep',
   },
   {
-    name: 'подпись ушла ниже порога',
-    section: 'контраст',
+    name: 'label pushed below the threshold',
+    section: 'contrast',
     page: '/components/actions/button/',
     from: '--text-muted:     light-dark(var(--n-8),  var(--n-6));',
     to: '--text-muted:     light-dark(var(--n-5),  var(--n-6));',
-    why: 'приглушённый текст перестаёт брать 4.5:1 на панели',
+    why: 'muted text stops taking 4.5:1 on a panel',
   },
   {
-    name: 'цель нажатия ушла под норму',
-    section: 'цели',
+    name: 'tap target pushed below the minimum',
+    section: 'targets',
     page: '/components/actions/button/',
     from: '--control-h-sm: 26px;',
     to: '--control-h-sm: 14px;',
-    why: 'кнопка меньше 24 и без зазора, компенсирующего размер',
+    why: 'a button under 24 and without the gap that compensates for the size',
   },
   {
-    name: 'акцент «глина» побелел под текстом',
-    section: 'контраст',
+    name: 'the clay accent went white under the text',
+    section: 'contrast',
     page: '/components/actions/button/',
     from: '  --a-4: oklch(0.560 0.130 45);',
     to: '  --a-4: oklch(0.880 0.130 45);',
-    why: 'ломается ОДИН акцент из четырёх — без свипа по акцентам это невидимо',
+    why: 'ONE accent of four breaks — without the accent sweep this is invisible',
   },
 ];
 
@@ -311,13 +314,13 @@ try {
   const src = await readFile(new URL('./audit.js', import.meta.url), 'utf8');
   if (MUTATE) {
     const tokens = await readFile(new URL('../src/tokens.css', import.meta.url), 'utf8');
-    console.log('проверка проверки\n');
+    console.log('checking the check\n');
     let missed = 0;
     const width = Math.max(...MUTATIONS.map((m) => [...m.name].length));
     for (const m of MUTATIONS) {
       const pad = ' '.repeat(width - [...m.name].length);
       if (!tokens.includes(m.from)) {
-        console.log(`  ${m.name}${pad}  ✗ МУТАЦИЯ НЕ ПРИМЕНИЛАСЬ — стенд разошёлся с китом`);
+        console.log(`  ${m.name}${pad}  ✗ MUTATION DID NOT APPLY — the harness has drifted from the kit`);
         missed++;
         continue;
       }
@@ -326,39 +329,40 @@ try {
         r = await evalInPage(BASE + m.page, EXPR(src),
           { path: '/kit/tokens.css', body: tokens.replace(m.from, m.to) });
       } catch (e) {
-        console.log(`  ${m.name}${pad}  ✗ НЕ ВЫПОЛНИЛАСЬ — ${e.message}`);
+        console.log(`  ${m.name}${pad}  ✗ DID NOT RUN — ${e.message}`);
         missed++;
         continue;
       }
-      const bad = Object.values(r[m.section] || {}).reduce((n, v) => n + v.нарушений, 0);
+      const bad = Object.values(r[m.section] || {}).reduce((n, v) => n + v.failed, 0);
       if (bad) {
-        console.log(`  ${m.name}${pad}  · поймана   ${m.section} (${bad})`);
+        console.log(`  ${m.name}${pad}  · caught    ${m.section} (${bad})`);
       } else {
-        console.log(`  ${m.name}${pad}  ✗ ПРОПУЩЕНА  ${m.section}`);
+        console.log(`  ${m.name}${pad}  ✗ MISSED   ${m.section}`);
         console.log(`      ${m.why}`);
         missed++;
       }
     }
     console.log();
     if (missed) {
-      console.log(`── дыр в гейте: ${missed} из ${MUTATIONS.length} ──`);
-      console.log('Пропущенная мутация означает, что инвариант объявлен, но не охраняется.');
+      console.log(`── holes in the gate: ${missed} of ${MUTATIONS.length} ──`);
+      console.log('A missed mutation means the invariant is declared but not guarded.');
       process.exitCode = 1;
     } else {
-      console.log(`· ${MUTATIONS.length} мутаций, все пойманы: матрица меряет то, что обещает`);
+      console.log(`· ${MUTATIONS.length} mutations, all caught: the matrix measures what it promises`);
     }
     proc.kill();
     process.exit(process.exitCode || 0);
   }
   const list = await pages();
-  console.log(`страниц: ${list.length}  ·  ${BASE}  ·  вкладок разом: ${JOBS}\n`);
+  console.log(`pages: ${list.length}  ·  ${BASE}  ·  tabs at once: ${JOBS}\n`);
 
   let checked = 0, failed = 0;
   const problems = [];
 
-  /* Точка печатается по мере готовности, а список нарушений собирается ПО
-     ПОРЯДКУ СТРАНИЦ: порядок завершения вкладок случаен, и отчёт, который
-     меняет порядок от прогона к прогону, невозможно сравнить с прошлым. */
+  /* A dot is printed as each page finishes, while the list of violations is
+     collected IN PAGE ORDER: the order tabs finish in is arbitrary, and a
+     report that changes order from run to run cannot be compared with the last
+     one. */
   const measured = await pool(list, JOBS, async (p) => {
     try {
       const r = await evalInPage(BASE + p, EXPR(src));
@@ -372,16 +376,16 @@ try {
 
   for (const { p, r, err } of measured) {
     if (err) {
-      problems.push({ страница: p, раздел: '—', что: 'не выполнилось: ' + err });
+      problems.push({ page: p, section: '—', what: 'did not run: ' + err });
       failed++;
       continue;
     }
-    checked += r.всего;
-    for (const [раздел, набор] of Object.entries({ контраст: r.контраст, цели: r.цели, пропорции: r.пропорции })) {
-      for (const [ключ, v] of Object.entries(набор)) {
-        if (!v.нарушений) continue;
-        failed += v.нарушений;
-        for (const item of v.список) problems.push({ страница: p, раздел: `${раздел}/${ключ}`, что: JSON.stringify(item) });
+    checked += r.total;
+    for (const [section, set] of Object.entries({ contrast: r.contrast, targets: r.targets, proportion: r.proportion })) {
+      for (const [key, v] of Object.entries(set)) {
+        if (!v.failed) continue;
+        failed += v.failed;
+        for (const item of v.list) problems.push({ page: p, section: `${section}/${key}`, what: JSON.stringify(item) });
       }
     }
     if (process.env.AUDIT_VERBOSE) console.log(' ' + p);
@@ -389,12 +393,12 @@ try {
 
   console.log('\n');
   if (problems.length) {
-    console.log(`── нарушений: ${failed} ──`);
-    for (const pr of problems.slice(0, 60)) console.log(`  ${pr.страница}\n    ${pr.раздел}  ${pr.что}`);
-    if (problems.length > 60) console.log(`  … и ещё ${problems.length - 60}`);
+    console.log(`── violations: ${failed} ──`);
+    for (const pr of problems.slice(0, 60)) console.log(`  ${pr.page}\n    ${pr.section}  ${pr.what}`);
+    if (problems.length > 60) console.log(`  … and ${problems.length - 60} more`);
     process.exitCode = 1;
   } else {
-    console.log(`· ${checked} замеров на ${list.length} страницах — чисто`);
+    console.log(`· ${checked} measurements across ${list.length} pages — clean`);
   }
 } finally {
   proc.kill();

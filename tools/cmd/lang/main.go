@@ -1,20 +1,22 @@
-// Команда lang сторожит зоны, из которых кириллица уже ушла.
+// Command lang guards the zones Cyrillic has already left.
 //
-// Переезд на английский идёт шагами, и у каждого шага обязан быть проверяемый
-// признак завершённости. Без него «зона переведена» — это память автора: она
-// держится до первой правки, сделанной по привычке, и обнаруживается на
-// стороне потребителя.
+// The move to English goes in steps, and every step has to have a checkable
+// mark of completion. Without one, "the zone is translated" is the author's
+// memory: it holds until the first edit made out of habit, and it is
+// discovered on the consumer's side.
 //
-// Зоны включаются ПО ОДНОЙ и в КОНЦЕ шага, а не в начале: гейт, заведённый
-// красным, живёт с отключённой проверкой и не сторожит ничего. Список зон
-// лежит здесь целиком, вместе с невключёнными, — иначе «сколько сделано» и
-// «сколько осталось» пришлось бы считать по чужой памяти.
+// Zones are switched on ONE AT A TIME and at the END of a step, not at the
+// start: a gate raised red lives with its check disabled and guards nothing.
+// The list of zones lies here in full, the switched-off ones included —
+// otherwise "how much is done" and "how much is left" would have to be counted
+// from somebody's memory.
 //
-// Команда стоит отдельно, а не внутри сборки сайта: сборка видит src/ и docs/,
-// а зоны переезда — ещё и dist/, tools/, assets/ и корневые файлы.
+// The command stands on its own rather than inside the site build: the build
+// sees src/ and docs/, while the zones of the move also cover dist/, tools/,
+// assets/ and the files at the root.
 //
-//	go run ./cmd/lang        проверить включённые зоны
-//	go run ./cmd/lang -v     показать заодно и невключённые
+//	go run ./cmd/lang        check the zones that are switched on
+//	go run ./cmd/lang -v     show the switched-off ones as well
 package main
 
 import (
@@ -29,81 +31,108 @@ import (
 
 type zone struct {
 	name  string
-	paths []string // файлы и каталоги, относительно корня репозитория
+	paths []string // files and directories, relative to the repository root
 	on    bool
-	step  string // шаг переезда, на котором зона включается
+	step  string // the step of the move on which the zone is switched on
 	why   string
+	// except lists files inside the zone where Cyrillic is DATA rather than
+	// text, together with the reason. A reason is mandatory: an exception
+	// without one is indistinguishable from a forgotten file, and a list of
+	// those turns the gate back into a wish.
+	except []exception
+}
+
+type exception struct {
+	path string
+	why  string
 }
 
 var zones = []zone{
 	{
-		name:  "манифест пакета",
+		name:  "package manifest",
 		paths: []string{"package.json"},
 		on:    true,
 		step:  "1",
-		why:   "description виден в реестре npm",
+		why:   "description is visible in the npm registry",
 	},
 	{
-		name:  "знаки",
+		name:  "marks",
 		paths: []string{"assets"},
 		on:    true,
 		step:  "1",
-		why:   "файлы уезжают в пакет вместе с комментариями внутри",
+		why:   "the files ship inside the package together with the comments in them",
 	},
-	// Шаг 2 шёл файлами, а не одним куском: 3 392 кириллические строки — это
-	// 15–22 сеанса, и всё это время зона «src целиком» стояла бы выключенной.
-	// Работа двадцати сеансов без охраны возвращается по привычке ровно так
-	// же, как работа одного, поэтому зона росла: переведённый файл попадал в
-	// список в том же коммите, которым переведён.
+	// Step 2 went file by file rather than in one piece: 3 392 Cyrillic lines
+	// is 15–22 sessions, and all that time the zone "src as a whole" would have
+	// stood switched off. The work of twenty sessions comes back out of habit
+	// exactly as the work of one does, so the zone grew: a translated file
+	// entered the list in the same commit that translated it.
 	//
-	// Двадцатый файл — tokens.css — закрыл список, и он схлопнут в "src".
-	// Схлопывание и есть признак завершённости шага: пока в зоне стояли
-	// имена, недостающее имя было видно; теперь недостающего нет.
+	// The twentieth file — tokens.css — closed the list, and it is collapsed
+	// into "src". The collapse is the mark of completion for the step: while
+	// the zone held names, a missing name was visible; now nothing is missing.
 	{
-		name:  "исходники кита",
+		name:  "kit sources",
 		paths: []string{"src", "dist/instrument.js", "dist/instrument.css"},
 		on:    true,
 		step:  "2",
-		why:   "src/ уезжает в пакет полем files",
+		why:   "src/ ships inside the package through the files field",
 	},
 	{
-		name:  "инструменты",
+		name:  "tools",
 		paths: []string{"tools"},
 		step:  "3",
-		why:   "вывод гейтов живёт в тех же строках, что и код",
+		why:   "the gates' output lives in the same lines as their code",
+		except: []exception{
+			{
+				path: "tools/cmd/mutate/main.go",
+				why: "the mutation table holds two kinds of Russian, and neither is text. " +
+					"An anchor points at documentation that is still Russian until step 4, " +
+					"and a payload is the very string a gate has to reject: feeding cmd/lang " +
+					"or the comment rule English would test nothing.",
+			},
+			{
+				path: "tools/cmd/docscheck/tokens.go",
+				why: "the Russian words for black and white are how an alpha cell is " +
+					"written in docs/foundations/tokens.md. They are the pattern a cell is " +
+					"matched against rather than a phrase, and they leave together with the " +
+					"page on step 4.",
+			},
+		},
 	},
 	{
-		name:  "сайт",
+		name:  "site",
 		paths: []string{"site"},
 		step:  "3",
 		why:   "",
 	},
 	{
-		name:  "документация",
+		name:  "documentation",
 		paths: []string{"docs/start", "docs/foundations", "docs/components", "docs/agent", "docs/layout", "docs/blocks", "docs/about"},
 		step:  "4",
-		why:   "русский переезжает в *.ru.md разворотом базового языка",
+		why:   "Russian moves into *.ru.md when the base language is flipped",
 	},
 	{
-		name:  "корень",
+		name:  "root",
 		paths: []string{"README.md", "CONTRIBUTING.md", "ROADMAP.md"},
 		step:  "6",
-		why:   "CHANGELOG.md не переводится: переведённая летопись — переписанная",
+		why:   "CHANGELOG.md is not translated: a translated chronicle is a rewritten one",
 	},
 }
 
 func main() {
-	root := flag.String("root", "..", "корень репозитория")
-	verbose := flag.Bool("v", false, "показать невключённые зоны")
+	root := flag.String("root", "..", "repository root")
+	verbose := flag.Bool("v", false, "show the switched-off zones")
 	flag.Parse()
 
 	var problems []string
-	onCount := 0
+	onCount, exCount := 0, 0
 	for _, z := range zones {
 		if !z.on {
 			continue
 		}
 		onCount++
+		exCount += len(z.except)
 		for _, p := range z.paths {
 			problems = append(problems, z.scan(filepath.Join(*root, filepath.FromSlash(p)), *root)...)
 		}
@@ -111,28 +140,33 @@ func main() {
 	sort.Strings(problems)
 
 	if len(problems) > 0 {
-		fmt.Printf("── кириллица в зоне, из которой она ушла (%d) ──\n", len(problems))
+		fmt.Printf("── Cyrillic in a zone it has left (%d) ──\n", len(problems))
 		for _, p := range problems {
 			fmt.Println("  ·", p)
 		}
 		fmt.Println()
-		fmt.Println("Зона объявлена переведённой, и признак завершённости шага держится на")
-		fmt.Println("этой проверке. Верните строку на английский или снимите зону осознанно.")
+		fmt.Println("The zone is declared translated, and the mark of completion for the step")
+		fmt.Println("rests on this check. Put the line back into English, or drop the zone")
+		fmt.Println("deliberately.")
 		os.Exit(1)
 	}
 
-	fmt.Printf("· зон под охраной: %d из %d — кириллицы в них нет\n", onCount, len(zones))
+	fmt.Printf("· zones under guard: %d of %d, exceptions: %d — no Cyrillic in them\n",
+		onCount, len(zones), exCount)
 	if *verbose {
 		for _, z := range zones {
 			if z.on {
+				for _, e := range z.except {
+					fmt.Printf("    exception in «%s»: %s\n      %s\n", z.name, e.path, e.why)
+				}
 				continue
 			}
-			fmt.Printf("    ждёт шага %s: %s (%s)\n", z.step, z.name, strings.Join(z.paths, " · "))
+			fmt.Printf("    waiting for step %s: %s (%s)\n", z.step, z.name, strings.Join(z.paths, " · "))
 		}
 	}
 }
 
-// scan обходит файл или каталог зоны.
+// scan walks a file or a directory of a zone.
 func (z zone) scan(path, root string) []string {
 	var out []string
 	filepath.WalkDir(path, func(p string, d os.DirEntry, err error) error {
@@ -147,10 +181,13 @@ func (z zone) scan(path, root string) []string {
 		if r, err := filepath.Rel(root, p); err == nil {
 			rel = filepath.ToSlash(r)
 		}
+		if z.excepted(rel) {
+			return nil
+		}
 		text := strings.ReplaceAll(string(b), "\r\n", "\n")
 		for i, line := range strings.Split(text, "\n") {
 			if w := cyrillicIn(line); w != "" {
-				out = append(out, fmt.Sprintf("%s:%d: %s — зона «%s»", rel, i+1, w, z.name))
+				out = append(out, fmt.Sprintf("%s:%d: %s — zone «%s»", rel, i+1, w, z.name))
 			}
 		}
 		return nil
@@ -158,9 +195,18 @@ func (z zone) scan(path, root string) []string {
 	return out
 }
 
-// cyrillicIn возвращает первое кириллическое слово строки — сообщение обязано
-// показывать НАЙДЕННОЕ, а не только координату: по слову видно сразу, забытая
-// это строка или намеренная.
+func (z zone) excepted(rel string) bool {
+	for _, e := range z.except {
+		if e.path == rel {
+			return true
+		}
+	}
+	return false
+}
+
+// cyrillicIn returns the first Cyrillic word of a line — the message has to
+// show WHAT WAS FOUND rather than only where: from the word alone it is
+// immediately clear whether the line was forgotten or meant.
 func cyrillicIn(line string) string {
 	start := -1
 	for i, r := range line {
