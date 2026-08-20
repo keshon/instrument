@@ -116,7 +116,10 @@
       "print": "keep",
       "page": "whole",
       "forced": "border"
-    }
+    },
+    "related": [
+      "choice-card"
+    ]
   },
   "change": {
     "axes": {
@@ -148,7 +151,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "toggles",
+      "select",
+      "card"
+    ]
   },
   "code": {
     "axes": {
@@ -217,7 +225,11 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "input",
+      "form"
+    ]
   },
   "flow": {
     "axes": {
@@ -238,7 +250,13 @@
       "inst-form-actions": {
         "print": "hide"
       }
-    }
+    },
+    "related": [
+      "input",
+      "select",
+      "toggles",
+      "file"
+    ]
   },
   "history": {
     "axes": {
@@ -259,7 +277,16 @@
       "inst-textarea": {
         "forced": "border"
       }
-    }
+    },
+    "related": [
+      "search",
+      "num-field",
+      "select",
+      "form",
+      "file",
+      "inserts",
+      "slider"
+    ]
   },
   "inserts": {
     "axes": {
@@ -267,7 +294,11 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "input",
+      "tag"
+    ]
   },
   "kv": {
     "axes": {
@@ -335,7 +366,8 @@
     },
     "related": [
       "button",
-      "button-group"
+      "button-group",
+      "select"
     ]
   },
   "meter": {
@@ -364,7 +396,10 @@
         "print": "hide",
         "forced": "fill"
       }
-    }
+    },
+    "related": [
+      "slider"
+    ]
   },
   "metric": {
     "axes": {
@@ -396,7 +431,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "border"
-    }
+    },
+    "related": [
+      "input",
+      "slider",
+      "select"
+    ]
   },
   "page-header": {
     "axes": {
@@ -470,7 +510,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "input",
+      "select",
+      "toolbar"
+    ]
   },
   "section": {
     "axes": {
@@ -520,8 +565,15 @@
       }
     },
     "related": [
+      "input",
+      "toggles",
+      "choice-card",
+      "menu",
+      "segmented",
       "chip",
-      "segmented"
+      "form",
+      "num-field",
+      "search"
     ]
   },
   "sheet": {
@@ -562,7 +614,12 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "num-field",
+      "input",
+      "meter"
+    ]
   },
   "sparkline": {
     "axes": {
@@ -669,7 +726,8 @@
       "forced": "none"
     },
     "related": [
-      "chip"
+      "chip",
+      "inserts"
     ]
   },
   "task": {
@@ -722,8 +780,11 @@
       }
     },
     "related": [
+      "choice-card",
+      "select",
+      "segmented",
       "chip",
-      "segmented"
+      "form"
     ]
   },
   "toolbar": {
@@ -735,7 +796,8 @@
     },
     "related": [
       "button",
-      "button-group"
+      "button-group",
+      "search"
     ]
   },
   "tooltip": {
