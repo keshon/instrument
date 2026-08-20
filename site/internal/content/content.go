@@ -3,6 +3,7 @@
 package content
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"os"
@@ -135,7 +136,62 @@ var sprite string
 
 func SetSprite(s string) { sprite = s }
 
+// Связи между компонентами: имя → имена соседей. Приходят из components.json,
+// того же файла, по которому cmd/registry сверяет сквозные оси.
+//
+// Реестр, а не фронтматтер страницы, по одной причине: связь — утверждение о
+// ДВОИХ, и лежать ей полагается там, где обе стороны видны сразу. Списки,
+// набранные руками на каждой странице, расходятся по одной строке за правку, и
+// заметить это можно только прочитав обе.
+var relations map[string][]string
+
+func SetRelations(m map[string][]string) { relations = m }
+
+// pageBySlug — страницы по слагу, для разрешения имён из реестра в адреса.
+// Заполняется один раз перед разметкой: соседи бывают из другого каталога, и
+// искать их обходом на каждую ссылку значило бы обходить дерево двести раз.
+var pageBySlug = map[string]*Page{}
+
+func indexPages(pages []*Page) {
+	for _, p := range pages {
+		if p.Lang == i18n.RU {
+			pageBySlug[p.Slug] = p
+		}
+	}
+}
+
+// Related возвращает соседей страницы: имя компонента совпадает со слагом
+// страницы у всех шестидесяти восьми записей реестра, поэтому отображение
+// хранить негде и незачем.
+func (p *Page) Related() []string { return relations[p.Slug] }
+
+// LoadRelations читает связи из реестра компонентов.
+//
+// Отсутствие файла — ошибка, а не пустой список: раздел «Связанное» на странице
+// формы 2 берётся только отсюда, и молча отдать ноль связей значит собрать
+// страницу без соседей и не сказать об этом.
+func LoadRelations(path string) (map[string][]string, error) {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var reg map[string]struct {
+		Related []string `json:"related"`
+	}
+	if err := json.Unmarshal(b, &reg); err != nil {
+		return nil, err
+	}
+	out := map[string][]string{}
+	for name, e := range reg {
+		if len(e.Related) > 0 {
+			out[name] = e.Related
+		}
+	}
+	return out, nil
+}
+
 func Render(pages []*Page) error {
+	indexPages(pages)
 	for _, p := range pages {
 		if err := renderMarkdown(p, p.body); err != nil {
 			return fmt.Errorf("%s: %w", p.Rel, err)

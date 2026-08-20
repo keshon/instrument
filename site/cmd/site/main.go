@@ -28,6 +28,8 @@ func main() {
 		public = flag.String("public", "public", "каталог, копируемый в корень вывода как есть")
 		serve  = flag.String("serve", "", "поднять сервер после сборки, например :4321")
 
+		registry = flag.String("registry", "../components.json", "реестр компонентов: связи для раздела «Связанное»")
+
 		verbose = flag.Bool("contract", false, "печатать замечания контракта по непереносенным страницам")
 	)
 	flag.Parse()
@@ -59,6 +61,11 @@ func main() {
 	content.ResolveTokens(pages, tokens)
 
 	content.SetSprite(string(sprite))
+	rel, err := content.LoadRelations(*registry)
+	if err != nil {
+		log.Fatalf("не прочитать реестр: %v", err)
+	}
+	content.SetRelations(rel)
 	if err := content.Render(pages); err != nil {
 		log.Fatalf("разметка: %v", err)
 	}

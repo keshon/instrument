@@ -135,6 +135,5 @@ chips.addEventListener('inst:select', (e) => {
 
 ## Связанное
 
-[Сегментированный контрол](./segmented.md) [Кнопка](./button.md)
-[Тег](../display/tag.md) [Бейдж](../display/badge.md)
-[Селект](../inputs/select.md) [Переключатели](../inputs/toggles.md)
+```related
+```

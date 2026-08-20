@@ -44,7 +44,10 @@
       "inst-dot": {
         "forced": "fill"
       }
-    }
+    },
+    "related": [
+      "chip"
+    ]
   },
   "banner": {
     "axes": {
@@ -76,7 +79,14 @@
       "print": "keep",
       "page": "flow",
       "forced": "border"
-    }
+    },
+    "related": [
+      "button-group",
+      "segmented",
+      "menu",
+      "toolbar",
+      "chip"
+    ]
   },
   "button-group": {
     "axes": {
@@ -84,7 +94,13 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "button",
+      "segmented",
+      "menu",
+      "toolbar"
+    ]
   },
   "calendar": {
     "axes": {
@@ -116,7 +132,15 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "segmented",
+      "button",
+      "tag",
+      "badge",
+      "select",
+      "toggles"
+    ]
   },
   "choice-card": {
     "axes": {
@@ -308,7 +332,11 @@
       "item": {
         "role": "menuitem"
       }
-    }
+    },
+    "related": [
+      "button",
+      "button-group"
+    ]
   },
   "meter": {
     "axes": {
@@ -469,7 +497,15 @@
         "role": "radio",
         "state": "aria-checked"
       }
-    }
+    },
+    "related": [
+      "chip",
+      "button-group",
+      "tabs",
+      "select",
+      "toggles",
+      "button"
+    ]
   },
   "select": {
     "axes": {
@@ -482,7 +518,11 @@
       "inst-select": {
         "forced": "border"
       }
-    }
+    },
+    "related": [
+      "chip",
+      "segmented"
+    ]
   },
   "sheet": {
     "axes": {
@@ -616,7 +656,10 @@
         "role": "tab",
         "state": "aria-selected"
       }
-    }
+    },
+    "related": [
+      "segmented"
+    ]
   },
   "tag": {
     "axes": {
@@ -624,7 +667,10 @@
       "print": "keep",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "chip"
+    ]
   },
   "task": {
     "axes": {
@@ -674,7 +720,11 @@
         "forced": "fill",
         "flow": "inline"
       }
-    }
+    },
+    "related": [
+      "chip",
+      "segmented"
+    ]
   },
   "toolbar": {
     "axes": {
@@ -682,7 +732,11 @@
       "print": "hide",
       "page": "flow",
       "forced": "none"
-    }
+    },
+    "related": [
+      "button",
+      "button-group"
+    ]
   },
   "tooltip": {
     "axes": {

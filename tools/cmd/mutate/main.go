@@ -263,6 +263,19 @@ var mutations = []mutation{
 	{"a scripted role not declared in the registry", "registry", "components.json",
 		"\"role\": \"tablist\",", "\"role\": \"tablist-renamed\",",
 		"the script promises a keyboard on the kit's behalf and the registry knows nothing about it"},
+	// The "Related" section of a shape 2 page is rendered from the registry and
+	// from nothing else. A name pointing at nothing drops a link from the page
+	// silently; a one-way link is a statement about two components that only one
+	// of them was told about — and that is exactly how the four hand-written
+	// lists of "Actions" had already drifted.
+	{"a neighbour that is not in the registry", "registry", "components.json",
+		"\"related\": [\n      \"segmented\",\n      \"button\",",
+		"\"related\": [\n      \"segmented-renamed\",\n      \"button\",",
+		"the link would vanish from the page without a word"},
+	{"a link that goes only one way", "registry", "components.json",
+		"\"related\": [\n      \"segmented\",\n      \"button\",\n      \"tag\",",
+		"\"related\": [\n      \"segmented\",\n      \"button\",",
+		"a neighbour that does not know it is one is a list nobody keeps in step"},
 	// ── lang ───────────────────────────────────────────────────────────────
 	//
 	// A zone is declared translated — so a Russian string that comes back into

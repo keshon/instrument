@@ -386,6 +386,11 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 		return ast.WalkSkipChildren, nil
 	}
 
+	if lang == "related" {
+		writeRelated(w, r.page)
+		return ast.WalkSkipChildren, nil
+	}
+
 	if lang == "js" || lang == "javascript" {
 		r.page.HasJS = true
 	}
@@ -545,6 +550,33 @@ func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
 	}
 	fmt.Fprintf(w, `<div class="%s">%s<pre><code class="lang-%s">%s</code></pre></div>`,
 		cls, copyButton(raw, lg), escape(lang), highlight(raw, lang))
+}
+
+// writeRelated печатает соседей страницы из реестра.
+//
+// Ссылки не набираются руками, и причина измерима: на четырёх страницах
+// «Действий» списки соседей разошлись между собой — чип называл сегментированный
+// контрол, сегментированный чип не называл. Список, который надо держать
+// согласованным в четырёх файлах, рассогласовывается на первой же правке.
+//
+// Адрес собирается из каталога страницы соседа, а не хранится: имя компонента в
+// реестре совпадает со слагом страницы у всех шестидесяти восьми записей, и
+// второе отображение было бы вторым источником истины.
+func writeRelated(w util.BufWriter, p *Page) {
+	names := p.Related()
+	if len(names) == 0 {
+		return
+	}
+	w.WriteString(`<p class="related">`)
+	for _, n := range names {
+		t, ok := pageBySlug[n]
+		if !ok {
+			continue
+		}
+		fmt.Fprintf(w, `<a class="inst-btn inst-btn--sm" href="%s">%s</a>`,
+			escape(t.Route), escape(t.Title))
+	}
+	w.WriteString(`</p>`)
 }
 
 func writeAPI(w util.BufWriter, p *Page) {

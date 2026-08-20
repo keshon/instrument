@@ -64,6 +64,11 @@ type entry struct {
 	Axes  map[string]string            `json:"axes"`
 	Aria  *aria                        `json:"aria,omitempty"`
 	Parts map[string]map[string]string `json:"parts,omitempty"`
+
+	// Neighbours of the component, by registry name. The reference renders the
+	// "Related" section from this and nothing else, so a name that resolves to
+	// nothing produces a page with a link missing and no word about it.
+	Related []string `json:"related,omitempty"`
 }
 
 // Markup contract: a role is a promise, and an unfulfilled promise is worse
@@ -550,7 +555,44 @@ func main() {
 		}
 	}
 
-	// ── 6. markup contract against live examples ────────────────────────────
+	// ── 6. neighbours: names resolve, and the link goes both ways ───────────
+	//
+	// The reference renders "Related" from this and nothing else, so a name
+	// pointing at nothing yields a page with a link silently missing.
+	//
+	// Reciprocity is required, and it is the whole reason the list moved into
+	// the registry. Four pages of "Actions" each carried a hand-written list of
+	// neighbours, and they had already drifted: the chip named the segmented
+	// control, the segmented control did not name the chip. A one-sided
+	// statement about two components is a statement that one of them has not
+	// been told about.
+	regNames := make([]string, 0, len(reg))
+	for name := range reg {
+		regNames = append(regNames, name)
+	}
+	sort.Strings(regNames)
+	for _, name := range regNames {
+		for _, other := range reg[name].Related {
+			checks++
+			o, ok := reg[other]
+			if !ok {
+				add("%s: related names %q, and the registry has no such component — the link would vanish from the page without a word", name, other)
+				continue
+			}
+			back := false
+			for _, r := range o.Related {
+				if r == name {
+					back = true
+					break
+				}
+			}
+			if !back {
+				add("%s and %s: the link goes one way — %s names %s, %s does not name %s", name, other, name, other, other, name)
+			}
+		}
+	}
+
+	// ── 7. markup contract against live examples ────────────────────────────
 	markup, markupChecks := checkMarkup(*docs, reg, classes)
 	problems = append(problems, markup...)
 	checks += markupChecks
