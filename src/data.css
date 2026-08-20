@@ -1,24 +1,26 @@
 /* ==========================================================================
-   instrument — данные и дашборды
+   instrument — data and dashboards
 
-   Всё, что показывает величины и сущности: аватар, тег, лента, легенда,
-   спарклайн, кольцо, календарь.
+   Everything that shows quantities and entities: the avatar, the tag, the
+   feed, the legend, the sparkline, the ring, the calendar.
 
-   Графики рисуются SVG и без JS: путь и точки приходят с сервера или из
-   шаблона, кит отвечает за тона, толщины и подписи. Интерактивный график с
-   подсказкой под курсором — это уже слой приложения.
+   Charts are drawn in SVG and without JS: the path and the points arrive from
+   the server or from a template, and the kit answers for tones, weights and
+   labels. An interactive chart with a tooltip under the cursor is already the
+   application layer.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Аватар
+   Avatar
 
-   Инициалы по умолчанию, изображение поверх. Тон берётся из категориальной
-   палитры, потому что это ровно её работа: различать сущности, а не
-   сообщать состояние.
+   Initials by default, an image over them. The tone comes from the
+   categorical palette, because that is exactly its job: to tell entities
+   apart rather than to report a state.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-avatar {
-  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  /* Sized by its content: it does not stretch in a column and centres in a
+     row. */
   align-self: var(--flow-self, center);
   display: inline-flex;
   align-items: center;
@@ -27,9 +29,9 @@
   inline-size: var(--control-h-md);
   block-size: var(--control-h-md);
   border-radius: var(--radius-full);
-  /* Относительное: аватар стоит везде — в строке очереди, в карточке, в
-     навигации, в меню, в ленте. Это самый частый случай меняющейся подложки
-     во всём ките. */
+  /* Relative: an avatar stands everywhere — in a queue row, in a card, in
+     navigation, in a menu, in a feed. This is the most frequent case of a
+     changing ground in the whole kit. */
   background: var(--surface-recessed);
   color: var(--text-secondary);
   font-size: var(--text-xs);
@@ -44,10 +46,11 @@
 .inst-avatar--sm { inline-size: var(--control-h-sm); block-size: var(--control-h-sm); font-size: var(--text-2xs); }
 .inst-avatar--lg { inline-size: var(--control-h-lg); block-size: var(--control-h-lg); font-size: var(--text-sm); }
 
-/* Группа с наложением. Кольцо цвета поверхности отделяет соседей, поэтому
-   стопка читается как стопка, а не как слипшееся пятно.                   */
+/* An overlapping group. A ring the colour of the surface parts the
+   neighbours, so the stack reads as a stack and not as one fused blob.    */
 .inst-avatars {
-  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  /* Sized by its content: it does not stretch in a column and centres in a
+     row. */
   align-self: var(--flow-self, center);
   display: flex;
   align-items: center;
@@ -65,15 +68,16 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Тег
+   Tag
 
-   Это НЕ бейдж. Бейдж — состояние из фиксированного словаря кита, у него
-   пять значений и они перечислимы. Тег — произвольный текст, который завёл
-   пользователь, и его можно снять.
+   This is NOT a badge. A badge is a state from the kit's fixed vocabulary: it
+   has five values and they are enumerable. A tag is arbitrary text the user
+   created, and it can be removed.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-tag {
-  /* Меряется содержимым: в колонке не растягивается, в ряду центрируется. */
+  /* Sized by its content: it does not stretch in a column and centres in a
+     row. */
   align-self: var(--flow-self, center);
   display: inline-flex;
   align-items: center;
@@ -82,24 +86,25 @@
   padding-inline: var(--space-3);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-sm);
-  /* Утопление относительное, а не ступень рампы, — по той же причине, по
-     которой его сменило умолчание кнопки. Ступень задаёт светлоту абсолютно
-     и потому знает одну глубину, а тег стоит то в строке прозы, то в панели,
-     то в карточке. На приподнятой панели --surface-sunken давал провал 0.087
-     вместо 0.033: панель уже сама на шаг выше, и шаги складывались.
-     Тега это касается чаще, чем кнопки: в панели он живёт почти всегда.   */
+  /* The recess is relative rather than a step of the ramp, for the same
+     reason the button default moved that way. A step sets lightness
+     absolutely and therefore knows one depth, while a tag stands now in a
+     line of prose, now in a panel, now in a card. On a raised panel
+     --surface-sunken gives a drop of 0.087 instead of 0.033: the panel is
+     already a step higher, and the steps add up. This bites a tag more often
+     than a button: a tag lives inside a panel almost always.             */
   background: var(--surface-recessed);
   color: var(--text-secondary);
   font-size: var(--text-xs);
   white-space: nowrap;
 }
 
-/* Кнопка снятия — настоящая кнопка, а не крестик текстом: её надо уметь
-   нажать с клавиатуры и озвучить скринридеру.                            */
-/* Крестик 10×10 — самая маленькая цель кита, и единственная, у которой нет
-   ни подписи рядом, ни строки-обёртки: соседний тег стоит вплотную, поэтому
-   исключение по расстоянию к ней неприменимо. Область нажатия дорастает до
-   нормы невидимым ::before; сам крестик остаётся 10px.                     */
+/* The remove control is a real button, not a cross made of text: it has to
+   be pressable from the keyboard and announced to a screen reader.        */
+/* The 10×10 cross is the smallest target in the kit, and the only one with
+   neither a label beside it nor a row to wrap it: the next tag stands right
+   against it, so the spacing exception does not apply. The tap area grows to
+   the norm through an invisible ::before; the cross itself stays 10px.     */
 .inst-tag-remove {
   position: relative;
   flex: none;
@@ -108,9 +113,9 @@
   margin-inline-end: calc(var(--space-1) * -1);
   cursor: pointer;
 
-  /* Область нажатия до нормы WCAG 2.2 AA. Размер задан ЯВНО, а не
-     отрицательным inset: тот отсчитывается от padding-box и промахивается на
-     толщину рамки.                                                        */
+  /* The tap area up to the WCAG 2.2 AA norm. The size is stated EXPLICITLY
+     rather than through a negative inset: that one counts from the
+     padding-box and misses by the width of the border.                    */
   &::before {
     content: "";
     position: absolute;
@@ -121,11 +126,11 @@
     block-size: var(--tap-min);
   }
 
-  /* Крестик рисует ::after, а не сама кнопка, и это не украшательство.
-     Маска на элементе обрезает ВСЁ его содержимое, включая псевдоэлементы:
-     пока mask стоял на кнопке, невидимая область нажатия вырезалась вместе
-     с фоном и не ловила ни одного нажатия за пределами десяти пикселей.
-     Проверено попаданием: было 0 из 4 точек, стало 4 из 4.                */
+  /* The cross is drawn by ::after rather than by the button, and that is no
+     flourish. A mask on an element clips ALL of its content, pseudo-elements
+     included: with the mask on the button, the invisible tap area is cut away
+     along with the background and catches not one press beyond ten pixels.
+     Checked by hitting it: 0 of 4 points before, 4 of 4 after.            */
   &::after {
     content: "";
     position: absolute;
@@ -138,10 +143,10 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Лента событий
+   Event feed
 
-   Соединительная линия проведена псевдоэлементом от точки к точке, поэтому
-   она не рвётся на переносе и не требует лишнего узла в разметке.
+   The connecting line is drawn by a pseudo-element from dot to dot, so it
+   does not break on a wrap and needs no extra node in the markup.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-timeline { display: flex; flex-direction: column; }
@@ -154,7 +159,8 @@
   gap: var(--gap-inline);
   padding-block: var(--row-pad-y);
 
-  /* Линия идёт от центра точки до низа строки и продолжается в следующей. */
+  /* The line runs from the centre of the dot to the bottom of the row and
+     continues in the next one. */
   &::before {
     content: "";
     position: absolute;
@@ -167,7 +173,7 @@
   &:last-child::before { content: none; }
 }
 
-/* Точка встаёт по центру первой строки — та же формула, что у значков. */
+/* The dot centres on the first line — the same formula as for glyphs. */
 .inst-timeline-dot {
   position: relative;
   z-index: 1;
@@ -185,10 +191,11 @@
 .inst-timeline-time { font-size: var(--text-xs); color: var(--text-muted); white-space: nowrap; }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Легенда
+   Legend
 
-   Обязательна у любого графика с более чем одним рядом: без неё цвет ничего
-   не значит. Метка ряда — квадрат, а не круг: круг занят точкой состояния.
+   Mandatory on any chart with more than one series: without it the colour
+   means nothing. The series swatch is a square, not a circle: the circle is
+   taken by the state dot.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-legend {
@@ -204,14 +211,14 @@
 
 .inst-legend-item { display: flex; align-items: center; gap: var(--space-3); }
 
-/* Умолчание образца — АКЦЕНТ, а не первый категориальный тон.
+/* The swatch defaults to the ACCENT, not to the first categorical tone.
 
-   Легенда из одной строки подписывает один ряд, а категориальный цвет
-   существует, чтобы РАЗЛИЧАТЬ ряды: различать ему там нечего. Ряд №1 берёт
-   --chart-1 тогда, когда есть ряд №2, и тогда --series проставляется явно —
-   на всех рядах, включая первый.
+   A one-line legend labels one series, and a categorical colour exists to
+   TELL SERIES APART: there is nothing there to tell apart. Series 1 takes
+   --chart-1 when there is a series 2, and then --series is set explicitly —
+   on every series, the first included.
 
-   Правило общее с самим графиком, см. .inst-sparkline ниже.               */
+   The rule is shared with the chart itself, see .inst-sparkline below.    */
 .inst-legend-swatch {
   flex: none;
   inline-size: var(--size-dot);
@@ -223,29 +230,31 @@
 .inst-legend-value { color: var(--text-primary); font-weight: var(--weight-medium); }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Спарклайн и кольцо
+   Sparkline and ring
 
-   Разметка — inline SVG с viewBox; кит задаёт только тона и толщины.
-   Спарклайн намеренно без осей и подписей: это форма изменения рядом с
-   числом, а не график. Как только понадобились оси — это уже график, и он
-   заслуживает своего места.
+   The markup is inline SVG with a viewBox; the kit sets only tones and
+   weights. A sparkline deliberately has no axes and no labels: it is the
+   shape of a change beside a number, not a chart. The moment axes are wanted
+   it is a chart, and a chart deserves a place of its own.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* ОДИН РЯД — НЕ КАТЕГОРИЯ, поэтому умолчание здесь --accent-mark.
+/* ONE SERIES IS NOT A CATEGORY, so the default here is --accent-mark.
 
-   Спарклайн однорядный по определению — его собственная страница отправляет
-   два ряда в график с легендой. Значит, категориальный тон ему не положен
-   никогда: цвет ряда кодирует, КАКОЙ из нескольких, а выбора нет.
+   A sparkline is single-series by definition — its own page sends two series
+   to a chart with a legend. So a categorical tone is never due to it: a
+   series colour encodes WHICH OF SEVERAL, and there is no choice to make.
 
-   Цена прежнего умолчания мерялась на дашборде кита: спарклайн расхода стоял
-   на --chart-1 (тогда 280°), а мера бюджета в шестидесяти пикселях под ним —
-   на --accent-mark (250°). Два разных синих на одном экране, ровно то
-   соседство, которое кит запрещает для акцента; запрет был написан про
-   --accent-mark против --accent-solid и до категориальной палитры не доставал.
+   The price of the previous default was measured on the kit's own dashboard:
+   the spend sparkline sat on --chart-1 (280° at the time) and the budget
+   meter sixty pixels below it on --accent-mark (250°). Two different blues on
+   one screen — exactly the adjacency the kit forbids for the accent; the ban
+   was written about --accent-mark against --accent-solid and did not reach as
+   far as the categorical palette.
 
-   С ручкой акцента на четыре положения дистанция вообще перестала быть
-   гарантией: глина стоит на 45°, а --chart-4 на 55°. Разделение теперь по
-   ОБЛАСТЯМ, а не по градусам, и умолчание — его первая половина.           */
+   With the accent as a four-position knob, distance stopped being any
+   guarantee at all: clay stands at 45° and --chart-4 at 55°. The separation
+   is by DOMAIN now rather than by degrees, and this default is its first
+   half.                                                                    */
 .inst-sparkline {
   inline-size: 100%;
   block-size: calc(var(--control-h-md) * 1.25);
@@ -260,8 +269,8 @@
     vector-effect: non-scaling-stroke;
   }
 
-  /* Заливка под линией — единственный разрешённый в ките градиент, и он не
-     градиент: это сплошной тон с альфой.                                  */
+  /* The fill under the line is the only gradient the kit allows, and it is
+     not a gradient: it is one flat tone with alpha.                       */
   & > .inst-sparkline-area {
     fill: var(--series, var(--accent-mark));
     fill-opacity: 0.12;
@@ -286,8 +295,8 @@
     stroke: var(--tone-mark, var(--accent-mark));
     stroke-width: 3;
     stroke-linecap: round;
-    /* Значение задаётся долей 0…1 в --value: длина окружности при r=8
-       равна 50.27, поэтому пунктир считается прямо из неё.               */
+    /* The value is given as a 0…1 fraction in --value: the circumference at
+       r=8 is 50.27, so the dash is computed straight from it.            */
     stroke-dasharray: calc(var(--value, 0) * 50.27) 50.27;
   }
 }
@@ -304,11 +313,11 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Календарь
+   Calendar
 
-   Статическая сетка. Выбор даты и переключение месяцев — слой приложения;
-   кит отвечает за то, чтобы сетка была сеткой, а сегодняшний день был
-   помечен не только цветом.
+   A static grid. Picking a date and moving between months is the application
+   layer; the kit answers for the grid being a grid and for today being marked
+   by more than colour.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-calendar {
@@ -336,23 +345,24 @@
   cursor: pointer;
 
   &:hover { background: var(--surface-hover); }
-  /* Начертание ЗДЕСЬ состояние нести вправе, и это единственное такое место
-     в ките. Закон запрещает не жирный шрифт, а сдвиг: у вкладки, чипа, пункта
-     меню и сегмента ширина задаётся содержимым, поэтому потолстевшая подпись
-     двигает соседей. День календаря стоит в grid из семи равных колонок —
-     геометрию держит сетка, и вес внутри ячейки не двигает ничего.
+  /* Weight IS allowed to carry state here, and this is the only such place in
+     the kit. The law bans not bold type but the shift: on a tab, a chip, a
+     menu item and a segment the width is set by the content, so a label that
+     thickens moves its neighbours. A calendar day sits in a grid of seven
+     equal columns — the grid holds the geometry, and weight inside a cell
+     moves nothing.
 
-     Записано затем, чтобы следующая ревизия не «починила» это вслед за
-     остальными четырьмя: там правка была обязательна, здесь была бы потерей
-     носителя без всякой выгоды.                                            */
+     Written down so that the next revision does not "fix" this along with the
+     other four: there the change was mandatory, here it would lose a carrier
+     for no gain at all.                                                     */
   &[aria-selected="true"] { background: var(--surface-selected); color: var(--accent-text); font-weight: var(--weight-medium); }
-  /* День соседнего месяца тише, но остаётся ЧИТАЕМОЙ датой: на него нажимают
-     и его сравнивают. На --text-faint он давал 3.27 — порог декорации, а не
-     чтения.                                                              */
+  /* A day of the neighbouring month is quieter but stays a READABLE date:
+     people press it and compare it. On --text-faint it gives 3.27 — the
+     threshold of decoration, not of reading.                             */
   &[data-outside="true"] { color: var(--text-muted); }
   &[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
 
-  /* Сегодня помечено подчёркиванием, а не только цветом. */
+  /* Today is marked with an underline, not by colour alone. */
   &[data-today="true"] {
     font-weight: var(--weight-medium);
     box-shadow: inset 0 calc(var(--size-marker) * -1) 0 0 var(--accent-solid);
@@ -360,35 +370,36 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Изменение файла
+   File change
 
-   Добавлен · изменён · удалён · переименован · конфликт.
+   Added · modified · deleted · renamed · conflict.
 
-   Своя ось, а НЕ тональный словарь, и это главное решение компонента.
-   Соблазн взять готовое велик: зелёный «добавлен», красный «удалён» — почти
-   ложится. Но не ложится совсем: `ok · warn · error` это ОЦЕНКА, а
-   «удалён» — не ошибка и не предупреждение, это то, чего человек хотел и
-   добился. Покрасить удаление красным значит сообщить, что что-то пошло не
-   так, тогда как всё пошло ровно так.
+   An axis of its own, NOT the tone vocabulary, and that is the component's
+   main decision. The temptation to reuse what exists is strong: green for
+   "added", red for "deleted" — it almost fits. But it does not fit at all:
+   `ok · warn · error` is a JUDGEMENT, and "deleted" is neither an error nor a
+   warning, it is what the person wanted and achieved. Painting a deletion red
+   says something went wrong, when everything went exactly right.
 
-   Отсюда отдельный атрибут и отдельный набор значений: он перечислим и
-   закрыт, как ряд графика, и потому цвет здесь кодирует КАТЕГОРИЮ — ровно тот
-   случай, который конституция разрешает.
+   Hence a separate attribute and a separate set of values: enumerable and
+   closed, like the series of a chart, which is why colour here encodes a
+   CATEGORY — precisely the case the design principles allow.
 
-   Цвет не единственный носитель, и это не формальность: знак внутри глифа
-   отличает добавление от удаления на чёрно-белой печати и при дальтонизме,
-   где красный и зелёный сливаются в один серый.
+   Colour is not the only carrier, and that is not a formality: the sign
+   inside the glyph tells an addition from a deletion in black-and-white print
+   and under colour blindness, where red and green merge into one grey.
 
-   Знак — СОДЕРЖИМОЕ, а не псевдоэлемент и не атрибут. Так он остаётся в
-   разметке, где его видно при чтении кода, и не требует ни attr(), ни второго
-   словаря значений. Запрет кита на текстовые глифы сюда не относится: он про
-   пиктограммы вроде ⟳ и ▶, у которых метрики пляшут по шрифтам и есть риск
-   подстановки эмодзи, а «+», «M» и «−» — обычные знаки текущей гарнитуры.
+   The sign is CONTENT, not a pseudo-element and not an attribute. That way it
+   stays in the markup, where it is visible while reading the code, and needs
+   neither attr() nor a second vocabulary of values. The kit's ban on text
+   glyphs does not apply here: it is about pictograms such as ⟳ and ▶, whose
+   metrics dance between fonts and which risk emoji substitution, while "+",
+   "M" and "−" are ordinary characters of the current family.
 
-   Разметка: <span class="inst-change" data-change="added" aria-label="Добавлен">+</span>
-   Имя ОБЯЗАТЕЛЬНО: знак «+» скринридер прочитает как «плюс», а не как
-   «файл добавлен». aria-label перекрывает содержимое, поэтому знак вслух не
-   дублируется.
+   Markup: <span class="inst-change" data-change="added" aria-label="Added">+</span>
+   The name is MANDATORY: a screen reader reads the "+" as "plus", not as
+   "file added". aria-label overrides the content, so the sign is not spoken
+   twice.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-change {
@@ -403,29 +414,29 @@
   font-size: var(--text-2xs);
   font-weight: var(--weight-medium);
   line-height: 1;
-  /* Контур, а не заливка: глиф стоит в конце строки файла, и плашка там
-     тяжелее самого имени, ради которого строка существует.
+  /* An outline rather than a fill: the glyph stands at the end of a file
+     row, and a plate there is heavier than the name the row exists for.
 
-     ДВА НОСИТЕЛЯ, И У КАЖДОГО СВОЙ ПОРОГ. Цвет живёт на контуре — это НЕ
-     текст, и порог ему меточный, 3:1. Знак внутри читают, поэтому он берёт
-     текстовый цвет и держит 4.5:1.
+     TWO CARRIERS, AND EACH HAS ITS OWN THRESHOLD. The colour lives on the
+     outline — that is NOT text, so its threshold is the mark one, 3:1. The
+     sign inside is read, so it takes a text colour and holds 4.5:1.
 
-     Сначала цвет стоял на обоих, и обход по пикселям поймал: категориальная
-     палитра настроена под меточный порог, и знаки «+», «M», «R» давали
-     4.19 · 3.34 · 3.43 в светлых темах. Покрасить их темнее значило бы
-     сдвинуть палитру графика ради глифа; развести носители — не значило
-     ничего, потому что категорию здесь и так несёт ФОРМА. */
+     With the colour on both, the pixel sweep catches it: the categorical
+     palette is tuned to the mark threshold, and the signs "+", "M", "R" give
+     4.19 · 3.34 · 3.43 in the light themes. Painting them darker would move
+     the chart palette for the sake of a glyph; parting the carriers costs
+     nothing, because the category here is carried by SHAPE anyway. */
   color: var(--text-secondary);
 }
 
-/* Тона взяты из категориальной палитры, а не из статусной: множество значений
-   перечислимо и закрыто, как ряд графика. */
+/* The tones come from the categorical palette rather than the status one:
+   the set of values is enumerable and closed, like the series of a chart. */
 .inst-change[data-change="added"]    { --change-ink: var(--chart-5); }
 .inst-change[data-change="modified"] { --change-ink: var(--chart-4); }
 .inst-change[data-change="deleted"]  { --change-ink: var(--chart-3); }
 .inst-change[data-change="renamed"]  { --change-ink: var(--chart-6); }
-/* Конфликт — единственное значение оси, которое ОДНОВРЕМЕННО является
-   оценкой: его никто не хотел, и он требует вмешательства. Поэтому здесь
-   тональный словарь уместен, а категориальный был бы враньём. Знак тоже
-   красится: предупреждение обязано быть заметно, а --warn-text текстовый. */
+/* A conflict is the one value of the axis that is ALSO a judgement: nobody
+   wanted it, and it demands intervention. So here the tone vocabulary is
+   right and a categorical one would be a lie. The sign is painted too: a
+   warning has to be noticeable, and --warn-text is a text colour. */
 .inst-change[data-change="conflict"] { --change-ink: var(--warn-text); color: var(--warn-text); }

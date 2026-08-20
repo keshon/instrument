@@ -1,31 +1,33 @@
 /* ==========================================================================
-   instrument — оверлеи
+   instrument — overlays
 
-   Поповеру, тултипу и модалке скрипт не нужен. Popover API (`popover` +
-   `popovertarget`) даёт верхний слой, лёгкое закрытие по клику вне и по
-   Escape, и управление фокусом — ПОЛНОСТЬЮ декларативно. Это Baseline с
-   2024 года.
+   The popover, the tooltip and the modal need no script. The Popover API
+   (`popover` + `popovertarget`) gives the top layer, light dismiss on an
+   outside click and on Escape, and focus handling — FULLY declaratively. It
+   has been Baseline since 2024.
 
-   Что здесь прогрессивное, а что обязательное:
+   What is progressive here and what is required:
 
    · popover, :popover-open, ::backdrop, @starting-style,
-     transition-behavior: allow-discrete — безопасно, на этом строим.
-   · position-area (привязка к вызвавшей кнопке) — прогрессивно. Под
-     @supports: где есть — поповер встаёт под кнопкой, где нет — по центру
-     экрана. Деградирует, а не ломается.
-   · <dialog> открывается одной строкой JS (showModal). Декларативный
-     command/commandfor пока прогрессивен, поэтому в контракт не берётся.
+     transition-behavior: allow-discrete — safe, and what this is built on.
+   · position-area (anchoring to the button that opened it) — progressive.
+     Behind @supports: where it exists the popover sits under the button,
+     where it does not it centres on the screen. It degrades, it does not
+     break.
+   · <dialog> opens with one line of JS (showModal). Declarative
+     command/commandfor is still progressive, so it is not taken into the
+     contract.
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Поповер
+   Popover
 
-   Разметка:
-     <button class="btn" popovertarget="menu-1">Действия</button>
+   Markup:
+     <button class="btn" popovertarget="menu-1">Actions</button>
      <div class="popover" id="menu-1" popover>…</div>
 
-   Всё остальное — платформа: верхний слой, закрытие по Escape и по клику
-   мимо, возврат фокуса на кнопку.
+   Everything else is the platform: the top layer, dismissal on Escape and on
+   an outside click, focus returning to the button.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-popover {
@@ -38,22 +40,24 @@
   border-radius: var(--radius-md);
   background: var(--surface-overlay);
   color: var(--text-primary);
-  /* Тень означает «плавает сверху и сейчас исчезнет» — ровно то, что делает
-     поповер. Второй и последний её носитель — модалка.                    */
+  /* A shadow means "floating above and about to disappear" — exactly what a
+     popover does. Five things in the kit are allowed to say that, and no
+     others: the popover, the tooltip, the toast, the modal and the drawer.
+     Nothing that stays put carries one.                                   */
   box-shadow: var(--shadow-popover);
 }
 
-/* Скрытое состояние висит на атрибуте, а не на классе.
+/* The hidden state hangs on the attribute, not on the class.
 
-   `.inst-popover` — это ПОВЕРХНОСТЬ, `[popover]` добавляет к ней поведение
-   верхнего слоя. Разделение нужно всему, что плавает, но поповером не
-   является: списку результатов комбобокса, подсказке автодополнения. Будь
-   `opacity: 0` на самом классе, такой блок остался бы невидимым — снять
-   прозрачность было бы нечем.                                             */
+   `.inst-popover` is a SURFACE; `[popover]` adds top-layer behaviour to it.
+   The split is needed by everything that floats without being a popover: a
+   combobox result list, an autocomplete suggestion. With `opacity: 0` on the
+   class itself such a block would stay invisible — there would be nothing to
+   take the transparency off with.                                          */
 .inst-popover[popover] {
-  /* Появление и исчезновение без JS. allow-discrete нужен, чтобы переход
-     доигрывал на display и overlay, — иначе поповер пропадает мгновенно,
-     не дождавшись собственной анимации.                                  */
+  /* Appearing and disappearing without JS. allow-discrete is what lets the
+     transition play out on display and overlay — otherwise the popover
+     vanishes at once, without waiting for its own animation.             */
   opacity: 0;
   translate: 0 calc(var(--space-1) * -1);
   transition: opacity var(--dur-2) var(--ease-out),
@@ -64,63 +68,63 @@
 
 .inst-popover[popover]:popover-open { opacity: 1; translate: 0 0; }
 
-/* Стартовое состояние для входящего перехода. */
+/* The starting state for the entry transition. */
 @starting-style {
   .inst-popover[popover]:popover-open { opacity: 0; translate: 0 calc(var(--space-1) * -1); }
 }
 
-/* Плашка во всю ширину того, под чем она стоит.
+/* A plate as wide as whatever it stands under.
 
-   Умолчание поповера — `max-content`: меню меряется своими пунктами. Но
-   выпадающий список под полем обязан совпадать с полем по ширине, иначе он
-   читается как чужой элемент, случайно оказавшийся рядом. Это второй законный
-   способ мерить плавающую поверхность, и третьего нет.                     */
+   A popover defaults to `max-content`: a menu is sized by its items. But a
+   dropdown under a field has to match the field in width, or it reads as some
+   other element that happens to be nearby. This is the second lawful way to
+   size a floating surface, and there is no third.                          */
 .inst-popover--fill {
   min-inline-size: 0;
   max-inline-size: none;
 }
 
-/* Ширина берётся у ЯКОРЯ, а не в процентах.
-   Поповер живёт в верхнем слое, и содержащий блок у него — вьюпорт: сотня
-   процентов там означает ширину экрана, а не ширину поля. Размер якоря
-   умеет считать только anchor-size(); где его нет, плашка остаётся
-   max-content и просто не совпадает с полем по ширине. */
+/* The width comes from the ANCHOR, not from a percentage.
+   A popover lives in the top layer, and its containing block is the viewport:
+   a hundred percent there means the width of the screen, not the width of the
+   field. Only anchor-size() can compute the anchor's size; where it is
+   missing the plate stays max-content and simply does not match the field. */
 @supports (inline-size: anchor-size(width)) {
   .inst-popover--fill { inline-size: anchor-size(width); }
 }
 
-/* У поповера подложки нет: он не блокирует страницу. */
+/* A popover has no backdrop: it does not block the page. */
 .inst-popover::backdrop { background: transparent; }
 
-/* Привязка к вызвавшей кнопке. Неявный якорь — сама кнопка с
-   popovertarget, поэтому имена якорей заводить не нужно.                 */
+/* Anchored to the button that opened it. The implicit anchor is that
+   popovertarget button itself, so no anchor names need to be declared.   */
 @supports (position-area: block-end) {
   .inst-popover--anchored {
-    /* «Под кнопкой, растёт в сторону конца строки» — то есть начальный край
-       поповера совпадает с начальным краем кнопки. В RTL это зеркалится
-       само, потому что область логическая.                                */
+    /* "Under the button, growing towards the end of the line" — that is, the
+       start edge of the popover meets the start edge of the button. In RTL
+       this mirrors by itself, because the area is logical.                */
     position-area: block-end span-inline-end;
-    /* Отступ с ОБЕИХ сторон, а не только сверху, потому что строкой ниже
-       объявлен переворот. Односторонний отступ переворот не переживает: он
-       остаётся со стороны, которой после flip-block уже ничего не нужно, а
-       между кнопкой и ближайшим пунктом получается ноль.
+    /* Margin on BOTH sides, not only above, because the line below declares a
+       flip. A one-sided margin does not survive the flip: it stays on the
+       side that needs nothing after flip-block, and between the button and
+       the nearest item there is zero.
 
-       Ноль здесь стоит цели нажатия: пункт меню и кнопка в плотном режиме по
-       22px, и критерий 2.5.8 засчитывает их только вместе с зазором —
-       22 + 2 ≥ 24. Текстовый гейт этого не увидит по устройству: он берёт
-       зазор из токена, а не из того, что сложилось на экране. */
+       Zero here costs a tap target: a menu item and a button are 22px each in
+       compact, and criterion 2.5.8 counts them only together with the gap —
+       22 + 2 ≥ 24. The text gate cannot see this by construction: it takes
+       the gap from a token rather than from what ended up on screen. */
     margin-block: var(--space-2);
-    /* Если снизу или сбоку не помещается — перевернуться, а не вылезти. */
+    /* If it does not fit below or to the side — flip, do not overflow. */
     position-try-fallbacks: flip-block, flip-inline;
   }
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Меню — содержимое поповера
+   Menu — the content of a popover
 
-   Разметка: role="menu" на контейнере, role="menuitem" на пунктах.
-   Стрелки и бегущий tabindex — слой приложения; закрытие и фокус
-   платформа берёт на себя.
+   Markup: role="menu" on the container, role="menuitem" on the items. The
+   arrows and the roving tabindex are the script's job; dismissal and focus
+   are taken care of by the platform.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-menu {
@@ -153,17 +157,18 @@
 
   &:hover { background: var(--surface-hover); }
 
-  /* Выбор несёт ГАЛОЧКА, а не только цвет.
+  /* Selection is carried by a CHECK MARK, not by colour alone.
 
-     Стояло: акцентный цвет плюс вес 500. Два изъяна сразу. Первый — цвет
-     оказывался единственным носителем состояния, что запрещено собственным
-     законом кита («статус ходит с точкой и словом»). Второй — смена веса
-     меняет ШИРИНУ подписи, и пункт дёргался в момент выбора, ровно тогда,
-     когда на него смотрят.
+     Accent colour plus weight 500 has two flaws at once. First, the colour
+     becomes the only carrier of state, which the kit's own law forbids — a
+     status travels with a dot and a word. Second, changing the weight changes
+     the WIDTH of the label, and the item twitches at the moment of selection,
+     precisely when it is being looked at.
 
-     Теперь метка стоит у дальнего края и не двигает текст, а подпись остаётся
-     обычной. Цвет метки — --accent-mark: это метка без подписи поверх, ей
-     довольно 3:1, и она в одном регистре с остальными метками кита.       */
+     So the mark stands at the far edge and moves no text, and the label stays
+     ordinary. The mark takes --accent-mark: it is a mark with no label over
+     it, 3:1 is enough for it, and it is in the same register as the kit's
+     other marks.                                                          */
   &[aria-checked="true"]::after, &[aria-current]:not([aria-current="false"])::after {
     content: "";
     flex: none;
@@ -173,8 +178,9 @@
     background: var(--accent-mark);
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 5' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   }
-  /* Горячая клавиша уже прижата к дальнему краю своим margin: когда она есть,
-     авто-отступ метки съел бы её. Отдаём край клавише, метка встаёт за ней. */
+  /* A shortcut is already pushed to the far edge by its own margin: where one
+     exists, the mark's auto margin would swallow it. The edge goes to the
+     shortcut and the mark stands behind it. */
   &:has(> .inst-menu-shortcut)::after { margin-inline-start: var(--gap-inline); }
 
   &[data-tone="error"] { color: var(--err-text); }
@@ -183,16 +189,16 @@
   &:disabled, &[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
 }
 
-/* Пункт с пояснением: название и строка под ним.
+/* An item with an explanation: a name and a line under it.
 
-   Однострочный пункт объяснить себя не может, а меню выбора — модели, режима,
-   профиля — без пояснения превращается в список кодовых слов. Пока второй
-   строки не было, приложение писало пояснение в title и теряло его на
-   клавиатуре и в скринридере.
+   A one-line item cannot explain itself, and a menu that picks something — a
+   model, a mode, a profile — turns into a list of code words without one.
+   With no second line the application writes the explanation into a title and
+   loses it on the keyboard and in a screen reader.
 
-   Многострочность включается наличием подписи, а не модификатором: два
-   состояния одного пункта — это не два варианта, которые выбирает автор
-   разметки, а следствие того, что внутри.                                  */
+   Multi-line is switched on by the presence of the sub-label rather than by a
+   modifier: two states of one item are not two variants for the author of the
+   markup to choose between, they follow from what is inside.               */
 .inst-menu-item:has(> .inst-menu-item-main) {
   align-items: start;
   padding-block: var(--row-pad-y);
@@ -209,17 +215,17 @@
   line-height: var(--leading-ui);
 }
 
-/* Метка выбора у многострочного пункта встаёт по ПЕРВОЙ строке, а не по
-   середине блока: она относится к названию, а не к паре «название плюс
-   пояснение». Формула та же, что у значка сноски, и по той же причине —
-   1lh подстраивается под кегль и плотность сам.                           */
+/* On a multi-line item the selection mark stands on the FIRST line rather
+   than in the middle of the block: it belongs to the name, not to the pair of
+   name plus explanation. The formula is the same as for the note glyph, and
+   for the same reason — 1lh adapts to type size and density by itself.    */
 .inst-menu-item:has(> .inst-menu-item-main)::after {
   align-self: start;
   margin-block-start: calc((1lh - var(--size-icon)) / 2);
 }
 
-/* Горячая клавиша прижимается к дальнему краю и тише подписи: она
-   подсказка, а не второе название пункта.                                */
+/* The shortcut is pushed to the far edge and is quieter than the label: it
+   is a hint, not a second name for the item.                             */
 .inst-menu-shortcut { margin-inline-start: auto; padding-inline-start: var(--space-6); color: var(--text-muted); }
 
 .inst-menu-sep {
@@ -229,18 +235,19 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Тултип
+   Tooltip
 
-   Намеренно БЕЗ Popover API и без привязки якорем: тултип должен работать
-   везде одинаково, а это единственный оверлей, которому хватает обычного
-   позиционирования.
+   Deliberately WITHOUT the Popover API and without anchoring: a tooltip has
+   to work the same way everywhere, and it is the one overlay for which
+   ordinary positioning is enough.
 
-   Контракт: подпись несёт role="tooltip" и id, триггер — aria-describedby.
-   Тултип не заменяет подпись и не содержит того, без чего нельзя обойтись:
-   он не открывается с клавиатуры на сенсорном экране.
+   The contract: the label carries role="tooltip" and an id, the trigger
+   carries aria-describedby. A tooltip does not replace a label and holds
+   nothing that cannot be done without: on a touch screen it does not open
+   from the keyboard.
 
-   ОГРАНИЧЕНИЕ: внутри .inst-panel с overflow: hidden тултип обрежется. Там
-   нужен .inst-popover, который живёт в верхнем слое.
+   LIMITATION: inside an .inst-panel with overflow: hidden a tooltip is
+   clipped. There an .inst-popover is wanted, which lives in the top layer.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-tooltip { position: relative; display: inline-flex; align-self: var(--flow-self, center); }
@@ -251,17 +258,18 @@
   inset-block-end: calc(100% + var(--space-3));
   inset-inline-start: 50%;
   translate: -50% 0;
-  /* Плашка АННОТАЦИИ, а не маленькая панель.
+  /* The plate of an ANNOTATION, not a small panel.
 
-     Стояло: --surface-overlay, рамка, тень поповера и обычный цвет текста —
-     то есть ровно тот же набор признаков, что у любого куска интерфейса. Глаз
-     читал тултип как ещё одно содержимое, а подсказка обязана опознаваться
-     раньше, чем прочитана.
+     --surface-overlay, a border, the popover shadow and ordinary text colour
+     add up to exactly the set of traits any other piece of interface has. The
+     eye then reads a tooltip as one more piece of content, while a hint has
+     to be recognised before it is read.
 
-     Инверсная поверхность делает это одним признаком: такого цвета на экране
-     больше нет ни у чего. Рамка снимается — на инверсии она не разделяет, а
-     сдваивает край. Тень остаётся: тултип действительно плавает и действительно
-     сейчас исчезнет, то есть это первый смысл тени, а не второй.           */
+     An inverted surface does that with one trait: nothing else on the screen
+     is that colour. The border goes — on an inversion it does not separate,
+     it doubles the edge. The shadow stays: a tooltip really does float and
+     really is about to disappear, so this is the first meaning of a shadow
+     rather than a second one.                                              */
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
   background: var(--surface-inverse);
@@ -278,9 +286,9 @@
 .inst-tooltip:hover > .inst-tooltip-text,
 .inst-tooltip:focus-within > .inst-tooltip-text { opacity: 1; }
 
-/* Тултип в одну строку годится для короткой подписи. Как только внутри
-   предложение, nowrap растягивает его за край экрана — поэтому длинному
-   тексту нужен явный вариант с переносом и потолком ширины.             */
+/* A one-line tooltip suits a short label. As soon as there is a sentence
+   inside, nowrap stretches it past the edge of the screen — so long text
+   needs an explicit variant that wraps and has a ceiling on width.      */
 .inst-tooltip-text--wide {
   inline-size: max-content;
   max-inline-size: 22rem;
@@ -289,27 +297,30 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Модалка
+   Modal
 
-   Стилизуется нативный <dialog>. Открытие — одна строка: dlg.showModal().
-   Закрытие декларативно: кнопка с formmethod="dialog" внутри формы или
-   атрибут closedby="any".
+   A native <dialog>, styled. Opening is one line: dlg.showModal(). Closing is
+   declarative: a button with formmethod="dialog" inside a form, or the
+   closedby="any" attribute.
 
-   Модалка — второй и последний носитель тени в ките.
+   A modal is one of the five things in the kit that carry a shadow — see the
+   popover above for the rule.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-dialog {
-  /* Поле листа — СВОЁ, и живёт оно на компоненте, а не в ярусе ролей.
+  /* The padding of the sheet is its OWN, and it lives on the component
+     rather than in the role tier.
 
-     Ступенью выше карточки: лист висит над всем экраном и держит один вопрос,
-     карточка стоит в ряду таких же и экономит место соседям. Пробовал поднять
-     саму роль --pad-card — она держит ещё карточку выбора, обведённый
-     фильдсет, зону перетаскивания и блоки согласия, и раздувать их всех ради
-     диалога значит чинить не там.
+     A step above the card: a sheet hangs over the whole screen and holds one
+     question, a card stands in a row of its like and saves room for its
+     neighbours. Raising the --pad-card role itself does not work — that role
+     also holds the choice card, the outlined fieldset, the drop zone and the
+     consent blocks, and inflating all of them for the sake of a dialog is
+     fixing the wrong thing.
 
-     За плотностью не едет намеренно, по той же причине, что --tap-min и
-     --label-col: плотность про то, сколько строк влезет в список, а лист
-     показывает один вопрос — сжимать его не за чем.                       */
+     It deliberately does not ride density, for the same reason as --tap-min
+     and --label-col: density is about how many rows fit into a list, and a
+     sheet shows one question — there is nothing to compress.              */
   --dialog-pad: var(--space-7);
 
   margin: auto;
@@ -324,56 +335,57 @@
   overflow: hidden;
 }
 
-/* Раскладка задаётся только открытому: у <dialog> закрытое состояние — это
-   display: none, и безусловный display: flex показал бы модалку всегда.  */
+/* The layout is given to the open state only: a closed <dialog> is
+   display: none, and an unconditional display: flex would show the modal
+   always.                                                                */
 .inst-dialog[open] { display: flex; flex-direction: column; }
 
 .inst-dialog::backdrop { background: var(--scrim); }
 
-/* Блокировка прокрутки фона — и она тоже без JS.
+/* Locking the background scroll — also without JS.
 
-   showModal() делает содержимое под модалкой инертным для КЛИКОВ, но
-   прокрутку не останавливает: колесо продолжает крутить фон, и пользователь
-   теряет место, к которому вернётся после закрытия. :has() решает это одним
-   правилом.
+   showModal() makes the content under the modal inert to CLICKS but does not
+   stop scrolling: the wheel keeps turning the background, and the user loses
+   the place they will come back to. :has() settles that with one rule.
 
-   ЧТО ЭТО ДЕЛАЕТ И ЧЕГО НЕ ДЕЛАЕТ. Пользовательская прокрутка (колесо,
-   тачпад, клавиши) останавливается. Программный scrollTo — нет, и это
-   правильно: приложению может понадобиться подвести фон к нужному месту,
-   пока модалка открыта.
+   WHAT IT DOES AND DOES NOT DO. User scrolling — wheel, trackpad, keys —
+   stops. A programmatic scrollTo does not, and rightly so: an application may
+   need to bring the background to a particular place while the modal is open.
 
-   ПЛАТА. Если прокручивается сам ДОКУМЕНТ, в момент открытия исчезает
-   полоса прокрутки и содержимое сдвигается вбок на её ширину.
-   scrollbar-gutter здесь не спасает: резерв места действует только при
-   overflow auto/scroll, а у нас hidden.
+   THE PRICE. If the DOCUMENT itself is what scrolls, the scrollbar disappears
+   at the moment of opening and the content shifts sideways by its width.
+   scrollbar-gutter is no help here: the reservation applies only under
+   overflow auto/scroll, and this is hidden.
 
-   В приложении на .inst-shell документ не прокручивается вообще — прокручивается
-   .inst-shell-main, — поэтому сдвига нет и платить не за что. Если у вас
-   прокручивается именно документ, поставьте `scrollbar-gutter: stable` на
-   html постоянно: место будет зарезервировано заранее и ширина не изменится.
-   Кит не делает этого сам, потому что на нескроллящемся экране это была бы
-   пустая полоса в 10px у правого края.
+   In an application built on .inst-shell the document does not scroll at all —
+   .inst-shell-main does — so there is no shift and nothing to pay. If it is
+   the document that scrolls for you, put `scrollbar-gutter: stable` on html
+   permanently: the room is reserved in advance and the width does not change.
+   The kit does not do it for you, because on a non-scrolling screen that
+   would be an empty 10px strip at the trailing edge.
 
-   Селектор — `dialog:modal`, а НЕ `dialog[open]`. Атрибут [open] стоит и на
-   немодальном show(), у которого вся работа в том, чтобы НЕ блокировать
-   страницу: немодальная панель замораживала прокрутку всего документа. Хуже
-   того, правило глобальное — под него попадал любой <dialog> приложения, даже
-   без единого класса кита.                                                 */
+   The selector is `dialog:modal`, NOT `dialog[open]`. The [open] attribute is
+   also set by a non-modal show(), whose entire job is NOT to block the page:
+   a non-modal panel would freeze the scroll of the whole document. Worse, the
+   rule is global — it would catch any <dialog> in the application, even one
+   without a single class of the kit.                                        */
 html:has(dialog:modal) { overflow: hidden; }
 
-/* Модалка — ОДНА ПОВЕРХНОСТЬ, а не три этажа с перекрытиями.
+/* A modal is ONE SURFACE, not three storeys with overlaps.
 
-   Линейки под шапкой и над подвалом делят лист на три коробки, и на коротком
-   диалоге — а короткий он почти всегда, потому что задаёт один вопрос — это
-   три коробки вокруг двух строчек текста. Лист начинает выглядеть окном
-   приложения, тогда как он спрашивает и закрывается.
+   Rules under the header and over the footer split the sheet into three
+   boxes, and on a short dialog — and it is short almost always, because it
+   asks one question — that is three boxes around two lines of text. The sheet
+   starts to look like an application window when what it does is ask and
+   close.
 
-   Работу линеек берёт на себя отступ: он один и тот же у шапки, тела и
-   подвала, поэтому лист читается как лист.
+   The padding takes the work of those rules: it is the same for the header,
+   the body and the footer, so the sheet reads as a sheet.
 
-   Линейка остаётся нужной ровно в одном случае — когда тело ПРОКРУЧИВАЕТСЯ и
-   содержимое уезжает под шапку. Для него есть --scroll, и он объявлен явно,
-   а не выведен из длины: длину CSS не знает.                              */
+   A rule stays wanted in exactly one case — when the body SCROLLS and the
+   content slides under the header. For that there is --scroll, declared
+   explicitly rather than deduced from the length: CSS does not know the
+   length.                                                                 */
 .inst-dialog-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -390,8 +402,9 @@ html:has(dialog:modal) { overflow: hidden; }
   line-height: var(--leading-ui);
 }
 
-/* Подпись под заголовком: чего диалог хочет, если из заголовка это не следует
-   целиком. Тише и мельче — она обслуживает вопрос, а не задаёт его. */
+/* The sub-label under the title: what the dialog wants, when the title does
+   not say all of it. Quieter and smaller — it serves the question rather than
+   asking it. */
 .inst-dialog-sub {
   grid-area: 2 / 1;
   font-size: var(--text-sm);
@@ -399,8 +412,8 @@ html:has(dialog:modal) { overflow: hidden; }
   line-height: var(--leading-ui);
 }
 
-/* Крестик прижат к своему углу и не растягивает шапку: он в отдельной
-   колонке, а не в конце строки заголовка. */
+/* The close cross is pinned to its corner and does not stretch the header:
+   it is in a column of its own, not at the end of the title line. */
 .inst-dialog-close { grid-area: 1 / 2; margin-inline-start: 0; }
 
 .inst-dialog-body {
@@ -416,14 +429,16 @@ html:has(dialog:modal) { overflow: hidden; }
   align-items: end;
   gap: var(--space-3);
   flex: none;
-  /* Подвал прижат к правому краю по умолчанию: главное действие диалога стоит
-     последним, и искать его в середине листа неоткуда. */
+  /* The footer is pushed to the trailing edge by default: the dialog's main
+     action stands last, and there is no reason to hunt for it in the middle
+     of the sheet. */
   justify-content: flex-end;
   padding: var(--space-5) var(--dialog-pad) var(--dialog-pad) var(--dialog-pad);
 }
 
-/* Прокручиваемое тело — единственный случай, когда линейки нужны: без них
-   содержимое уезжает под шапку и выныривает из-под подвала без границы. */
+/* A scrolling body is the one case where the rules are wanted: without them
+   the content slides under the header and surfaces from under the footer with
+   no boundary at all. */
 .inst-dialog--scroll {
   & > form > .inst-dialog-head, & > .inst-dialog-head {
     border-block-end: var(--hairline) solid var(--border-subtle);
@@ -438,9 +453,9 @@ html:has(dialog:modal) { overflow: hidden; }
 .inst-dialog-foot--start { justify-content: flex-start; }
 .inst-dialog-foot-note { margin-inline-end: auto; font-size: var(--text-xs); color: var(--text-muted); }
 
-/* ── Шторка ─────────────────────────────────────────────────────────────────
-   Тот же <dialog>, другая раскладка: во всю высоту у края. Для длинных
-   форм и подробностей, которые не хочется терять из контекста.
+/* ── Sheet ──────────────────────────────────────────────────────────────────
+   The same <dialog>, a different layout: full height at an edge. For long
+   forms and for details one does not want to lose from context.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-sheet {
@@ -456,36 +471,39 @@ html:has(dialog:modal) { overflow: hidden; }
 
 .inst-sheet--start { margin-inline-start: 0; margin-inline-end: auto; border-inline: none; border-inline-end: var(--hairline) solid var(--border); }
 
-/* ── Тост ───────────────────────────────────────────────────────────────────
+/* ── Toast ──────────────────────────────────────────────────────────────────
 
-   Результат действия, которое запустил человек, — когда результату не место
-   на экране, куда он смотрит. «Прогон поставлен в очередь», «настройки
-   сохранены», «не удалось отправить».
+   The result of an action a person started — when the result has no place on
+   the screen they are looking at. "Run queued", "settings saved", "could not
+   send".
 
-   Это НЕ баннер: баннер про состояние экрана и живёт на нём, пока состояние
-   держится. Это и НЕ сноска: она поясняет то, рядом с чем стоит. Тост
-   привязан к МОМЕНТУ, а не к месту, и потому уходит сам.
+   This is NOT a banner: a banner is about the state of the screen and lives
+   on it as long as the state holds. Nor is it a note: a note explains what it
+   stands beside. A toast is tied to a MOMENT rather than to a place, and that
+   is why it leaves by itself.
 
-   ── Почему popover, а не z-index ──────────────────────────────────────────
+   ── Why a popover rather than a z-index ───────────────────────────────────
 
-   Тост обязан быть виден поверх модалки: подтвердили удаление в диалоге —
-   результат приходит туда же. Модалка, открытая через showModal(), живёт в
-   ВЕРХНЕМ СЛОЕ, а верхний слой не пробивается никаким z-index: 2000 в нём
-   проигрывает всегда. Поэтому область тостов сама объявлена popover.
+   A toast has to be visible over a modal: a deletion confirmed in a dialog
+   returns its result to the same place. A modal opened through showModal()
+   lives in the TOP LAYER, and no z-index gets through it: 2000 loses there
+   every time. So the toast region is itself declared a popover.
 
-   Токена --z-toast поэтому нет: применить его было бы некуда.
+   That is why there is no --z-toast token: there would be nowhere to apply
+   it.
 
-   ── Почему область открыта всегда ─────────────────────────────────────────
+   ── Why the region is always open ─────────────────────────────────────────
 
-   popover="manual" открывается один раз при инициализации и не закрывается.
-   Закрытый popover — это display: none, а живой регион в display: none не
-   озвучивается: скринридер не сообщил бы ни одного тоста. Пустая открытая
-   область невидима и ничего не перехватывает — pointer-events возвращаются
-   только самим тостам.
+   popover="manual" is opened once at initialisation and never closed. A
+   closed popover is display: none, and a live region in display: none is not
+   announced: a screen reader would report no toast at all. An empty open
+   region is invisible and intercepts nothing — pointer-events come back to
+   the toasts themselves only.
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-toasts {
-  /* Сброс UA-раскладки popover: она центрирует по экрану, а тостам нужен угол. */
+  /* Resetting the UA popover layout: it centres on the screen, and toasts
+     want a corner. */
   position: fixed;
   inset: auto var(--space-6) var(--space-6) auto;
   margin: 0;
@@ -501,15 +519,15 @@ html:has(dialog:modal) { overflow: hidden; }
   inline-size: min(24rem, 100vw - var(--space-8));
   max-block-size: 100dvh;
 
-  /* Область — не мишень. Клики проходят сквозь неё к странице; сами тосты
-     их возвращают.                                                        */
+  /* The region is not a target. Clicks pass through it to the page; the
+     toasts themselves take them back.                                     */
   pointer-events: none;
 
   &:popover-open { display: flex; }
 }
 
-/* Снизу вверх — умолчание: угол у действия ближе, чем шапка, и новый тост не
-   двигает те, что человек уже начал читать.                               */
+/* Bottom-up is the default: the corner is nearer the action than the header
+   is, and a new toast does not move the ones already being read.          */
 .inst-toasts--start { inset: var(--space-6) var(--space-6) auto auto; flex-direction: column-reverse; }
 
 .inst-toast {
@@ -525,12 +543,12 @@ html:has(dialog:modal) { overflow: hidden; }
   color: var(--text-primary);
   font-size: var(--text-sm);
   line-height: var(--leading-ui);
-  /* Третий и последний носитель тени в ките — и по той же причине, что у
-     первых двух: «плавает сверху и сейчас исчезнет».                      */
+  /* A shadow here for the same reason as everywhere else it is allowed:
+     "floating above and about to disappear".                              */
   box-shadow: var(--shadow-popover);
 
-  /* Появление и уход без единой строки JS: allow-discrete доигрывает переход
-     на display и overlay.                                                 */
+  /* Arriving and leaving without a line of JS: allow-discrete plays the
+     transition out on display and overlay.                                */
   opacity: 1;
   translate: 0 0;
   transition: opacity var(--dur-2) var(--ease-out),
@@ -547,8 +565,8 @@ html:has(dialog:modal) { overflow: hidden; }
   }
   &:not([data-tone])::before { content: none; }
 
-  /* Уходящий тост помечается атрибутом, а не удаляется мгновенно: переход
-     обязан доиграть, иначе строка исчезает рывком.                        */
+  /* A leaving toast is marked with an attribute rather than removed at once:
+     the transition has to play out, or the row vanishes with a jerk.      */
   &[data-state="leaving"] { opacity: 0; translate: var(--space-5) 0; }
 }
 
@@ -561,9 +579,9 @@ html:has(dialog:modal) { overflow: hidden; }
 .inst-toast-text { color: var(--text-secondary); font-size: var(--text-xs); }
 .inst-toast-actions { flex: none; display: flex; align-items: center; gap: var(--space-2); }
 
-/* Значки тона — тот же общий набор масок, что у сноски и баннера. Третий
-   компонент на одном источнике формы; заводить свой data-URI значило бы
-   завести второй источник истины для значка.                             */
+/* The tone glyphs are the same shared set of masks as on the note and the
+   banner. A third component on one source of shape; a data-URI of its own
+   would create a second source of truth for the glyph.                   */
 :is(.inst-toast)[data-tone="running"]::before, :is(.inst-toast)[data-tone="neutral"]::before {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M8 7.4v3.6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='5.2' r='.85' fill='%23000'/%3E%3C/svg%3E") center / contain no-repeat;
 }

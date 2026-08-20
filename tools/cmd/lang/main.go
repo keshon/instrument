@@ -83,6 +83,9 @@ var zones = []zone{
 			// английский целиком, и различать нечего.
 			"src/kit.js",
 			"dist/instrument.js",
+			"src/data.css",
+			"src/overlay.css",
+			"src/agent.css",
 		},
 		on:   true,
 		step: "2",
