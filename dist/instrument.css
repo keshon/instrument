@@ -1205,14 +1205,20 @@
      set in eleven rather than in fourteen.
 
      The measure is the same as for --size-icon, only the cap height differs:
-     11 × 0.71 = 8.0 against 10.0 at the base. The icon is due ink of 7.0–9.3,
-     that is a box of 12.5–16.5. The usual 18 gives 10.15 — the icon outweighs
-     the reading it stands for; a chevron at 10 gives 5.6 — the icon vanishes
-     altogether.
+     11 x 0.700 = 7.70 against 9.80 at the base. The icon is due ink level
+     with that, so a box of about 13.7: the usual 18 gives ink of 10.15 and
+     outweighs the reading it stands for, a chevron at 10 gives 5.6 and
+     vanishes altogether.
 
-     14 gives 7.9 against a cap height of 8.0, that is a ratio of 0.99. The
-     number is not new: it is --text-sm, and it is even — at a density of 1.5
-     exactly 21 device pixels.                                              */
+     14 gives ink of 7.90 against a cap height of 7.70, a ratio of 1.025. It
+     is the ONLY whole number that fits: 13 gives 1.182 of the type size and
+     15 gives 1.364, and the band admits 1.216…1.300. The number is not new
+     either — it is --text-sm, and at a density of 1.5 exactly 21 device
+     pixels.
+
+     The cap height here is 0.700 of the type size, measured with the CSS
+     `cap` unit. The 0.71 that stood in this comment was a model, and three
+     rungs of this ladder were once moved to satisfy a ruler cruder still.  */
   --size-icon-sm:  14px;
   --size-chevron:  10px;
   /* The tap-target norm, WCAG 2.2 AA (2.5.8). A token rather than a constant,
@@ -1399,21 +1405,21 @@
   --size-spinner:  15px;
   --size-icon:     19px;
   --size-icon-lg:  26px;
-  /* 16 rather than 14, though 14 stands on scale 14 too.
-     The cap height of --text-2xs stepped here and the icon did not: sizes of
-     11 → 11.5px round to 8 → 9 device pixels, and 14 gives ink of 7.9 against
-     a cap height of 9.0, a ratio of 0.877 against a body of 0.974…1.041.
-     16 gives 1.003.
+  /* 14, the same as on scale 14, and the ladder pausing here is not an
+     oversight. It stood at 16 for a while on the strength of a measurement
+     that said the cap height of --text-2xs stepped from 8 to 9 DEVICE PIXELS
+     while the icon did not. Cap height does not step: it is 0.700 of the type
+     size, and 11 -> 11.5px moves it 7.70 -> 8.05. The steps were an artefact
+     of a canvas that rounds the rasterised ascent to a whole pixel, and 16
+     put the icon 12% above the capital — further from level than any other
+     rung in the kit.
 
-     The same shape of defect sits on --size-icon-sm at scales 16 and 17, and
-     it is fixed the same way: a cap height that holds still while the type
-     keeps growing leaves the icon behind.
-
-     The --size-icon-sm ladder is 14-16-17-17-18: the plateau sits on 16 and 17,
-     where the cap height of --text-2xs holds at 10 device pixels while the type
-     keeps growing. The scale is set in whole pixels, and a step that the cap
-     height does not take is a step the icon must not take either. */
-  --size-icon-sm:  16px;
+     14 against 8.05 gives 0.981. The ladder is 14-14-16-16-18, and the pause
+     is what makes it tight enough to guard: the five ratios span 1.2174…
+     1.2857, narrower than a single pixel, so the band in cmd/proportion
+     refuses every one-pixel error. At 16 the span was 1.2727…1.3913 — wider
+     than a pixel, and no band could have separated the ladder from a defect. */
+  --size-icon-sm:  14px;
   --size-chevron:  11px;
   --size-tick:     3px;
   --size-marker:   2px;
@@ -1477,15 +1483,15 @@
   --size-spinner:  16px;
   --size-icon:     20px;
   --size-icon-lg:  28px;
-  /* 17 rather than 16, for the same reason as on scale 15 and against the same
-     measure. The cap height of --text-2xs steps 9 -> 10 device pixels here and
-     the icon does not move at all: 16 gives ink of 9.0 against a cap height of
-     10.0, a ratio of 0.902 against a band of 0.95…1.07. 17 gives 0.959.
+  /* 16 against --text-2xs of 12.5: cap height 8.75, ink 9.02, ratio 1.031 —
+     level with the capital, and level with the untouched rungs at either end
+     of the ladder. This rung read 17 for a while for the same reason as the
+     one on scale 15, and it was wrong the same way: 17 gives 1.096.
 
-     Against the type gate 17/12.5 = 1.36, inside 1.20…1.42 — and that band is
-     wide precisely because the fine part of this invariant is measured by the
-     pixel gate, where the cap height is real rather than modelled. */
-  --size-icon-sm:  17px;
+     Against the type gate 16/12.5 = 1.280, inside 1.216…1.300. That band is
+     narrow BECAUSE this ladder is tight, not despite it — see cmd/proportion,
+     where it is derived rung by rung.                                      */
+  --size-icon-sm:  16px;
   --size-chevron:  11px;
   --size-tick:     4px;
   --size-marker:   2px;
@@ -1543,11 +1549,13 @@
   --size-spinner:  17px;
   --size-icon:     22px;
   --size-icon-lg:  30px;
-  /* 17, not 16: the cap height of --text-2xs stays at 10 device pixels from
-     scale 16 to 17 while the type grows 12.5 -> 13px, so the icon that fell
-     behind on 16 is still behind here. 16 gives 0.902, 17 gives 0.959.
-     Against the type gate 17/13 = 1.308. */
-  --size-icon-sm:  17px;
+  /* 16 against --text-2xs of 13: cap height 9.10, ink 9.02, ratio 0.992. The
+     old comment here said the cap height "stays at 10 device pixels" from
+     scale 16 to 17 while the type grows — it does not stay anywhere, it goes
+     9.10 from 8.75. Whole device pixels were the canvas talking.
+
+     Against the type gate 16/13 = 1.231.                                   */
+  --size-icon-sm:  16px;
   --size-chevron:  12px;
   --size-tick:     4px;
   --size-marker:   2px;

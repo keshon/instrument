@@ -62,7 +62,9 @@ var rules = []rule{
 	// ── Glyph against text ─────────────────────────────────────────────────
 	// The icon and spinner sit next to a label and are measured NOT by the box,
 	// but by how their ink looks against the uppercase letter. Uppercase is
-	// about 0.71 of the type size, icon ink is 9.02 from a box of 16, or 0.564.
+	// 0.700 of the type size — measured with the CSS `cap` unit, which asks the
+	// font rather than the raster; the 0.71 that stood here was a guess that
+	// happened to be close. Icon ink is 9.02 from a box of 16, or 0.564.
 	// Hence the band: icon box to base type size.
 	{label: "icon to base type size", a: "--size-icon", b: "--text-sm", min: 1.20, max: 1.34, perDens: true,
 		why: "icon next to the label reads tiny or overwhelms it instead"},
@@ -70,24 +72,38 @@ var rules = []rule{
 	// --text-2xs, so its icon must be measured against the uppercase of eleven,
 	// not fourteen: ordinary 18 against 11 gives 1.64 and outweighs the readout.
 	//
-	// The band is WIDER than its neighbor, and this is not leniency. The measure
-	// relies on the model "uppercase = 0.71 × type size", while the browser
-	// renders uppercase in whole pixels. At --text-2xs = 11.5px the model gives
-	// 8.16, the measured value is 9 — a 10% discrepancy, caused exactly by the
-	// fact that one device pixel at this type size is 12% of the value. A linear
-	// model cannot allow one pixel in principle.
+	// This band used to be 1.20…1.42 — wider than its neighbour — and the
+	// widening had a reason written out at length: the model "uppercase = 0.71
+	// of the type size" could not resolve one device pixel, so the fine part of
+	// the invariant was delegated to the pixel gate where uppercase was REAL.
+	// Every word of that was wrong. The pixel gate measured uppercase with a
+	// canvas, which reports the RASTERISED ascent rounded to a whole pixel and
+	// was off by 0.8px; the real cap height of this family is a clean 0.700 of
+	// the type size and resolves nothing in pixels at all. Three rungs of the
+	// --size-icon-sm ladder were raised to satisfy that canvas, and the band was
+	// widened to 1.42 to admit them. The band was fitted to the correction, and
+	// the correction was fitted to a broken ruler.
 	//
-	// Therefore this check no longer pretends to measure the fine part of the
-	// invariant: that is measured by the pixel gate, where uppercase is REAL,
-	// with a band of 0.95…1.07 (tools/audit.js). What remains here is the coarse
-	// rule — "the icon does not outweigh the readout and does not disappear
-	// beside it": 1.64 still fails, while the entire 1.231…1.391 body passes.
+	// The ladder went back to 14-14-16-16-18, and with it the band is DERIVED
+	// rather than chosen. The five ratios are 1.2174…1.2857. Move any one rung
+	// by a single pixel and the highest such value below the body is 1.2143
+	// (17/14, scale 18) and the lowest above it is 1.3043 (15/11.5, scale 15).
+	// The body therefore fits strictly between two defects, and a band exists
+	// that admits every honest rung and refuses every one-pixel error:
 	//
-	// Two checks of one invariant through different intermediaries are exactly
-	// why the icon stood behind at scale 15 for a year: the text check said
-	// "in band", the pixel check said "violation", and both were right about
-	// their own model.
-	{label: "small icon to its type size", a: "--size-icon-sm", b: "--text-2xs", min: 1.20, max: 1.42, perDens: true,
+	//     1.2143  <  [ 1.2174 … 1.2857 ]  <  1.3043
+	//              ^                    ^
+	//              1.216                1.300
+	//
+	// The lower margin is 0.003 and that is the POINT rather than a fragility:
+	// it is smaller than the smallest step this quantity can take, so nothing
+	// broken can hide inside it. Its neighbour above cannot be tightened this
+	// way — the --size-icon ladder spans 1.25…1.3333 while a one-pixel error
+	// reaches 1.2778 and 1.3125, so its body and its defects OVERLAP and no
+	// global band separates them. The two bands are different numbers because
+	// the two ladders are different objects, and that is now a derivation
+	// rather than a preference.
+	{label: "small icon to its type size", a: "--size-icon-sm", b: "--text-2xs", min: 1.216, max: 1.300, perDens: true,
 		why: "icon in the status row overwhelms the readout or disappears beside it"},
 	{label: "spinner to base type size", a: "--size-spinner", b: "--text-sm", min: 0.92, max: 1.20, perDens: true,
 		why: "busy indicator takes the label's place and must be its height"},

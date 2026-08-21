@@ -134,6 +134,18 @@ var mutations = []mutation{
 		"a tap target under 24 and without the gap that compensates for the size"},
 
 	// ── proportion ─────────────────────────────────────────────────────────
+	// The rung the ladder pauses on. It was 16 for a while, raised to satisfy a
+	// canvas that rounded the rasterised cap height to a whole pixel, and the
+	// band was widened to 1.42 to admit it — at which point a one-pixel error
+	// on this very rung fitted inside the band and nothing was guarding it at
+	// all. With the ladder back at 14-14-16-16-18 the body spans 1.2174…1.2857,
+	// narrower than one pixel, and all ten one-pixel errors across the five
+	// rungs come out red. This mutation holds ONE of the ten so the property
+	// does not quietly lapse the next time the ladder is touched.
+	{"the small-icon ladder lost its pause", "proportion", "src/tokens.css",
+		"than a pixel, and no band could have separated the ladder from a defect. */\n  --size-icon-sm:  14px;",
+		"than a pixel, and no band could have separated the ladder from a defect. */\n  --size-icon-sm:  15px;",
+		"one pixel on the rung where the band is tightest"},
 	{"type steps merged", "proportion", "src/tokens.css",
 		"--text-xs:  0.78125rem;",
 		"--text-xs:  0.86rem;",
