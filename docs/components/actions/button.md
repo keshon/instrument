@@ -311,7 +311,9 @@ group-en: "Actions"
 
 ### Полоса действий формы
 
-Главное действие последнее, отмена перед ним, обе прижаты к дальнему краю.
+Главное действие стоит у внешнего края полосы. Здесь полоса прижата к концу
+строки, поэтому главное идёт последним, а отмена перед ним; при выравнивании
+к началу порядок обратный — см. [форму](../inputs/form.md).
 
 ```html preview context
 <form class="inst-panel">
@@ -320,7 +322,7 @@ group-en: "Actions"
       <label class="inst-label" for="p-name">Имя прогона</label>
       <input class="inst-input" id="p-name" type="text" value="nightly-4127">
     </div>
-    <div class="inst-form-actions">
+    <div class="inst-form-actions inst-form-actions--end">
       <button class="inst-btn" type="button">Отмена</button>
       <button class="inst-btn inst-btn--primary" type="submit">Сохранить</button>
     </div>

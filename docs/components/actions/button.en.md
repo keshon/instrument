@@ -315,8 +315,10 @@ pixel, so a shift of half a pixel left a visible thickening at every joint.
 
 ### The action bar of a form
 
-The principal action is last, cancel before it, and both are pushed to the far
-edge.
+The principal action stands at the outer edge of the bar. Here the bar is
+pushed to the end of the line, so the principal one goes last with cancel
+before it; aligned to the start the order is the reverse — see
+[the form](../inputs/form.md).
 
 ```html preview context
 <form class="inst-panel">
@@ -325,7 +327,7 @@ edge.
       <label class="inst-label" for="p-name">Run name</label>
       <input class="inst-input" id="p-name" type="text" value="nightly-4127">
     </div>
-    <div class="inst-form-actions">
+    <div class="inst-form-actions inst-form-actions--end">
       <button class="inst-btn" type="button">Cancel</button>
       <button class="inst-btn inst-btn--primary" type="submit">Save</button>
     </div>
