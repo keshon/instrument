@@ -928,7 +928,13 @@
 
   & > .inst-copy {
     position: absolute;
-    inset-block-start: var(--pad-block-y);
+    /* CENTRED ON THE FIRST LINE, not pinned to the padding edge. The two are
+       the same thing only when the glyph happens to be as tall as a line, and
+       it is not: 14 against 20. Pinned, the button sat 2.3px high, which on a
+       one-line listing — a command, a path, the most frequent kind — reads as
+       a button that missed its row. The formula is the kit's own, the one the
+       consequence list uses to meet a mark with the line beside it. */
+    inset-block-start: calc(var(--pad-block-y) + (var(--code-line) - var(--size-icon-sm)) / 2);
     /* The same inset as the text on the leading side: the glyph stands on the
        edge of the frame, neither nearer nor further. */
     inset-inline-end: var(--pad-panel);

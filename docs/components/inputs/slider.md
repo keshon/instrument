@@ -44,23 +44,14 @@ A slider stretches to **100% of the width of its container**. In a row with
 other elements give it an explicit `flex` and `min-inline-size: 0`, otherwise
 it pushes its neighbour onto the next line.
 
-The keyboard is entirely native: the arrows give a step, `PageUp` and
-`PageDown` a large step, `Home` and `End` the ends of the range. The `slider`
-role and `aria-valuenow` come from the platform; by hand only `aria-valuetext`
-is wanted where the number by itself is unclear — "6 agents" rather than "6".
-The name is given by a `<label for>` or an `aria-label`, and the number is
-output through an `<output>` and is not mixed into the name.
+The keyboard, the `slider` role and `aria-valuenow` are the platform's. By hand
+only `aria-valuetext` is wanted where the number alone is unclear — "6 agents"
+rather than "6".
 
-The focus ring is drawn around the control entire: a thumb of 14px would not
-hold it. The thumb itself holds 3:1 against the surface and against the track
-alike — a ring the colour of the surface parts them where they overlap.
-
-The tap target of the thumb is 14px, that is **below the 24px of WCAG 2.5.8**.
-The press is taken by the track across the whole height of `--size-icon`, and
-the position is reachable from the keyboard; where a slider is the only way to
-set a value, [a number field](./num-field.md) is put beside it. Precision is
-not its job at all: hitting a particular number depends on motor control, and
-the pair "a slider plus a field" settles that.
+The thumb's target is 14px, **below the 24px of WCAG 2.5.8**: the press is taken
+by the track across the whole height of `--size-icon`, and the position is
+reachable from the keyboard. Where a slider is the only way to set a value, put
+[a number field](./num-field.md) beside it — precision is not a slider's job.
 
 ## Anatomy
 
@@ -114,9 +105,6 @@ not update.
 </div>
 ```
 
-The example is live: drag the thumb — the number is changed by
-`instrument.js`.
-
 An `<output for>` ties the number to the slider semantically, so there is no
 need to repeat it in an `aria-label` — and it should not be: a label changing
 at every step turns the announcement into noise.
@@ -133,17 +121,9 @@ arrived later.
 
 ### What `instrument.js` does
 
-The example in the "Outputting the value" section is live: drag the thumb and
-the number beside it is changed by `instrument.js`.
-
-It keeps the current value of the thumb in the `<output for>` — on input and on
-the loading of the page. The tie is declared by the `for` attribute already;
-synchronising it by hand would mean writing one and the same line in every
-application.
-
-Without the module the slider **works entire**: the value goes with the form
-and a screen reader announces it at every step. Only the visible number does
-not update.
+Keeps the `<output for>` at the thumb's value, on input and on load. The tie is
+declared by the `for` attribute already; synchronising it by hand would mean
+writing one and the same line in every application.
 
 ### Events
 

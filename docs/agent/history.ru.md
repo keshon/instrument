@@ -173,7 +173,7 @@ api:
 ## Размеры
 
 ```html preview
-<div class="inst-stack" style="max-inline-size:22rem">
+<div class="inst-stack" style="align-items:start">
   <div class="inst-history inst-history--sm" role="img" aria-label="Мелкая: восемь проверок, одна с ошибкой">
     <span class="inst-history-tick" data-tone="ok"></span>
     <span class="inst-history-tick" data-tone="ok"></span>
@@ -216,7 +216,7 @@ api:
 ## Состояния
 
 ```html preview
-<div class="inst-stack" style="max-inline-size:22rem">
+<div class="inst-stack" style="align-items:start">
   <div class="inst-history" role="img" aria-label="Всё успешно">
     <span class="inst-history-tick" data-tone="ok"></span>
     <span class="inst-history-tick" data-tone="ok"></span>

@@ -51,12 +51,18 @@
 .inst-log-level { inline-size: 5ch; color: var(--level-ink, var(--text-muted)); }
 
 .inst-code {
+  /* The line box, named once. Anything positioned against a LINE of the
+     listing rather than against its padding edge needs this number, and the
+     copy button in the corner is exactly that — `1lh` would give it its own
+     line-height the moment it is composed onto `.inst-btn`, which sets 1. */
+  --code-line: calc(var(--text-xs) * 1.6);
+
   background: var(--surface-sunken);
   border: var(--hairline) solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: var(--pad-block-y) var(--pad-panel);
   font-size: var(--text-xs);
-  line-height: 1.6;
+  line-height: var(--code-line);
   overflow: auto;
   scrollbar-gutter: stable;
 }

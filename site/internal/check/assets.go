@@ -16,6 +16,10 @@ import (
 var ownVars = map[string]bool{
 	"--c": true, "--v": true,
 	"--code-tag": true, "--code-attr": true, "--code-val": true,
+	// --code-line is the listing's line box: the copy button in the corner is
+	// positioned against a LINE rather than against the padding edge, and the
+	// number has to be stated once for the two rules that need it.
+	"--code-line": true,
 }
 
 var (

@@ -174,7 +174,7 @@ the ninth had twelve and is wide.
 ## Sizes
 
 ```html preview
-<div class="inst-stack" style="max-inline-size:22rem">
+<div class="inst-stack" style="align-items:start">
   <div class="inst-history inst-history--sm" role="img" aria-label="Small: eight checks, one with an error">
     <span class="inst-history-tick" data-tone="ok"></span>
     <span class="inst-history-tick" data-tone="ok"></span>
@@ -217,7 +217,7 @@ the ninth had twelve and is wide.
 ## States
 
 ```html preview
-<div class="inst-stack" style="max-inline-size:22rem">
+<div class="inst-stack" style="align-items:start">
   <div class="inst-history" role="img" aria-label="Everything succeeded">
     <span class="inst-history-tick" data-tone="ok"></span>
     <span class="inst-history-tick" data-tone="ok"></span>

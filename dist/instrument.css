@@ -5202,12 +5202,18 @@ hr {
 .inst-log-level { inline-size: 5ch; color: var(--level-ink, var(--text-muted)); }
 
 .inst-code {
+  /* The line box, named once. Anything positioned against a LINE of the
+     listing rather than against its padding edge needs this number, and the
+     copy button in the corner is exactly that — `1lh` would give it its own
+     line-height the moment it is composed onto `.inst-btn`, which sets 1. */
+  --code-line: calc(var(--text-xs) * 1.6);
+
   background: var(--surface-sunken);
   border: var(--hairline) solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: var(--pad-block-y) var(--pad-panel);
   font-size: var(--text-xs);
-  line-height: 1.6;
+  line-height: var(--code-line);
   overflow: auto;
   scrollbar-gutter: stable;
 }
@@ -8674,7 +8680,13 @@ html:has(dialog:modal) { overflow: hidden; }
 
   & > .inst-copy {
     position: absolute;
-    inset-block-start: var(--pad-block-y);
+    /* CENTRED ON THE FIRST LINE, not pinned to the padding edge. The two are
+       the same thing only when the glyph happens to be as tall as a line, and
+       it is not: 14 against 20. Pinned, the button sat 2.3px high, which on a
+       one-line listing — a command, a path, the most frequent kind — reads as
+       a button that missed its row. The formula is the kit's own, the one the
+       consequence list uses to meet a mark with the line beside it. */
+    inset-block-start: calc(var(--pad-block-y) + (var(--code-line) - var(--size-icon-sm)) / 2);
     /* The same inset as the text on the leading side: the glyph stands on the
        edge of the frame, neither nearer nor further. */
     inset-inline-end: var(--pad-panel);

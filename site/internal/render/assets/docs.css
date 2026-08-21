@@ -463,7 +463,7 @@
   padding-block: var(--space-8);
 }
 
-.demo-stage:has(> .demo-root > :is(.inst-panel, .inst-card, .inst-split, .inst-container, .inst-grid, .inst-shell)) {
+.demo-stage:has(> .demo-root > :is(.inst-panel, .inst-card, .inst-split, .inst-container, .inst-grid, .inst-shell, .inst-accordion)) {
   background-color: var(--surface-page);
   background-image: repeating-linear-gradient(
     -45deg,
@@ -590,10 +590,15 @@
    side field of the stage cuts the first and last points off the series. */
 .demo-stage:has(> .demo-root > .inst-sparkline) { padding-inline: 0; }
 
-/* A tooltip opens UPWARDS and is positioned absolutely: without room above it
-   goes under the edge of the stage. A negative coordinate is not cured by
-   fitting the height. */
-.demo-root:has(.inst-tooltip) { padding-block-start: 4.5rem; }
+/* THE STRIP RESERVED FOR A TOOLTIP IS GONE, and so is what it was reserved
+   against. A hint used to occupy its box while invisible, so a frame either
+   made room above it or clipped it; 4.5rem was that room, and it stood empty
+   on every visit — 121 pixels of nothing over a 32px control — for the sake of
+   something that appears on hover.
+
+   A hidden hint is now out of the layout entirely (see the kit), and the frame
+   already lifts its clipping for this component in the rule above, so on hover
+   the plate simply floats out over the edge. That is what a tooltip does. */
 
 /* ── Showing the material ─────────────────────────────────────────────────
 
@@ -793,13 +798,13 @@
 
 /* ── Code ───────────────────────────────────────────────────────────────── */
 
-.code-block { position: relative; }
+.code-block { position: relative; --code-line: calc(var(--text-xs) * 1.6); }
 .code-block pre {
   margin: 0; overflow: auto; scrollbar-gutter: stable;
   padding: var(--space-5) var(--pad-panel);
   background: var(--surface-sunken);
   border-radius: var(--radius-md);
-  font-size: var(--text-xs); line-height: 1.6;
+  font-size: var(--text-xs); line-height: var(--code-line);
 }
 .code-block--demo pre { border-radius: 0; border-block-start: var(--hairline) solid var(--border-subtle); }
 .code-block code { font-size: inherit; }
@@ -821,7 +826,11 @@
    not line up with anything, and invisible as a cause. */
 .code-copy {
   position: absolute;
-  inset-block-start: var(--space-5); inset-inline-end: var(--pad-panel);
+  /* Centred on the FIRST LINE rather than pinned to the padding edge — the
+     same correction the kit's own button needed, in the other direction: this
+     one is a 26px control against a 20px line, so pinned it sat 3px low. */
+  inset-block-start: calc(var(--space-5) + (var(--code-line) - var(--control-h-sm)) / 2);
+  inset-inline-end: var(--pad-panel);
 }
 
 /* Two icons in the markup, the switching here. The href of a <use> cannot be
