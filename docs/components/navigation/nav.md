@@ -1,149 +1,149 @@
 ---
-title: Навигация
-group: Навигация
+title: Navigation
+group: Navigation
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-nav", kind: "класс", doc: "Контейнер списка. Колонка с зазором `--space-1`" }
-  - { name: "inst-nav-group", kind: "класс", doc: "Смысловой блок пунктов" }
-  - { name: "inst-nav-label", kind: "класс", doc: "Подпись группы" }
-  - { name: "inst-nav-item", kind: "класс", doc: "Пункт. Ссылка, а не кнопка" }
-  - { name: "inst-nav-count", kind: "класс", doc: "Прижать счётчик к дальнему краю пункта" }
-  - { name: "--control-h-md", kind: "токен" }
-  - { name: "--radius-sm", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--text-2xs", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--space-1", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--size-marker", kind: "токен" }
-  - { name: "--surface-hover", kind: "токен" }
-  - { name: "--surface-selected", kind: "токен" }
-  - { name: "--accent-solid", kind: "токен" }
-  - { name: "--accent-text", kind: "токен" }
-  - { name: "--text-secondary", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-  - { name: "--dur-1", kind: "токен" }
-  - { name: "--ease-out", kind: "токен" }
-title-en: "Navigation"
-group-en: "Navigation"
+  - { name: "inst-nav", kind: "class", doc: "The container of the list. A column with a gap of `--space-1`" }
+  - { name: "inst-nav-group", kind: "class", doc: "A meaningful block of items" }
+  - { name: "inst-nav-label", kind: "class", doc: "The label of a group" }
+  - { name: "inst-nav-item", kind: "class", doc: "An item. A link rather than a button" }
+  - { name: "inst-nav-count", kind: "class", doc: "Pushes a counter to the far edge of an item" }
+  - { name: "--control-h-md", kind: "token" }
+  - { name: "--radius-sm", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--text-2xs", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--space-1", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--pad-panel", kind: "token" }
+  - { name: "--size-marker", kind: "token" }
+  - { name: "--surface-hover", kind: "token" }
+  - { name: "--surface-selected", kind: "token" }
+  - { name: "--accent-solid", kind: "token" }
+  - { name: "--accent-text", kind: "token" }
+  - { name: "--text-secondary", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
+  - { name: "--dur-1", kind: "token" }
+  - { name: "--ease-out", kind: "token" }
 ---
 
-Список разделов приложения в боковой колонке. Текущий пункт помечен не только
-цветом: у его края стоит несущая полоса.
+The list of an application's sections in the side column. The current item is
+marked by more than colour: a load-bearing bar stands at its edge.
 
 ```html preview
-<nav class="inst-nav" aria-label="Разделы">
+<nav class="inst-nav" aria-label="Sections">
   <div class="inst-nav-group">
-    <span class="inst-nav-label">Работа</span>
+    <span class="inst-nav-label">Work</span>
     <a class="inst-nav-item" href="#" aria-current="page">
-      <svg class="inst-icon" aria-hidden="true"><use href="#i-grid"/></svg>Прогоны
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-grid"/></svg>Runs
       <span class="inst-badge inst-nav-count">7</span></a>
     <a class="inst-nav-item" href="#">
-      <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>Очередь</a>
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>Queue</a>
     <a class="inst-nav-item" href="#">
-      <svg class="inst-icon" aria-hidden="true"><use href="#i-chart"/></svg>Отчёты</a>
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-chart"/></svg>Reports</a>
   </div>
   <div class="inst-nav-group">
-    <span class="inst-nav-label">Настройка</span>
+    <span class="inst-nav-label">Setup</span>
     <a class="inst-nav-item" href="#">
-      <svg class="inst-icon" aria-hidden="true"><use href="#i-users"/></svg>Доступы</a>
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-users"/></svg>Access</a>
     <a class="inst-nav-item" href="#">
-      <svg class="inst-icon" aria-hidden="true"><use href="#i-settings"/></svg>Параметры</a>
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-settings"/></svg>Parameters</a>
   </div>
 </nav>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<nav>` + `aria-label` | да | На экране больше одной навигации (боковая, крошки, вкладки, страницы) — без имени они неразличимы в списке ориентиров |
-| `<a href>` у пункта | да | Навигация — это адрес. Кнопка ломает средний клик, «открыть в новой вкладке» и копирование ссылки |
-| `aria-current="page"` | да | Единственный источник текущего состояния. Класса для него нет |
-| `aria-hidden="true"` у иконки | да | Имя пункта даёт подпись |
-| Текущий пункт — полосой у края, не только цветом | да | Носитель, не зависящий от цвета. `aria-current` сообщает то же скринридеру |
+| A `<nav>` + an `aria-label` | yes | There is more than one navigation on a screen (the side one, breadcrumbs, tabs, pages) — with no name they are indistinguishable in the list of landmarks |
+| An `<a href>` on an item | yes | Navigation is an address. A button breaks the middle click, "open in a new tab" and copying the link |
+| An `aria-current="page"` | yes | The only source of the current state. There is no class for it |
+| An `aria-hidden="true"` on the icon | yes | The name of the item is given by the label |
+| The current item by a bar at the edge rather than by colour alone | yes | A carrier that does not depend on colour. `aria-current` tells a screen reader the same |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Клавиатура | Всё от нативных ссылок: `Tab` — обход, `Enter` — переход. `instrument.js` ничего не перехватывает, бегущий `tabindex` навигации не нужен |
-| Ориентир | `<nav aria-label>` — пункт назначения для «перейти к ориентиру» в скринридере |
-| Цвет не единственный носитель | Текущий пункт несёт полосу у края и `aria-current`, а не один только оттенок фона |
-| Цель нажатия | Высота пункта — `--control-h-md`, 32px. В плотности `compact` она уменьшается: применяйте `compact` к табличным видам, а не к основной навигации |
-| Контраст | Подпись `--text-secondary` держит 4.5:1 на приглушённой поверхности колонки в пяти темах |
-| Печать | Боковая колонка не печатается: это хром приложения, а не данные |
+| The keyboard | All of it from native links: `Tab` traverses, `Enter` goes. `instrument.js` intercepts nothing, and navigation needs no roving `tabindex` |
+| The landmark | A `<nav aria-label>` is a destination for "go to a landmark" in a screen reader |
+| Colour is not the only carrier | The current item carries a bar at its edge and an `aria-current` rather than a shade of background alone |
+| The tap target | The height of an item is `--control-h-md`, 32px. At density `compact` it shrinks: apply `compact` to tabular views rather than to the main navigation |
+| Contrast | The label `--text-secondary` holds 4.5:1 on the muted surface of the column in five themes |
+| Print | The side column is not printed: it is the chrome of the application rather than data |
 
-## Устройство
+## Anatomy
 
-`inst-nav-group` собирает пункты в смысловой блок, `inst-nav-label` его
-подписывает. Зазор между группами ставится **между соседями**
-(`.inst-nav-group + .inst-nav-group`), а не вокруг каждой, — иначе первая
-группа отступила бы от верхнего края колонки вдвое дальше, чем от боковых.
+`inst-nav-group` gathers the items into a meaningful block and
+`inst-nav-label` labels it. The gap between groups is set **between neighbours**
+(`.inst-nav-group + .inst-nav-group`) rather than around each — otherwise the
+first group would step away from the top edge of the column twice as far as
+from the sides.
 
-Подпись — обычное предложение кеглем `--text-2xs` цветом `--text-muted`. Капса
-здесь нет: подпись не имеет права звучать громче пунктов, которые она
-подписывает.
+The label is an ordinary sentence at size `--text-2xs` in the colour
+`--text-muted`. There are no capitals here: a label has no right to sound
+louder than the items it labels.
 
-## Состояния
+## States
 
 ```html preview
-<nav class="inst-nav" aria-label="Пример текущего пункта">
+<nav class="inst-nav" aria-label="An example of the current item">
   <div class="inst-nav-group">
-    <a class="inst-nav-item" href="#" aria-current="page">Прогоны</a>
-    <a class="inst-nav-item" href="#">Очередь</a>
+    <a class="inst-nav-item" href="#" aria-current="page">Runs</a>
+    <a class="inst-nav-item" href="#">Queue</a>
   </div>
 </nav>
 ```
 
-Метка ставится атрибутом `aria-current="page"`, а не классом. Оформление ловит
-селектор `[aria-current]:not([aria-current="false"])`, поэтому строчка
-`aria-current="false"` у остальных пунктов допустима и ничего не подсвечивает.
+The mark is set by the attribute `aria-current="page"` rather than by a class.
+The styling is caught by the selector
+`[aria-current]:not([aria-current="false"])`, so an `aria-current="false"` on
+the other items is allowed and highlights nothing.
 
-| Признак текущего | Что даёт |
+| The mark of the current one | What it gives |
 |---|---|
-| Полоса у внутреннего края | `box-shadow: inset` шириной `--size-marker`. Носитель, не зависящий от цвета |
-| Поверхность | `--surface-selected` |
-| Цвет подписи | `--accent-text` |
-| Начертание | `--weight-medium`. Веса 700 в библиотеке нет |
+| A bar at the inner edge | A `box-shadow: inset` of width `--size-marker`. A carrier that does not depend on colour |
+| The surface | `--surface-selected` |
+| The colour of the label | `--accent-text` |
+| The weight | `--weight-medium`. There is no weight 700 in the library |
 
-## Поведение
+## Behavior
 
-### В узкой оболочке
+### In a narrow shell
 
-Внутри `.inst-shell-aside` ниже 60rem колонка разворачивается в горизонтальную
-полосу: `.inst-nav` и `.inst-nav-group` встают в ряд, `.inst-nav-label`
-скрывается, подписи пунктов перестают переноситься. Это единственное место, где
-навигация меняет форму, и делает это [оболочка](../../layout/shell.md), а не
-сама навигация.
+Inside a `.inst-shell-aside` below 60rem the column unfolds into a horizontal
+strip: `.inst-nav` and `.inst-nav-group` line up in a row, `.inst-nav-label` is
+hidden and the labels of the items stop wrapping. That is the one place where
+navigation changes shape, and it is done by [the shell](../../layout/shell.md)
+rather than by the navigation itself.
 
-## Композиции
+## Composition
 
-### Счётчик в пункте
+### A counter in an item
 
 ```html preview
-<nav class="inst-nav" aria-label="Пример со счётчиком">
+<nav class="inst-nav" aria-label="An example with a counter">
   <div class="inst-nav-group">
-    <a class="inst-nav-item" href="#">Очередь
+    <a class="inst-nav-item" href="#">Queue
       <span class="inst-badge inst-nav-count">7</span></a>
-    <a class="inst-nav-item" href="#">История</a>
+    <a class="inst-nav-item" href="#">History</a>
   </div>
 </nav>
 ```
 
-`inst-nav-count` — модификатор положения: `margin-inline-start: auto` прижимает
-[бейдж](../display/badge.md) к дальнему краю пункта. Сам бейдж остаётся
-бейджем и читает те же токены.
+`inst-nav-count` is a modifier of position: a `margin-inline-start: auto`
+pushes [the badge](../display/badge.md) to the far edge of the item. The badge
+itself stays a badge and reads the same tokens.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

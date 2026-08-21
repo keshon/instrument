@@ -94,13 +94,19 @@ async function pages() {
      a glyph outweighs the type beside it. An English label is a different
      length from the Russian one, so a page that passed in one spelling says
      nothing about the other. */
-  const roots = ['/', '/en/'];
   const seen = new Set();
+  const roots = ['/'];
   for (const root of roots) {
     const r = await fetch(BASE + root);
     if (!r.ok) continue;
     const html = await r.text();
-    for (const m of html.matchAll(/href="(\/[^"#]*?)"/g)) seen.add(m[1]);
+    for (const m of html.matchAll(/href="(\/[^"#]*?)"/g)) {
+      seen.add(m[1]);
+      /* A two-letter root is the OTHER language, and it is found rather than
+         named: which language sits at the bare root is a decision of the site,
+         and it has already changed once. */
+      if (/^\/[a-z]{2}\/$/.test(m[1]) && !roots.includes(m[1])) roots.push(m[1]);
+    }
   }
   const uniq = [...seen].filter(
     (h) => h.endsWith('/') && h.startsWith(FILTER || '/'),

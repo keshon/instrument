@@ -1,113 +1,111 @@
 ---
-title: Группа кнопок
-group: Действия
+title: Button group
+group: Actions
 layout: component
 source: src/actions.css
 api:
-  - { name: "inst-btn-group", kind: "класс", doc: "Контейнер. Внутри — только `inst-btn`" }
-  - { name: "--radius-md", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-title-en: "Button group"
-group-en: "Actions"
+  - { name: "inst-btn-group", kind: "class", doc: "The container. Only `inst-btn` inside it" }
+  - { name: "--radius-md", kind: "token" }
+  - { name: "--hairline", kind: "token" }
 ---
 
-Несколько разных действий, поставленных вплотную. Группа говорит «эти действия
-про одно и то же», но каждое остаётся самостоятельным.
+Several different actions standing flush. A group says "these actions are about
+the same thing", while each of them stays on its own.
 
 ```html preview
 <div class="inst-btn-group">
-  <button class="inst-btn inst-btn--sm" type="button">Слева</button>
-  <button class="inst-btn inst-btn--sm" type="button">Центр</button>
-  <button class="inst-btn inst-btn--sm" type="button">Справа</button>
+  <button class="inst-btn inst-btn--sm" type="button">Left</button>
+  <button class="inst-btn inst-btn--sm" type="button">Centre</button>
+  <button class="inst-btn inst-btn--sm" type="button">Right</button>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Группа не добавляет ролей: каждая кнопка объявляет себя сама — в этом и отличие
-от [сегментированного контрола](./segmented.md), где роль обязательна.
+A group adds no roles: every button declares itself — that is the difference
+from [the segmented control](./segmented.md), where the role is obligatory.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `.inst-btn-group` на контейнере | да | Снимает рамку у соседа и скругляет только торцы; без него кнопки стоят рядом, а не в группе |
-| Обычные `.inst-btn` внутри | да | Группа — это раскладка, а не новый компонент: кнопка внутри неё остаётся кнопкой |
-| Один размер на всю группу | да | Соседние кнопки разной высоты дают ступеньку на шве, и её видно на любом фоне |
-| Своё имя у каждой кнопки | да | Группа не нуждается в `aria-label`: она не один контрол, а несколько действий рядом |
-| Бегущий `tabindex` | **нет, это ошибка** | `Tab` проходит по каждой кнопке отдельно — это разные действия, а не один выбор. Бегущий `tabindex` спрятал бы часть действий от клавиатуры |
+| `.inst-btn-group` on the container | yes | It removes the neighbour's border and rounds only the ends; without it the buttons stand side by side rather than in a group |
+| Ordinary `.inst-btn` inside | yes | A group is a layout rather than a new component: a button inside it stays a button |
+| One size for the whole group | yes | Neighbouring buttons of different heights give a step at the seam, and it shows on any background |
+| A name of its own on every button | yes | A group needs no `aria-label`: it is not one control but several actions side by side |
+| A roving `tabindex` | **no, that is a mistake** | `Tab` goes through every button separately — these are different actions rather than one choice. A roving `tabindex` would hide part of the actions from the keyboard |
 
-Кнопка под фокусом поднимается по `z-index`, иначе кольцо срезал бы сосед:
-элементы флекса подчиняются `z-index` без `position`.
+The button under focus rises by `z-index`, otherwise its neighbour would cut
+the ring off: flex items obey `z-index` without `position`.
 
-## Устройство
+## Anatomy
 
-Шов группы — **снятая рамка у соседа**. Отрицательное поле в `-0.5px` не
-годится: браузер не рисует рамку тоньше физического пикселя, и сдвиг оставлял
-утолщение на каждом стыке.
+The seam of a group is **the neighbour's border removed**. A negative margin of
+`-0.5px` will not do: a browser does not draw a border thinner than a physical
+pixel, and the shift left a thickening at every joint.
 
-| Что делает контейнер | Как |
+| What the container does | How |
 |---|---|
-| Снимает шов | У всех кнопок, кроме первой, убирается ближняя рамка |
-| Скругляет торцы | Радиус остаётся только у первой и последней |
-| Поднимает фокус | Кнопка под фокусом идёт выше по `z-index`, иначе кольцо срезал бы сосед |
+| Removes the seam | On every button but the first the near border is taken away |
+| Rounds the ends | The radius stays only on the first and the last |
+| Raises the focus | The button under focus goes higher by `z-index`, otherwise its neighbour would cut the ring off |
 
-## Размеры
+## Sizes
 
-Размер задаётся каждой кнопке, а не контейнеру: группа не контрол, а
-композиция, и своего размера у неё нет.
+The size is set on each button rather than on the container: a group is a
+composition rather than a control, and it has no size of its own.
 
 ```html preview
 <div class="inst-btn-group">
-  <button class="inst-btn inst-btn--sm" type="button">Один</button>
-  <button class="inst-btn inst-btn--sm" type="button">Два</button>
+  <button class="inst-btn inst-btn--sm" type="button">One</button>
+  <button class="inst-btn inst-btn--sm" type="button">Two</button>
 </div>
 <div class="inst-btn-group">
-  <button class="inst-btn" type="button">Один</button>
-  <button class="inst-btn" type="button">Два</button>
+  <button class="inst-btn" type="button">One</button>
+  <button class="inst-btn" type="button">Two</button>
 </div>
 <div class="inst-btn-group">
-  <button class="inst-btn inst-btn--lg" type="button">Один</button>
-  <button class="inst-btn inst-btn--lg" type="button">Два</button>
+  <button class="inst-btn inst-btn--lg" type="button">One</button>
+  <button class="inst-btn inst-btn--lg" type="button">Two</button>
 </div>
 ```
 
-## Композиции
+## Composition
 
-### С иконочными кнопками
+### With icon buttons
 
 ```html preview
 <div class="inst-btn-group">
-  <button class="inst-btn inst-btn--sm inst-btn--icon" type="button" aria-label="Обновить">
+  <button class="inst-btn inst-btn--sm inst-btn--icon" type="button" aria-label="Refresh">
     <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg>
   </button>
-  <button class="inst-btn inst-btn--sm inst-btn--icon" type="button" aria-label="Копировать">
+  <button class="inst-btn inst-btn--sm inst-btn--icon" type="button" aria-label="Copy">
     <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
   </button>
-  <button class="inst-btn inst-btn--sm inst-btn--icon" type="button" aria-label="Настройки">
+  <button class="inst-btn inst-btn--sm inst-btn--icon" type="button" aria-label="Settings">
     <svg class="inst-icon" aria-hidden="true"><use href="#i-settings"/></svg>
   </button>
 </div>
 ```
 
-Каждая иконочная кнопка несёт свой `aria-label`: у группы нет общего имени,
-потому что она не один контрол.
+Every icon button carries an `aria-label` of its own: a group has no shared
+name, because it is not one control.
 
-## Сценарии
+## Patterns
 
-### В тулбаре
+### In a toolbar
 
-Группы разделены зазором, внутри группы — вплотную. Зазор и есть сообщение о
-том, где кончается одно родство и начинается другое.
+Groups are parted by a gap, and inside a group things stand flush. The gap is
+the message about where one kinship ends and another begins.
 
 ```html preview context
 <div class="inst-toolbar">
   <div class="inst-btn-group">
-    <button class="inst-btn inst-btn--sm" type="button">Список</button>
-    <button class="inst-btn inst-btn--sm" type="button">Сетка</button>
+    <button class="inst-btn inst-btn--sm" type="button">List</button>
+    <button class="inst-btn inst-btn--sm" type="button">Grid</button>
   </div>
   <span class="inst-toolbar-sep"></span>
   <div class="inst-btn-group">
-    <button class="inst-btn inst-btn--sm" type="button">Копировать</button>
-    <button class="inst-btn inst-btn--sm" type="button">Дублировать</button>
+    <button class="inst-btn inst-btn--sm" type="button">Copy</button>
+    <button class="inst-btn inst-btn--sm" type="button">Duplicate</button>
   </div>
 </div>
 ```
@@ -117,7 +115,7 @@ group-en: "Actions"
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

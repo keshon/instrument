@@ -1,73 +1,71 @@
 ---
-title: Обратная связь
-group: Обратная связь
+title: Feedback
+group: Feedback
 layout: index
-title-en: "Feedback"
-group-en: "Feedback"
 ---
 
-Восемь компонентов, и все они отвечают на один вопрос: **что сейчас происходит
-и что с этим делать.** Различаются двумя: сколько это держится и к чему
-относится.
+Eight components, and they all answer one question: **what is happening now and
+what to do about it.** Two things tell them apart: how long it holds and what
+it is about.
 
-| | держится | относится к |
+| | holds | is about |
 |---|---|---|
-| [Тост](./toast.md) | секунды, уходит сам | тому, что человек только что сделал |
-| [Баннер](./banner.md) | пока держится состояние | всему экрану |
-| [Сноска](./note.md) | всегда | соседнему абзацу, полю, блоку |
-| [Спиннер](./spinner.md) | пока идёт работа | месту, где он стоит |
-| [Скелетон](./skeleton.md) | пока грузится | форме будущего содержимого |
-| [Пустое состояние](./empty.md) | пока пусто | всему списку |
-| [Точки состояния](./states.md) | пока держится фаза | одному объекту |
-| [Аккордеон](./accordion.md) | — | это не сообщение, а раскладка |
+| [The toast](./toast.md) | seconds, it leaves by itself | what the person has just done |
+| [The banner](./banner.md) | as long as the condition holds | the whole screen |
+| [The note](./note.md) | always | the paragraph, field or block beside it |
+| [The spinner](./spinner.md) | while the work goes on | the place it stands in |
+| [The skeleton](./skeleton.md) | while it loads | the shape of the content to come |
+| [The empty state](./empty.md) | while it is empty | the whole list |
+| [State dots](./states.md) | as long as the phase holds | one object |
+| [The accordion](./accordion.md) | — | it is a layout rather than a message |
 
-Сравнение стоит здесь, а не на страницах: «возьмите другое» — это утверждение о
-СОСЕДЯХ, и повторённое восемь раз оно расходится с ними по одной строке за
-правку.
+The comparison stands here rather than on the pages: "take instead" is a
+statement about NEIGHBOURS, and repeated eight times it parts from them by one
+line per edit.
 
-## Ожидание: что показать
+## Waiting: what to show
 
-| Что известно | Возьмите | Почему не соседа |
+| What is known | Take | Why not the neighbour |
 |---|---|---|
-| Форма будущего содержимого: заголовок и три строки | [Скелетон](./skeleton.md) | Скелетон не той формы врёт дважды |
-| Ничего, и ожидание короче секунды | [Спиннер](./spinner.md) | Скелетон обещал бы форму, которой не будет |
-| Доля выполненного | [мера](../charts/meter.md) | Ни спиннер, ни скелетон не говорят, сколько осталось |
-| Занята кнопка | `aria-busy="true"` на самой [кнопке](../actions/button.md) | У неё своё кольцо на месте подписи |
-| Данных нет и не будет | [Пустое состояние](./empty.md) | Скелетон в этот момент обещает то, чего не случится |
-| Пусто из-за ошибки | [блок отказа](../../agent/failure.md) | Там нужны причина и то, что уже пробовали |
+| The shape of the content to come: a heading and three lines | [The skeleton](./skeleton.md) | A skeleton of the wrong shape lies twice |
+| Nothing, and the wait is shorter than a second | [The spinner](./spinner.md) | A skeleton would promise a shape that will not be |
+| The share done | [a meter](../charts/meter.md) | Neither a spinner nor a skeleton says how much is left |
+| A button is busy | `aria-busy="true"` on [the button](../actions/button.md) itself | It has a ring of its own in the place of the label |
+| There is no data and there will be none | [The empty state](./empty.md) | A skeleton at that moment promises what will not happen |
+| Empty because of an error | [a failure block](../../agent/failure.md) | There a reason and what has already been tried are wanted |
 
-## Сообщение: где показать
+## A message: where to show it
 
-| Что нужно | Возьмите | Почему не соседа |
+| What is wanted | Take | Why not the neighbour |
 |---|---|---|
-| Результат действия, которое человек запустил сам | [Тост](./toast.md) | Баннер держится, пока держится состояние, и сам не уходит |
-| Условие, действующее на весь экран | [Баннер](./banner.md) | Тост уйдёт раньше, чем условие исчезнет |
-| Пояснение к соседнему блоку | [Сноску](./note.md) | Баннер претендует на весь экран |
-| Вопрос, без ответа на который нельзя дальше | [модалку](../overlays/dialog.md) | У тоста и баннера нет вопроса |
-| Отказ, из которого нужен выход | [блок отказа](../../agent/failure.md) | У него есть причина и повтор, и он остаётся в потоке |
-| Ошибка одного поля | сообщение [формы](../inputs/form.md) под полем | Баннер уровня экрана про одно поле — это шум |
+| The result of an action a person started themselves | [The toast](./toast.md) | A banner holds as long as the condition holds and does not leave by itself |
+| A condition acting on the whole screen | [The banner](./banner.md) | A toast will leave before the condition does |
+| An explanation of the block beside it | [The note](./note.md) | A banner lays claim to the whole screen |
+| A question without an answer to which nothing goes on | [a modal](../overlays/dialog.md) | A toast and a banner have no question |
+| A refusal that needs a way out | [a failure block](../../agent/failure.md) | It has a reason and a retry, and it stays in the flow |
+| An error in one field | a message of [the form](../inputs/form.md) under the field | A screen-level banner about one field is noise |
 
-## Когда ни один не подходит
+## When none of them fits
 
-| Что нужно | Возьмите | Почему не отсюда |
+| What is wanted | Take | Why not from here |
 |---|---|---|
-| Равноправные виды одного объекта | [вкладки](../navigation/tabs.md) | У них видно все названия сразу и нет прыжка высоты |
-| Всё, что нужно видеть одновременно | [панели](../display/panel.md) в колонку | Аккордеон прячет то, что сравнивают |
-| Вызов инструмента с телом вывода | [шаг агента](../../agent/step.md) | У него есть фаза и длительность |
-| Статус без слова | [бейдж](../display/badge.md) целиком | Одна точка не называет состояние |
+| Equal views of one object | [tabs](../navigation/tabs.md) | All their names are visible at once and there is no jump in height |
+| Everything that has to be seen at once | [panels](../display/panel.md) in a column | An accordion hides what is being compared |
+| A tool call with a body of output | [an agent step](../../agent/step.md) | It has a phase and a duration |
+| A status with no word | [a badge](../display/badge.md) entire | One dot does not name a state |
 
-## Общее для всех восьми
+## Common to all eight
 
-**Ошибка перебивает, остальное — нет.** У сообщения об ошибке `role="alert"`, у
-подтверждения `role="status"`: первое прерывает чтение, второе дожидается
-паузы. Перепутать их значит либо перебивать по пустякам, либо промолчать о
-сбое.
+**An error interrupts, the rest does not.** An error message has `role="alert"`,
+a confirmation has `role="status"`: the first interrupts reading, the second
+waits for a pause. Confusing them means either interrupting over trifles or
+staying silent about a failure.
 
-**Живой регион обязан быть в раскладке.** Область тостов открыта поповером один
-раз и не закрывается: закрытый `popover` — это `display: none`, а живой регион
-в `display: none` не озвучивается вовсе.
+**A live region has to be in the layout.** The toast region is opened by a
+popover once and is not closed: a closed `popover` is `display: none`, and a
+live region in `display: none` is not spoken at all.
 
-**Бесконечный индикатор не останавливают при `prefers-reduced-motion`.**
-Сжатая до 0.01ms бесконечная анимация — это остановка, а остановленный спиннер
-сообщает «ничего не происходит» ровно тогда, когда происходит. Такие
-замедляются до частоты, которая читается как «идёт».
+**An infinite indicator is not stopped at `prefers-reduced-motion`.** An
+infinite animation squeezed to 0.01ms is a stop, and a stopped spinner says
+"nothing is happening" at exactly the moment something is. Such things are
+slowed to a frequency that reads as "running".

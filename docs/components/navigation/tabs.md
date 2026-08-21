@@ -1,155 +1,158 @@
 ---
-title: Вкладки
-group: Навигация
+title: Tabs
+group: Navigation
 layout: component
 source: src/layout.css
-js: Переключение панели. Стрелки и бегущий tabindex делает `instrument.js`
+js: Switching the panel. The arrows and the roving tabindex are done by `instrument.js`
 api:
-  - { name: "inst-tabs", kind: "класс", doc: "Полоса вкладок. Нижняя линия и горизонтальная прокрутка без видимого скроллбара" }
-  - { name: "inst-tab", kind: "класс", doc: "Вкладка. Ссылка или кнопка с `role=\"tab\"`" }
-  - { name: "inst-tabs--chips", kind: "модификатор", doc: "Вкладки-чипы: выбранная заливкой, а не полосой. Для ОТКРЫТЫХ ДОКУМЕНТОВ, которых сколько угодно и которые закрываются" }
-  - { name: "inst-tab-close", kind: "класс", doc: "Крестик закрытия. Настоящая `<button>`, `aria-label` обязателен. Закрываемая вкладка поэтому `<div role=\"tab\">`, а не `<button>`. Область растёт до `--tap-min`, форма остаётся мелкой" }
-  - { name: "data-state", kind: "атрибут", value: "modified", doc: "На `.inst-tab`: на месте крестика точка, пока файл не сохранён. Крестик возвращается под курсором" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--space-4", kind: "токен" }
-  - { name: "--space-6", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--size-marker", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--surface-inverse-soft", kind: "токен", doc: "Поверхность выбранного чипа: тёмная в светлой теме, светлая в тёмной. Мягкая — постоянный выбор не берёт полную инверсию" }
-  - { name: "--control-h-sm", kind: "токен", doc: "Высота чипа. Набор отступом давал ряд выше соседней кнопки" }
-  - { name: "--control-h-xs", kind: "токен", doc: "Коробка крестика. Квадрат с полем вокруг глифа" }
-  - { name: "--text-on-inverse", kind: "токен", doc: "Подпись выбранного чипа" }
-  - { name: "--accent-solid", kind: "токен" }
-  - { name: "--text-primary", kind: "токен" }
-  - { name: "--text-secondary", kind: "токен" }
-title-en: "Tabs"
-group-en: "Navigation"
+  - { name: "inst-tabs", kind: "class", doc: "The strip of tabs. A line below and horizontal scrolling with no visible scrollbar" }
+  - { name: "inst-tab", kind: "class", doc: "A tab. A link or a button with `role=\"tab\"`" }
+  - { name: "inst-tabs--chips", kind: "modifier", doc: "Tabs as chips: the chosen one by a fill rather than by a bar. For OPEN DOCUMENTS, of which there are any number and which close" }
+  - { name: "inst-tab-close", kind: "class", doc: "The close cross. A real `<button>`, and an `aria-label` is required. A closable tab is therefore a `<div role=\"tab\">` rather than a `<button>`. The area grows to `--tap-min` while the shape stays small" }
+  - { name: "data-state", kind: "attribute", value: "modified", doc: "On `.inst-tab`: a dot in the place of the cross while the file is unsaved. The cross comes back under the cursor" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--space-4", kind: "token" }
+  - { name: "--space-6", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--size-marker", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--surface-inverse-soft", kind: "token", doc: "The surface of a chosen chip: dark in a light theme, light in a dark one. Soft — a permanent selection does not take the full inversion" }
+  - { name: "--control-h-sm", kind: "token", doc: "The height of a chip. Setting it by padding gave a row taller than the button beside it" }
+  - { name: "--control-h-xs", kind: "token", doc: "The box of the cross. A square with a field around the glyph" }
+  - { name: "--text-on-inverse", kind: "token", doc: "The label of a chosen chip" }
+  - { name: "--accent-solid", kind: "token" }
+  - { name: "--text-primary", kind: "token" }
+  - { name: "--text-secondary", kind: "token" }
 ---
 
-Горизонтальный переключатель видов внутри одного раздела. По умолчанию — на
-ссылках: переключение экрана это роутинг, и JS ему не нужен.
+A horizontal switch of views inside one section. By default on links:
+switching a screen is routing, and it needs no JS.
 
 ```html preview
-<nav class="inst-tabs" aria-label="Разделы прогонов">
-  <a class="inst-tab" href="#" aria-current="page">Активные</a>
-  <a class="inst-tab" href="#">История</a>
-  <a class="inst-tab" href="#">Расписание</a>
+<nav class="inst-tabs" aria-label="Sections of the runs">
+  <a class="inst-tab" href="#" aria-current="page">Active</a>
+  <a class="inst-tab" href="#">History</a>
+  <a class="inst-tab" href="#">Schedule</a>
 </nav>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<nav>` + `aria-label` на роутинговом варианте | да | Навигаций на экране несколько, и без имени они неразличимы |
-| `aria-current="page"` | да | Активный вид при переключении адресом |
-| `role="tablist"` + `role="tab"` + `aria-selected` + `aria-controls` | да, **только** у настоящих вкладок | Роль без стрелочной навигации и панели — обещание, которого никто не выполнит |
-| `type="button"` у вкладки-кнопки | да | Иначе внутри формы она её отправит |
-| Активная вкладка — подчёркиванием наравне с цветом | да | `aria-current` или `aria-selected` сообщает то же скринридеру |
+| A `<nav>` + an `aria-label` on the routing variant | yes | There are several navigations on a screen, and with no name they are indistinguishable |
+| An `aria-current="page"` | yes | The active view when switching by address |
+| A `role="tablist"` + `role="tab"` + `aria-selected` + `aria-controls` | yes, on **real** tabs only | A role with no arrow navigation and no panel is a promise nobody will keep |
+| A `type="button"` on a tab that is a button | yes | Otherwise inside a form it will submit it |
+| The active tab by an underline as well as by colour | yes | An `aria-current` or an `aria-selected` tells a screen reader the same |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Клавиатура, роутинг | Нативные ссылки: `Tab` — обход, `Enter` — переход |
-| Клавиатура, настоящие вкладки | `Tab` входит в полосу один раз, стрелки переключают, — это **JS приложения**. Без него `role="tablist"` ставить нельзя |
-| Цвет не единственный носитель | Активная вкладка несёт подчёркивание и `aria-current` / `aria-selected` |
-| Прокрутка | Полоса прокручивается по горизонтали, скроллбар скрыт визуально, но прокрутка колесом и с клавиатуры остаётся |
-| Контраст | Неактивная подпись `--text-secondary` держит 4.5:1 в пяти темах |
-| Фокус | Кольцо `:focus-visible` от базового слоя, полоса вкладок его не обрезает |
+| The keyboard, routing | Native links: `Tab` traverses, `Enter` goes |
+| The keyboard, real tabs | `Tab` enters the strip once and the arrows switch — that is the **application's JS**. Without it a `role="tablist"` may not be set |
+| Colour is not the only carrier | The active tab carries an underline and an `aria-current` / `aria-selected` |
+| Scrolling | The strip scrolls horizontally, the scrollbar is hidden visually, but scrolling by wheel and from the keyboard stays |
+| Contrast | An inactive label `--text-secondary` holds 4.5:1 in five themes |
+| Focus | The `:focus-visible` ring from the base layer; the strip of tabs does not clip it |
 
-## Варианты
+## Variants
 
-Ссылки или настоящие вкладки — два разных случая, и разметка у них разная.
-Выбирается тот, который правдив:
+Links or real tabs are two different cases, and their markup differs. The one
+chosen is the one that is truthful:
 
-| Случай | Разметка | Признак |
+| The case | The markup | The mark |
 |---|---|---|
-| Переключение экрана | `<nav class="inst-tabs">` + `<a class="inst-tab" aria-current="page">` | У каждого вида свой адрес. Средний клик открывает вкладку в новой вкладке браузера |
-| Панели внутри одной страницы | `role="tablist"` + `role="tab"` + `aria-selected` + `aria-controls` | Адрес не меняется, содержимое подменяется на месте |
+| Switching a screen | `<nav class="inst-tabs">` + `<a class="inst-tab" aria-current="page">` | Every view has an address of its own. A middle click opens it in a new browser tab |
+| Panels inside one page | `role="tablist"` + `role="tab"` + `aria-selected` + `aria-controls` | The address does not change, the content is swapped in place |
 
-Оформление ловит оба: селектор библиотеки реагирует и на
-`[aria-current]:not([aria-current="false"])`, и на `[aria-selected="true"]`.
-Поэтому вопрос «какой класс поставить» не возникает — возникает вопрос «какая
-разметка правдива».
+The styling catches both: the library's selector reacts to
+`[aria-current]:not([aria-current="false"])` and to `[aria-selected="true"]`
+alike. So the question "which class to put" does not arise — the question that
+arises is "which markup is truthful".
 
-### Настоящие вкладки
+### Real tabs
 
-`role="tablist"` ставится **только** если вкладки настоящие. Роль обещает
-скринридеру стрелочную навигацию и связь с панелью; необеспеченное обещание
-хуже отсутствующего.
+A `role="tablist"` is set **only** if the tabs are real. The role promises a
+screen reader arrow navigation and a tie to a panel; an unbacked promise is
+worse than none.
 
 ```html preview
-<div class="inst-tabs" role="tablist" aria-label="Свойства объекта">
+<div class="inst-tabs" role="tablist" aria-label="Properties of the object">
   <button class="inst-tab" type="button" role="tab" id="t-geom"
-          aria-selected="true" aria-controls="p-geom" tabindex="0">Геометрия</button>
+          aria-selected="true" aria-controls="p-geom" tabindex="0">Geometry</button>
   <button class="inst-tab" type="button" role="tab" id="t-mat"
-          aria-selected="false" aria-controls="p-mat" tabindex="-1">Материал</button>
+          aria-selected="false" aria-controls="p-mat" tabindex="-1">Material</button>
   <button class="inst-tab" type="button" role="tab" id="t-phys"
-          aria-selected="false" aria-controls="p-phys" tabindex="-1">Физика</button>
+          aria-selected="false" aria-controls="p-phys" tabindex="-1">Physics</button>
 </div>
-<div id="p-geom" role="tabpanel" aria-labelledby="t-geom" tabindex="0">Вершин 12 480, полигонов 6 240.</div>
-<div id="p-mat" role="tabpanel" aria-labelledby="t-mat" tabindex="0" hidden>Стандартный PBR, две текстуры.</div>
-<div id="p-phys" role="tabpanel" aria-labelledby="t-phys" tabindex="0" hidden>Выпуклая оболочка, масса 4,2 кг.</div>
+<div id="p-geom" role="tabpanel" aria-labelledby="t-geom" tabindex="0">12 480 vertices, 6 240 polygons.</div>
+<div id="p-mat" role="tabpanel" aria-labelledby="t-mat" tabindex="0" hidden>Standard PBR, two textures.</div>
+<div id="p-phys" role="tabpanel" aria-labelledby="t-phys" tabindex="0" hidden>A convex hull, a mass of 4.2 kg.</div>
 ```
 
-Пример живой: войдите `Tab` и нажмите `←` или `→`. Отметка переносится вместе
-с фокусом, `Home` и `End` работают, перебор идёт по кругу.
+The example is live: enter with `Tab` and press `←` or `→`. The mark is carried
+along with the focus, `Home` and `End` work, and the traversal wraps around.
 
-Стрелки, `Home`, `End` и бегущий `tabindex` выполняет
-[`instrument.js`](../../foundations/behavior.md). Показать нужную панель — приложение:
-какая панель за какой вкладкой, библиотека не знает.
+The arrows, `Home`, `End` and the roving `tabindex` are done by
+[`instrument.js`](../../foundations/behavior.md). Showing the right panel is
+the application's: the library does not know which panel is behind which tab.
 
-## Состояния
+## States
 
 ```html preview
-<nav class="inst-tabs" aria-label="Пример активной вкладки">
-  <a class="inst-tab" href="#" aria-current="page">Активная</a>
-  <a class="inst-tab" href="#">Обычная</a>
-  <a class="inst-tab" href="#">Ещё одна</a>
+<nav class="inst-tabs" aria-label="An example of an active tab">
+  <a class="inst-tab" href="#" aria-current="page">Active</a>
+  <a class="inst-tab" href="#">Ordinary</a>
+  <a class="inst-tab" href="#">One more</a>
 </nav>
 ```
 
-| Признак активной | Что даёт |
+| The mark of the active one | What it gives |
 |---|---|
-| Подчёркивание | `border-block-end` шириной `--size-marker` цветом `--accent-solid`. Носитель наравне с цветом |
-| Цвет подписи | `--text-primary` вместо `--text-secondary` |
+| An underline | A `border-block-end` of width `--size-marker` in the colour `--accent-solid`. A carrier on a par with colour |
+| The colour of the label | `--text-primary` instead of `--text-secondary` |
 
-Начертание при выборе **не меняется**, и это не упущение. Смена веса меняет
-ширину подписи, а вкладки стоят в ряд: замер на этом справочнике дал сдвиг
-соседей вправо на 2 и 3 пикселя — выбор мышью двигал бы под курсором то, во
-что целятся. То же правило кит уже применил к пункту меню и к чипу.
+The weight **does not change** on selection, and that is not an omission. A
+change of weight changes the width of the label, and tabs stand in a row: a
+measurement on this reference gave a shift of the neighbours to the right by 2
+and 3 pixels — a choice by mouse would move what is being aimed at under the
+cursor. The kit has already applied the same rule to a menu item and to a chip.
 
-Носителей остаётся два, и один из них не цвет: от обычной вкладки активная
-отличается **наличием** полосы, от наведённой — её тоном.
+Two carriers are left, and one of them is not colour: an active tab differs
+from an ordinary one by the **presence** of the bar and from a hovered one by
+its tone.
 
-Полоса вкладки перекрывает линию контейнера отрицательным полем в `--hairline`,
-а не сдвигом на полпикселя: браузер не рисует рамку тоньше физического
-пикселя, и остаток был бы виден на каждом стыке.
+The bar of a tab covers the line of the container by a negative margin of
+`--hairline` rather than by a shift of half a pixel: a browser does not draw a
+border thinner than a physical pixel, and the remainder would show at every
+joint.
 
 ## JS
 
-Подключите модуль один раз на страницу.
+Include the module once per page.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Пример в разделе «Настоящие вкладки» живой: `←`, `→`, `Home`, `End`, перебор по кругу.
+The example in the "Real tabs" section is live: `←`, `→`, `Home`, `End`, with
+the traversal wrapping around.
 
-Полосу объявляет `role="tablist"`, и `instrument.js` выполняет контракт этой роли: `←` и
-`→` между вкладками, `Home`, `End`, перебор по кругу, один `Tab` на всю
-полосу. `aria-selected` переносится и стрелкой, и щелчком.
+The strip is declared by a `role="tablist"`, and `instrument.js` carries out
+the contract of that role: `←` and `→` between the tabs, `Home`, `End`, a
+traversal that wraps, one `Tab` for the whole strip. `aria-selected` is carried
+over on an arrow and on a click alike.
 
-### События
+### Events
 
-`inst:select` всплывает с выбранной вкладки, `detail` — `{ value }`:
-`data-value`, если он есть, иначе подпись.
+`inst:select` bubbles from the chosen tab, and its `detail` is `{ value }`: the
+`data-value` if there is one, otherwise the label.
 
 ```js
 tabs.addEventListener('inst:select', (e) => {
@@ -159,98 +162,104 @@ tabs.addEventListener('inst:select', (e) => {
 });
 ```
 
-### Что остаётся приложению
+### What is left to the application
 
-Показать нужную панель и спрятать остальные. Какая панель за какой вкладкой,
-знает только приложение: библиотеке доступна разметка, а не смысл.
+Showing the right panel and hiding the rest. Which panel is behind which tab is
+known to the application alone: what the library has is the markup rather than
+the meaning.
 
-## Композиции
+## Composition
 
-### С иконкой и счётчиком
+### With an icon and a counter
 
 ```html preview
-<nav class="inst-tabs" aria-label="Пример со счётчиком">
+<nav class="inst-tabs" aria-label="An example with a counter">
   <a class="inst-tab" href="#" aria-current="page">
-    <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>Очередь
+    <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>Queue
     <span class="inst-badge">7</span></a>
-  <a class="inst-tab" href="#">История</a>
+  <a class="inst-tab" href="#">History</a>
 </nav>
 ```
 
-Зазор внутри вкладки — `--space-3`, между вкладками — `--space-6`: расстояние
-между соседями обязано быть заметно больше, чем внутри одной, иначе иконка
-следующей читается как часть предыдущей.
+The gap inside a tab is `--space-3` and between tabs `--space-6`: the distance
+between neighbours has to be noticeably larger than the distance within one,
+otherwise the icon of the next reads as part of the previous.
 
-### Вкладки-чипы
+### Tabs as chips
 
-Второй вид вкладки, и это другая работа. Вкладка-полоса переключает **раздел**:
-разделов немного, они заданы заранее и не закрываются. Чип держит **открытый
-документ**: их сколько угодно, они появляются и закрываются по ходу дела, у
-каждого своё состояние «не сохранён».
+A second kind of tab, and it is another job. A tab as a bar switches a
+**section**: there are few sections, they are set in advance and they do not
+close. A chip holds an **open document**: there are any number of them, they
+appear and close as work goes on, and each has a state of its own of being
+unsaved.
 
 ```html preview
-<div class="inst-tabs inst-tabs--chips" role="tablist" aria-label="Открытые файлы">
+<div class="inst-tabs inst-tabs--chips" role="tablist" aria-label="Open files">
   <div class="inst-tab" role="tab" aria-selected="false" tabindex="-1">tokens.css
-    <button class="inst-tab-close" type="button" aria-label="Закрыть tokens.css">
+    <button class="inst-tab-close" type="button" aria-label="Close tokens.css">
       <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
   <div class="inst-tab" role="tab" aria-selected="true" tabindex="0" data-state="modified">layout.css
-    <button class="inst-tab-close" type="button" aria-label="Закрыть layout.css">
+    <button class="inst-tab-close" type="button" aria-label="Close layout.css">
       <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
   <div class="inst-tab" role="tab" aria-selected="false" tabindex="-1">components.css
-    <button class="inst-tab-close" type="button" aria-label="Закрыть components.css">
+    <button class="inst-tab-close" type="button" aria-label="Close components.css">
       <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
 </div>
 ```
 
-Полоса под таким рядом перестаёт работать: она рисует одну линию под всеми, и
-на двадцати вкладках выбранную приходится искать. Заливка читается сразу и на
-любой длине ряда.
+A bar under such a row stops working: it draws one line under all of them, and
+at twenty tabs the chosen one has to be searched for. A fill reads at once and
+at any length of row.
 
-Выбранный чип берёт **мягкую обратную поверхность** — тёмную в светлой теме,
-светлую в тёмной. Приподнятая здесь не работает: ряд лежит на той же
-приподнятой, что и всё вокруг, и выбранный отличался бы на один шаг светлоты,
-то есть почти ничем. Полная инверсия не работает с другой стороны: она для
-подсказки, которая мелькнула, а вкладка стоит всё время, и почти чёрная плашка
-тянет на себя больше внимания, чем то, ради чего её выбрали.
+A chosen chip takes a **soft inverted surface** — dark in a light theme, light
+in a dark one. The raised one does not work here: the row lies on the same
+raised surface as everything around, and the chosen one would differ by one
+step of lightness, that is, by almost nothing. A full inversion does not work
+from the other side: it is for a hint that flashed by, while a tab stands there
+all the time, and an almost-black plate pulls more attention than what it was
+chosen for.
 
-Высота чипа — из лестницы контролов (`--control-h-sm`), а не из отступа: набор
-отступом давал ряд выше стоящей рядом кнопки, и чип читался кирпичом.
+The height of a chip comes from the ladder of controls (`--control-h-sm`)
+rather than from padding: setting it by padding gave a row taller than the
+button standing beside it, and the chip read as a brick.
 
-**Крестик — оверлей у дальнего края, а не место в строке.** Имя файла читают
-всё время, закрывают вкладку один раз, поэтому крестик всплывает под курсором
-поверх подписи; подпись при этом не обрывается на полуслове — под крестиком
-лежит градиент к фону чипа. Появляется он и от клавиатуры: невидимая кнопка,
-до которой доехал `Tab`, — ловушка.
+**The cross is an overlay at the far edge rather than a place in the line.**
+The name of a file is read all the time and a tab is closed once, so the cross
+comes up under the cursor over the label; the label does not break off
+mid-word — a gradient to the background of the chip lies under the cross. It
+appears from the keyboard too: an invisible button that `Tab` has reached is a
+trap.
 
-Место под точку «не сохранено» **резервируется**, и это не то же самое.
-Состояние стоит постоянно, а постоянный оверлей навсегда съел бы конец имени.
+Room for the "unsaved" dot **is reserved**, and that is not the same thing. The
+state stands there permanently, and a permanent overlay would eat the end of
+the name for good.
 
-Чип скруглён **со всех четырёх сторон** и лежит на полосе, а не прирастает к
-содержимому снизу. Скруглены только верхние углы плюс метка-полоса — это
-вкладка-полоса, переодетая в заливку, и от чипа она отличается ровно тем, чем
-не должна. Носителей у выбранного два, и ни один не цвет: заливка и
-начертание.
+A chip is rounded **on all four sides** and lies on the strip rather than
+growing into the content below. Rounding only the top corners plus a bar as a
+mark would be a tab-as-a-bar dressed in a fill, differing from a chip in
+exactly what it should not. A chosen one has two carriers, and neither of them
+is colour: the fill and the weight.
 
-**Закрываемая вкладка — `<div role="tab">`, а не `<button>`.** Крестик обязан
-быть настоящей кнопкой: вкладки закрывают с клавиатуры, и у крестика своя цель
-нажатия. А кнопку внутрь кнопки HTML не пускает вовсе — интерактивное
-содержимое запрещено потомком `<button>` и `<a>`. Вкладка-полоса остаётся
-кнопкой или ссылкой: закрывать там нечего.
+**A closable tab is a `<div role="tab">` rather than a `<button>`.** The cross
+has to be a real button: tabs are closed from the keyboard, and the cross has a
+tap target of its own. And HTML does not let a button inside a button at all —
+interactive content is forbidden as a descendant of a `<button>` or an `<a>`. A
+tab as a bar stays a button or a link: there is nothing to close there.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<div role="tab">` у закрываемой | да | Настоящий крестик внутри `<button>` — невалидная разметка |
-| `tabindex` бегущий: `0` у выбранной, `-1` у прочих | да | Тридцать открытых файлов не должны стоить тридцати нажатий `Tab` |
-| `aria-label` на крестике | да | Кнопка без текста не имеет доступного имени, а «закрыть» без имени файла не говорит что именно |
-| `data-state="modified"` | нет | Точка на месте крестика, пока файл не сохранён. Место под неё резервируется, крестик возвращается под курсором |
-| Скругление из `--radius-control-md` | — | Чип и есть контрол: в плотном режиме он скругляется слабее вместе с кнопкой |
+| A `<div role="tab">` on a closable one | yes | A real cross inside a `<button>` is invalid markup |
+| A roving `tabindex`: `0` on the chosen one, `-1` on the rest | yes | Thirty open files must not cost thirty presses of `Tab` |
+| An `aria-label` on the cross | yes | A button with no text has no accessible name, and "close" with no file name does not say what exactly |
+| A `data-state="modified"` | no | A dot in the place of the cross while the file is unsaved. Room is reserved for it, and the cross comes back under the cursor |
+| The rounding from `--radius-control-md` | — | A chip is a control: in the compact mode it is rounded less, along with the button |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

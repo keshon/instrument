@@ -1,207 +1,208 @@
 ---
-title: Таблица
-group: Отображение данных
+title: Table
+group: Data display
 layout: component
 source: src/table.css
-js: Сортировка и действия строки. «Выбрать всё» делает `instrument.js`
+js: Sorting and row actions. "Select all" is done by `instrument.js`
 api:
-  - { name: "inst-table", kind: "класс", doc: "Базовый, на `<table>`" }
-  - { name: "inst-num", kind: "класс", doc: "Числовая ячейка: выравнивание по концу" }
-  - { name: "inst-sort", kind: "класс", doc: "Кнопка-заголовок сортировки" }
-  - { name: "inst-col-select", kind: "класс", doc: "Колонка чекбоксов, ширина по контролу" }
-  - { name: "inst-col-actions", kind: "класс", doc: "Колонка действий, ширина по содержимому" }
-  - { name: "inst-row-actions", kind: "класс", doc: "Обёртка действий: проявляется на наведении и фокусе" }
-  - { name: "inst-table--cells", kind: "модификатор", doc: "Ячейка-плитка: каждое значение в своей коробке, между коробками просвет" }
-  - { name: "inst-table--zebra", kind: "модификатор", doc: "Полосы вместо линеек. Для широкой таблицы: на пятнадцати колонках линейка не показывает, ГДЕ ты внутри строки" }
-  - { name: "inst-table--sticky", kind: "модификатор", doc: "Липкая шапка" }
-  - { name: "inst-table--sticky-col", kind: "модификатор", doc: "Липкая первая колонка" }
-  - { name: "aria-sort", kind: "атрибут", value: "ascending · descending", doc: "на `<th>`" }
-  - { name: "aria-selected", kind: "атрибут", value: "true · false", doc: "на `<tr>`" }
-  - { name: "--table-head-bg", kind: "переменная", value: "--surface-raised" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--pad-cell-x", kind: "токен" }
-  - { name: "--row-pad-y", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--border-subtle", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-  - { name: "--surface-selected", kind: "токен" }
-  - { name: "--surface-hover", kind: "токен" }
-  - { name: "--control-h-md", kind: "токен" }
-  - { name: "--z-sticky", kind: "токен" }
-title-en: "Table"
-group-en: "Data display"
+  - { name: "inst-table", kind: "class", doc: "The base one, on a `<table>`" }
+  - { name: "inst-num", kind: "class", doc: "A numeric cell: aligned to the end" }
+  - { name: "inst-sort", kind: "class", doc: "The heading button of a sort" }
+  - { name: "inst-col-select", kind: "class", doc: "The column of checkboxes, its width from the control" }
+  - { name: "inst-col-actions", kind: "class", doc: "The column of actions, its width from the content" }
+  - { name: "inst-row-actions", kind: "class", doc: "The wrapper of actions: it appears on hover and on focus" }
+  - { name: "inst-table--cells", kind: "modifier", doc: "A cell as a tile: every value in a box of its own, with a gap between the boxes" }
+  - { name: "inst-table--zebra", kind: "modifier", doc: "Stripes instead of rules. For a wide table: on fifteen columns a rule does not show WHERE you are within a row" }
+  - { name: "inst-table--sticky", kind: "modifier", doc: "A sticky head" }
+  - { name: "inst-table--sticky-col", kind: "modifier", doc: "A sticky first column" }
+  - { name: "aria-sort", kind: "attribute", value: "ascending · descending", doc: "on a `<th>`" }
+  - { name: "aria-selected", kind: "attribute", value: "true · false", doc: "on a `<tr>`" }
+  - { name: "--table-head-bg", kind: "variable", value: "--surface-raised" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--pad-cell-x", kind: "token" }
+  - { name: "--row-pad-y", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--border-subtle", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
+  - { name: "--surface-selected", kind: "token" }
+  - { name: "--surface-hover", kind: "token" }
+  - { name: "--control-h-md", kind: "token" }
+  - { name: "--z-sticky", kind: "token" }
 ---
 
-Сравнимые записи в колонках. Настоящая `<table>` — с семантикой заголовков,
-навигацией скринридера по ячейкам и печатью.
+Comparable records in columns. A real `<table>` — with the semantics of
+headings, a screen reader's navigation over cells, and printing.
 
 ```html preview
 <table class="inst-table">
   <thead>
-    <tr><th>Прогон</th><th>Модель</th><th class="inst-num">Время</th></tr>
+    <tr><th>Run</th><th>Model</th><th class="inst-num">Time</th></tr>
   </thead>
   <tbody>
-    <tr><td>worldgen-01</td><td>opus</td><td class="inst-num">2,1 с</td></tr>
-    <tr><td>biomes-04</td><td>sonnet</td><td class="inst-num">8,4 с</td></tr>
+    <tr><td>worldgen-01</td><td>opus</td><td class="inst-num">2.1 s</td></tr>
+    <tr><td>biomes-04</td><td>sonnet</td><td class="inst-num">8.4 s</td></tr>
   </tbody>
 </table>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Настоящая `<table>` с `<th>` в `<thead>` | да | Скринридер озвучивает заголовок при переходе по ячейкам — без него таблица превращается в набор чисел |
-| `<caption>` или `aria-label` | да | Две таблицы на экране без имён неразличимы на слух |
-| `inst-num` на числовых ячейках | да, у чисел | Выравнивание по концу строки: без него разряды не сравнить глазом |
-| Достижимая с клавиатуры область прокрутки | да, при горизонтальной прокрутке | Иначе часть колонок существует только для мыши |
+| A real `<table>` with `<th>` in `<thead>` | yes | A screen reader speaks the heading when moving over cells — without it a table turns into a set of numbers |
+| A `<caption>` or an `aria-label` | yes | Two tables on a screen with no names are indistinguishable by ear |
+| `inst-num` on numeric cells | yes, on numbers | Alignment to the end of the line: without it the digits cannot be compared by eye |
+| A scrolling region reachable from the keyboard | yes, when it scrolls horizontally | Otherwise part of the columns exists for the mouse only |
 
 :::note
-**Разделение труда.** «Выбрать всё» делает [instrument.js](#js), включая частичный
-выбор. Сортировка и действия строки — слой приложения: порядок строк это
-данные, и библиотеке они неизвестны.
+**The division of labour.** "Select all" is done by
+[instrument.js](#js), the partial selection included. Sorting and row actions
+belong to the application layer: the order of rows is data, and the library
+does not know it.
 :::
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Заголовки | `<th>` в `<thead>`. Скринридер озвучивает заголовок при переходе по ячейкам — без него таблица превращается в набор чисел |
-| Сортировка | `aria-sort` на `<th>` плюс `<button>` внутри. Атрибут без кнопки недостижим, кнопка без атрибута не озвучивает направление |
-| Выбор | `aria-selected` на `<tr>`. Чекбокс несёт своё имя, иначе колонка озвучится как «отметка, отметка, отметка» |
-| Действия строки | Проявляются по `:focus-within`, а не только по `:hover`. Иначе они существуют лишь для мыши |
-| Подпись таблицы | `<caption>` или `aria-label`. Две таблицы на экране без имён неразличимы на слух |
-| Не только цвет | Выбранная строка несёт `aria-selected`, а не одну лишь подсветку |
-| Горизонтальная прокрутка | Область прокрутки должна быть достижима с клавиатуры |
+| Headings | `<th>` in `<thead>`. A screen reader speaks the heading when moving over cells — without it a table turns into a set of numbers |
+| Sorting | `aria-sort` on the `<th>` plus a `<button>` inside. The attribute with no button is unreachable, the button with no attribute does not speak the direction |
+| Selection | `aria-selected` on the `<tr>`. A checkbox carries a name of its own, otherwise the column is spoken as "tick, tick, tick" |
+| Row actions | They appear on `:focus-within` rather than on `:hover` alone. Otherwise they exist for the mouse only |
+| The caption of the table | A `<caption>` or an `aria-label`. Two tables on a screen with no names are indistinguishable by ear |
+| Not colour alone | A selected row carries `aria-selected` rather than a highlight alone |
+| Horizontal scrolling | The scrolling region has to be reachable from the keyboard |
 
-## Устройство
+## Anatomy
 
-### Числовые колонки
+### Numeric columns
 
 ```html
-<th class="inst-num">Время</th>
-<td class="inst-num">2,1 с</td>
+<th class="inst-num">Time</th>
+<td class="inst-num">2.1 s</td>
 ```
 
-`inst-num` выравнивает по концу строки. Табличные цифры включены по умолчанию
-для всей библиотеки, поэтому разряды встают друг под друга без дополнительных
-усилий.
+`inst-num` aligns to the end of the line. Tabular figures are on by default for
+the whole library, so the digits stand one under another with no extra effort.
 
-### Итоги
+### Totals
 
 ```html
 <tfoot>
-  <tr><td>Всего</td><td></td><td class="inst-num">10,5 с</td></tr>
+  <tr><td>Total</td><td></td><td class="inst-num">10.5 s</td></tr>
 </tfoot>
 ```
 
-`<tfoot>` идёт в разметке **после** `<tbody>` и отбивается сверху. Строка
-итогов — не последняя строка данных, и путать их нельзя.
+A `<tfoot>` goes **after** the `<tbody>` in the markup and is set off above. A
+row of totals is not the last row of the data, and confusing them is not
+allowed.
 
-## Состояния
+## States
 
-### Выбор строк
+### Selecting rows
 
 ```html preview
 <table class="inst-table">
-  <thead><tr><th class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать все"></label></th><th>Прогон</th></tr></thead>
+  <thead><tr><th class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" aria-label="Select all"></label></th><th>Run</th></tr></thead>
   <tbody>
     <tr aria-selected="true">
-      <td class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" checked aria-label="Выбрать worldgen-01"></label></td>
+      <td class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" checked aria-label="Select worldgen-01"></label></td>
       <td>worldgen-01</td>
     </tr>
     <tr>
-      <td class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать biomes-04"></label></td>
+      <td class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" aria-label="Select biomes-04"></label></td>
       <td>biomes-04</td>
     </tr>
   </tbody>
 </table>
 ```
 
-Состояние живёт на `aria-selected` у `<tr>`. Подсветка полупрозрачна, поэтому
-состояния складываются: наведение на выбранную строку остаётся видно.
+The state lives on the `aria-selected` of the `<tr>`. The highlight is
+translucent, so the states add up: a hover over a selected row stays visible.
 
-## Поведение
+## Behavior
 
-### Сортировка
+### Sorting
 
 ```html
 <th aria-sort="ascending">
-  <button class="inst-sort" type="button">Время</button>
+  <button class="inst-sort" type="button">Time</button>
 </th>
 ```
 
-| Значение `aria-sort` | Что показывает |
+| The value of `aria-sort` | What it shows |
 |---|---|
-| нет атрибута | Колонка не сортирована |
-| `ascending` | По возрастанию, значок вверх |
-| `descending` | По убыванию, значок вниз |
+| no attribute | The column is not sorted |
+| `ascending` | Ascending, the glyph points up |
+| `descending` | Descending, the glyph points down |
 
-Направление несёт **значок**, и то же самое озвучивает `aria-sort`. Одной
-позиции строк мало. Заголовок-сортировка — настоящая `<button>` внутри `<th>`,
-иначе до неё не добраться с клавиатуры.
+The direction is carried by the **glyph**, and `aria-sort` speaks the same
+thing. The position of the rows alone is not enough. A sorting heading is a
+real `<button>` inside the `<th>`, otherwise it cannot be reached from the
+keyboard.
 
-У числовой колонки значок идёт перед подписью, иначе он отрывается от неё на
-всю ширину ячейки.
+In a numeric column the glyph goes before the label, otherwise it is torn away
+from it across the whole width of the cell.
 
-### Действия строки
+### Row actions
 
 ```html
 <td class="inst-col-actions">
   <div class="inst-row-actions">
-    <button class="inst-btn inst-btn--sm inst-btn--icon" type="button" aria-label="Обновить">
+    <button class="inst-btn inst-btn--sm inst-btn--icon" type="button" aria-label="Refresh">
       <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg>
     </button>
   </div>
 </td>
 ```
 
-Действия появляются на наведении — **и всегда доступны с клавиатуры**: они
-проявляются также по `:focus-within` и на выбранной строке. Действие, видимое
-только под курсором, для клавиатуры не существует.
+The actions appear on hover — **and are always available from the keyboard**:
+they also appear on `:focus-within` and on a selected row. An action visible
+only under the cursor does not exist for the keyboard.
 
-### Липкие шапка и колонка
+### A sticky head and column
 
 ```html
 <table class="inst-table inst-table--sticky inst-table--sticky-col">
 ```
 
-| Класс | Что липнет |
+| Class | What sticks |
 |---|---|
-| `inst-table--sticky` | Шапка при вертикальной прокрутке |
-| `inst-table--sticky-col` | Первая колонка при горизонтальной |
+| `inst-table--sticky` | The head on vertical scrolling |
+| `inst-table--sticky-col` | The first column on horizontal scrolling |
 
-Липкость работает относительно **прокручиваемого предка** — обычно
-`inst-panel-body`. Таблица в неприкреплённом потоке ничего не приклеит.
+Stickiness works against the **scrolling ancestor** — usually
+`inst-panel-body`. A table in an unattached flow will stick nothing.
 
 ## JS
 
-Подключите модуль один раз на страницу — инициализировать компоненты по
-отдельности не нужно, `instrument.js` работает делегированием и видит узлы, пришедшие
-позже.
+Include the module once per page — there is no need to initialise the
+components one by one, `instrument.js` works by delegation and sees nodes that
+arrived later.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Пример в разделе «Состояния» живой: отметьте чекбокс в шапке — выберутся все строки, снимите одну — он станет промежуточным.
+The example in the "States" section is live: tick the checkbox in the head —
+every row is selected; untick one and it becomes indeterminate.
 
-Только чекбокс «выбрать всё» в шапке колонки выбора:
+Only the "select all" checkbox in the head of the selection column:
 
-- отмечает и снимает все строки, кроме `disabled`;
-- держит `aria-selected` на `<tr>`;
-- показывает частичный выбор через `indeterminate` — «часть строк выбрана»
-  невыразимо ни через `checked`, ни через его отсутствие;
-- пересчитывает себя, когда строку отметили поодиночке.
+- ticks and unticks every row except the `disabled` ones;
+- keeps `aria-selected` on the `<tr>`;
+- shows a partial selection through `indeterminate` — "some of the rows are
+  selected" is inexpressible either by `checked` or by its absence;
+- recomputes itself when a row is ticked on its own.
 
-### События
+### Events
 
-`inst:selectall` всплывает с таблицы, `detail` — `{ checked }`. Отмена
-оставляет строки как есть.
+`inst:selectall` bubbles from the table, and its `detail` is `{ checked }`.
+Cancelling leaves the rows as they are.
 
 ```js
 table.addEventListener('inst:selectall', (e) => {
@@ -209,95 +210,94 @@ table.addEventListener('inst:selectall', (e) => {
 });
 ```
 
-### Что остаётся приложению
+### What is left to the application
 
-| Что | Почему не `instrument.js` |
+| What | Why not `instrument.js` |
 |---|---|
-| Сортировка | Порядок строк — это данные. Библиотека рисует `aria-sort` и стрелку, переставляет строки приложение |
-| Действия строки | Что делает «Остановить» — знает только приложение |
-| Пагинация и виртуализация | Зависят от источника данных |
+| Sorting | The order of rows is data. The library draws `aria-sort` and the arrow, the application rearranges the rows |
+| Row actions | What "Stop" does is known to the application alone |
+| Pagination and virtualisation | They depend on the source of the data |
 
-## Сценарии
+## Patterns
 
-### Таблица в панели
+### A table in a panel
 
-Таблица показывает себя только целиком: сортировка, выбор строк, действия и
-итоги по отдельности выглядят как четыре независимых класса, а вместе — как
-один инструмент.
+A table shows itself only entire: sorting, row selection, actions and totals
+look like four independent classes apart, and like one instrument together.
 
-Что проверить руками:
+What to check by hand:
 
-- **наведите на строку** — появятся действия. Теперь пройдите по строкам
-  `Tab`: действия появятся снова. Это разные события (`:hover` и
-  `:focus-within`), и второе существует затем, чтобы действие,
-  видимое только под курсором, не пропадало для клавиатуры;
-- **выделите строку** и наведите на неё — подсветки складываются, потому
-  что выделение полупрозрачно;
-- **прокрутите тело панели** — шапка останется на месте.
+- **hover over a row** — the actions appear. Now go through the rows with
+  `Tab`: the actions appear again. These are different events (`:hover` and
+  `:focus-within`), and the second exists so that an action visible only under
+  the cursor does not disappear for the keyboard;
+- **select a row** and hover over it — the highlights add up, because the
+  selection is translucent;
+- **scroll the body of the panel** — the head stays where it is.
 
 ```html preview context
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Модули прогона</span>
-    <span class="inst-panel-actions"><span class="inst-badge">выбрано 1</span></span>
+    <span class="inst-panel-title">Modules of the run</span>
+    <span class="inst-panel-actions"><span class="inst-badge">1 selected</span></span>
   </div>
   <div class="inst-panel-body inst-panel-body--flush">
     <table class="inst-table inst-table--sticky">
       <thead>
         <tr>
-          <th class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать все строки"></label></th>
-          <th aria-sort="descending"><button class="inst-sort" type="button">Модуль</button></th>
-          <th>Состояние</th>
-          <th class="inst-num"><button class="inst-sort" type="button">Время, с</button></th>
-          <th class="inst-num"><button class="inst-sort" type="button">Токенов</button></th>
-          <th class="inst-col-actions"><span class="inst-u-visually-hidden">Действия</span></th>
+          <th class="inst-col-select"><label class="inst-checkbox"><input type="checkbox" aria-label="Select every row"></label></th>
+          <th aria-sort="descending"><button class="inst-sort" type="button">Module</button></th>
+          <th>State</th>
+          <th class="inst-num"><button class="inst-sort" type="button">Time, s</button></th>
+          <th class="inst-num"><button class="inst-sort" type="button">Tokens</button></th>
+          <th class="inst-col-actions"><span class="inst-u-visually-hidden">Actions</span></th>
         </tr>
       </thead>
       <tbody>
         <tr aria-selected="true">
-          <td><label class="inst-checkbox"><input type="checkbox" checked aria-label="Выбрать «Рендер»"></label></td>
-          <td>Рендер</td>
-          <td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span></td>
-          <td class="inst-num">18,2</td><td class="inst-num">61 204</td>
+          <td><label class="inst-checkbox"><input type="checkbox" checked aria-label="Select Render"></label></td>
+          <td>Render</td>
+          <td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span></td>
+          <td class="inst-num">18.2</td><td class="inst-num">61 204</td>
           <td class="inst-col-actions"><span class="inst-row-actions">
-            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Рендер">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Restart Render">
               <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </span></td>
         </tr>
         <tr>
-          <td><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать «Физика»"></label></td>
-          <td>Физика</td>
-          <td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span></td>
-          <td class="inst-num">11,5</td><td class="inst-num">38 910</td>
+          <td><label class="inst-checkbox"><input type="checkbox" aria-label="Select Physics"></label></td>
+          <td>Physics</td>
+          <td><span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span></td>
+          <td class="inst-num">11.5</td><td class="inst-num">38 910</td>
           <td class="inst-col-actions"><span class="inst-row-actions">
-            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Физика">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Restart Physics">
               <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </span></td>
         </tr>
         <tr>
-          <td><label class="inst-checkbox"><input type="checkbox" aria-label="Выбрать «Аудио»"></label></td>
-          <td>Аудио</td>
-          <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>упало</span></td>
-          <td class="inst-num">4,2</td><td class="inst-num">1 180</td>
+          <td><label class="inst-checkbox"><input type="checkbox" aria-label="Select Audio"></label></td>
+          <td>Audio</td>
+          <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>failed</span></td>
+          <td class="inst-num">4.2</td><td class="inst-num">1 180</td>
           <td class="inst-col-actions"><span class="inst-row-actions">
-            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Перезапустить Аудио">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon" type="button" aria-label="Restart Audio">
               <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
           </span></td>
         </tr>
       </tbody>
       <tfoot>
-        <tr><td></td><td>Итого</td><td></td><td class="inst-num">33,9</td><td class="inst-num">101 294</td><td></td></tr>
+        <tr><td></td><td>Total</td><td></td><td class="inst-num">33.9</td><td class="inst-num">101 294</td><td></td></tr>
       </tfoot>
     </table>
   </div>
 </div>
 ```
 
-### Ячейка-плитка
+### A cell as a tile
 
 ```html preview
 <table class="inst-table inst-table--cells">
-  <thead><tr><th>Прогон</th><th>Ветка</th><th>Модель</th><th class="inst-num">Токенов</th></tr></thead>
+  <thead><tr><th>Run</th><th>Branch</th><th>Model</th><th class="inst-num">Tokens</th></tr></thead>
   <tbody>
     <tr><td>nightly-4127</td><td>main</td><td>opus</td><td class="inst-num">186 000</td></tr>
     <tr><td>audio-pass</td><td>fix/mixdown</td><td>sonnet</td><td class="inst-num">42 300</td></tr>
@@ -306,47 +306,48 @@ table.addEventListener('inst:selectall', (e) => {
 </table>
 ```
 
-Линейка отделяет строку от строки и ничего не говорит про **колонку**: на
-пятнадцати колонках глаз, идущий вправо, теряет и строку, и границу значения.
-Плитка держит и то и другое сразу — у каждого значения своя коробка.
+A rule parts a row from a row and says nothing about a **column**: on fifteen
+columns the eye going to the right loses both the row and the boundary of the
+value. A tile holds both at once — every value has a box of its own.
 
-Шапка плиткой не становится: она не значение, а имя колонки, и коробка вокруг
-имени сделала бы её равной данным.
+The head does not become a tile: it is not a value but the name of a column,
+and a box around a name would make it equal to the data.
 
-### Полосы вместо линеек
+### Stripes instead of rules
 
 ```html preview
 <table class="inst-table inst-table--zebra">
-  <thead><tr><th>Прогон</th><th>Ветка</th><th>Модель</th><th class="inst-num">Токенов</th><th class="inst-num">Время</th></tr></thead>
+  <thead><tr><th>Run</th><th>Branch</th><th>Model</th><th class="inst-num">Tokens</th><th class="inst-num">Time</th></tr></thead>
   <tbody>
-    <tr><td>nightly-4127</td><td>main</td><td>opus</td><td class="inst-num">186 000</td><td class="inst-num">21 с</td></tr>
-    <tr><td>audio-pass</td><td>fix/mixdown</td><td>sonnet</td><td class="inst-num">42 300</td><td class="inst-num">4,2 с</td></tr>
-    <tr><td>biomes-04</td><td>main</td><td>opus</td><td class="inst-num">98 700</td><td class="inst-num">11,5 с</td></tr>
-    <tr><td>terrain-88</td><td>main</td><td>sonnet</td><td class="inst-num">150 400</td><td class="inst-num">18,2 с</td></tr>
+    <tr><td>nightly-4127</td><td>main</td><td>opus</td><td class="inst-num">186 000</td><td class="inst-num">21 s</td></tr>
+    <tr><td>audio-pass</td><td>fix/mixdown</td><td>sonnet</td><td class="inst-num">42 300</td><td class="inst-num">4.2 s</td></tr>
+    <tr><td>biomes-04</td><td>main</td><td>opus</td><td class="inst-num">98 700</td><td class="inst-num">11.5 s</td></tr>
+    <tr><td>terrain-88</td><td>main</td><td>sonnet</td><td class="inst-num">150 400</td><td class="inst-num">18.2 s</td></tr>
   </tbody>
 </table>
 ```
 
-Линейка под каждой строкой работает, пока колонок пять. На пятнадцати она
-отделяет строку от соседа, но не показывает, **где вы внутри строки**, — глаз
-уезжает по вертикали, пока идёт вправо. Заливка через одну показывает: она
-тянется на всю ширину и не пропадает при горизонтальной прокрутке.
+A rule under every row works while there are five columns. On fifteen it parts
+a row from its neighbour but does not show **where you are within the row** —
+the eye travels off on the vertical while going to the right. A fill on every
+other row does show it: it runs the full width and does not disappear on
+horizontal scrolling.
 
-Вместе с линейками её ставить нельзя: два разделителя на одной границе дают
-решётку. Поэтому вариант линейки **снимает**, а не дополняет.
+It may not be put together with the rules: two dividers on one boundary give a
+grid. So the variant **removes** the rules rather than adding to them.
 
-| Берите полосы | Берите линейки |
+| Take stripes | Take rules |
 |---|---|
-| Колонок больше семи, таблицу прокручивают вбок | Колонок до пяти, строка видна целиком |
-| Строки читают целиком, слева направо | Строки сравнивают между собой по одной колонке |
-| Таблица длинная и стоит на своей поверхности | Таблица короткая и лежит внутри карточки |
+| More than seven columns, the table is scrolled sideways | Up to five columns, the row is visible entire |
+| The rows are read entire, left to right | The rows are compared with one another by one column |
+| The table is long and stands on a surface of its own | The table is short and lies inside a card |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

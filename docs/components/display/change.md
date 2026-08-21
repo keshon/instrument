@@ -1,65 +1,64 @@
 ---
-title: Изменение файла
-group: Отображение данных
+title: File change
+group: Data display
 layout: component
 source: src/data.css
 api:
-  - { name: "inst-change", kind: "класс", doc: "Глиф изменения. Контур со знаком внутри" }
-  - { name: "data-change", kind: "атрибут", value: "added · modified · deleted · renamed · conflict", doc: "Что случилось с файлом. Своя ось, не тональный словарь" }
-  - { name: "aria-label", kind: "атрибут", doc: "**Обязателен.** «+» скринридер прочитает как «плюс», а не как «файл добавлен»" }
-  - { name: "--size-icon", kind: "токен", doc: "Коробка глифа" }
-  - { name: "--text-2xs", kind: "токен", doc: "Кегль знака" }
-  - { name: "--chart-3", kind: "токен" }
-  - { name: "--chart-4", kind: "токен" }
-  - { name: "--chart-5", kind: "токен" }
-  - { name: "--chart-6", kind: "токен" }
-  - { name: "--change-ink", kind: "переменная", doc: "Цвет контура. Меточный порог 3:1: контур — не текст" }
-  - { name: "--text-secondary", kind: "токен", doc: "Цвет знака. Текстовый порог 4.5:1: знак читают" }
-  - { name: "--warn-text", kind: "токен", doc: "Только конфликт: единственное значение оси, которое одновременно оценка. Красит и контур, и знак" }
-title-en: "File change"
-group-en: "Data display"
+  - { name: "inst-change", kind: "class", doc: "The glyph of a change. An outline with a sign inside it" }
+  - { name: "data-change", kind: "attribute", value: "added · modified · deleted · renamed · conflict", doc: "What happened to the file. An axis of its own rather than the tonal vocabulary" }
+  - { name: "aria-label", kind: "attribute", doc: "**Required.** A screen reader reads «+» as \"plus\" rather than as \"file added\"" }
+  - { name: "--size-icon", kind: "token", doc: "The box of the glyph" }
+  - { name: "--text-2xs", kind: "token", doc: "The size of the sign" }
+  - { name: "--chart-3", kind: "token" }
+  - { name: "--chart-4", kind: "token" }
+  - { name: "--chart-5", kind: "token" }
+  - { name: "--chart-6", kind: "token" }
+  - { name: "--change-ink", kind: "variable", doc: "The colour of the outline. The threshold of a mark, 3:1: an outline is not text" }
+  - { name: "--text-secondary", kind: "token", doc: "The colour of the sign. The threshold of text, 4.5:1: a sign gets read" }
+  - { name: "--warn-text", kind: "token", doc: "Conflict only: the one value of the axis that is also a judgement. It paints both the outline and the sign" }
 ---
 
-Что случилось с файлом в списке изменений: добавлен, изменён, удалён,
-переименован, конфликт.
+What happened to a file in a list of changes: added, modified, deleted,
+renamed, conflict.
 
 ```html preview
 <div class="inst-stack inst-stack--tight">
-  <span class="inst-change" data-change="added" aria-label="Добавлен">+</span>
-  <span class="inst-change" data-change="modified" aria-label="Изменён">M</span>
-  <span class="inst-change" data-change="deleted" aria-label="Удалён">−</span>
-  <span class="inst-change" data-change="renamed" aria-label="Переименован">R</span>
-  <span class="inst-change" data-change="conflict" aria-label="Конфликт">!</span>
+  <span class="inst-change" data-change="added" aria-label="Added">+</span>
+  <span class="inst-change" data-change="modified" aria-label="Modified">M</span>
+  <span class="inst-change" data-change="deleted" aria-label="Deleted">−</span>
+  <span class="inst-change" data-change="renamed" aria-label="Renamed">R</span>
+  <span class="inst-change" data-change="conflict" aria-label="Conflict">!</span>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Знак стоит содержимым, имя — в `aria-label`. Разделены они потому, что знак это
-данные, а имя — речь: «−» вслух должно звучать «удалён». `aria-label`
-перекрывает содержимое, поэтому знак не зачитывается дважды.
+The sign stands as the content and the name in the `aria-label`. They are
+parted because the sign is data and the name is speech: «−» aloud has to sound
+"deleted". The `aria-label` overrides the content, so the sign is not read
+twice.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `aria-label` словом | да | Знак «+» будет прочитан как «плюс». Что именно случилось, из этого не следует |
-| Знак содержимым | да | Цвет не имеет права быть единственным носителем. На чёрно-белой печати и при дальтонизме остаётся только знак |
-| Значение из словаря | да | Пять значений, список закрыт. Шестое молча не сработает |
+| An `aria-label` in words | yes | The sign «+» will be read as "plus". What exactly happened does not follow from that |
+| The sign as content | yes | Colour has no right to be the only carrier. In black-and-white print and under colour blindness only the sign is left |
+| A value from the vocabulary | yes | Five values, and the list is closed. A sixth will silently do nothing |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Доступное имя | Из `aria-label`: он перекрывает содержимое, и «плюс» вслух не звучит |
-| Цвет не единственный | Знак внутри отличает добавление от удаления там, где цвет исчез: печать, дальтонизм, высокая контрастность |
-| Контраст | Разные пороги у разных носителей: контур меточный 3:1, знак текстовый 4.5:1. Проверяется обходом по пикселям в пяти темах |
-| Роль | Не `img` и не `status`: это метка при имени файла, и озвучивается она вместе с ним |
+| The accessible name | From the `aria-label`: it overrides the content, and "plus" is not said aloud |
+| Colour is not the only one | The sign inside tells an addition from a deletion where colour has gone: print, colour blindness, high contrast |
+| Contrast | Different carriers have different thresholds: the outline is a mark at 3:1, the sign is text at 4.5:1. Checked by a sweep over the pixels in five themes |
+| The role | Neither `img` nor `status`: this is a mark beside a file name, and it is spoken together with it |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

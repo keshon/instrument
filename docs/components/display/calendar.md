@@ -1,46 +1,44 @@
 ---
-title: Календарь
-group: Отображение данных
+title: Calendar
+group: Data display
 layout: component
 source: src/data.css
-js: Выбор даты и переключение месяцев — слой приложения
+js: Picking a date and switching months belong to the application layer
 api:
-  - { name: "inst-calendar", kind: "класс", doc: "Сетка на семь колонок" }
-  - { name: "inst-calendar-dow", kind: "класс", doc: "Шапка: сокращение дня недели" }
-  - { name: "inst-calendar-day", kind: "класс", doc: "Ячейка дня" }
-  - { name: "data-today", kind: "атрибут", value: "true", doc: "на `inst-calendar-day`" }
-  - { name: "data-outside", kind: "атрибут", value: "true", doc: "там же" }
-  - { name: "aria-selected", kind: "атрибут", value: "true · false", doc: "там же" }
-  - { name: "aria-disabled", kind: "атрибут", value: "true", doc: "там же" }
-  - { name: "--space-1", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--control-h-sm", kind: "токен" }
-  - { name: "--radius-sm", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--text-2xs", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-  - { name: "--surface-hover", kind: "токен" }
-  - { name: "--surface-selected", kind: "токен" }
-  - { name: "--accent-text", kind: "токен" }
-  - { name: "--accent-solid", kind: "токен" }
-  - { name: "--size-marker", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-title-en: "Calendar"
-group-en: "Data display"
+  - { name: "inst-calendar", kind: "class", doc: "A grid of seven columns" }
+  - { name: "inst-calendar-dow", kind: "class", doc: "The head: the abbreviation of a weekday" }
+  - { name: "inst-calendar-day", kind: "class", doc: "The cell of a day" }
+  - { name: "data-today", kind: "attribute", value: "true", doc: "on `inst-calendar-day`" }
+  - { name: "data-outside", kind: "attribute", value: "true", doc: "in the same place" }
+  - { name: "aria-selected", kind: "attribute", value: "true · false", doc: "in the same place" }
+  - { name: "aria-disabled", kind: "attribute", value: "true", doc: "in the same place" }
+  - { name: "--space-1", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--control-h-sm", kind: "token" }
+  - { name: "--radius-sm", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--text-2xs", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
+  - { name: "--surface-hover", kind: "token" }
+  - { name: "--surface-selected", kind: "token" }
+  - { name: "--accent-text", kind: "token" }
+  - { name: "--accent-solid", kind: "token" }
+  - { name: "--size-marker", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
 ---
 
-Статическая сетка дат. Библиотека отвечает за то, чтобы сетка была сеткой, а
-сегодняшний день был помечен не только цветом.
+A static grid of dates. The library answers for the grid being a grid and for
+today being marked by more than colour.
 
 ```html preview
-<div class="inst-calendar" role="grid" aria-label="Август 2026">
-  <span class="inst-calendar-dow" aria-hidden="true">пн</span>
-  <span class="inst-calendar-dow" aria-hidden="true">вт</span>
-  <span class="inst-calendar-dow" aria-hidden="true">ср</span>
-  <span class="inst-calendar-dow" aria-hidden="true">чт</span>
-  <span class="inst-calendar-dow" aria-hidden="true">пт</span>
-  <span class="inst-calendar-dow" aria-hidden="true">сб</span>
-  <span class="inst-calendar-dow" aria-hidden="true">вс</span>
+<div class="inst-calendar" role="grid" aria-label="August 2026">
+  <span class="inst-calendar-dow" aria-hidden="true">Mo</span>
+  <span class="inst-calendar-dow" aria-hidden="true">Tu</span>
+  <span class="inst-calendar-dow" aria-hidden="true">We</span>
+  <span class="inst-calendar-dow" aria-hidden="true">Th</span>
+  <span class="inst-calendar-dow" aria-hidden="true">Fr</span>
+  <span class="inst-calendar-dow" aria-hidden="true">Sa</span>
+  <span class="inst-calendar-dow" aria-hidden="true">Su</span>
   <span class="inst-calendar-day" role="gridcell" data-outside="true">27</span>
   <span class="inst-calendar-day" role="gridcell" data-outside="true">28</span>
   <span class="inst-calendar-day" role="gridcell" data-outside="true">29</span>
@@ -86,67 +84,69 @@ group-en: "Data display"
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `role="grid"` на сетке, `role="gridcell"` на дне | да | Без ролей календарь озвучивается как поток из 42 чисел |
-| `aria-label` с месяцем и годом на сетке | да | «2» без месяца не является датой |
-| `aria-label` с полной датой на каждом дне | да | Одно число вне контекста бесполезно |
-| `aria-hidden="true"` на днях недели | да | «пн», «вт» дублируют информацию из полной даты ячейки |
-| Сегодня помечено начертанием, а не только цветом | да | Подчёркивание и полужирное — два признака помимо цвета. Скринридеру то же сообщается словом в `aria-label` |
+| `role="grid"` on the grid, `role="gridcell"` on a day | yes | Without the roles a calendar is spoken as a stream of 42 numbers |
+| An `aria-label` with the month and the year on the grid | yes | "2" with no month is not a date |
+| An `aria-label` with the full date on every day | yes | One number out of context is useless |
+| `aria-hidden="true"` on the weekdays | yes | "Mo", "Tu" repeat what the full date of the cell already carries |
+| Today marked by weight rather than by colour alone | yes | An underline and a semibold are two marks besides colour. The same is told to a screen reader in words in the `aria-label` |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Роли | `role="grid"` на сетке, `role="gridcell"` на дне, `role="row"` на неделе. Без них календарь озвучивается как поток из 42 чисел |
-| Имя | `aria-label` с месяцем и годом на сетке. «2» без месяца не является датой |
-| Дни недели | `aria-hidden="true"`: сокращения «пн», «вт» дублируют информацию, которую скринридер берёт из полной даты ячейки |
-| Полная дата | Каждый день несёт `aria-label` с полной датой («2 августа 2026, суббота»). Одно число вне контекста бесполезно |
-| Клавиатура | Стрелки по дням, `PageUp`/`PageDown` по месяцам, `Home`/`End` по неделе, бегущий `tabindex`. Поведение — на приложении |
-| Сегодня | Не только цвет: подчёркивание плюс начертание. Скринридеру это надо сообщить словом в `aria-label` |
-| Цель нажатия | Высота — `--control-h-sm`, то есть 26px. В плотности `compact` — 22px, **ниже 24px по WCAG 2.5.8** |
-| Табличные цифры | Включены, поэтому колонки чисел стоят ровно независимо от разрядности |
+| The roles | `role="grid"` on the grid, `role="gridcell"` on a day, `role="row"` on a week. Without them a calendar is spoken as a stream of 42 numbers |
+| The name | An `aria-label` with the month and the year on the grid. "2" with no month is not a date |
+| The weekdays | `aria-hidden="true"`: the abbreviations "Mo", "Tu" repeat what a screen reader takes from the full date of the cell |
+| The full date | Every day carries an `aria-label` with the full date ("2 August 2026, Saturday"). One number out of context is useless |
+| The keyboard | Arrows over days, `PageUp`/`PageDown` over months, `Home`/`End` over a week, a roving `tabindex`. The behaviour belongs to the application |
+| Today | Not colour alone: an underline plus the weight. A screen reader has to be told this in words in the `aria-label` |
+| The tap target | The height is `--control-h-sm`, that is 26px. At density `compact` it is 22px, **below the 24px of WCAG 2.5.8** |
+| Tabular figures | On, so the columns of numbers stand level whatever the number of digits |
 
-## Состояния
+## States
 
-| Атрибут | Что значит |
+| Attribute | What it means |
 |---|---|
-| нет атрибутов | Обычный день текущего месяца |
-| `data-today="true"` | Сегодня. Подчёркивание **и** полужирное начертание |
-| `data-outside="true"` | День соседнего месяца, добивающий неделю |
-| `aria-selected="true"` | Выбран |
-| `aria-disabled="true"` | Недоступен. Прозрачность `0.5`, нажатие снято |
+| no attributes | An ordinary day of the current month |
+| `data-today="true"` | Today. An underline **and** a semibold weight |
+| `data-outside="true"` | A day of a neighbouring month filling out the week |
+| `aria-selected="true"` | Selected |
+| `aria-disabled="true"` | Unavailable. An opacity of `0.5`, with the press removed |
 
-**Сегодня помечено подчёркиванием, а не только цветом.** Это выполнение закона
-библиотеки: цвет не имеет права быть единственным носителем состояния. Подчёркивание
-рисуется внутренней тенью толщиной `--size-marker` — той же, что несёт полосу
-активной вкладки и край текущего пункта навигации.
+**Today is marked by an underline rather than by colour alone.** That is the
+library's law being carried out: colour has no right to be the only carrier of
+a state. The underline is drawn by an inner shadow of thickness `--size-marker`
+— the same that carries the bar of an active tab and the edge of the current
+navigation item.
 
 ## JS
 
-Подключите модуль один раз на страницу — инициализировать компоненты по
-отдельности не нужно, `instrument.js` работает делегированием и видит узлы, пришедшие
-позже.
+Include the module once per page — there is no need to initialise the
+components one by one, `instrument.js` works by delegation and sees nodes that
+arrived later.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Ничего. Календарь — это сетка дат, а даты библиотека не считает: месяц, високосный
-год, первый день недели и локаль — данные, а не оформление. Библиотека рисует сетку и
-состояния дня, разметку строит приложение.
+Nothing. A calendar is a grid of dates, and the library does not compute dates:
+the month, the leap year, the first day of the week and the locale are data
+rather than styling. The library draws the grid and the states of a day, and
+the application builds the markup.
 
-### Что должно сделать приложение
+### What the application has to do
 
-| Что | Что для этого есть в библиотеке |
+| What | What the library has for it |
 |---|---|
-| Построить сетку месяца | Классы дня и `aria-label` с полной датой |
-| Отметить выбранное | `aria-selected="true"` на дне |
-| Переключить месяц | Кнопки шапки — обычные `<button>` |
+| Build the grid of a month | The classes of a day and an `aria-label` with the full date |
+| Mark what is selected | `aria-selected="true"` on a day |
+| Switch the month | The buttons of the header — ordinary `<button>`s |
 
 ```js
 grid.addEventListener('click', (e) => {
@@ -161,16 +161,16 @@ grid.addEventListener('click', (e) => {
 });
 ```
 
-Дата хранится в `data-date` в формате ISO, а не читается из подписи: подпись
-зависит от локали, и парсить её обратно — способ получить разъезд на первом же
-языке.
+The date is kept in `data-date` in ISO format rather than read from the label:
+the label depends on the locale, and parsing it back is a way of getting a
+divergence on the very first language.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

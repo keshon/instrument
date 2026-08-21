@@ -1,53 +1,51 @@
 ---
-title: Утилиты
-group: Основания
+title: Utilities
+group: Foundations
 layout: foundation
 source: src/base.css
 api:
-  - { name: "--text-secondary", kind: "токен" }
-  - { name: "--font-mono", kind: "токен" }
-title-en: "Utilities"
-group-en: "Foundations"
+  - { name: "--text-secondary", kind: "token" }
+  - { name: "--font-mono", kind: "token" }
 ---
 
-Пять утилит, и это **потолок**. Если понадобилась шестая, обычно нужен
-компонент.
+Five utilities, and that is the **ceiling**. If a sixth is wanted, what is
+usually wanted is a component.
 
 ```html preview
-<span class="inst-u-dim">приглушённый текст</span>
+<span class="inst-u-dim">muted text</span>
 <span class="inst-u-mono">a4f7c2e</span>
 <span class="inst-u-prose-nums">1 234 567</span>
 ```
 
-## Контракт
+## Contract
 
-Каждая существует потому, что описывает работу, которой у компонента нет.
+Each one exists because it describes work no component does.
 
 ```html
-<span class="inst-u-truncate">Очень длинное имя файла, которое не влезает</span>
-<span class="inst-u-visually-hidden">Действия</span>
+<span class="inst-u-truncate">A very long file name that does not fit</span>
+<span class="inst-u-visually-hidden">Actions</span>
 ```
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Утилита называет **работу** | да | «Обрезать», «спрятать визуально», «табличные цифры». Не «отступ 12px» |
-| `inst-u-visually-hidden`, а не `display: none` | да | Скрытое через `display` выпадает из дерева доступности вместе со смыслом |
-| Отступ утилитой | нет, и не будет | Ритм — работа [примитивов потока](../layout/flow.md), а не разметки экрана |
+| A utility names **work** | yes | "Truncate", "hide visually", "tabular figures". Not "12px of padding" |
+| `inst-u-visually-hidden` rather than `display: none` | yes | What is hidden through `display` falls out of the accessibility tree along with its meaning |
+| Spacing by a utility | no, and there will be none | Rhythm is the work of the [flow primitives](../layout/flow.md), not of a screen's markup |
 
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| `inst-u-visually-hidden` | Единственный правильный способ спрятать текст от глаза, оставив скринридеру. `display: none` и `visibility: hidden` убирают его отовсюду, включая озвучивание |
-| Фокус внутри скрытого | Если внутри скрытого блока есть фокусируемый элемент, фокус уедет в невидимое место. Классический случай — «перейти к содержимому»: там нужен [`inst-skip-link`](../layout/shell.md), который проявляется по фокусу |
-| `inst-u-truncate` | Режет **визуально**: полный текст остаётся в DOM и озвучивается. Для мыши добавьте `title`, иначе значение доступно только на слух |
-| `inst-u-dim` | `--text-secondary` держит 4.5:1. Не путайте с `--text-faint` — это порог декорации (3:1), и текст им красить нельзя |
-| `inst-u-prose-nums` | Пропорциональные цифры **нельзя** ставить в колонку: разряды перестанут стоять друг под другом |
+| `inst-u-visually-hidden` | The one right way to hide text from the eye while leaving it to a screen reader. `display: none` and `visibility: hidden` remove it from everywhere, the speaking included |
+| Focus inside something hidden | If a focusable element sits inside a hidden block, the focus travels to an invisible place. The classic case is "skip to content": what is wanted there is [`inst-skip-link`](../layout/shell.md), which appears on focus |
+| `inst-u-truncate` | It cuts **visually**: the full text stays in the DOM and is spoken. For a mouse add a `title`, otherwise the value is available by ear only |
+| `inst-u-dim` | `--text-secondary` holds 4.5:1. Do not confuse it with `--text-faint` — that is the threshold of decoration (3:1), and text may not be painted with it |
+| `inst-u-prose-nums` | Proportional figures **may not** be put in a column: the digits stop standing one under another |
 
-## Устройство
+## Anatomy
 
-`inst-u-mono` объявлен **в одном правиле** с `code`, `kbd`, `samp`, `pre`:
+`inst-u-mono` is declared **in one rule** with `code`, `kbd`, `samp`, `pre`:
 
 ```css
 code, kbd, samp, pre, .inst-u-mono {
@@ -56,55 +54,56 @@ code, kbd, samp, pre, .inst-u-mono {
 }
 ```
 
-Моноширинный шрифт оптически крупнее санса на том же кегле, поэтому поправка
-обязательна. Объявлена она один раз намеренно: когда у утилиты было своё
-правило, `<code class="inst-u-mono">` получал `0.925 × 0.925` и уезжал под
-объявленный пол в 11px.
+A monospaced font is optically larger than a sans at the same size, so the
+correction is obligatory. It is declared once deliberately: while the utility
+had a rule of its own, a `<code class="inst-u-mono">` got `0.925 × 0.925` and
+went under the declared floor of 11px.
 
-Внутри [блока кода](../components/display/code.md) поправка уже применена
-контейнером — второй раз не нужна.
+Inside a [block of code](../components/display/code.md) the correction is
+already applied by the container — a second one is not needed.
 
-## Шкала
+## Scale
 
-| Класс | Что делает | Когда |
+| Class | What it does | When |
 |---|---|---|
-| `inst-u-truncate` | Обрезает строку многоточием | Заголовок, который иначе вытолкнет соседа за край: строка очереди, путь в дифе, подпись дорожки |
-| `inst-u-visually-hidden` | Прячет визуально, оставляет скринридеру | Подпись, которую заменяет иконка; заголовок области, лишний на экране, но нужный на слух |
-| `inst-u-mono` | Моноширинное начертание | Идентификатор или хеш **внутри** обычного текста |
-| `inst-u-prose-nums` | Пропорциональные цифры | Число в прозе, где табличные цифры выглядят разреженными |
-| `inst-u-dim` | `--text-secondary` | Второстепенная часть строки, для которой заводить класс избыточно |
+| `inst-u-truncate` | Truncates a line with an ellipsis | A title that would otherwise push its neighbour off the edge: a row of a queue, a path in a diff, the label of a lane |
+| `inst-u-visually-hidden` | Hides visually, leaves it to a screen reader | A label an icon replaces; the heading of a region, superfluous on screen but wanted by ear |
+| `inst-u-mono` | Monospaced setting | An identifier or a hash **inside** ordinary text |
+| `inst-u-prose-nums` | Proportional figures | A number in prose, where tabular figures look loose |
+| `inst-u-dim` | `--text-secondary` | A secondary part of a line, for which starting a class is excessive |
 
-## Правила
+## Rules
 
-**Утилит отступов** — `mt-3`, `p-2`, `pt-0d25`. Причина не в эстетике: шкала
-нарочно разрежена сверху, чтобы «чуть побольше» просто не было в наборе, а
-набор утилит отступов возвращает это решение первым же классом и переносит
-ответственность за ритм из библиотеки в разметку каждого экрана.
+**Spacing utilities** — `mt-3`, `p-2`, `pt-0d25`. The reason is not aesthetic:
+the scale is sparse at the top on purpose, so that "a little bigger" is simply
+not in the set, and a set of spacing utilities takes that decision back with
+its very first class and moves the responsibility for rhythm out of the library
+and into the markup of every screen.
 
-Вместо них — три примитива потока с зазором, названным **намерением, а не
-числом**: [стопка, кластер и сетка](../layout/flow.md) с шагами
-`--tight` / обычный / `--loose`. Плотность контейнера перенастраивает все три
-разом.
+In their place, three flow primitives with a gap named by **intent rather than
+by a number**: [the stack, the cluster and the grid](../layout/flow.md) with
+steps `--tight` / ordinary / `--loose`. The density of a container retunes all
+three at once.
 
-| Хочется | Возьмите другое |
+| What is wanted | Take instead |
 |---|---|
-| Отступ между элементами | [`inst-stack`](../layout/flow.md) или [`inst-cluster`](../layout/flow.md) |
-| Выравнивание и раскладка | [примитивы раскладки](../layout/flow.md) |
-| Цвет текста | Семантический токен в своём правиле, не утилита |
-| Размер шрифта | Компонент. Кегль — часть роли элемента, а не украшение |
+| Spacing between elements | [`inst-stack`](../layout/flow.md) or [`inst-cluster`](../layout/flow.md) |
+| Alignment and layout | [the layout primitives](../layout/flow.md) |
+| A text colour | A semantic token in a rule of your own, not a utility |
+| A font size | A component. Type size is part of an element's role rather than decoration |
 
 ## API
 
 ```api
 ```
 
-Утилиты намеренно не имеют собственных токенов: каждая либо переключает
-свойство платформы, либо берёт один существующий семантический токен.
+The utilities deliberately have no tokens of their own: each either switches a
+property of the platform or takes one existing semantic token.
 
-## Связанное
+## Related
 
-[Примитивы потока](../layout/flow.md)
-[Типографика](./typography.md)
-[Отступы и форма](./spacing.md)
-[Код](../components/display/code.md)
-[Оболочка](../layout/shell.md)
+[Flow primitives](../layout/flow.md)
+[Typography](./typography.md)
+[Spacing and shape](./spacing.md)
+[Code](../components/display/code.md)
+[Shell](../layout/shell.md)

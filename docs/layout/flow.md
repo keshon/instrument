@@ -1,164 +1,164 @@
 ---
-title: Примитивы потока
-group: Раскладка
+title: Flow primitives
+group: Layout
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-stack", kind: "класс", doc: "Колонка. Зазор `--pad-panel`" }
-  - { name: "inst-cluster", kind: "класс", doc: "Ряд с переносом, выравнивание по центру. Зазор `--gap-inline`" }
-  - { name: "inst-cluster-spacer", kind: "класс", doc: "Прижать хвост ряда к дальнему краю" }
-  - { name: "inst-grid", kind: "класс", doc: "Адаптивная сетка. Зазор `--pad-panel`" }
-  - { name: "inst-stack--tight", kind: "модификатор", doc: "Шаг зазора" }
-  - { name: "inst-stack--loose", kind: "модификатор", doc: "Шаг зазора" }
-  - { name: "inst-cluster--tight", kind: "модификатор", doc: "Шаг зазора" }
-  - { name: "inst-cluster--loose", kind: "модификатор", doc: "Шаг зазора" }
-  - { name: "inst-grid--tight", kind: "модификатор", doc: "Минимальная ширина колонки" }
-  - { name: "inst-grid--wide", kind: "модификатор", doc: "Минимальная ширина колонки" }
-  - { name: "--col-min", kind: "переменная", value: "260px" }
-  - { name: "--flow-self", kind: "переменная", doc: "Канал колонки: чем она говорит прямым детям, что те меряются содержимым. Незаследуемый, поэтому не протекает вглубь" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--gap-row", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--gap-section", kind: "токен" }
-title-en: "Flow primitives"
-group-en: "Layout"
+  - { name: "inst-stack", kind: "class", doc: "A column. A gap of `--pad-panel`" }
+  - { name: "inst-cluster", kind: "class", doc: "A row with wrapping, aligned to the centre. A gap of `--gap-inline`" }
+  - { name: "inst-cluster-spacer", kind: "class", doc: "Push the tail of a row to the far edge" }
+  - { name: "inst-grid", kind: "class", doc: "A responsive grid. A gap of `--pad-panel`" }
+  - { name: "inst-stack--tight", kind: "modifier", doc: "A step of the gap" }
+  - { name: "inst-stack--loose", kind: "modifier", doc: "A step of the gap" }
+  - { name: "inst-cluster--tight", kind: "modifier", doc: "A step of the gap" }
+  - { name: "inst-cluster--loose", kind: "modifier", doc: "A step of the gap" }
+  - { name: "inst-grid--tight", kind: "modifier", doc: "The minimum width of a column" }
+  - { name: "inst-grid--wide", kind: "modifier", doc: "The minimum width of a column" }
+  - { name: "--col-min", kind: "variable", value: "260px" }
+  - { name: "--flow-self", kind: "variable", doc: "The channel of a column: what it tells its direct children with, that they are sized by their content. Non-inheriting, so it does not leak deeper" }
+  - { name: "--pad-panel", kind: "token" }
+  - { name: "--gap-row", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--gap-section", kind: "token" }
 ---
 
-Три способа расставить элементы: стопкой, рядом, сеткой. У каждого три шага
-зазора, названные **намерением, а не числом**.
+Three ways to place elements: as a stack, as a row, as a grid. Each has three
+steps of the gap, named **by intent rather than by a number**.
 
 ```html preview
 <div class="inst-stack">
   <div class="inst-cluster">
-    <button class="inst-btn inst-btn--sm" type="button">Фильтры</button>
-    <button class="inst-btn inst-btn--sm" type="button">Период</button>
+    <button class="inst-btn inst-btn--sm" type="button">Filters</button>
+    <button class="inst-btn inst-btn--sm" type="button">Period</button>
     <span class="inst-cluster-spacer"></span>
-    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Запустить</button>
+    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Run</button>
   </div>
   <div class="inst-grid inst-grid--tight">
-    <div class="inst-metric"><div class="inst-metric-label">В работе</div><div class="inst-metric-value">7</div></div>
-    <div class="inst-metric"><div class="inst-metric-label">В очереди</div><div class="inst-metric-value">5</div></div>
-    <div class="inst-metric"><div class="inst-metric-label">Упало</div><div class="inst-metric-value">1</div></div>
+    <div class="inst-metric"><div class="inst-metric-label">In work</div><div class="inst-metric-value">7</div></div>
+    <div class="inst-metric"><div class="inst-metric-label">In the queue</div><div class="inst-metric-value">5</div></div>
+    <div class="inst-metric"><div class="inst-metric-label">Fell</div><div class="inst-metric-value">1</div></div>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Зазор ставит **контейнер**, а не элемент | да | Отступ у элемента складывается с внутренним отступом контейнера сверху и снизу, но не по бокам: блок отъезжает от рамки по вертикали вдвое дальше, чем по горизонтали |
-| Шаг зазора — модификатором | да | `--tight` и `--loose` названы намерением. Число в разметке ломается на первой же смене плотности |
-| Один `inst-cluster-spacer` на ряд | да | Второй ничего не даст: первый уже забрал остаток |
-| `<ul>` вместо `<div>`, если это список | нет, но обычно да | Примитивы семантики не несут |
+| The gap is set by the **container** rather than by the element | yes | An indent on an element adds up with the padding of the container at the top and at the bottom, but not at the sides: the block travels away from the border twice as far vertically as horizontally |
+| The step of the gap through a modifier | yes | `--tight` and `--loose` are named by intent. A number in the markup breaks at the very first change of density |
+| One `inst-cluster-spacer` per row | yes | A second one will give nothing: the first has already taken the remainder |
+| A `<ul>` instead of a `<div>` if this is a list | no, but usually yes | The primitives carry no semantics |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Порядок | Все три примитива сохраняют порядок разметки: визуальный и клавиатурный совпадают. `order` и `row-reverse` в библиотеке не применяются |
-| Перенос | Кластер и сетка переносятся сами — при увеличении кегля до 200% содержимое не обрезается и не даёт горизонтальной прокрутки |
-| Распорка | `inst-cluster-spacer` пуст и в дереве доступности отсутствует: он не сообщает ничего сверх порядка |
-| Плотность | Все три зазора приходят из ролей и перенастраиваются `data-density` разом. Компонент, у которого зашито число, ломается здесь первым |
-| Семантика | Примитивы — `<div>`. Если группа элементов — список, ставьте `<ul>` и класс на него |
+| Order | All three primitives keep the order of the markup: the visual one and the keyboard one coincide. `order` and `row-reverse` are not applied in the library |
+| Wrapping | A cluster and a grid wrap by themselves — at an increase of the type size to 200% the content is not cut off and gives no horizontal scrolling |
+| The spacer | `inst-cluster-spacer` is empty and absent from the accessibility tree: it reports nothing beyond the order |
+| Density | All three gaps arrive from roles and are retuned by `data-density` at once. A component with a number wired into it breaks here first |
+| Semantics | The primitives are `<div>`s. If a group of elements is a list, put a `<ul>` and the class on it |
 
-## Варианты
+## Variants
 
-### Стопка
+### The stack
 
 ```html preview
 <div class="inst-stack inst-stack--loose">
   <div class="inst-stack inst-stack--tight">
-    <div class="inst-card"><div class="inst-card-title">Первый</div></div>
-    <div class="inst-card"><div class="inst-card-title">Второй</div></div>
+    <div class="inst-card"><div class="inst-card-title">The first</div></div>
+    <div class="inst-card"><div class="inst-card-title">The second</div></div>
   </div>
   <div class="inst-stack inst-stack--tight">
-    <div class="inst-card"><div class="inst-card-title">Третий</div></div>
-    <div class="inst-card"><div class="inst-card-title">Четвёртый</div></div>
+    <div class="inst-card"><div class="inst-card-title">The third</div></div>
+    <div class="inst-card"><div class="inst-card-title">The fourth</div></div>
   </div>
 </div>
 ```
 
-| Класс | Зазор | Когда |
+| The class | The gap | When |
 |---|---|---|
-| `inst-stack` | `--pad-panel` | Умолчание: блоки экрана, секции, панели |
-| `inst-stack--tight` | `--gap-row` | Строки внутри блока: пары ключ-значение, список задач |
-| `inst-stack--loose` | `--gap-section` | Крупные смысловые разделы длинного экрана |
+| `inst-stack` | `--pad-panel` | The default: the blocks of a screen, sections, panels |
+| `inst-stack--tight` | `--gap-row` | Rows inside a block: key-value pairs, a list of tasks |
+| `inst-stack--loose` | `--gap-section` | The large divisions of meaning of a long screen |
 
-Кнопка, бейдж, тег и сегментированный контрол в колонке **не растягиваются**:
-кнопка во всю ширину карточки — та же ошибка, что и иконочная кнопка
-прямоугольником. Поля и карточки ширину колонки, наоборот, занимают.
+A button, a badge, a tag and a segmented control in a column **do not
+stretch**: a button the full width of a card is the same mistake as an icon
+button drawn as a rectangle. Fields and cards, on the contrary, do take the
+width of the column.
 
-Колонка не знает, кто внутри неё: она объявляет намерение своим прямым детям,
-а читает его тот, кого оно касается. Компонент, который меряется содержимым,
-несёт `align-self: var(--flow-self, center)` в собственном правиле — рядом со
-своим `display: inline-flex`. Поэтому «я меряюсь содержимым» остаётся
-свойством компонента, а не списком чужих имён в раскладке.
+A column does not know who is inside it: it declares an intent to its direct
+children, and the one it concerns reads it. A component that is sized by its
+content carries `align-self: var(--flow-self, center)` in its own rule — beside
+its `display: inline-flex`. So "I am sized by my content" stays a property of
+the component rather than a list of other people's names in the layout.
 
-Запасное значение `center` объясняет, почему в ряду ничего не меняется: там
-намерение не объявлено, и компонент центрируется, как и должен.
+The fallback value `center` explains why nothing changes in a row: the intent
+is not declared there, and the component centres as it should.
 
-Это работает во **всех колонках библиотеки** — стопке, форме, филдсете, поле,
-секции. В своей колонке приложения — нет: `display: flex; flex-direction:
-column`, написанный руками, намерения не объявит, и контролы растянутся
-заново. Это довод взять примитив, а не писать колонку — либо объявить канал
-самому:
+This works in **every column of the library** — the stack, the form, the
+fieldset, the field, the section. In a column of your own application it does
+not: a `display: flex; flex-direction: column` written by hand declares no
+intent, and the controls stretch all over again. That is an argument for taking
+the primitive rather than writing the column — or else for declaring the
+channel yourself:
 
 ```css
-.моя-колонка > * { --flow-self: start; }
+.my-column > * { --flow-self: start; }
 ```
 
-### Кластер
+### The cluster
 
 ```html preview
 <div class="inst-cluster inst-cluster--loose">
   <span class="inst-cluster inst-cluster--tight">
-    <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
-    <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
+    <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span>
+    <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>running</span>
   </span>
   <span class="inst-cluster-spacer"></span>
-  <button class="inst-btn inst-btn--sm" type="button">Ещё</button>
+  <button class="inst-btn inst-btn--sm" type="button">More</button>
 </div>
 ```
 
-| Класс | Зазор | Когда |
+| The class | The gap | When |
 |---|---|---|
-| `inst-cluster` | `--gap-inline` | Умолчание: кнопки, бейджи, контролы в ряд |
-| `inst-cluster--tight` | `--space-2` | Элементы, читающиеся как одна группа: теги, чипы |
-| `inst-cluster--loose` | `--pad-panel` | Разные по смыслу группы в одной строке |
+| `inst-cluster` | `--gap-inline` | The default: buttons, badges, controls in a row |
+| `inst-cluster--tight` | `--space-2` | Elements that read as one group: tags, chips |
+| `inst-cluster--loose` | `--pad-panel` | Groups of differing meaning in one line |
 
-Кластер **переносится всегда** (`flex-wrap: wrap`) и выравнивает детей по
-центру поперечной оси. `inst-cluster-spacer` — пустой элемент с
-`margin-inline-start: auto`: всё после него уезжает к дальнему краю.
+A cluster **always wraps** (`flex-wrap: wrap`) and aligns its children to the
+centre of the cross axis. `inst-cluster-spacer` is an empty element with a
+`margin-inline-start: auto`: everything after it travels to the far edge.
 
-### Сетка
+### The grid
 
 ```html preview
 <div class="inst-grid inst-grid--wide">
-  <div class="inst-card"><div class="inst-card-title">Карточка</div>
-    <div class="inst-card-sub">Колонки перестраиваются сами: auto-fit, без единого запроса.</div></div>
-  <div class="inst-card"><div class="inst-card-title">Карточка</div>
-    <div class="inst-card-sub">min() не даёт колонке вылезти за контейнер на узком экране.</div></div>
+  <div class="inst-card"><div class="inst-card-title">A card</div>
+    <div class="inst-card-sub">The columns rebuild themselves: auto-fit, with not a single query.</div></div>
+  <div class="inst-card"><div class="inst-card-title">A card</div>
+    <div class="inst-card-sub">min() keeps a column from spilling out of the container on a narrow screen.</div></div>
 </div>
 ```
 
-| Класс | Минимальная колонка | Когда |
+| The class | The minimum column | When |
 |---|---|---|
-| `inst-grid` | `--col-min`, 260px на базовом масштабе | Умолчание: карточки, панели |
-| `inst-grid--tight` | 180px | Мелкие ячейки: метрики, плитки состояний |
-| `inst-grid--wide` | 380px | Крупные блоки с текстом внутри |
+| `inst-grid` | `--col-min`, 260px at the base scale | The default: cards, panels |
+| `inst-grid--tight` | 180px | Small cells: metrics, tiles of states |
+| `inst-grid--wide` | 380px | Large blocks with text inside |
 
-Число колонок не задаётся: `repeat(auto-fit, minmax(min(var(--col-min), 100%), 1fr))`
-считает его сам. `min(…, 100%)` обязателен — без него колонка шириной 380px не
-помещается в контейнер шириной 320px и вылезает наружу вместе с горизонтальной
-прокруткой.
+The count of columns is not set: `repeat(auto-fit, minmax(min(var(--col-min), 100%), 1fr))`
+works it out itself. The `min(…, 100%)` is required — without it a column 380px
+wide does not fit into a container 320px wide and spills outside along with a
+horizontal scrollbar.
 
-Это первый уровень адаптивности, **интринсик**: работает всегда, в том числе
-там, где контейнера-предка нет.
+That is the first level of responsiveness, the **intrinsic** one: it always
+works, including where there is no container ancestor.
 
 ```css
-/* Своя плотность сетки — одна строка */
+/* A density of your own for a grid — one line */
 .my-board { --col-min: 320px; }
 ```
 
@@ -167,7 +167,7 @@ column`, написанный руками, намерения не объяви
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

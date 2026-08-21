@@ -71,7 +71,7 @@
       <input class="inst-input inst-input--sm" type="search" placeholder="{{ t .Lang "search" }}"
              role="combobox" aria-expanded="false" aria-controls="site-results"
              aria-autocomplete="list" aria-label="{{ t .Lang "search.aria" }}"
-             autocomplete="off" data-search>
+             autocomplete="off" data-search data-index="{{ index .Lang }}">
       <div class="site-results inst-popover inst-popover--fill" id="site-results" role="listbox"
            aria-label="{{ t .Lang "search.result" }}" hidden data-results></div>
     </div>

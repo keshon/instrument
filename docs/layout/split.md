@@ -1,76 +1,75 @@
 ---
-title: Сплит
-group: Раскладка
+title: Split
+group: Layout
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-split", kind: "класс", doc: "Контейнер. Ряд с переносом, зазор `--pad-panel`" }
-  - { name: "inst-split-main", kind: "класс", doc: "Основная часть. Забирает остаток, не уже `--split-main`" }
-  - { name: "inst-split-side", kind: "класс", doc: "Боковая часть. Желаемая ширина `--split-side`" }
-  - { name: "--split-side", kind: "переменная", value: "18rem", doc: "Желаемая ширина боковой части" }
-  - { name: "--split-main", kind: "переменная", value: "30rem", doc: "Ниже этого основная часть переносится вниз" }
-  - { name: "--pad-panel", kind: "токен" }
-title-en: "Split"
-group-en: "Layout"
+  - { name: "inst-split", kind: "class", doc: "The container. A row that wraps, with a gap of `--pad-panel`" }
+  - { name: "inst-split-main", kind: "class", doc: "The main part. It takes the remainder and goes no narrower than `--split-main`" }
+  - { name: "inst-split-side", kind: "class", doc: "The side part. Its wanted width is `--split-side`" }
+  - { name: "--split-side", kind: "variable", value: "18rem", doc: "The wanted width of the side part" }
+  - { name: "--split-main", kind: "variable", value: "30rem", doc: "Below this the main part wraps underneath" }
+  - { name: "--pad-panel", kind: "token" }
 ---
 
-Две колонки разной важности: основная и боковая. Переносится сама, когда
-основной части перестаёт хватать порога, — **без единого медиазапроса**.
+Two columns of differing importance: the main one and the side one. It wraps by
+itself when the main part stops having its threshold — **with not a single
+media query**.
 
 ```html preview
 <div class="inst-split">
   <div class="inst-split-side inst-card">
     <div class="inst-card-title">split-side</div>
-    <div class="inst-card-sub">Желаемая ширина 18rem. Фильтры, свойства, сводка.</div>
+    <div class="inst-card-sub">The wanted width is 18rem. Filters, properties, a summary.</div>
   </div>
   <div class="inst-split-main inst-card">
     <div class="inst-card-title">split-main</div>
-    <div class="inst-card-sub">Забирает остаток. Сузьте область — колонки встанут друг
-      под друга, и ни одного @media для этого не понадобилось.</div>
+    <div class="inst-card-sub">It takes the remainder. Narrow the region — the columns stand
+      one under another, and not one @media was needed for that.</div>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `inst-split-main` и `inst-split-side` | да | Обе части нужны: сплит — про раскладку **разной** важности, и без второй он вырождается в блок |
-| Порядок в разметке = порядок при переносе | да | `order` разводит визуальный порядок с клавиатурным, и `Tab` начинает прыгать через экран |
-| Пороги — через `--split-side` и `--split-main` | да | Роли яруса 3, переопределяются на контейнере, а не внутри компонента |
-| Медиазапрос | нет | Перенос делает интринсик: он работает и внутри узкой панели, и в модалке |
+| An `inst-split-main` and an `inst-split-side` | yes | Both parts are wanted: a split is about a layout of **differing** importance, and without the second it degenerates into a block |
+| The order in the markup = the order on wrapping | yes | `order` parts the visual order from the keyboard one, and `Tab` starts jumping across the screen |
+| The thresholds through `--split-side` and `--split-main` | yes | Roles of tier 3, overridden on the container rather than inside the component |
+| A media query | no | The wrapping is done by the intrinsic size: it works inside a narrow panel and in a modal alike |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Порядок | Визуальный порядок равен порядку разметки. `order` не применяется: он разводит `Tab` с картинкой |
-| Масштабирование | Перенос срабатывает и при увеличении кегля: пороги заданы в `rem`, поэтому колонки складываются вместе с ростом текста, а не после него |
-| Ориентиры | Части — `<div>`. Если боковая часть это дополняющее содержимое, ставьте `<aside>` |
-| Прокрутка | Сплит сам ничего не прокручивает. Независимая прокрутка — работа [оболочки](./shell.md) и [панели](../components/display/panel.md) |
+| Order | The visual order equals the order of the markup. `order` is not used: it parts `Tab` from the picture |
+| Zoom | The wrapping fires on an increase of type size too: the thresholds are set in `rem`, so the columns fold along with the growth of the text rather than after it |
+| Landmarks | The parts are `<div>`s. If the side part is complementary content, put an `<aside>` |
+| Scrolling | A split scrolls nothing itself. Independent scrolling is the work of [the shell](./shell.md) and [the panel](../components/display/panel.md) |
 
-## Устройство
+## Anatomy
 
-Переноса добивается не запрос, а два числа:
+The wrapping is achieved not by a query but by two numbers:
 
-| Часть | Правило | Значит |
+| The part | The rule | Which means |
 |---|---|---|
-| `inst-split-side` | `flex: 1 1 var(--split-side)` | Желаемая ширина 18rem. Готова ужаться и растянуться |
-| `inst-split-main` | `flex: 999 1 0` + `min-inline-size: min(var(--split-main), 100%)` | Забирает почти весь остаток, но не сжимается ниже 30rem |
+| `inst-split-side` | `flex: 1 1 var(--split-side)` | A wanted width of 18rem. Ready to squeeze and to stretch |
+| `inst-split-main` | `flex: 999 1 0` + `min-inline-size: min(var(--split-main), 100%)` | It takes almost the whole remainder but does not squeeze below 30rem |
 
-Когда основной части перестаёт хватать её минимума, `flex-wrap` переносит
-боковую вниз, и обе занимают полную ширину. Это первый уровень адаптивности —
-**интринсик**: он работает и там, где контейнера-предка нет, и внутри узкой
-панели, и в модалке.
+When the main part stops having its minimum, `flex-wrap` moves the side one
+below, and both take the full width. That is the first level of responsiveness
+— the **intrinsic** one: it works where there is no container ancestor, inside
+a narrow panel and in a modal alike.
 
-`min()` в минимуме обязателен: без него основная часть шириной 30rem не
-помещается в область шириной 24rem и вылезает наружу вместе с горизонтальной
-прокруткой.
+The `min()` in the minimum is required: without it a main part of 30rem does
+not fit into a region of 24rem and sticks out along with a horizontal
+scrollbar.
 
-### Порядок
+### The order
 
-Порядок в разметке — это порядок при переносе. Хотите, чтобы на узком экране
-сверху оказалась основная часть, — ставьте её первой:
+The order in the markup is the order on wrapping. If you want the main part on
+top on a narrow screen, put it first:
 
 ```html
 <div class="inst-split">
@@ -79,27 +78,27 @@ group-en: "Layout"
 </div>
 ```
 
-`order` для этого не применяется: он разводит визуальный порядок с
-клавиатурным, и `Tab` начинает прыгать через экран.
+`order` is not used for that: it parts the visual order from the keyboard one,
+and `Tab` starts jumping across the screen.
 
-## Композиции
+## Composition
 
-### Список и инспектор
+### A list and an inspector
 
 ```html
 <div class="inst-split">
   <div class="inst-split-main inst-panel">
-    <div class="inst-panel-header"><span class="inst-panel-title">Очередь</span></div>
+    <div class="inst-panel-header"><span class="inst-panel-title">Queue</span></div>
     <div class="inst-panel-body inst-panel-body--list">…</div>
   </div>
   <div class="inst-split-side inst-panel">
-    <div class="inst-panel-header"><span class="inst-panel-title">Свойства</span></div>
+    <div class="inst-panel-header"><span class="inst-panel-title">Properties</span></div>
     <div class="inst-panel-body">…</div>
   </div>
 </div>
 ```
 
-### Со стопкой внутри
+### With a stack inside
 
 ```html
 <div class="inst-split">
@@ -108,25 +107,25 @@ group-en: "Layout"
 </div>
 ```
 
-## Настройка
+## Customization
 
 ```css
-/* Узкая колонка свойств, ранний перенос */
+/* A narrow column of properties, an early wrap */
 .inspector-split {
   --split-side: 14rem;
   --split-main: 24rem;
 }
 ```
 
-Обе переменные — роли яруса 3, поэтому переопределяются на контейнере, а не
-внутри компонента.
+Both variables are roles of tier 3, so they are overridden on the container
+rather than inside the component.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

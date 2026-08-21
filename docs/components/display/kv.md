@@ -1,73 +1,71 @@
 ---
-title: Список свойств
-group: Отображение данных
+title: Key–value list
+group: Data display
 layout: component
 source: src/table.css
 api:
-  - { name: "inst-kv", kind: "класс", doc: "Список только для чтения, на `<dl>`" }
-  - { name: "inst-kv--tight", kind: "класс", doc: "Колонка имён по содержимому. Для узких контейнеров" }
-  - { name: "inst-props", kind: "класс", doc: "Инспектор: контейнер редактируемых свойств" }
-  - { name: "inst-prop", kind: "класс", doc: "Одна строка инспектора" }
-  - { name: "inst-prop-label", kind: "класс", doc: "Имя свойства. Обрезается — нужен `title`" }
-  - { name: "inst-prop-control", kind: "класс", doc: "Ячейка контрола" }
-  - { name: "--label-col", kind: "токен" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--pad-cell-x", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-  - { name: "--surface-hover", kind: "токен" }
-  - { name: "--control-h-sm", kind: "токен" }
-title-en: "Key–value list"
-group-en: "Data display"
+  - { name: "inst-kv", kind: "class", doc: "A read-only list, on a `<dl>`" }
+  - { name: "inst-kv--tight", kind: "class", doc: "The name column by its content. For narrow containers" }
+  - { name: "inst-props", kind: "class", doc: "The inspector: a container of editable properties" }
+  - { name: "inst-prop", kind: "class", doc: "One row of the inspector" }
+  - { name: "inst-prop-label", kind: "class", doc: "The name of a property. It is truncated — a `title` is wanted" }
+  - { name: "inst-prop-control", kind: "class", doc: "The cell of a control" }
+  - { name: "--label-col", kind: "token" }
+  - { name: "--pad-panel", kind: "token" }
+  - { name: "--pad-cell-x", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
+  - { name: "--surface-hover", kind: "token" }
+  - { name: "--control-h-sm", kind: "token" }
 ---
 
-Пары «имя — значение» одного объекта. Настоящий `<dl>`: связь имени со
-значением живёт в разметке, а не только в раскладке.
+Name–value pairs of one object. A real `<dl>`: the tie between a name and its
+value lives in the markup rather than in the layout alone.
 
 ```html preview
 <dl class="inst-kv">
-  <dt>Модель</dt><dd>opus</dd>
-  <dt>Начат</dt><dd>14:32:07</dd>
-  <dt>Файлов</dt><dd>4</dd>
+  <dt>Model</dt><dd>opus</dd>
+  <dt>Started</dt><dd>14:32:07</dd>
+  <dt>Files</dt><dd>4</dd>
 </dl>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Настоящий `<dl>` с `<dt>`/`<dd>` | да | Связь имени со значением даёт разметка. Два `<div>` в две колонки выглядят так же и не связаны ничем |
-| `title` на `inst-prop-label` | да, в инспекторе | Имя обрезается по ширине колонки — без полного текста значение остаётся без имени |
-| `<label for>` вместо `<div>` в инспекторе | да | Иначе поле безымянно |
+| A real `<dl>` with `<dt>`/`<dd>` | yes | The tie between a name and its value is given by the markup. Two `<div>`s in two columns look the same and are tied by nothing |
+| A `title` on `inst-prop-label` | yes, in the inspector | The name is truncated by the width of the column — without the full text the value is left with no name |
+| A `<label for>` rather than a `<div>` in the inspector | yes | Otherwise the field has no name |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Связь имени и значения | Даёт `<dl>`/`<dt>`/`<dd>`. Два `<div>` в две колонки выглядят так же и не связаны ничем |
-| Обрезанное имя | `inst-prop-label` обрезается по ширине колонки, поэтому обязан нести `title` с полным текстом — иначе значение остаётся без имени |
-| Подпись контрола | В инспекторе `inst-prop-label` — настоящий `<label for>`, а не `<div>`: иначе поле безымянно |
-| Порядок чтения | Совпадает с разметкой. Раскладка гридом не меняет порядок озвучивания, и менять его визуально не следует |
+| The tie between name and value | Given by `<dl>`/`<dt>`/`<dd>`. Two `<div>`s in two columns look the same and are tied by nothing |
+| A truncated name | `inst-prop-label` is truncated by the width of the column, so it has to carry a `title` with the full text — otherwise the value is left with no name |
+| The label of a control | In the inspector `inst-prop-label` is a real `<label for>` rather than a `<div>`: otherwise the field has no name |
+| The order of reading | It matches the markup. A grid layout does not change the order of speaking, and it should not be changed visually either |
 
-## Варианты
+## Variants
 
-### Инспектор
+### The inspector
 
-`inst-kv` показывает значения, `inst-props` — редактирует их.
+`inst-kv` shows values, `inst-props` edits them.
 
 ```html preview
 <div class="inst-props">
   <div class="inst-prop">
-    <label class="inst-prop-label" title="Максимум токенов" for="mx">Максимум токенов</label>
+    <label class="inst-prop-label" title="Token limit" for="mx">Token limit</label>
     <div class="inst-prop-control">
       <input class="inst-input inst-input--sm" id="mx" value="500000">
     </div>
   </div>
   <div class="inst-prop">
-    <label class="inst-prop-label" title="Параллельных агентов" for="pa">Параллельных агентов</label>
+    <label class="inst-prop-label" title="Parallel agents" for="pa">Parallel agents</label>
     <div class="inst-prop-control">
       <input class="inst-input inst-input--sm" id="pa" value="6">
     </div>
@@ -75,43 +73,44 @@ group-en: "Data display"
 </div>
 ```
 
-Колонка имён у обоих — один и тот же `--label-col`: два способа показать пару
-«имя — значение» не имеют права разъезжаться по метрике.
+The name column of both is one and the same `--label-col`: two ways of showing
+a name–value pair have no right to part in their metrics.
 
-### Узкий контейнер
+### A narrow container
 
 ```html preview
 <div style="max-width: 235px">
   <div class="inst-card">
     <div class="inst-card-head"><span class="inst-card-title">email</span></div>
     <dl class="inst-kv inst-kv--tight">
-      <dt>Отправлено</dt><dd>1</dd>
-      <dt>Подавлено</dt><dd>0</dd>
+      <dt>Sent</dt><dd>1</dd>
+      <dt>Suppressed</dt><dd>0</dd>
     </dl>
   </div>
 </div>
 ```
 
-Общая колонка — это обещание, что строки выровнены **между** контейнерами, и
-она стоит своей ширины. В карточке на 235px фиксированные `--label-col`
-съедали четыре десятых, и значение «1» оказывалось посреди пустоты. Внутри
-карточки такого обещания нет: сравнивают строки внутри неё, а не с соседней.
+A shared column is a promise that the rows are aligned **between** containers,
+and it is worth its width. In a card of 235px a fixed `--label-col` ate four
+tenths of it, and the value "1" ended up in the middle of emptiness. Inside a
+card there is no such promise: what is compared is the rows within it rather
+than with the one next door.
 
-Обратная сторона честная: две карточки рядом **не** выровняются между собой.
-Если это нужно — берите обычный `inst-kv` и мирьтесь с шириной.
+The other side is honest: two cards side by side will **not** align with each
+other. If that is wanted, take the ordinary `inst-kv` and live with the width.
 
 | | `inst-kv` | `inst-props` |
 |---|---|---|
-| Значения | Только чтение | Редактируемые |
-| Носитель | `<dl>` / `<dt>` / `<dd>` | `<div>` + `<label for>` |
-| Имя связано | Разметкой списка | Ярлыком контрола |
+| Values | Read-only | Editable |
+| The carrier | `<dl>` / `<dt>` / `<dd>` | `<div>` + `<label for>` |
+| The name is tied | By the markup of the list | By the control's label |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

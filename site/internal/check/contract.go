@@ -44,7 +44,7 @@ func underContract(dir string) bool {
 
 func Contract(pages []*content.Page) (errs, warns []string) {
 	for _, p := range pages {
-		if p.Lang != i18n.RU || p.Splash || p.Slug == "index" {
+		if p.Lang != i18n.Base || p.Splash || p.Slug == "index" {
 			continue
 		}
 		strict := p.Layout == "component" || p.Layout == "foundation"

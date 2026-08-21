@@ -1,31 +1,30 @@
 ---
-title: Кольцо
-group: Графики
+title: Ring
+group: Charts
 layout: component
 source: src/data.css
 api:
-  - { name: "inst-ring-wrap", kind: "класс", doc: "Обёртка. Позиционирует подпись" }
-  - { name: "inst-ring", kind: "класс", doc: "`<svg>`. Размер — `--control-h-lg`, поворот `-90°`" }
-  - { name: "inst-ring-track", kind: "класс", doc: "Полная окружность дорожки" }
-  - { name: "inst-ring-fill", kind: "класс", doc: "Дуга значения. Читает `--value`" }
-  - { name: "inst-ring-label", kind: "класс", doc: "Подпись по центру" }
-  - { name: "--value", kind: "переменная", value: "0", doc: "Доля 0…1. Ставится инлайном как данные" }
-  - { name: "--tone-mark", kind: "переменная", value: "--accent-mark", doc: "Цвет дуги. Приходит из `data-tone`" }
-  - { name: "--track", kind: "переменная", value: "—", doc: "Цвет дорожки" }
-  - { name: "--control-h-lg", kind: "токен" }
-  - { name: "--accent-mark", kind: "токен" }
-  - { name: "--text-2xs", kind: "токен" }
-  - { name: "--radius-full", kind: "токен" }
-title-en: "Ring"
-group-en: "Charts"
+  - { name: "inst-ring-wrap", kind: "class", doc: "The wrapper. It positions the label" }
+  - { name: "inst-ring", kind: "class", doc: "The `<svg>`. The size is `--control-h-lg`, turned `-90°`" }
+  - { name: "inst-ring-track", kind: "class", doc: "The full circle of the track" }
+  - { name: "inst-ring-fill", kind: "class", doc: "The arc of the value. It reads `--value`" }
+  - { name: "inst-ring-label", kind: "class", doc: "The label at the centre" }
+  - { name: "--value", kind: "variable", value: "0", doc: "A share of 0…1. Set inline as data" }
+  - { name: "--tone-mark", kind: "variable", value: "--accent-mark", doc: "The colour of the arc. It comes from `data-tone`" }
+  - { name: "--track", kind: "variable", value: "—", doc: "The colour of the track" }
+  - { name: "--control-h-lg", kind: "token" }
+  - { name: "--accent-mark", kind: "token" }
+  - { name: "--text-2xs", kind: "token" }
+  - { name: "--radius-full", kind: "token" }
 ---
 
-Та же доля, что у [меры](./meter.md), но в габарите контрола: кольцо встаёт
-рядом с текстом карточки, где полосе на всю ширину места нет. SVG, без JS.
+The same share as [a meter](./meter.md) but in the size of a control: a ring
+stands beside the text of a card, where a full-width bar has no room. SVG, with
+no JS.
 
 ```html preview
 <span class="inst-ring-wrap">
-  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Израсходовано 74% бюджета">
+  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="74% of the budget spent">
     <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
     <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.74"/>
   </svg>
@@ -33,67 +32,68 @@ group-en: "Charts"
 </span>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `role="img"` на `<svg>` | да | Иначе у графики нет роли, и `aria-label` на ней не гарантирован |
-| `aria-label` со значением словами | да | «74» внутри кольца — это цифра без единицы и без контекста |
-| `viewBox="0 0 20 20"`, `cx="10" cy="10" r="8"` | да | Пунктир дуги посчитан из длины окружности при `r=8` |
-| `--value` в долях 0…1 | да | Не проценты и не градусы |
+| A `role="img"` on the `<svg>` | yes | Otherwise the graphic has no role, and an `aria-label` on it is not guaranteed |
+| An `aria-label` with the value in words | yes | A "74" inside a ring is a figure with no unit and no context |
+| `viewBox="0 0 20 20"`, `cx="10" cy="10" r="8"` | yes | The dash of the arc is computed from the circumference at `r=8` |
+| A `--value` as a share of 0…1 | yes | Not percentages and not degrees |
 
-`viewBox="0 0 20 20"` и `r="8"` **не произвольны**: длина окружности при
-`r=8` равна 50.27, и пунктир дуги считается прямо из неё. Другой радиус —
-другая длина, и дуга перестанет соответствовать значению.
+The `viewBox="0 0 20 20"` and the `r="8"` are **not arbitrary**: the
+circumference at `r=8` equals 50.27, and the dash of the arc is computed
+straight from it. Another radius means another length, and the arc stops
+matching the value.
 
 ```css
-/* Кольцо крупнее — снаружи, а не радиусом внутри */
+/* A larger ring — from outside rather than by the radius inside */
 .my-ring { inline-size: 48px; block-size: 48px; }
 ```
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Роль | `role="img"` — в примере, а не в примечании |
-| Имя | `aria-label` предложением: «Израсходовано 74% бюджета», а не «74» |
-| Цвет не единственный носитель | Значение продублировано числом в `inst-ring-label` либо в подписи рядом. Дуга без числа читается только зрячим и только на цвет |
-| Контраст | Дуга держит 3:1 против дорожки. Дорожка не несущая, поэтому 3:1 к поверхности с неё не спрашивается |
-| Кегль подписи | `--text-2xs` — 11px, нижний предел кегля. Кольцу меньше `--control-h-lg` подпись внутрь не помещается: выносите её наружу |
-| Цифры | `font-variant-numeric: tabular-nums` — обновление значения не дёргает центровку |
+| The role | `role="img"` — in the example rather than in a note |
+| The name | An `aria-label` as a sentence: "74% of the budget spent" rather than "74" |
+| Colour is not the only carrier | The value is repeated as a number in the `inst-ring-label` or in the label beside it. An arc with no number is read only by the sighted and only by colour |
+| Contrast | The arc holds 3:1 against the track. The track is not load-bearing, so 3:1 against the surface is not asked of it |
+| The size of the label | `--text-2xs` — 11px, the lower limit of type size. A ring smaller than `--control-h-lg` does not fit a label inside: take it outside |
+| Figures | `font-variant-numeric: tabular-nums` — an update of the value does not tug at the centring |
 
-## Устройство
+## Anatomy
 
-| Узел | Работа |
+| Node | The work |
 |---|---|
-| `inst-ring-wrap` | Позиционирующая обёртка. Только она умеет держать подпись по центру |
-| `inst-ring` | Сам `<svg>`. Повёрнут на `-90°`, поэтому дуга начинается сверху, а не справа |
-| `inst-ring-track` | Дорожка — полная окружность |
-| `inst-ring-fill` | Дуга значения |
-| `inst-ring-label` | Число по центру. Табличные цифры, чтобы не дёргалось при обновлении |
+| `inst-ring-wrap` | The positioning wrapper. It alone can hold the label at the centre |
+| `inst-ring` | The `<svg>` itself. Turned `-90°`, so the arc begins at the top rather than at the right |
+| `inst-ring-track` | The track — a full circle |
+| `inst-ring-fill` | The arc of the value |
+| `inst-ring-label` | The number at the centre. Tabular figures, so that it does not twitch on an update |
 
-Значение — **доля 0…1** в `--value`. Ни проценты, ни градусы: из доли пунктир
-считается без пересчёта.
-`style="--value:0.74"` — инлайновый стиль как **канал данных**, а не
-оформление: значение приходит с сервера и не может жить в статическом CSS.
+The value is a **share of 0…1** in `--value`. Neither percentages nor degrees:
+from a share the dash is computed with no conversion. The
+`style="--value:0.74"` is an inline style as a **channel of data** rather than
+styling: the value comes from the server and cannot live in static CSS.
 
 ```html preview
 <span class="inst-ring-wrap">
-  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Готово 25%">
+  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="25% done">
     <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
     <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.25"/>
   </svg>
   <span class="inst-ring-label">25</span>
 </span>
 <span class="inst-ring-wrap">
-  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Готово 60%">
+  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="60% done">
     <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
     <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.6"/>
   </svg>
   <span class="inst-ring-label">60</span>
 </span>
 <span class="inst-ring-wrap">
-  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Готово 96%">
+  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="96% done">
     <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
     <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.96"/>
   </svg>
@@ -101,25 +101,25 @@ group-en: "Charts"
 </span>
 ```
 
-## Варианты
+## Variants
 
 ```html preview
 <span class="inst-ring-wrap">
-  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Расход 62%">
+  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="62% spent">
     <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
     <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.62"/>
   </svg>
   <span class="inst-ring-label">62</span>
 </span>
 <span class="inst-ring-wrap">
-  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Расход 88%, у порога">
+  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="88% spent, near the threshold">
     <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
     <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.88" data-tone="warn"/>
   </svg>
   <span class="inst-ring-label">88</span>
 </span>
 <span class="inst-ring-wrap">
-  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Лимит исчерпан">
+  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="The limit is spent">
     <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
     <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:1" data-tone="error"/>
   </svg>
@@ -127,52 +127,52 @@ group-en: "Charts"
 </span>
 ```
 
-Дуга читает `--tone-mark` и без атрибута берёт `--accent-mark`. Как и у меры,
-тон меняется вслед за **смыслом величины**.
-Категориальные тона `--chart-*` дуге не положены: кольцо показывает одну
-величину, а не ряд среди равных — см. [палитру](./palette.md).
+The arc reads `--tone-mark` and without the attribute takes `--accent-mark`. As
+on a meter, the tone follows the **meaning of the quantity**. The categorical
+hues `--chart-*` are not due to an arc: a ring shows one quantity rather than a
+series among equals — see [the palette](./palette.md).
 
-## Композиции
+## Composition
 
-### В карточке
+### In a card
 
 ```html preview context
 <div class="inst-card inst-cluster inst-cluster--loose">
   <span class="inst-ring-wrap">
-    <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Израсходовано 74% бюджета">
+    <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="74% of the budget spent">
       <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
       <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.74"/>
     </svg>
     <span class="inst-ring-label">74</span>
   </span>
   <div>
-    <div class="inst-card-title">Бюджет израсходован</div>
-    <div class="inst-card-sub">184 320 из 250 000 токенов</div>
+    <div class="inst-card-title">The budget is spent</div>
+    <div class="inst-card-sub">184 320 of 250 000 tokens</div>
   </div>
 </div>
 ```
 
-### Без подписи внутри
+### With no label inside
 
 ```html preview
 <span class="inst-ring-wrap">
-  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="Готово 40%">
+  <svg class="inst-ring" viewBox="0 0 20 20" role="img" aria-label="40% done">
     <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
     <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.4"/>
   </svg>
 </span>
 ```
 
-Обёртка остаётся: она даёт `inline-flex` и снимает лишний зазор строки под
-SVG. `aria-label` остаётся тем более — без подписи внутри он единственный
-носитель значения для скринридера.
+The wrapper stays: it gives the `inline-flex` and removes the extra line gap
+under an SVG. The `aria-label` stays all the more — with no label inside it is
+the only carrier of the value for a screen reader.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

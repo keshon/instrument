@@ -215,8 +215,8 @@ var mutations = []mutation{
 		"<button class=\"inst-btn\"", "<button class=\"inst-btn inst-btn--mut\"",
 		"a reader copies the markup and it silently does not work"},
 	{"a number in the token table lied", "docscheck", "docs/foundations/tokens.md",
-		"| `--surface-recessed` | чёрный 6% | белый 5% |",
-		"| `--surface-recessed` | чёрный 9% | белый 5% |",
+		"| `--surface-recessed` | black 6% | white 5% |",
+		"| `--surface-recessed` | black 9% | white 5% |",
 		"the class is there, the token is there, only the number lies"},
 	{"a number in the density table lied", "docscheck", "docs/foundations/density.md",
 		"| `--row-pad-y` | `--space-2` | `--space-3` | `--space-4` |",
@@ -237,19 +237,19 @@ var mutations = []mutation{
 	// Each translates one word and lies with a number at the same time. If the
 	// gate went blind on the translation the lie passes, and "documentation and
 	// kit agree completely" becomes a report about nothing.
-	{"mode table header translated", "docscheck", "docs/foundations/density.md",
+	{"mode table header translated", "docscheck", "docs/foundations/density.ru.md",
 		"| Токен | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--control-h-xs` | 18px | 20px | 22px |",
 		"| Token | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--control-h-xs` | 18px | 20px | 24px |",
 		"one word in the header used to silence the check over the whole table"},
-	{"default column translated", "docscheck", "docs/foundations/density.md",
+	{"default column translated", "docscheck", "docs/foundations/density.ru.md",
 		"| Токен | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--size-check` | 13px | 15px | 17px |",
 		"| Токен | `compact` | default | `comfortable` |\n|---|---|---|---|\n| `--size-check` | 13px | 19px | 17px |",
 		"the column was recognised by its caption, and the caption was the only Russian one of three"},
-	{"mode code in the header translated", "docscheck", "docs/foundations/density.md",
+	{"mode code in the header translated", "docscheck", "docs/foundations/density.ru.md",
 		"| Токен | `compact` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--pad-panel` | `--space-4` | `--space-5` | `--space-6` |",
 		"| Токен | `плотная` | по умолчанию | `comfortable` |\n|---|---|---|---|\n| `--pad-panel` | `--space-2` | `--space-5` | `--space-6` |",
 		"a mode code is part of the kit, and a translated code has to be heard"},
-	{"alpha cell translated, value lied", "docscheck", "docs/foundations/tokens.md",
+	{"alpha cell translated, value lied", "docscheck", "docs/foundations/tokens.ru.md",
 		"| `--surface-recessed` | чёрный 6% | белый 5% |",
 		"| `--surface-recessed` | black 9% | белый 5% |",
 		"translating a cell used to carry away the check of its number"},
@@ -268,18 +268,23 @@ var mutations = []mutation{
 		"| `--chart-1` | 292° | L 0.520 | L 0.700 |",
 		"| `--chart-1` | 300° | L 0.520 | L 0.700 |",
 		"the hue belongs to neither theme, and that is how it stayed unread"},
-	{"alpha cell unreadable", "docscheck", "docs/foundations/tokens.md",
+	{"alpha cell unreadable", "docscheck", "docs/foundations/tokens.ru.md",
 		"| `--surface-recessed-hover` | чёрный 2.5% | белый 1.5% |",
 		"| `--surface-recessed-hover` | тёмный 2.5% | белый 1.5% |",
 		"an unparsed cell in a machine column is silence, not permission"},
-	{"token table lied in translation", "docscheck", "docs/foundations/tokens.en.md",
-		"| `--surface-recessed` | black 6% | white 5% |",
-		"| `--surface-recessed` | black 9% | white 5% |",
+	// The two below stand on the SUFFIXED page rather than on the base one.
+	// The suffix changed hands at step five — it used to be `.en.md` and is
+	// now `.ru.md` — and the point of both is that the check is nailed to a
+	// page rather than to a file name, whichever name the base language
+	// happens to hold.
+	{"token table lied on the suffixed page", "docscheck", "docs/foundations/tokens.ru.md",
+		"| `--surface-recessed-active` | чёрный 7.5% | белый 6.2% |",
+		"| `--surface-recessed-active` | чёрный 6.5% | белый 6.2% |",
 		"translating a page used to carry its tables out from under the check entirely"},
-	{"mode table lied in translation", "docscheck", "docs/foundations/density.en.md",
+	{"mode table lied on the suffixed page", "docscheck", "docs/foundations/density.ru.md",
 		"| `--row-pad-y` | `--space-2` | `--space-3` | `--space-4` |",
 		"| `--row-pad-y` | `--space-2` | `--space-3` | `--space-6` |",
-		"the check was nailed to a Russian file name rather than to a page"},
+		"the check was nailed to one file name rather than to a page"},
 
 	// ── registry ───────────────────────────────────────────────────────────
 	{"component outside the registry", "registry", "components.json",
@@ -297,12 +302,12 @@ var mutations = []mutation{
 		".inst-dot {", ".inst-mut-spin { animation: inst-pulse 1s linear infinite; }\n.inst-dot {",
 		"an infinite animation squeezed to 0.01ms is a stop, not a slowdown"},
 	{"a group item lost its state", "registry", "docs/components/actions/segmented.md",
-		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\">Сетка</button>",
-		"<button type=\"button\" role=\"radio\" tabindex=\"-1\">Сетка</button>",
+		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\">Grid</button>",
+		"<button type=\"button\" role=\"radio\" tabindex=\"-1\">Grid</button>",
 		"state lives in an attribute rather than in a class"},
 	{"two roving tabindexes in one group", "registry", "docs/components/actions/segmented.md",
-		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\">Сетка</button>",
-		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Сетка</button>",
+		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\">Grid</button>",
+		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Grid</button>",
 		"Tab would walk every item and the group would stop being one control"},
 	{"a meter without aria-valuenow", "registry", "docs/components/charts/meter.md",
 		"aria-valuenow=\"43\"", "data-mut=\"43\"",
@@ -356,9 +361,9 @@ var mutations = []mutation{
 		"// Норма WCAG 2.2 AA 2.5.8 (Target Size, Minimum).",
 		"a zone with exceptions has to be checked outside them, or the exceptions become the zone"},
 
-	{"two roving tabindexes on a translated page", "registry", "docs/components/actions/segmented.en.md",
-		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\">Grid</button>",
-		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Grid</button>",
+	{"two roving tabindexes on the suffixed page", "registry", "docs/components/actions/segmented.ru.md",
+		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\">Сетка</button>",
+		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Сетка</button>",
 		"a translation is written from scratch and errs more often than the original, and only the original was checked"},
 
 	// ── the site build ─────────────────────────────────────────────────────
@@ -373,6 +378,14 @@ var mutations = []mutation{
 	// Two of the three handed out Russian, and no gate saw it — a page in
 	// another language is unreadable to the Cyrillic check of cmd/lang, which
 	// guards SOURCES rather than the built page.
+	{"a language got no search index", "site", "site/internal/render/render.go",
+		"\tfor _, lang := range i18n.All {\n\t\tif err := searchIndex(o.Out, lang, byLang[lang]); err != nil {",
+		"\tfor _, lang := range i18n.All[:1] {\n\t\tif err := searchIndex(o.Out, lang, byLang[lang]); err != nil {",
+		"a page that asks for an index nobody wrote renders, passes every gate and finds nothing when a reader types"},
+	{"a half of the dictionary is empty", "site", "site/internal/i18n/i18n.go",
+		"\t\tRU: \"Эта страница ещё не переведена — ниже текст на базовом языке \" +\n\t\t\t\"справочника. Справочник API от этого не меняется: имена классов, \" +\n\t\t\t\"токенов и атрибутов одинаковы в обоих языках.\",",
+		"\t\tRU: \"\",",
+		"an empty half is a missing translation no panic reports: the template prints a hole where a sentence was"},
 	{"a neighbour resolved without a language", "site", "site/internal/content/markdown.go",
 		"t, ok := pageBySlug[relKey{p.Lang, n}]",
 		"t, ok := pageBySlug[relKey{i18n.RU, n}]",
@@ -432,10 +445,10 @@ var mutations = []mutation{
 		"  /* controls inside a card */",
 		"the reference would name a cell as the base and say nothing about it"},
 	{"a page lost its markup contract", "site", "docs/components/actions/chip.md",
-		"## Контракт", "### Контракт",
+		"## Contract", "### Contract",
 		"the contract is the section the whole shape exists for; without it the page promises a role and explains nothing"},
 	{"a page kept a section the shape no longer holds", "site", "docs/components/actions/chip.md",
-		"## Состояния", "## Использование",
+		"## States", "## Usage",
 		"a section that left has somewhere to be, and two homes for one thing drift apart"},
 }
 

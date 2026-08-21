@@ -1,74 +1,73 @@
 ---
-title: Карточка
-group: Отображение данных
+title: Card
+group: Data display
 layout: component
 source: src/surfaces.css
 api:
-  - { name: "inst-card", kind: "класс", doc: "Базовый" }
-  - { name: "inst-card-title", kind: "класс", doc: "Заголовок объекта" }
-  - { name: "inst-card-sub", kind: "класс", doc: "Подпись под заголовком" }
-  - { name: "inst-card--interactive", kind: "модификатор", doc: "Отклик на наведение и фокус" }
-  - { name: "--surface-raised", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--radius-lg", kind: "токен" }
-  - { name: "--pad-card", kind: "токен" }
-title-en: "Card"
-group-en: "Data display"
+  - { name: "inst-card", kind: "class", doc: "The base one" }
+  - { name: "inst-card-title", kind: "class", doc: "The heading of an object" }
+  - { name: "inst-card-sub", kind: "class", doc: "The caption under the heading" }
+  - { name: "inst-card--interactive", kind: "modifier", doc: "A response to hover and focus" }
+  - { name: "--surface-raised", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--radius-lg", kind: "token" }
+  - { name: "--pad-card", kind: "token" }
 ---
 
-Объект, который можно было бы перетащить. Карточек столько, сколько пришло из
-данных, — в отличие от [панели](./panel.md), которая есть место на экране.
+An object one could have dragged. There are as many cards as came from the
+data — unlike [a panel](./panel.md), which is a place on the screen.
 
 ```html preview
 <div class="inst-card">
   <div class="inst-card-title">worldgen-01</div>
-  <div class="inst-card-sub">terrain/heightmap.ts · 4 файла</div>
+  <div class="inst-card-sub">terrain/heightmap.ts · 4 files</div>
 </div>
 ```
 
-Карточка — колонка с просветом между детьми. Шапка не упирается в содержимое,
-и заголовок не читается частью первой строки данных.
+A card is a column with a gap between its children. The header does not press
+against the content, and the heading does not read as part of the first row of
+data.
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `inst-card-title` | нет | Заголовок объекта. Карточка без него — просто рамка |
-| `<a>` или `<button>` для кликабельной | да | Модификатор даёт вид, роль даёт тег. `div` с обработчиком недоступен с клавиатуры |
-| Настоящий заголовок (`<h3>`) в списке карточек | нет, но обычно да | `inst-card-title` оформляет, но не объявляет: навигация по заголовкам без него не работает |
+| `inst-card-title` | no | The heading of an object. A card without one is just a frame |
+| An `<a>` or a `<button>` for a clickable one | yes | The modifier gives the look, the tag gives the role. A `div` with a handler is unreachable from the keyboard |
+| A real heading (`<h3>`) in a list of cards | no, but usually yes | `inst-card-title` styles but does not declare: navigation by headings does not work without one |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Кликабельность | Только через `<a>` или `<button>`. Модификатор даёт вид, роль даёт тег |
-| Одна цель, а не две | Если вся карточка кликабельна, внутри не должно быть второй ссылки: клавиатура получит две остановки на один объект |
-| Заголовок | `inst-card-title` — визуальный. Для списка карточек уместен настоящий заголовок (`<h3>`), чтобы работала навигация по заголовкам |
-| Фокус | Кольцо с отступом 1px по внешнему краю. Радиус наследуется от карточки |
-| Тени нет | Глубина передаётся поверхностью. Тень в библиотеке означает «временное и сверху» и принадлежит только поповеру и модалке |
+| Clickability | Through an `<a>` or a `<button>` only. The modifier gives the look, the tag gives the role |
+| One target rather than two | If the whole card is clickable, there must be no second link inside it: the keyboard gets two stops for one object |
+| The heading | `inst-card-title` is visual. For a list of cards a real heading (`<h3>`) is in order, so that navigation by headings works |
+| Focus | A ring with a 1px gap along the outer edge. The radius is inherited from the card |
+| No shadow | Depth is carried by the surface. A shadow in the library means "temporary and above" and belongs to the popover and the modal alone |
 
-## Варианты
+## Variants
 
-### Интерактивная
+### Interactive
 
 ```html preview
 <a class="inst-card inst-card--interactive" href="#">
-  <div class="inst-card-title">Открыть прогон</div>
-  <div class="inst-card-sub">Вся карточка — цель нажатия</div>
+  <div class="inst-card-title">Open the run</div>
+  <div class="inst-card-sub">The whole card is the tap target</div>
 </a>
 ```
 
-Модификатор добавляет отклик на наведение и фокус, но **не делает элемент
-кликабельным**: им должен быть `<a>` или `<button>`. Карточка-`div` с
-обработчиком клика недоступна с клавиатуры и не имеет роли.
+The modifier adds a response to hover and focus but **does not make the element
+clickable**: that has to be an `<a>` or a `<button>`. A card that is a `div`
+with a click handler is unreachable from the keyboard and has no role.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

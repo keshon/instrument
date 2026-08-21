@@ -1,99 +1,97 @@
 ---
-title: Блок отказа
-group: Агентный слой
+title: Failure block
+group: Agent layer
 layout: component
 source: src/agent.css
 api:
-  - { name: "inst-failure", kind: "класс", doc: "Блок" }
-  - { name: "inst-failure-head", kind: "класс", doc: "Что не вышло. Со значком" }
-  - { name: "inst-failure-reason", kind: "класс", doc: "Причина: машинный код и расшифровка" }
-  - { name: "inst-failure-tried", kind: "класс", doc: "Что уже пробовали, на `<ul>`" }
-  - { name: "inst-failure-actions", kind: "класс", doc: "Выход. **Обязателен**" }
-  - { name: "--pad-card", kind: "токен" }
-  - { name: "--radius-lg", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--err-bg", kind: "токен" }
-  - { name: "--err-text", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-title-en: "Failure block"
-group-en: "Agent layer"
+  - { name: "inst-failure", kind: "class", doc: "The block" }
+  - { name: "inst-failure-head", kind: "class", doc: "What did not work. With an icon" }
+  - { name: "inst-failure-reason", kind: "class", doc: "The reason: a machine code and its explanation" }
+  - { name: "inst-failure-tried", kind: "class", doc: "What has already been tried, on a `<ul>`" }
+  - { name: "inst-failure-actions", kind: "class", doc: "The way out. **Required**" }
+  - { name: "--pad-card", kind: "token" }
+  - { name: "--radius-lg", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--err-bg", kind: "token" }
+  - { name: "--err-text", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
 ---
 
-Агент не смог. Блок отвечает на три вопроса подряд: **что не вышло**, **что
-уже пробовали** и **что делать дальше**.
+The agent could not do it. The block answers three questions in a row: **what
+did not work**, **what has already been tried** and **what to do next**.
 
 ```html preview
 <div class="inst-failure" role="alert">
-  <div class="inst-failure-head">Не удалось прочитать terrain/chunks.bin</div>
-  <div class="inst-failure-reason">Файл заблокирован другим процессом (EBUSY)</div>
+  <div class="inst-failure-head">Could not read terrain/chunks.bin</div>
+  <div class="inst-failure-reason">The file is locked by another process (EBUSY)</div>
   <ul class="inst-failure-tried">
-    <li>Повтор через 1 с — тот же код</li>
-    <li>Повтор через 4 с — тот же код</li>
+    <li>A retry after 1 s — the same code</li>
+    <li>A retry after 4 s — the same code</li>
   </ul>
   <div class="inst-failure-actions">
-    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Повторить</button>
-    <button class="inst-btn inst-btn--sm" type="button">Пропустить файл</button>
+    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Retry</button>
+    <button class="inst-btn inst-btn--sm" type="button">Skip the file</button>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `role="alert"` | да | Отказ обязан перебить: он сообщает, что действие **не** выполнено |
-| `inst-failure-actions` хотя бы с одним выходом | да | Блок отказа без действия — это [сноска](../components/feedback/note.md) красного цвета |
-| Машинный код в причине | да | «Что-то пошло не так» нельзя ни найти в логе, ни отправить в поддержку |
-| `inst-failure-tried` на `<ul>` | нет, но обычно да | Попытки перечислимы, и их количество объявляется до чтения |
+| A `role="alert"` | yes | A failure has to interrupt: it reports that an action was **not** carried out |
+| An `inst-failure-actions` with at least one way out | yes | A failure block with no action is [a note](../components/feedback/note.md) in red |
+| A machine code in the reason | yes | "Something went wrong" can neither be found in a log nor sent to support |
+| An `inst-failure-tried` on a `<ul>` | no, but usually yes | The attempts are enumerable, and their number is announced before the reading |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| `role="alert"` | Обязателен: отказ возникает по инициативе машины и обязан быть объявлен немедленно. Тихо появившийся блок останется незамеченным |
-| Не только цвет | Заголовок несёт значок **и** слово. Красный фон сам по себе ничего не сообщает |
-| Причина текстом | Машинный код (`EBUSY`) сопровождается расшифровкой. Код без объяснения — это не причина, а её идентификатор |
-| Фокус | При появлении блока фокус имеет смысл перевести на первое действие: пользователь только что потерял то, чем занимался |
-| Контраст | Заголовок и текст проверены на `--err-bg` в пяти темах. Рамка — `color-mix` от `--err-text`, декоративная: рядом есть перепад поверхностей |
-| Повторяющиеся отказы | Несколько `role="alert"` подряд перебивают друг друга. Для серии отказов лучше один блок со счётчиком |
+| `role="alert"` | Required: a failure arises on the machine's initiative and has to be announced at once. A block that appeared quietly stays unnoticed |
+| Not colour alone | The heading carries an icon **and** a word. A red background by itself reports nothing |
+| The reason in text | A machine code (`EBUSY`) comes with an explanation. A code with no explanation is not a reason but its identifier |
+| Focus | When the block appears it makes sense to move the focus to the first action: the user has just lost what they were doing |
+| Contrast | The heading and the text are checked on `--err-bg` in five themes. The border is a `color-mix` of `--err-text` and is decorative: there is a step between surfaces beside it |
+| Repeating failures | Several `role="alert"`s in a row interrupt one another. For a series of failures one block with a counter is better |
 
-## Устройство
+## Anatomy
 
-**Блок отказа без выхода не является блоком отказа** — это красное сообщение,
-на которое нечего ответить. Пользователь агентной системы застревает: работа
-остановлена, а решения не предложено.
+**A failure block with no way out is not a failure block** — it is a red
+message there is nothing to answer. A user of an agent system is stuck: the
+work has stopped and no decision has been offered.
 
-Минимум одно действие. Если продолжить нельзя в принципе — действием является
-«Отменить прогон».
+At least one action. If going on is impossible in principle, the action is
+"Cancel the run".
 
-| Возьмите другое | Когда |
+| Take instead | When |
 |---|---|
-| [Сноска или баннер](../components/feedback/banner.md) с тоном `error` | Сообщение, не останавливающее работу |
-| [Пустое состояние](../components/feedback/empty.md) | Пусто **не** из-за ошибки |
-| [Запрос подтверждения](./approval.md) | Агент не упал, а спрашивает разрешения |
+| [A note or a banner](../components/feedback/banner.md) with the `error` tone | A message that does not stop the work |
+| [An empty state](../components/feedback/empty.md) | It is empty **not** because of an error |
+| [A request for approval](./approval.md) | The agent has not failed but is asking permission |
 
-### «Что уже пробовали»
+### "What has already been tried"
 
 ```html
 <ul class="inst-failure-tried">
-  <li>Повтор через 1 с — тот же код</li>
-  <li>Повтор через 4 с — тот же код</li>
+  <li>A retry after 1 s — the same code</li>
+  <li>A retry after 4 s — the same code</li>
 </ul>
 ```
 
-Это единственное, что отличает отчёт агента от обычной ошибки. Без списка
-пользователь первым делом нажмёт «Повторить» — то есть сделает то, что
-машина уже сделала дважды.
+This is the one thing that sets an agent's report apart from an ordinary error.
+Without the list the first thing a user does is press "Retry" — that is, do
+what the machine has already done twice.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

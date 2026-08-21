@@ -1,42 +1,40 @@
 ---
-title: Шаг — вызов инструмента
-group: Агентный слой
+title: Step — a tool call
+group: Agent layer
 layout: component
 source: src/agent.css
 api:
-  - { name: "inst-step", kind: "класс", doc: "Шаг, на `<details>`" }
-  - { name: "inst-step-head", kind: "класс", doc: "Шапка, на `<summary>`" }
-  - { name: "inst-step-twist", kind: "класс", doc: "Треугольник раскрытия. Поворачивается по `[open]`" }
-  - { name: "inst-step-name", kind: "класс", doc: "Имя инструмента, моноширинное" }
-  - { name: "inst-step-sub", kind: "класс", doc: "Аргумент вызова" }
-  - { name: "inst-step-meta", kind: "класс", doc: "Объём и время, прижаты к концу" }
-  - { name: "inst-step-body", kind: "класс", doc: "Тело: аргументы и вывод" }
-  - { name: "inst-output", kind: "класс", doc: "Обёртка сворачиваемого вывода" }
-  - { name: "inst-output-body", kind: "класс", doc: "Сам вывод" }
-  - { name: "inst-output-more", kind: "класс", doc: "Кнопка разворота с числом" }
-  - { name: "data-state", kind: "атрибут", value: "running · ok · failed", doc: "на `inst-step`" }
-  - { name: "open", kind: "атрибут", value: "нативный", doc: "на `<details>`" }
-  - { name: "data-details-all", kind: "атрибут", value: "селектор области · пусто", doc: "Кнопка «раскрыть все». Пусто — ближайшая панель" }
-  - { name: "data-label-expand", kind: "атрибут", doc: "Подпись кнопки в свёрнутом состоянии" }
-  - { name: "data-label-collapse", kind: "атрибут", doc: "Подпись в раскрытом" }
-  - { name: "data-truncated", kind: "атрибут", value: "true · false", doc: "на `inst-output`" }
-  - { name: "--space-1", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--pad-cell-x", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--font-mono", kind: "токен" }
-  - { name: "--size-dot", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-  - { name: "--tone-ink", kind: "токен" }
-  - { name: "--dur-1", kind: "токен" }
-title-en: "Step — a tool call"
-group-en: "Agent layer"
+  - { name: "inst-step", kind: "class", doc: "A step, on a `<details>`" }
+  - { name: "inst-step-head", kind: "class", doc: "The header, on a `<summary>`" }
+  - { name: "inst-step-twist", kind: "class", doc: "The triangle of expansion. It turns by `[open]`" }
+  - { name: "inst-step-name", kind: "class", doc: "The name of the tool, monospaced" }
+  - { name: "inst-step-sub", kind: "class", doc: "The argument of the call" }
+  - { name: "inst-step-meta", kind: "class", doc: "The volume and the time, pushed to the end" }
+  - { name: "inst-step-body", kind: "class", doc: "The body: the arguments and the output" }
+  - { name: "inst-output", kind: "class", doc: "The wrapper of a folding output" }
+  - { name: "inst-output-body", kind: "class", doc: "The output itself" }
+  - { name: "inst-output-more", kind: "class", doc: "The unfold button with a number" }
+  - { name: "data-state", kind: "attribute", value: "running · ok · failed", doc: "on `inst-step`" }
+  - { name: "open", kind: "attribute", value: "native", doc: "on the `<details>`" }
+  - { name: "data-details-all", kind: "attribute", value: "a selector of the region · empty", doc: "The \"expand all\" button. Empty means the nearest panel" }
+  - { name: "data-label-expand", kind: "attribute", doc: "The label of the button in the folded state" }
+  - { name: "data-label-collapse", kind: "attribute", doc: "The label in the unfolded one" }
+  - { name: "data-truncated", kind: "attribute", value: "true · false", doc: "on `inst-output`" }
+  - { name: "--space-1", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--pad-cell-x", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--font-mono", kind: "token" }
+  - { name: "--size-dot", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
+  - { name: "--tone-ink", kind: "token" }
+  - { name: "--dur-1", kind: "token" }
 ---
 
-Один вызов инструмента агентом: что вызвали, с чем и что вернулось. У шага
-есть **тело**, и раскрывается оно платформой — это `<details>`, поэтому
-клавиатура и состояние достаются бесплатно.
+One call of a tool by an agent: what was called, with what, and what came back.
+A step has a **body**, and it is expanded by the platform — this is a
+`<details>`, so the keyboard and the state come free.
 
 ```html preview
 <details class="inst-step" data-state="ok">
@@ -45,7 +43,7 @@ group-en: "Agent layer"
     <span class="inst-dot"></span>
     <span class="inst-step-name">read_file</span>
     <span class="inst-step-sub inst-u-truncate">terrain/heightmap.ts</span>
-    <span class="inst-step-meta">240 строк · 0,4 с</span>
+    <span class="inst-step-meta">240 lines · 0.4 s</span>
   </summary>
   <div class="inst-step-body">
     <div class="inst-code">{ "path": "terrain/heightmap.ts", "range": [1, 240] }</div>
@@ -53,81 +51,82 @@ group-en: "Agent layer"
 </details>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<details>` и `<summary>` | да | Раскрытие, клавиатура, состояние `open` и поиск по странице — от платформы |
-| `data-state` на `inst-step` | да | Фаза вызова. Точка внутри наследует тон отсюда |
-| `inst-u-truncate` на аргументе | да | Путь длиннее строки иначе распирает шапку и выталкивает время за край |
-| `data-truncated` на `inst-output` | да, если вывод обрезан | Читатель обязан знать, что показано не всё |
+| A `<details>` and a `<summary>` | yes | The expansion, the keyboard, the `open` state and search on the page come from the platform |
+| A `data-state` on `inst-step` | yes | The phase of the call. The dot inside inherits its tone from here |
+| An `inst-u-truncate` on the argument | yes | A path longer than the line otherwise pushes the header wide and drives the time past the edge |
+| A `data-truncated` on `inst-output` | yes, if the output is truncated | The reader has to know that not everything is shown |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Раскрытие | Нативное. `<summary>` фокусируется, `Enter` и `Space` переключают, `aria-expanded` браузер объявляет сам |
-| Имя инструмента | Моноширинное и машинное (`read_file`). Скринридер прочитает его по частям — если это мешает, добавьте человеческую подпись рядом |
-| Свёрнутый вывод | Число в кнопке — часть доступного имени: «Показать все 240 строк» озвучивается целиком |
-| Состояние словом | Тон имени не озвучивается. Успех и отказ должны быть в тексте — в `inst-step-meta` или бейджем |
-| Уменьшенное движение | Пульсация точки `running` замедляется, а не гаснет |
-| Треугольник | Декоративен, отдельного имени не имеет: состояние раскрытия несёт сам `<details>` |
+| Expansion | Native. The `<summary>` takes focus, `Enter` and `Space` toggle it, and the browser announces `aria-expanded` itself |
+| The name of the tool | Monospaced and machine-like (`read_file`). A screen reader reads it in pieces — if that gets in the way, add a human label beside it |
+| The folded output | The number in the button is part of the accessible name: "Show all 240 lines" is spoken entire |
+| The state in words | The tone of the name is not spoken. Success and refusal have to be in the text — in the `inst-step-meta` or as a badge |
+| Reduced motion | The pulse of a `running` dot slows rather than going out |
+| The triangle | Decorative, with no name of its own: the state of expansion is carried by the `<details>` itself |
 
-## Состояния
+## States
 
-| `data-state` | Что происходит |
+| `data-state` | What happens |
 |---|---|
-| нет атрибута | Шаг ещё не начался |
-| `running` | Идёт. Точка пульсирует, имя берёт акцент |
-| `ok` | Вернулся успешно |
-| `failed` | Вызов не удался |
+| no attribute | The step has not begun |
+| `running` | Going. The dot pulses, the name takes the accent |
+| `ok` | It came back successfully |
+| `failed` | The call did not succeed |
 
-У шага **свой** словарь: `ok` вместо `done`, и `skipped` в нём нет. Словари
-`data-state` перечислены у каждого компонента отдельно — у строки очереди и у
-вызова инструмента разные фазы жизни.
+A step has a vocabulary **of its own**: `ok` instead of `done`, and there is no
+`skipped` in it. The vocabularies of `data-state` are listed separately on
+every component — a queue row and a tool call have different phases of life.
 
-### Свёрнутый вывод
+### The folded output
 
-Лог инструмента почти всегда длиннее экрана. Молча обрезать нельзя — это враньё
-про объём.
+The log of a tool is almost always longer than the screen. Truncating it in
+silence is not allowed — that is a lie about the volume.
 
 ```html
 <div class="inst-output" data-truncated="true">
   <pre class="inst-code inst-output-body">…</pre>
-  <button class="inst-output-more" type="button">Показать все 240 строк</button>
+  <button class="inst-output-more" type="button">Show all 240 lines</button>
 </div>
 ```
 
-**Свёрнутый вывод называет своё число словами.** «Показать все 240 строк», а
-не «…» и не «Показать ещё»: пользователь должен знать, сколько он не видит,
-чтобы решить, стоит ли разворачивать.
+**A folded output names its number in words.** "Show all 240 lines" rather than
+"…" and rather than "Show more": a user has to know how much they are not
+seeing in order to decide whether it is worth unfolding.
 
-## Поведение
+## Behavior
 
-Своя реализация обошлась бы в `aria-expanded`, обработчик клавиатуры,
-управление фокусом и синхронизацию состояния — и всё равно проиграла бы
-нативной по мелочам вроде поиска по странице, который раскрывает свёрнутое.
+An implementation of your own would cost an `aria-expanded`, a keyboard
+handler, the management of focus and the synchronisation of state — and would
+still lose to the native one on small things like search on the page, which
+expands what is folded.
 
 ```html
 <details class="inst-step" open>…</details>
 ```
 
-Открытость — атрибут `open`, а не класс и не `data-state`: второго канала для
-одного состояния здесь нет.
+Being open is the `open` attribute rather than a class or a `data-state`: there
+is no second channel for one state here.
 
-### Раскрыть все
+### Expand all
 
-Шесть шагов — это шесть нажатий, чтобы прочитать прогон целиком, и ещё шесть,
-чтобы вернуть как было. Кнопка ставится в шапку области:
+Six steps mean six presses to read a run entire, and six more to put it back.
+The button goes into the header of the region:
 
 ```html preview
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Последняя проверка</span>
+    <span class="inst-panel-title">The last check</span>
     <span class="inst-panel-actions">
       <button class="inst-btn inst-btn--sm" type="button" aria-expanded="false"
-              data-details-all data-label-expand="Раскрыть все"
-              data-label-collapse="Свернуть все">Раскрыть все</button>
+              data-details-all data-label-expand="Expand all"
+              data-label-collapse="Collapse all">Expand all</button>
     </span>
   </div>
   <div class="inst-panel-body inst-panel-body--list">
@@ -135,8 +134,8 @@ group-en: "Agent layer"
       <summary class="inst-step-head">
         <span class="inst-step-twist"></span>
         <span class="inst-step-name">TCP</span>
-        <span class="inst-step-sub inst-u-truncate">сокет открыт</span>
-        <span class="inst-step-meta">38 мс</span>
+        <span class="inst-step-sub inst-u-truncate">the socket is open</span>
+        <span class="inst-step-meta">38 ms</span>
       </summary>
       <div class="inst-step-body"><div class="inst-code">93.184.216.34:443</div></div>
     </details>
@@ -144,8 +143,8 @@ group-en: "Agent layer"
       <summary class="inst-step-head">
         <span class="inst-step-twist"></span>
         <span class="inst-step-name">TLS</span>
-        <span class="inst-step-sub inst-u-truncate">рукопожатие завершено</span>
-        <span class="inst-step-meta">64 мс</span>
+        <span class="inst-step-sub inst-u-truncate">the handshake is finished</span>
+        <span class="inst-step-meta">64 ms</span>
       </summary>
       <div class="inst-step-body"><div class="inst-code">TLS 1.3</div></div>
     </details>
@@ -153,32 +152,33 @@ group-en: "Agent layer"
 </div>
 ```
 
-Состояние кнопка определяет по содержимому, а не помнит: пока хоть один шаг
-закрыт, нажатие раскрывает всё. Кнопка со своей памятью рано или поздно
-расходится с тем, что человек открыл руками.
+The button works out its state from the content rather than remembering it:
+while at least one step is closed, a press expands everything. A button with a
+memory of its own sooner or later parts from what a person opened by hand.
 
-| Что | Зачем |
+| What | What for |
 |---|---|
-| `data-details-all` пустой | Область — ближайшая `inst-panel`. Со значением — селектор нужного узла |
-| `aria-expanded` | `instrument.js` переставляет его сам; в разметке нужно начальное значение |
-| `data-label-expand` / `data-label-collapse` | Подписи. Без них кнопка молча меняет смысл, не меняя надписи |
+| An empty `data-details-all` | The region is the nearest `inst-panel`. With a value, a selector of the node wanted |
+| `aria-expanded` | `instrument.js` moves it itself; the markup wants an initial value |
+| `data-label-expand` / `data-label-collapse` | The labels. Without them the button changes its meaning in silence, without changing its text |
 
-Событие `inst:details-all` всплывает с кнопки, `detail` — `{ expand, count }`.
+The `inst:details-all` event bubbles from the button, with `{ expand, count }`
+in the `detail`.
 
-## Сценарии
+## Patterns
 
-Транскрипт прогона — то, ради чего шаг существует. Порознь шаги выглядят
-списком, вместе — рассказом о том, что делала машина.
+The transcript of a run — what a step exists for. Apart, the steps look like a
+list; together, like an account of what the machine did.
 
-Что проверить руками:
+What to check by hand:
 
-- **раскройте шаг** — это `<details>`, и раскрытие ничего не стоило: ни
-  строки скрипта, ни `aria-expanded` руками;
-- **найдите текст поиском по странице** (`Ctrl+F`) — браузер раскроет
-  свёрнутый шаг сам. Своя реализация это теряет;
-- **свёрнутый вывод называет своё число словами.** «Показать все 240 строк»,
-  а не «…»: пользователь должен знать, сколько он не видит, чтобы решить,
-  разворачивать ли.
+- **expand a step** — it is a `<details>`, and the expansion cost nothing:
+  neither a line of script nor an `aria-expanded` by hand;
+- **find the text with search on the page** (`Ctrl+F`) — the browser expands a
+  folded step itself. An implementation of your own loses that;
+- **the folded output names its number in words.** "Show all 240 lines" rather
+  than "…": a user has to know how much they are not seeing in order to decide
+  whether to unfold.
 
 ```html preview context
 <div class="inst-panel">
@@ -188,7 +188,7 @@ group-en: "Agent layer"
             <span class="inst-step-twist"></span><span class="inst-dot"></span>
             <span class="inst-step-name">read_file</span>
             <span class="inst-step-sub inst-u-truncate">terrain/heightmap.ts</span>
-            <span class="inst-step-meta">0,3 с</span>
+            <span class="inst-step-meta">0.3 s</span>
           </summary>
           <div class="inst-step-body">
             <div class="inst-code">{ "path": "terrain/heightmap.ts", "range": [1, 240] }</div>
@@ -212,7 +212,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
         + map[y1 * size + x0] * (1 - fx) * fy
         + map[y1 * size + x1] * fx * fy;
 }</pre>
-              <button class="inst-output-more" type="button">Показать все 240 строк</button>
+              <button class="inst-output-more" type="button">Show all 240 lines</button>
             </div>
           </div>
         </details>
@@ -221,8 +221,8 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
           <summary class="inst-step-head">
             <span class="inst-step-twist"></span><span class="inst-dot"></span>
             <span class="inst-step-name">place_resources</span>
-            <span class="inst-step-sub inst-u-truncate">проход 3 из 3</span>
-            <span class="inst-step-meta">14,0 с</span>
+            <span class="inst-step-sub inst-u-truncate">pass 3 of 3</span>
+            <span class="inst-step-meta">14.0 s</span>
           </summary>
           <div class="inst-step-body">
             <div class="inst-stack inst-stack--tight">
@@ -237,18 +237,18 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
           <summary class="inst-step-head">
             <span class="inst-step-twist"></span><span class="inst-dot"></span>
             <span class="inst-step-name">validate_paths</span>
-            <span class="inst-step-sub inst-u-truncate">3 узла недостижимы</span>
-            <span class="inst-step-meta">1,2 с</span>
+            <span class="inst-step-sub inst-u-truncate">3 nodes unreachable</span>
+            <span class="inst-step-meta">1.2 s</span>
           </summary>
           <div class="inst-step-body">
             <div class="inst-failure" role="alert">
-              <div class="inst-failure-head">Валидация путей не прошла</div>
+              <div class="inst-failure-head">The validation of the paths did not pass</div>
               <div class="inst-failure-reason">PathError: unreachable nodes (18,204) (19,204) (20,205) — no navmesh link from region 7</div>
-              <div class="inst-failure-tried">Попыток: 3, последняя в 19:38:16</div>
+              <div class="inst-failure-tried">Attempts: 3, the last at 19:38:16</div>
               <div class="inst-failure-actions">
-                <button class="inst-btn inst-btn--sm" type="button">Повторить</button>
-                <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Пропустить шаг</button>
-                <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Открыть регион 7</button>
+                <button class="inst-btn inst-btn--sm" type="button">Retry</button>
+                <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Skip the step</button>
+                <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Open region 7</button>
               </div>
             </div>
           </div>
@@ -262,7 +262,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

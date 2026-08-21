@@ -9,19 +9,33 @@ const (
 	EN Lang = "en"
 )
 
-var All = []Lang{RU, EN}
+// Base is the language that owns the bare name: `page.md` rather than
+// `page.ru.md`, and `/layout/split/` rather than `/ru/layout/split/`.
+//
+// IT IS ONE VARIABLE AND NOT A CONSTANT ON PURPOSE. The whole of the flip that
+// made English the base is this line plus the renaming of the files: every
+// other place in the site asks Base rather than naming a language, so nothing
+// else had to know that the answer had changed. What still names RU outright
+// names it because the RUSSIAN language is what it means — the label of the
+// switch, the transliteration of a heading, the Cyrillic check — and those
+// would be wrong to reroute through Base.
+var Base = EN
+
+// All is what gets built, and the base goes FIRST: reports count the base
+// language, and a reader who lands on the site with no prefix lands here.
+var All = []Lang{EN, RU}
 
 var Known = []Lang{RU, EN}
 
 func (l Lang) Prefix() string {
-	if l == RU {
+	if l == Base {
 		return ""
 	}
 	return "/" + string(l)
 }
 
 func (l Lang) Suffix() string {
-	if l == RU {
+	if l == Base {
 		return ""
 	}
 	return "." + string(l)
@@ -121,12 +135,48 @@ var strings = map[string]map[Lang]string{
 	"api.axis.theme":   {RU: "тема", EN: "theme"},
 	"api.axis.accent":  {RU: "акцент", EN: "accent"},
 	"api.axis.screen":  {RU: "экран", EN: "screen"},
+	// NEITHER HALF NAMES A LANGUAGE, and that is the point. The banner stands
+	// on a page whose own half is missing, so what shows through is whatever
+	// Base happens to be — and Base changed hands once already. Naming Russian
+	// here was true while Russian was the base; the day English took the bare
+	// name, the Russian half of this entry was empty and the English one said
+	// the opposite of what a reader would see.
 	"untranslated": {
-		RU: "",
-		EN: "This page is not translated yet — the text below is in Russian. " +
-			"The API reference is in English either way: class, token and " +
-			"attribute names are the same in both languages.",
+		RU: "Эта страница ещё не переведена — ниже текст на базовом языке " +
+			"справочника. Справочник API от этого не меняется: имена классов, " +
+			"токенов и атрибутов одинаковы в обоих языках.",
+		EN: "This page is not translated yet — the text below is in the " +
+			"reference's base language. The API reference is unaffected: the " +
+			"names of classes, tokens and attributes are the same in both.",
 	},
+}
+
+// An EMPTY half is a missing translation that no panic reports: T hands the
+// empty string back, the template prints nothing, and the page comes out with
+// a hole where a sentence was. That is exactly how the "not translated yet"
+// banner spent the whole of the bilingual period blank on one side — the side
+// nobody could reach until the base language flipped and made it the only
+// reachable one.
+//
+// Checked at init rather than in a gate: the dictionaries live here, the loop
+// costs microseconds, and a build that would print a hole must not start.
+func init() {
+	for name, dict := range map[string]map[string]map[Lang]string{
+		"strings": strings, "kinds": kinds,
+		"sectionTitles": sectionTitles, "sections": sections,
+	} {
+		for key, m := range dict {
+			for _, l := range Known {
+				v, ok := m[l]
+				if !ok {
+					panic("i18n: " + name + "[" + key + "] has no " + string(l))
+				}
+				if v == "" {
+					panic("i18n: " + name + "[" + key + "] is empty in " + string(l))
+				}
+			}
+		}
+	}
 }
 
 func T(l Lang, key string) string {

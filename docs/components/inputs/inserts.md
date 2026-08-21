@@ -1,95 +1,97 @@
 ---
-title: Вставки
-group: Ввод
+title: Inserts
+group: Inputs
 layout: component
 source: src/rows.css
-js: Вставка в поле по нажатию — делает `instrument.js`
+js: Inserting into a field on a press is done by `instrument.js`
 api:
-  - { name: "inst-inserts", kind: "класс", doc: "Ряд подстановок" }
-  - { name: "inst-insert", kind: "класс", doc: "Одна подстановка. Настоящая `<button>`" }
-  - { name: "data-insert-into", kind: "атрибут", doc: "Селектор поля, куда класть значение. Без него берётся поле того же `inst-field`" }
-  - { name: "data-insert", kind: "атрибут", doc: "Что вставить, если это не текст самой кнопки" }
-  - { name: "inst:insert", kind: "событие", doc: "Нажата вставка. `detail` — `{ text, field }`. Отмена оставляет поле нетронутым" }
-  - { name: "--control-h-sm", kind: "токен" }
-  - { name: "--surface-sunken", kind: "токен" }
-  - { name: "--border-subtle", kind: "токен" }
-  - { name: "--font-mono", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--radius-sm", kind: "токен" }
-title-en: "Inserts"
-group-en: "Inputs"
+  - { name: "inst-inserts", kind: "class", doc: "A row of inserts" }
+  - { name: "inst-insert", kind: "class", doc: "One insert. A real `<button>`" }
+  - { name: "data-insert-into", kind: "attribute", doc: "The selector of the field to put the value into. Without it the field of the same `inst-field` is taken" }
+  - { name: "data-insert", kind: "attribute", doc: "What to insert, when it is not the text of the button itself" }
+  - { name: "inst:insert", kind: "event", doc: "An insert was pressed. `detail` is `{ text, field }`. Cancelling leaves the field untouched" }
+  - { name: "--control-h-sm", kind: "token" }
+  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--border-subtle", kind: "token" }
+  - { name: "--font-mono", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--radius-sm", kind: "token" }
 ---
 
-Ряд подстановок для поля рядом: переменные шаблона, ключи события, поля
-записи. Нажатие кладёт значение **на место каретки**.
+A row of inserts for the field beside them: the variables of a template, the
+keys of an event, the fields of a record. A press puts the value **where the
+caret is**.
 
 ```html preview
 <div class="inst-field" style="max-inline-size:30rem">
-  <label class="inst-label" for="ins-tpl">Шаблон уведомления</label>
-  <textarea class="inst-textarea inst-u-mono" id="ins-tpl" rows="3">Упал {{name}}
+  <label class="inst-label" for="ins-tpl">Notification template</label>
+  <textarea class="inst-textarea inst-u-mono" id="ins-tpl" rows="3">{{name}} has failed
 </textarea>
   <div class="inst-inserts">
-    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="Имя монитора">{{name}}</button>
-    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="Адрес проверки">{{target}}</button>
-    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="Состояние">{{status}}</button>
-    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="Текст ошибки">{{error}}</button>
-    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="Время события">{{time}}</button>
+    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="The name of the monitor">{{name}}</button>
+    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="The address checked">{{target}}</button>
+    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="The state">{{status}}</button>
+    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="The text of the error">{{error}}</button>
+    <button class="inst-insert" type="button" data-insert-into="#ins-tpl" title="The time of the event">{{time}}</button>
   </div>
 </div>
 ```
 
-Пример живой: поставьте курсор в поле и нажмите подстановку — она встанет
-туда, где стоял курсор, а не в конец.
+The example is live: put the cursor in the field and press an insert — it lands
+where the cursor stood rather than at the end.
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Настоящая `<button type="button">` | да | Это действие. `<span>` не получит фокус, не сработает по `Enter` и не назовётся кнопкой |
-| `data-insert-into` | нет | Без него берётся поле того же `inst-field`. Указывать нужно, когда поле лежит в другом месте разметки |
-| Все подстановки видны разом | да | Пара рядов читается взглядом. То, что не поместилось и требует поиска, — уже справочник формата, и ему место в документации, а не под полем |
+| A real `<button type="button">` | yes | This is an action. A `<span>` takes no focus, does not fire on `Enter` and is not called a button |
+| `data-insert-into` | no | Without it the field of the same `inst-field` is taken. It is wanted when the field lies elsewhere in the markup |
+| Every insert visible at once | yes | A couple of rows is taken in at a glance. What did not fit and has to be searched for is a reference of the format already, and its place is in documentation rather than under a field |
 
-Текст кнопки и есть значение — отдельная подпись не нужна. Пояснение кладётся в
-`title`, но оно **дополняет** имя, а не заменяет его.
+The text of the button is the value — a separate label is not needed. An
+explanation goes into the `title`, but it **adds to** the name rather than
+replacing it.
 
-Ряд из десяти кнопок проходится табом, и это правильно: каждая делает своё.
-После вставки фокус возвращается в поле — оставленный на кнопке, он означает,
-что поле придётся искать руками.
+A row of ten buttons is traversed by tab, and that is right: each does its own
+thing. After an insert the focus returns to the field — left on the button, it
+means the field will have to be found by hand.
 
-Подпись держит 4.5:1 на утопленной поверхности во всех пяти темах.
-Моноширинный тут не украшение: подстановка — идентификатор, а не слово, и
-`{{name}}` от `{{node}}` отличается посимвольно.
+The label holds 4.5:1 on a recessed surface in all five themes. The monospaced
+setting is not decoration here: an insert is an identifier rather than a word,
+and `{{name}}` differs from `{{node}}` character by character.
 
-## Варианты
+## Variants
 
-Вариантов нет. Подстановка тише действия: их бывает по десятку и
-больше на одно поле, и в полный голос палитра кричала бы громче того, ради
-чего страница открыта. Если подстановка важнее текста под ней — это не
-подстановка.
+There are none. An insert is quieter than an action: there can be a dozen and
+more of them to one field, and at full voice the palette would shout louder
+than what the page was opened for. If an insert matters more than the text
+under it, it is not an insert.
 
 ## JS
 
-Подключите модуль один раз на страницу.
+Include the module once per page.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Кладёт значение в поле **на место каретки**, а не в конец: курсор ставят
-туда, где нужна подстановка, и ждут её там. Выделенное заменяется. После
-вставки фокус возвращается в поле — иначе следующую букву некуда набрать.
+It puts the value into the field **where the caret is** rather than at the end:
+the cursor is placed where the insert is wanted, and that is where it is
+expected. A selection is replaced. After an insert the focus returns to the
+field — otherwise there is nowhere to type the next letter.
 
-Значение берётся из `data-insert`, а без него — из текста кнопки.
+The value is taken from `data-insert`, and without one from the text of the
+button.
 
-### События
+### Events
 
-`inst:insert` всплывает с кнопки, `detail` — `{ text, field }`. Отмена
-оставляет поле нетронутым: приложению может понадобиться своя логика вставки,
-например с проверкой позиции.
+`inst:insert` bubbles from the button, and its `detail` is `{ text, field }`.
+Cancelling leaves the field untouched: an application may want a logic of
+insertion of its own, with a check of the position, for instance.
 
 ```js
 form.addEventListener('inst:insert', (e) => {
@@ -97,22 +99,22 @@ form.addEventListener('inst:insert', (e) => {
 });
 ```
 
-Само поле после вставки шлёт нативный `input` — рамки видят изменение без
-единой строки клея.
+The field itself sends a native `input` after an insert — frameworks see the
+change with not one line of glue.
 
-### Опции
+### Options
 
-| Атрибут | Что делает |
+| Attribute | What it does |
 |---|---|
-| `data-insert-into` | Селектор поля. Без него берётся первое `textarea`/`input` того же `.inst-field` |
-| `data-insert` | Что вставить, если это не текст самой кнопки: короткая подпись, длинное значение |
+| `data-insert-into` | The selector of the field. Without it the first `textarea`/`input` of the same `.inst-field` is taken |
+| `data-insert` | What to insert, when it is not the text of the button itself: a short label, a long value |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

@@ -1,70 +1,69 @@
 ---
-title: Строка состояния
-group: Раскладка
+title: Status bar
+group: Layout
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-statusbar", kind: "класс", doc: "Полоса у нижнего края. Высота в одну строку" }
-  - { name: "inst-statusbar-item", kind: "класс", doc: "Показание. `<span>`, если не нажимается, `<button>` или `<a>`, если нажимается" }
-  - { name: "inst-statusbar-end", kind: "класс", doc: "Правая группа: всё после неё уходит к дальнему краю" }
-  - { name: "data-tone", kind: "атрибут", value: "ok · warn · error · running · neutral", doc: "Тон показания. Берёт `--tone-ink`" }
-  - { name: "--control-h-xs", kind: "токен", doc: "Область показания. Форма при этом не толстеет" }
-  - { name: "--text-2xs", kind: "токен", value: "11px", doc: "Кегль полосы" }
-  - { name: "--icon-size", kind: "переменная", value: "--size-icon-sm", doc: "Ставится на показание и наследуется значку" }
-  - { name: "--size-icon-sm", kind: "токен", value: "14px", doc: "Значок полосы. Обычные 18 против кегля 11 перевешивают показание" }
-  - { name: "--surface-sunken", kind: "токен" }
-  - { name: "--border-subtle", kind: "токен" }
-title-en: "Status bar"
-group-en: "Layout"
+  - { name: "inst-statusbar", kind: "class", doc: "The strip at the bottom edge. One line in height" }
+  - { name: "inst-statusbar-item", kind: "class", doc: "A reading. A `<span>` if it is not pressed, a `<button>` or an `<a>` if it is" }
+  - { name: "inst-statusbar-end", kind: "class", doc: "The right group: everything after it goes to the far edge" }
+  - { name: "data-tone", kind: "attribute", value: "ok · warn · error · running · neutral", doc: "The tone of a reading. It takes `--tone-ink`" }
+  - { name: "--control-h-xs", kind: "token", doc: "The area of a reading. The shape does not thicken by it" }
+  - { name: "--text-2xs", kind: "token", value: "11px", doc: "The type size of the strip" }
+  - { name: "--icon-size", kind: "variable", value: "--size-icon-sm", doc: "Set on a reading and inherited by the glyph" }
+  - { name: "--size-icon-sm", kind: "token", value: "14px", doc: "The glyph of the strip. The usual 18 against a type size of 11 outweighs the reading" }
+  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--border-subtle", kind: "token" }
 ---
 
-Полоса у нижнего края с группами по краям: ветка и ошибки слева, режим и
-кодировка справа. Здесь стоят **показания**, а не контролы, — их читают, хотя
-нажать почти каждое можно.
+A strip at the bottom edge with groups at the sides: the branch and the errors
+at the left, the mode and the encoding at the right. What stands here are
+**readings** rather than controls — they are read, though almost every one of
+them can be pressed.
 
 ```html preview
 <div class="inst-statusbar">
   <button class="inst-statusbar-item" type="button">master</button>
   <span class="inst-statusbar-item" data-tone="error">
-    <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>2 ошибки</span>
-  <span class="inst-statusbar-item" data-tone="warn">7 замечаний</span>
+    <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>2 errors</span>
+  <span class="inst-statusbar-item" data-tone="warn">7 remarks</span>
   <span class="inst-statusbar-end">
-    <span class="inst-statusbar-item">Стр. 1, кол. 1</span>
+    <span class="inst-statusbar-item">Ln 1, Col 1</span>
     <span class="inst-statusbar-item">UTF-8</span>
     <button class="inst-statusbar-item" type="button">Go</button>
   </span>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Показание, которое нельзя нажать, остаётся `<span>`. Нажимаемое — настоящая
-кнопка или ссылка: отзыв на наведение появляется только у них, и это не
-оформление, а честность.
+A reading that cannot be pressed stays a `<span>`. A pressable one is a real
+button or a link: a response to hover appears on those alone, and that is
+honesty rather than styling.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<span>` для нечитаемого, `<button>` для нажимаемого | да | Ховер объявлен только у кнопки и ссылки. Полоса из одинаковых `<div>` врёт о том, что отзовётся |
-| `aria-hidden` на значке рядом с числом | да | Иначе «2» читается вместе с содержимым SVG |
-| Слово или значок вместе с тоном | да | Цвет как единственный носитель запрещён: красная «2» сама по себе не сообщает, что это ошибки |
-| Одна строка | да | Полоса, ушедшая в две строки, съедает низ экрана у инструмента, ради которого экран открыт |
+| A `<span>` for what is not pressed, a `<button>` for what is | yes | Hover is declared on a button and a link alone. A strip of identical `<div>`s lies about what will respond |
+| An `aria-hidden` on a glyph beside a number | yes | Otherwise the "2" is read together with the contents of the SVG |
+| A word or a glyph along with the tone | yes | Colour as the only carrier is forbidden: a red "2" by itself does not report that these are errors |
+| One line | yes | A strip that went to two lines eats the bottom of the screen of the very tool the screen was opened for |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Роль | Обычный контейнер. `role="status"` ставится **только** на то показание, которое меняется само и о котором нужно объявить, — вся полоса такой роли не получает, иначе каждое движение курсора зачитывается |
-| Цель нажатия | `--control-h-xs` плюс зазор между соседями. Проверяется `cmd/targets` |
-| Тон | `data-tone` даёт цвет, но носителем остаётся знак или слово рядом |
-| Контраст | `--text-secondary` на `--surface-sunken`, выше 4.5:1 в пяти темах. Кегль `--text-2xs` — это и есть пол шкалы, ниже него размера нет |
-| Порядок обхода | Совпадает с порядком в разметке: левая группа, потом правая |
+| The role | An ordinary container. A `role="status"` is set **only** on the reading that changes by itself and has to be announced — the whole strip gets no such role, otherwise every movement of the cursor is read out |
+| The tap target | `--control-h-xs` plus the gap between neighbours. Checked by `cmd/targets` |
+| The tone | A `data-tone` gives the colour, but the carrier stays the sign or the word beside it |
+| Contrast | `--text-secondary` on `--surface-sunken`, above 4.5:1 in five themes. The type size is `--text-2xs` — the floor of the scale, and there is no size below it |
+| The order of traversal | It matches the order in the markup: the left group, then the right one |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

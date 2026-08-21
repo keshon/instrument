@@ -1,77 +1,76 @@
 ---
-title: Ритм и форма
-group: Основания
+title: Rhythm and shape
+group: Foundations
 layout: foundation
 source: src/tokens.css
 api:
-  - { name: "inst-stack", kind: "класс", doc: "Вертикальный поток, зазор `--gap-inline`" }
-  - { name: "inst-cluster", kind: "класс", doc: "Горизонтальный поток с переносом" }
-  - { name: "inst-cluster-spacer", kind: "класс", doc: "Разрыв в ряду: всё после него уходит вправо" }
-  - { name: "inst-grid", kind: "класс", doc: "Адаптивная сетка `auto-fit` по `--col-min`" }
-  - { name: "inst-stack--tight", kind: "модификатор", doc: "Шаг зазора" }
-  - { name: "inst-stack--loose", kind: "модификатор", doc: "Шаг зазора" }
-  - { name: "inst-cluster--tight", kind: "модификатор", doc: "Шаг зазора" }
-  - { name: "inst-cluster--loose", kind: "модификатор", doc: "Шаг зазора" }
-  - { name: "inst-grid--tight", kind: "модификатор", doc: "Другая минимальная колонка" }
-  - { name: "inst-grid--wide", kind: "модификатор", doc: "Другая минимальная колонка" }
-  - { name: "--space-1", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--space-2", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--space-3", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--space-4", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--space-5", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--space-6", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--space-7", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--space-8", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--space-9", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--space-10", kind: "токен", doc: "Шаг шкалы" }
-  - { name: "--pad-panel", kind: "токен", doc: "Внутренний отступ панели" }
-  - { name: "--pad-card", kind: "токен", doc: "Внутренний отступ карточки" }
-  - { name: "--pad-cell-x", kind: "токен", doc: "Горизонтальный отступ ячейки" }
-  - { name: "--row-pad-y", kind: "токен", doc: "Вертикальный отступ строки" }
-  - { name: "--gap-row", kind: "токен", doc: "Зазор между строками" }
-  - { name: "--gap-inline", kind: "токен", doc: "Зазор в ряду" }
-  - { name: "--control-pad-sm", kind: "токен", doc: "Отступ малого контрола" }
-  - { name: "--control-pad-md", kind: "токен", doc: "Отступ базового контрола" }
-  - { name: "--control-pad-lg", kind: "токен", doc: "Отступ крупного контрола" }
-  - { name: "--radius-2xs", kind: "токен", value: "2px", doc: "Точка состояния и всё размером с неё" }
-  - { name: "--radius-xs", kind: "токен", value: "4px", doc: "Инлайн: бейджи, образцы, торцы полос" }
-  - { name: "--radius-control-sm", kind: "токен", doc: "Скругление мелкого контрола. Едет за плотностью вместе с высотой" }
-  - { name: "--radius-control-md", kind: "токен", doc: "Скругление контрола" }
-  - { name: "--radius-control-lg", kind: "токен", doc: "Скругление крупного контрола" }
-  - { name: "--radius-sm", kind: "токен", doc: "Контролы внутри карточки" }
-  - { name: "--radius-md", kind: "токен", doc: "Отдельно стоящие контролы" }
-  - { name: "--radius-lg", kind: "токен", doc: "Карточки и панели" }
-  - { name: "--radius-full", kind: "токен", doc: "Круг и капсула" }
-  - { name: "--hairline", kind: "токен", doc: "Волосок. На 1x равен пикселю, выше — половине" }
-  - { name: "--stroke", kind: "токен", doc: "Линия, которая обязана быть видна всегда" }
-  - { name: "--aside-w", kind: "токен", doc: "Боковая колонка оболочки" }
-  - { name: "--container-max", kind: "токен", doc: "Потолок ширины рабочей области" }
-  - { name: "--split-side", kind: "токен", doc: "Желаемая ширина боковой части сплита" }
-  - { name: "--split-main", kind: "токен", doc: "Порог переноса основной части" }
-  - { name: "--col-min", kind: "токен", doc: "Минимальная колонка адаптивной сетки" }
-title-en: "Rhythm and shape"
-group-en: "Foundations"
+  - { name: "inst-stack", kind: "class", doc: "A vertical flow, gap `--gap-inline`" }
+  - { name: "inst-cluster", kind: "class", doc: "A horizontal flow that wraps" }
+  - { name: "inst-cluster-spacer", kind: "class", doc: "A break in a row: everything after it goes to the right" }
+  - { name: "inst-grid", kind: "class", doc: "A responsive `auto-fit` grid by `--col-min`" }
+  - { name: "inst-stack--tight", kind: "modifier", doc: "A step of the gap" }
+  - { name: "inst-stack--loose", kind: "modifier", doc: "A step of the gap" }
+  - { name: "inst-cluster--tight", kind: "modifier", doc: "A step of the gap" }
+  - { name: "inst-cluster--loose", kind: "modifier", doc: "A step of the gap" }
+  - { name: "inst-grid--tight", kind: "modifier", doc: "A different minimum column" }
+  - { name: "inst-grid--wide", kind: "modifier", doc: "A different minimum column" }
+  - { name: "--space-1", kind: "token", doc: "A step of the scale" }
+  - { name: "--space-2", kind: "token", doc: "A step of the scale" }
+  - { name: "--space-3", kind: "token", doc: "A step of the scale" }
+  - { name: "--space-4", kind: "token", doc: "A step of the scale" }
+  - { name: "--space-5", kind: "token", doc: "A step of the scale" }
+  - { name: "--space-6", kind: "token", doc: "A step of the scale" }
+  - { name: "--space-7", kind: "token", doc: "A step of the scale" }
+  - { name: "--space-8", kind: "token", doc: "A step of the scale" }
+  - { name: "--space-9", kind: "token", doc: "A step of the scale" }
+  - { name: "--space-10", kind: "token", doc: "A step of the scale" }
+  - { name: "--pad-panel", kind: "token", doc: "The inner padding of a panel" }
+  - { name: "--pad-card", kind: "token", doc: "The inner padding of a card" }
+  - { name: "--pad-cell-x", kind: "token", doc: "The horizontal padding of a cell" }
+  - { name: "--row-pad-y", kind: "token", doc: "The vertical padding of a row" }
+  - { name: "--gap-row", kind: "token", doc: "The gap between rows" }
+  - { name: "--gap-inline", kind: "token", doc: "The gap in a row" }
+  - { name: "--control-pad-sm", kind: "token", doc: "The padding of a small control" }
+  - { name: "--control-pad-md", kind: "token", doc: "The padding of a base control" }
+  - { name: "--control-pad-lg", kind: "token", doc: "The padding of a large control" }
+  - { name: "--radius-2xs", kind: "token", value: "2px", doc: "The state dot and everything of its size" }
+  - { name: "--radius-xs", kind: "token", value: "4px", doc: "Inline: badges, swatches, the ends of bars" }
+  - { name: "--radius-control-sm", kind: "token", doc: "The rounding of a small control. It travels with density along with the height" }
+  - { name: "--radius-control-md", kind: "token", doc: "The rounding of a control" }
+  - { name: "--radius-control-lg", kind: "token", doc: "The rounding of a large control" }
+  - { name: "--radius-sm", kind: "token", doc: "Controls inside a card" }
+  - { name: "--radius-md", kind: "token", doc: "Free-standing controls" }
+  - { name: "--radius-lg", kind: "token", doc: "Cards and panels" }
+  - { name: "--radius-full", kind: "token", doc: "A circle and a pill" }
+  - { name: "--hairline", kind: "token", doc: "A hairline. At 1x it equals a pixel, above that a half" }
+  - { name: "--stroke", kind: "token", doc: "A line that has to stay visible always" }
+  - { name: "--aside-w", kind: "token", doc: "The side column of the shell" }
+  - { name: "--container-max", kind: "token", doc: "The ceiling on the width of the working area" }
+  - { name: "--split-side", kind: "token", doc: "The wanted width of a split's side part" }
+  - { name: "--split-main", kind: "token", doc: "The threshold at which the main part wraps" }
+  - { name: "--col-min", kind: "token", doc: "The minimum column of a responsive grid" }
 ---
 
-Шаг 4px, шкала нарочно **разрежена сверху** — чтобы «чуть побольше» просто не
-было в наборе. Компонент берёт отступ не из шкалы, а из яруса ролей: именно он
-даёт плотности одну точку, через которую она перенастраивает всё сразу.
+A step of 4px, and the scale is deliberately **sparse at the top** — so that "a
+little bigger" is simply not in the set. A component takes its padding from the
+tier of roles rather than from the scale: that is what gives density one point
+through which it retunes everything at once.
 
 ```html preview
 <div class="inst-card inst-stack inst-stack--tight">
   <div class="inst-card-title">worldgen-01</div>
-  <div class="inst-card-sub">Генерация биомов, 3 прохода</div>
+  <div class="inst-card-sub">Generating biomes, 3 passes</div>
   <div class="inst-cluster">
-    <button class="inst-btn inst-btn--sm" type="button">Повторить</button>
-    <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
+    <button class="inst-btn inst-btn--sm" type="button">Retry</button>
+    <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Отступ берётся **по назначению**: `--pad-panel`, не `--space-5`. Роль
-перенастраивается плотностью, ступень шкалы — нет.
+A padding is taken **by purpose**: `--pad-panel`, not `--space-5`. A role is
+retuned by density, a step of the scale is not.
 
 ```css
 .my-panel {
@@ -81,29 +80,29 @@ group-en: "Foundations"
 }
 ```
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Роль, а не ступень | да | `--pad-panel` меняется вместе с плотностью, `--space-5` — нет. Компонент с зашитой ступенью ломается первым |
-| Зазор ставит контейнер | да | Отступ у элемента складывается с внутренним отступом родителя по вертикали и не складывается по горизонтали |
-| Радиус из словаря | да | Пять ступеней, названных размером контрола. Своё число разъезжается с соседями на стыке |
-| Хайрлайн через `--hairline` | да | На дробном DPR это 0.5px, и линия остаётся линией, а не полосой |
+| A role rather than a step | yes | `--pad-panel` changes along with density, `--space-5` does not. A component with a hard-coded step is the first to break |
+| The gap is set by the container | yes | A margin on an element adds up with the parent's inner padding vertically and does not add up horizontally |
+| A radius from the vocabulary | yes | Five steps named by the size of a control. A number of your own parts from its neighbours at the joint |
+| A hairline through `--hairline` | yes | At a fractional DPR that is 0.5px, and the line stays a line rather than a band |
 
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Цели нажатия | Отступ контрола участвует в размере цели наравне с высотой. В `compact` мелкие контролы уходят ниже 24px по WCAG 2.5.8 — см. [плотность](./density.md) |
-| Геометрия в `px` | Отступы и радиусы не растут вместе с кеглем: плотный инструментальный вид иначе расползается. Растёт текст, а высоты работают как минимум |
-| Разделение групп | Ритм — тоже носитель смысла: четыре метрики без рамок читаются как одна группа именно зазором |
-| Хайрлайн | На 1x-дисплее остаётся `1px`: линия, которая должна быть видна, видна на любом экране |
+| Tap targets | The padding of a control takes part in the size of the target on a par with the height. At `compact` small controls go below 24px under WCAG 2.5.8 — see [density](./density.md) |
+| Geometry in `px` | Paddings and radii do not grow along with type size: a dense tooling look would otherwise fall apart. The text grows, and the heights work as a minimum |
+| Parting groups | Rhythm is a carrier of meaning too: four metrics with no borders read as one group precisely by the gap |
+| The hairline | On a 1x display it stays `1px`: a line that has to be visible is visible on any screen |
 
-## Шкала
+## Scale
 
-Компонент обращается к ней только через ярус ролей. Прямое использование
-`--space-*` допустимо в приложении и в примитивах потока.
+A component reaches it only through the tier of roles. Using `--space-*`
+directly is allowed in an application and in the flow primitives.
 
-| Токен | Значение |
+| Token | Value |
 |---|---|
 | `--space-1` | 2px |
 | `--space-2` | 4px |
@@ -116,79 +115,81 @@ group-en: "Foundations"
 | `--space-9` | 48px |
 | `--space-10` | 64px |
 
-Разрежение сверху — не экономия, а ограничение: между 32 и 48 нет ступени, и
-это правильно. Шаг, которого нет, нельзя выбрать по ошибке.
+The sparseness at the top is not thrift but a restriction: there is no step
+between 32 and 48, and that is right. A step that does not exist cannot be
+chosen by mistake.
 
-### Отступы по назначению
+### Paddings by purpose
 
-Ярус ролей. Значения ниже — для плотности по умолчанию; в `compact` и
-`comfortable` они другие, см. [плотность](./density.md).
+The tier of roles. The values below are for the default density; at `compact`
+and `comfortable` they differ, see [density](./density.md).
 
-| Токен | По умолчанию | Где |
+| Token | Default | Where |
 |---|---|---|
-| `--pad-panel` | `--space-5` | Внутренний отступ панели |
-| `--pad-card` | `--space-6` | Внутренний отступ карточки |
-| `--pad-cell-x` | `--space-4` | Горизонтальный отступ ячейки таблицы |
-| `--row-pad-y` | `--space-3` | Вертикальный отступ строки: задача, ячейка, пункт меню |
-| `--gap-row` | `--space-3` | Зазор между строками в стопке |
-| `--gap-inline` | `--space-4` | Зазор между соседями в ряду |
-| `--control-pad-sm` | `--space-4` | Горизонтальный отступ мелкого контрола |
-| `--control-pad-md` | `--space-5` | Он же у среднего |
-| `--control-pad-lg` | `--space-6` | Он же у крупного |
+| `--pad-panel` | `--space-5` | The inner padding of a panel |
+| `--pad-card` | `--space-6` | The inner padding of a card |
+| `--pad-cell-x` | `--space-4` | The horizontal padding of a table cell |
+| `--row-pad-y` | `--space-3` | The vertical padding of a row: a task, a cell, a menu item |
+| `--gap-row` | `--space-3` | The gap between rows in a stack |
+| `--gap-inline` | `--space-4` | The gap between neighbours in a row |
+| `--control-pad-sm` | `--space-4` | The horizontal padding of a small control |
+| `--control-pad-md` | `--space-5` | The same for a medium one |
+| `--control-pad-lg` | `--space-6` | The same for a large one |
 
-**Зазор ставится между соседями.** `margin-block` на
-каждом элементе складывается с внутренним отступом контейнера сверху и снизу,
-но не по бокам — и подсветка отступает от рамки по вертикали вдвое дальше, чем
-по горизонтали. Правильная форма — `X + X { margin-block-start }`.
+**The gap is set between neighbours.** A `margin-block` on every element adds
+up with the container's inner padding at the top and the bottom but not at the
+sides — and a highlight steps away from the border twice as far vertically as
+horizontally. The right form is `X + X { margin-block-start }`.
 
-### Размеры глифов и жёлобов
+### The sizes of glyphs and gutters
 
-Тот же ярус ролей: у каждого размера есть имя, поэтому в компонентах нет
-констант.
+The same tier of roles: every size has a name, so there are no constants in the
+components.
 
-| Токен | По умолчанию | Что это |
+| Token | Default | What it is |
 |---|---|---|
-| `--size-dot` | 6px | Точка состояния |
-| `--size-check` | 15px | Чекбокс и радио |
-| `--size-switch-w` / `--size-switch-h` | 30 / 18px | Дорожка свитча |
-| `--size-thumb` | 14px | Бегунок |
-| `--size-track` | 4px | Дорожка слайдера |
-| `--size-meter` | 6px | Толщина меры |
-| `--size-spinner` | 14px | Кольцо занятости |
-| `--size-icon` | 18px | Иконка — см. [иконки](./icons.md) |
-| `--size-chevron` | 10px | Шеврон, мелкая иконка |
-| `--size-marker` | 2px | Несущая метка: полоса вкладки, край сноски, край текущего пункта навигации. Тоньше не видно, толще — спорит с текстом |
-| `--size-gutter` | 14px | Левый жёлоб строки задачи |
-| `--size-indent` | 14px | Шаг вложенности дерева |
-| `--label-col` | 104px | Колонка подписей инспектора |
+| `--size-dot` | 6px | The state dot |
+| `--size-check` | 15px | The checkbox and the radio |
+| `--size-switch-w` / `--size-switch-h` | 30 / 18px | The track of a switch |
+| `--size-thumb` | 14px | The thumb |
+| `--size-track` | 4px | The track of a slider |
+| `--size-meter` | 6px | The thickness of a meter |
+| `--size-spinner` | 14px | The ring of busyness |
+| `--size-icon` | 18px | An icon — see [icons](./icons.md) |
+| `--size-chevron` | 10px | A chevron, a small icon |
+| `--size-marker` | 2px | A load-bearing mark: a tab's bar, the edge of a note, the edge of the current navigation item. Thinner and it is not seen, thicker and it argues with the text |
+| `--size-gutter` | 14px | The left gutter of a task row |
+| `--size-indent` | 14px | The indent step of a tree |
+| `--label-col` | 104px | The label column of the inspector |
 
-### Радиусы
+### Radii
 
-Шесть ступеней, и выбирает их **вложенность**. Все значения чётные: при
-плотности 1.5 нечётный радиус растрируется мимо устройственной сетки.
+Six steps, and what chooses among them is **nesting**. All the values are even:
+at a density of 1.5 an odd radius rasterises off the device grid.
 
-| Токен | Значение | Для чего |
+| Token | Value | What for |
 |---|---|---|
-| `--radius-2xs` | 2px | Точка состояния и всё размером с неё |
-| `--radius-xs` | 4px | Инлайн: бейджи, образцы, торцы полос |
-| `--radius-sm` | 6px | Контролы **внутри** карточки или панели |
-| `--radius-md` | 8px | Отдельно стоящие контролы: кнопка, поле, поповер |
-| `--radius-lg` | 12px | Карточки, панели, модалка |
-| `--radius-full` | 999px | Дорожки, бегунки, аватар |
+| `--radius-2xs` | 2px | The state dot and everything of its size |
+| `--radius-xs` | 4px | Inline: badges, swatches, the ends of bars |
+| `--radius-sm` | 6px | Controls **inside** a card or a panel |
+| `--radius-md` | 8px | Free-standing controls: a button, a field, a popover |
+| `--radius-lg` | 12px | Cards, panels, the modal |
+| `--radius-full` | 999px | Tracks, thumbs, the avatar |
 
-Скругление КОНТРОЛА берётся не отсюда напрямую, а из `--radius-control-sm/md/lg`:
-оно едет за плотностью вместе с высотой, иначе мелкая кнопка читается пилюлей.
-См. [плотность](./density.md).
+The rounding of a CONTROL is taken not from here directly but from
+`--radius-control-sm/md/lg`: it travels with density along with the height,
+otherwise a small button reads as a pill. See [density](./density.md).
 
-### Правило вложенных радиусов
+### The rule of nested radii
 
-Внутреннему углу нужен радиус **меньше** внешнего, иначе внутренний элемент
-выглядит выпирающим из контейнера. Оптически внутренний радиус равен внешнему
-минус толщина промежутка, и шкала уже подобрана так, чтобы соседняя ступень
-вниз давала верный результат при отступе из яруса ролей.
+An inner corner needs a radius **smaller** than the outer one, otherwise the
+inner element looks as if it bulges out of its container. Optically the inner
+radius equals the outer minus the thickness of the gap between them, and the
+scale is already chosen so that the neighbouring step down gives the right
+result at a padding from the tier of roles.
 
 ```html
-<!-- панель lg → контрол внутри sm; отдельно стоящий контрол — md -->
+<!-- panel lg → a control inside sm; a free-standing control is md -->
 <div class="inst-panel">
   <div class="inst-panel-body">
     <div class="inst-card"></div>
@@ -196,44 +197,45 @@ group-en: "Foundations"
 </div>
 ```
 
-**Скругление на односторонней рамке — всегда баг.** `border-left` вместе с
-`border-radius` даёт обрубок дуги: сноска и край текущего пункта навигации
-несут прямой угол намеренно.
+**A rounding on a one-sided border is always a bug.** A `border-left` together
+with a `border-radius` gives a stump of an arc: a note and the edge of the
+current navigation item carry a square corner deliberately.
 
-### Хайрлайн
+### The hairline
 
-Браузер никогда не рисует рамку тоньше одного физического пикселя. На
-1x-дисплее `0.5px` и `1px` дают **одно и то же**, а отрицательное поле в
-`-0.5px` при нарисованной рамке в `1px` оставляет полпикселя двойной линии.
-Поэтому хайрлайн включается только там, где ему есть куда поместиться.
+A browser never draws a border thinner than one physical pixel. On a 1x display
+`0.5px` and `1px` give **the same thing**, while a negative margin of `-0.5px`
+against a border drawn at `1px` leaves half a pixel of doubled line. So the
+hairline is switched on only where there is room for it.
 
-| Токен | Значение | Когда |
+| Token | Value | When |
 |---|---|---|
-| `--hairline` | `1px` | Плотность пикселей ниже 1.5dppx |
+| `--hairline` | `1px` | A pixel density below 1.5dppx |
 | `--hairline` | `0.5px` | `@media (min-resolution: 1.5dppx)` |
-| `--stroke` | `1px` | Линия, которая обязана остаться видимой всегда |
+| `--stroke` | `1px` | A line that has to stay visible always |
 
-Шов группы кнопок сделан **снятой рамкой у соседа** — по той же причине.
+The seam of a button group is made by **removing the neighbour's border** — for
+the same reason.
 
-## Правила
+## Rules
 
-| Токен | Значение | Что это |
+| Token | Value | What it is |
 |---|---|---|
-| `--aside-w` | 232px | Боковая колонка оболочки |
-| `--container-max` | 76rem | Потолок ширины рабочей области. В `rem`, потому что мера читаемости, а не геометрия |
-| `--split-side` | 18rem | Желаемая ширина боковой части сплита |
-| `--split-main` | 30rem | Ниже этого основная часть переносится вниз |
-| `--col-min` | 260px | Минимальная колонка адаптивной сетки |
+| `--aside-w` | 232px | The side column of the shell |
+| `--container-max` | 76rem | The ceiling on the width of the working area. In `rem`, because it is a measure of readability rather than geometry |
+| `--split-side` | 18rem | The wanted width of a split's side part |
+| `--split-main` | 30rem | Below this the main part wraps underneath |
+| `--col-min` | 260px | The minimum column of a responsive grid |
 
-### Что брать, а что нет
+### What to take and what not to
 
-| Используйте | Возьмите другое |
+| Use | Take instead |
 |---|---|
-| Роль: `--pad-panel`, `--gap-row`, `--row-pad-y` | **`--space-*` в компоненте** — плотность перенастраивает ярус ролей, а не шкалу. Список ролей целиком — [токены](./tokens.md) |
-| Зазор между соседями — примитив потока `.inst-stack` / `.inst-cluster` / `.inst-grid` | **Утилита отступа** (`mt-3`, `p-2`) — их в библиотеке нет и не будет, см. [поток](../layout/flow.md) |
-| Шаг зазора именем: обычный, `--tight`, `--loose` | **Свой зазор числом** — «чуть побольше» не должно быть доступным решением. Три шага описаны в [потоке](../layout/flow.md) |
-| Радиус по вложенности: контейнер `lg`, контрол внутри `sm` | **Один радиус на всё** — внутренний элемент с радиусом контейнера выпирает. Пример — [карточка](../components/display/card.md) |
-| `--hairline` для линии, которая не должна кричать | **`1px` числом** — на 2x-дисплее это вдвое толще нужного, см. [хайрлайн](#hayrlayn) |
+| A role: `--pad-panel`, `--gap-row`, `--row-pad-y` | **`--space-*` in a component** — density retunes the tier of roles, not the scale. The whole list of roles is in [tokens](./tokens.md) |
+| A gap between neighbours — a flow primitive `.inst-stack` / `.inst-cluster` / `.inst-grid` | **A spacing utility** (`mt-3`, `p-2`) — the library has none and will have none, see [flow](../layout/flow.md) |
+| A step of the gap by name: ordinary, `--tight`, `--loose` | **A gap of your own as a number** — "a little bigger" must not be an available decision. The three steps are described in [flow](../layout/flow.md) |
+| A radius by nesting: a container `lg`, a control inside `sm` | **One radius for everything** — an inner element with the container's radius bulges out. An example is [the card](../components/display/card.md) |
+| `--hairline` for a line that must not shout | **`1px` as a number** — on a 2x display that is twice the wanted thickness, see [the hairline](#the-hairline) |
 
 ## API
 
@@ -243,11 +245,11 @@ group-en: "Foundations"
 ```api
 ```
 
-## Связанное
+## Related
 
-[Плотность](./density.md)
-[Токены](./tokens.md)
-[Поток](../layout/flow.md)
-[Оболочка](../layout/shell.md)
-[Панель](../components/display/panel.md)
-[Карточка](../components/display/card.md)
+[Density](./density.md)
+[Tokens](./tokens.md)
+[Flow](../layout/flow.md)
+[Shell](../layout/shell.md)
+[Panel](../components/display/panel.md)
+[Card](../components/display/card.md)

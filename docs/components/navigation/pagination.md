@@ -1,79 +1,78 @@
 ---
-title: Постраничная навигация
-group: Навигация
+title: Pagination
+group: Navigation
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-pager", kind: "класс", doc: "Список страниц. Ставится на `<ol>`, переносится по ширине" }
-  - { name: "inst-pager-item", kind: "класс", doc: "Страница или стрелка. Квадрат не ниже `--control-h-sm`" }
-  - { name: "inst-pager-gap", kind: "класс", doc: "Многоточие на месте пропущенного диапазона. Не ссылка" }
-  - { name: "--control-h-sm", kind: "токен" }
-  - { name: "--radius-sm", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--surface-hover", kind: "токен" }
-  - { name: "--surface-selected", kind: "токен" }
-  - { name: "--accent-text", kind: "токен" }
-  - { name: "--accent-border", kind: "токен" }
-  - { name: "--text-secondary", kind: "токен" }
-  - { name: "--text-faint", kind: "токен" }
-title-en: "Pagination"
-group-en: "Navigation"
+  - { name: "inst-pager", kind: "class", doc: "The list of pages. Put on an `<ol>`; it wraps across the width" }
+  - { name: "inst-pager-item", kind: "class", doc: "A page or an arrow. A square no smaller than `--control-h-sm`" }
+  - { name: "inst-pager-gap", kind: "class", doc: "The ellipsis in the place of a skipped range. Not a link" }
+  - { name: "--control-h-sm", kind: "token" }
+  - { name: "--radius-sm", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--surface-hover", kind: "token" }
+  - { name: "--surface-selected", kind: "token" }
+  - { name: "--accent-text", kind: "token" }
+  - { name: "--accent-border", kind: "token" }
+  - { name: "--text-secondary", kind: "token" }
+  - { name: "--text-faint", kind: "token" }
 ---
 
-Переход по страницам длинного списка. Каждая страница — свой адрес, поэтому это
-ссылки, а не кнопки.
+Going through the pages of a long list. Every page is an address of its own, so
+these are links rather than buttons.
 
 ```html preview
-<nav aria-label="Страницы">
+<nav aria-label="Pages">
   <ol class="inst-pager">
-    <li><a class="inst-pager-item" href="#" aria-disabled="true">Назад</a></li>
+    <li><a class="inst-pager-item" href="#" aria-disabled="true">Back</a></li>
     <li><a class="inst-pager-item" href="#" aria-current="page">1</a></li>
     <li><a class="inst-pager-item" href="#">2</a></li>
     <li><a class="inst-pager-item" href="#">3</a></li>
     <li><span class="inst-pager-gap">…</span></li>
     <li><a class="inst-pager-item" href="#">24</a></li>
-    <li><a class="inst-pager-item" href="#">Вперёд</a></li>
+    <li><a class="inst-pager-item" href="#">Forward</a></li>
   </ol>
 </nav>
 ```
 
-## Контракт
+## Contract
 
-Пейджер — `<ol>` внутри `<nav aria-label>`: страницы упорядочены, и порядок
-часть смысла. Библиотека снимает у списка маркеры и отступ сам, поэтому обёртки не
-нужны.
+A pager is an `<ol>` inside a `<nav aria-label>`: the pages are ordered, and
+the order is part of the meaning. The library removes the markers and the
+indent of the list itself, so no wrappers are needed.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<nav>` + `aria-label` | да | Отдельный ориентир: на экране уже есть боковая навигация и крошки |
-| `<ol>` с `<li>` | да | Страницы упорядочены |
-| `aria-current="page"` | да | Единственный источник текущей страницы. Класса для неё нет |
-| `aria-disabled="true"` | да, на краю диапазона | У ссылки нет `disabled` — атрибут ARIA здесь единственный правдивый |
+| A `<nav>` + an `aria-label` | yes | A landmark of its own: the screen already has a side navigation and breadcrumbs |
+| An `<ol>` with `<li>` | yes | The pages are ordered |
+| An `aria-current="page"` | yes | The only source of the current page. There is no class for it |
+| An `aria-disabled="true"` | yes, at the edge of the range | A link has no `disabled` — the ARIA attribute is the only truthful one here |
 
-`inst-pager-gap` — это `<span>`, а не ссылка: многоточие обозначает пропуск, а
-не страницу. Оно остаётся внутри `<li>`, чтобы список не терял структуру.
+`inst-pager-gap` is a `<span>` rather than a link: an ellipsis marks a gap
+rather than a page. It stays inside an `<li>` so that the list does not lose
+its structure.
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Клавиатура | Нативные ссылки: `Tab` — обход, `Enter` — переход. Ничего не перехватывается |
-| Цель нажатия | Минимум `--control-h-sm` по обеим осям — квадрат, а не узкий прямоугольник. В плотности `compact` он опускается до 22px, ниже порога 24px по WCAG 2.5.8: держите пейджер вне `compact` |
-| Текущая страница | Несёт `aria-current`, заливку **и** рамку: цвет не единственный носитель |
-| Недоступность | `aria-disabled` озвучивается и сохраняет фокус, в отличие от удаления ссылки |
-| Контраст | Подпись `--text-secondary`, многоточие `--text-faint` — оно декорация, а не данные |
-| Печать | Пейджер не печатается: на бумаге страницы уже нет |
+| The keyboard | Native links: `Tab` traverses, `Enter` goes. Nothing is intercepted |
+| The tap target | At least `--control-h-sm` on both axes — a square rather than a narrow rectangle. At density `compact` it drops to 22px, below the 24px threshold of WCAG 2.5.8: keep a pager out of `compact` |
+| The current page | It carries an `aria-current`, a fill **and** a border: colour is not the only carrier |
+| Unavailability | An `aria-disabled` is spoken and keeps the focus, unlike removing the link |
+| Contrast | The label is `--text-secondary`, the ellipsis `--text-faint` — it is decoration rather than data |
+| Print | A pager is not printed: on paper there are no pages left |
 
-## Состояния
+## States
 
 ```html preview
-<nav aria-label="Пример состояний">
+<nav aria-label="An example of the states">
   <ol class="inst-pager">
-    <li><a class="inst-pager-item" href="#" aria-disabled="true">Назад</a></li>
+    <li><a class="inst-pager-item" href="#" aria-disabled="true">Back</a></li>
     <li><a class="inst-pager-item" href="#">7</a></li>
     <li><a class="inst-pager-item" href="#" aria-current="page">8</a></li>
     <li><a class="inst-pager-item" href="#">9</a></li>
@@ -81,22 +80,23 @@ group-en: "Navigation"
 </nav>
 ```
 
-| Состояние | Как ставится | Что происходит |
+| State | How it is set | What happens |
 |---|---|---|
-| текущая | `aria-current="page"` | `--surface-selected`, `--accent-text`, рамка `--accent-border` внутренней тенью, `--weight-medium` |
-| недоступна | `aria-disabled="true"` | Прозрачность `0.5` и снятая мышь. У ссылки нет `disabled` — атрибут ARIA здесь единственный правдивый |
-| наведение | `:hover` | `--surface-hover` и полный цвет подписи |
+| current | `aria-current="page"` | `--surface-selected`, `--accent-text`, a border of `--accent-border` by an inner shadow, `--weight-medium` |
+| unavailable | `aria-disabled="true"` | An opacity of `0.5` and the mouse removed. A link has no `disabled` — the ARIA attribute is the only truthful one here |
+| hover | `:hover` | `--surface-hover` and the full colour of the label |
 
-`aria-disabled` **не убирает ссылку из порядка обхода** — она остаётся
-достижимой с клавиатуры и озвучивается как недоступная. Перехват нажатия — на
-слое приложения: снимается только мышь.
+An `aria-disabled` **does not remove the link from the order of traversal** —
+it stays reachable from the keyboard and is spoken as unavailable.
+Intercepting the press belongs to the application layer: only the mouse is
+removed.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

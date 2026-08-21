@@ -1,127 +1,128 @@
 ---
-title: Сегментированный контрол
-group: Действия
+title: Segmented control
+group: Actions
 layout: component
 source: src/actions.css
-js: Выбор, стрелки и бегущий tabindex — делает `instrument.js`
+js: The choice, the arrows and the roving tabindex are done by `instrument.js`
 api:
-  - { name: "inst-segmented", kind: "класс", doc: "Контейнер. Внутри — голые `button` или `a`, свой класс им не нужен" }
-  - { name: "aria-checked", kind: "атрибут", doc: "`true` · `false` на кнопках. Ровно один `true` в группе" }
-  - { name: "aria-current", kind: "атрибут", value: "page", doc: "Носитель выбора, если варианты — ссылки" }
-  - { name: "--control-h-md", kind: "токен" }
-  - { name: "--control-pad-md", kind: "токен" }
-  - { name: "--radius-md", kind: "токен" }
-  - { name: "--radius-sm", kind: "токен" }
-  - { name: "--space-1", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--surface-sunken", kind: "токен" }
-  - { name: "--surface-raised", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-title-en: "Segmented control"
-group-en: "Actions"
+  - { name: "inst-segmented", kind: "class", doc: "The container. Bare `button` or `a` inside it; they need no class of their own" }
+  - { name: "aria-checked", kind: "attribute", doc: "`true` · `false` on the buttons. Exactly one `true` per group" }
+  - { name: "aria-current", kind: "attribute", value: "page", doc: "The carrier of the choice when the options are links" }
+  - { name: "--control-h-md", kind: "token" }
+  - { name: "--control-pad-md", kind: "token" }
+  - { name: "--radius-md", kind: "token" }
+  - { name: "--radius-sm", kind: "token" }
+  - { name: "--space-1", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--surface-raised", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--hairline", kind: "token" }
 ---
 
-Один выбор среди равных вариантов. У него всегда ровно одно выбранное значение
-— и в этом всё отличие от [группы кнопок](./button-group.md), где выбранного
-нет и быть не может.
+One choice among equal options. It always has exactly one chosen value — and
+that is the whole difference from [the button group](./button-group.md), where
+there is no chosen one and cannot be.
 
 ```html preview
-<div class="inst-segmented" role="radiogroup" aria-label="Режим отображения">
-  <button type="button" role="radio" aria-checked="true"  tabindex="0">Список</button>
-  <button type="button" role="radio" aria-checked="false" tabindex="-1">Сетка</button>
-  <button type="button" role="radio" aria-checked="false" tabindex="-1">Таблица</button>
+<div class="inst-segmented" role="radiogroup" aria-label="View mode">
+  <button type="button" role="radio" aria-checked="true"  tabindex="0">List</button>
+  <button type="button" role="radio" aria-checked="false" tabindex="-1">Grid</button>
+  <button type="button" role="radio" aria-checked="false" tabindex="-1">Table</button>
 </div>
 ```
 
-Переключатель [плотности](../../foundations/density.md) в шапке справочника —
-это он.
+The [density](../../foundations/density.md) switch in the header of the
+reference is this one.
 
-## Контракт
+## Contract
 
-Состояние приходит из разметки: библиотека его рисует, но не вычисляет. Без
-ролей `aria-checked` **невалиден**, а с клавиатуры до контрола не добраться.
+The state comes from the markup: the library draws it but does not compute it.
+Without the roles `aria-checked` is **invalid**, and the control cannot be
+reached from the keyboard.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `role="radiogroup"` на контейнере | да | Группа — один контрол с одним значением |
-| `aria-label` на контейнере | да | Иначе у контрола нет имени: подписи есть только у вариантов |
-| `role="radio"` на каждой кнопке | да | `role="tab"` без панели — невалидная роль |
-| `aria-checked` на каждой | да | Носитель состояния. Стиль выбранного висит на нём, а не на классе |
-| `type="button"` | да | Иначе внутри формы кнопка её отправит |
-| Бегущий `tabindex` | да, начальный | `0` у выбранной, `-1` у остальных. Без него `Tab` пройдёт по всем вариантам и группа перестанет быть одним контролом |
+| `role="radiogroup"` on the container | yes | A group is one control with one value |
+| `aria-label` on the container | yes | Otherwise the control has no name: only the options have labels |
+| `role="radio"` on every button | yes | A `role="tab"` with no panel is an invalid role |
+| `aria-checked` on each | yes | The carrier of the state. The style of the chosen one hangs on it rather than on a class |
+| `type="button"` | yes | Otherwise inside a form the button will submit it |
+| A roving `tabindex` | yes, the initial one | `0` on the chosen one, `-1` on the rest. Without it `Tab` goes through every option and the group stops being one control |
 
-Клавиатура: `Tab` — вход в группу и выход из неё, `←` `→` `↑` `↓` — перебор,
-выбор следует за фокусом.
+The keyboard: `Tab` enters and leaves the group, `←` `→` `↑` `↓` traverse it,
+and the choice follows the focus.
 
-Выбранный несёт **два** признака, и ни один из них не цвет: поднятую
-поверхность и кольцо рамки. Подпись невыбранного — `--text-secondary`,
-проверена на 4.5:1 в пяти темах. Высота на `--space-2` меньше
-`--control-h-md`, и в плотном режиме цель уходит ниже 24px по WCAG 2.5.8 —
-как и всё размера `sm`.
+The chosen one carries **two** marks, and neither of them is colour: a raised
+surface and a ring of border. The label of an unchosen one is
+`--text-secondary`, checked at 4.5:1 in five themes. The height is `--space-2`
+less than `--control-h-md`, and in the compact mode the target goes below 24px
+under WCAG 2.5.8 — as everything of size `sm` does.
 
-## Варианты
+## Variants
 
-### Со своим адресом
+### With an address of its own
 
-Значение, у которого есть адрес, не перестаёт быть значением. Окно истории
-переживает перезагрузку, ложится в закладку и передаётся другому человеку
-целиком — ссылкой; выбором одного из равных оно от этого быть не перестало.
-Носитель состояния тогда `aria-current="page"`, а не `aria-checked`.
+A value that has an address does not stop being a value. A history window
+survives a reload, goes into a bookmark and is handed to another person entire
+— as a link; it has not stopped being a choice among equals for that. The
+carrier of the state is then `aria-current="page"` rather than `aria-checked`.
 
 ```html preview
-<nav class="inst-segmented" aria-label="Окно истории">
-  <a href="?window=day" aria-current="page">24 часа</a>
-  <a href="?window=week">7 дней</a>
-  <a href="?window=month">30 дней</a>
+<nav class="inst-segmented" aria-label="History window">
+  <a href="?window=day" aria-current="page">24 hours</a>
+  <a href="?window=week">7 days</a>
+  <a href="?window=month">30 days</a>
 </nav>
 ```
 
-## Состояния
+## States
 
 ```html preview
-<div class="inst-segmented" role="radiogroup" aria-label="Выбрано первое">
-  <button type="button" role="radio" aria-checked="true"  tabindex="0">Выбрано</button>
-  <button type="button" role="radio" aria-checked="false" tabindex="-1">Обычное</button>
-  <button type="button" role="radio" aria-checked="false" tabindex="-1" disabled>Недоступно</button>
+<div class="inst-segmented" role="radiogroup" aria-label="The first one is chosen">
+  <button type="button" role="radio" aria-checked="true"  tabindex="0">Chosen</button>
+  <button type="button" role="radio" aria-checked="false" tabindex="-1">Ordinary</button>
+  <button type="button" role="radio" aria-checked="false" tabindex="-1" disabled>Unavailable</button>
 </div>
 ```
 
-| Состояние | Как ставится | Что происходит |
+| State | How it is set | What happens |
 |---|---|---|
-| выбрано | `aria-checked="true"` — или `aria-current="page"` у ссылок | Поднятая поверхность и рамка волоском. Начертание не меняется |
-| обычное | `aria-checked="false"` | Подпись `--text-secondary`, фона нет |
-| наведение | `:hover` | Меняется только цвет подписи: поверхность занята выбранным |
-| фокус | `:focus-visible` | Кольцо внутри контейнера, без собственного радиуса |
-| недоступно | `disabled` | Прозрачность. Вариант остаётся видимым — важно, **какой именно** недоступен |
+| chosen | `aria-checked="true"` — or `aria-current="page"` on links | A raised surface and a hairline border. The weight does not change |
+| ordinary | `aria-checked="false"` | The label is `--text-secondary`, with no background |
+| hover | `:hover` | Only the colour of the label changes: the surface is taken by the chosen one |
+| focus | `:focus-visible` | A ring inside the container, with no radius of its own |
+| unavailable | `disabled` | Transparency. The option stays visible — **which one** is unavailable matters |
 
-Выбранный несёт **два** признака, и ни один из них не цвет: поднятую
-поверхность и кольцо рамки. Различать оттенки не требуется.
+The chosen one carries **two** marks, and neither of them is colour: a raised
+surface and a ring of border. Telling shades apart is not required.
 
-Начертание состояние не несёт. Замерено: с `medium` ширина всей дорожки зависела
-от того, какой сегмент выбран — 217.16, 216.94 и 216.64 пикселя, — то есть выбор
-сдвигал соседей по тулбару, а правый скруглённый угол садился на полпиксель и
-перерастрировался. При плотности 2.0 это целый устройственный пиксель. Без
-`medium` все три положения дают одну ширину.
+The weight carries no state. Measured: with `medium` the width of the whole
+track depended on which segment was chosen — 217.16, 216.94 and 216.64 pixels —
+that is, the choice shifted the neighbours in the toolbar, and the rounded
+right corner landed half a pixel off and re-rasterised. At a density of 2.0
+that is a whole device pixel. Without `medium` all three positions give one
+width.
 
 ## JS
 
-Модуль подключается [один раз на страницу](../../foundations/behavior.md) —
-инициализировать компоненты по отдельности не нужно.
+The module is included [once per page](../../foundations/behavior.md) — there
+is no need to initialise the components one by one.
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Примеры на этой странице живые: войдите в контрол `Tab`, дальше `←` и `→`. Мышью — тоже.
+The examples on this page are live: enter the control with `Tab`, then `←` and
+`→`. With a mouse too.
 
-Контрол объявлен как `role="radiogroup"`, и `instrument.js` выполняет её контракт: `←` и `→`
-между вариантами, `Home` и `End`, один `Tab` на всю группу. Отметка
-`aria-checked` следует за фокусом и переносится щелчком — сразу на всю группу,
-потому что два отмеченных варианта это состояние, из которого разметка уже не
-выйдет.
+The control is declared as `role="radiogroup"`, and `instrument.js` carries out
+its contract: `←` and `→` between the options, `Home` and `End`, one `Tab` for
+the whole group. The `aria-checked` mark follows the focus and is carried over
+on a click — across the whole group at once, because two checked options are a
+state the markup will not get out of again.
 
-### События
+### Events
 
-`inst:select` всплывает с выбранного варианта.
+`inst:select` bubbles from the chosen option.
 
 ```js
 group.addEventListener('inst:select', (e) => {
@@ -129,34 +130,34 @@ group.addEventListener('inst:select', (e) => {
 });
 ```
 
-### Опции
+### Options
 
-| Атрибут | Что делает |
+| Attribute | What it does |
 |---|---|
-| `data-value` | Значение в `detail` вместо подписи варианта |
-| `aria-orientation="vertical"` | Стрелки по вертикали |
+| `data-value` | The value in `detail` instead of the option's label |
+| `aria-orientation="vertical"` | Arrows on the vertical |
 
 ```html
-<div class="inst-segmented" role="radiogroup" aria-label="Плотность">
-  <button type="button" role="radio" aria-checked="true"  data-value="sm" tabindex="0">Плотно</button>
-  <button type="button" role="radio" aria-checked="false" data-value="md" tabindex="-1">Обычно</button>
+<div class="inst-segmented" role="radiogroup" aria-label="Density">
+  <button type="button" role="radio" aria-checked="true"  data-value="sm" tabindex="0">Compact</button>
+  <button type="button" role="radio" aria-checked="false" data-value="md" tabindex="-1">Default</button>
 </div>
 ```
 
-## Композиции
+## Composition
 
-### В шапке экрана
+### In a page header
 
 ```html preview context
 <div class="inst-page-header">
   <div class="inst-page-header-main">
-    <h2 class="inst-page-title">Прогоны</h2>
+    <h2 class="inst-page-title">Runs</h2>
   </div>
   <div class="inst-page-actions">
-    <div class="inst-segmented" role="radiogroup" aria-label="Период">
-      <button type="button" role="radio" aria-checked="false" tabindex="-1">День</button>
-      <button type="button" role="radio" aria-checked="true"  tabindex="0">Неделя</button>
-      <button type="button" role="radio" aria-checked="false" tabindex="-1">Месяц</button>
+    <div class="inst-segmented" role="radiogroup" aria-label="Period">
+      <button type="button" role="radio" aria-checked="false" tabindex="-1">Day</button>
+      <button type="button" role="radio" aria-checked="true"  tabindex="0">Week</button>
+      <button type="button" role="radio" aria-checked="false" tabindex="-1">Month</button>
     </div>
   </div>
 </div>
@@ -167,7 +168,7 @@ group.addEventListener('inst:select', (e) => {
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

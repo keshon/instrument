@@ -1,175 +1,178 @@
 ---
-title: Выбираемая карточка
-group: Ввод
+title: Choice card
+group: Inputs
 layout: component
 source: src/forms.css
 api:
-  - { name: "inst-choice-card", kind: "класс", doc: "`<label>`-контейнер. Сетка, рамка, состояния" }
-  - { name: "inst-choice-card-title", kind: "класс", doc: "Заголовок варианта" }
-  - { name: "inst-choice-card-desc", kind: "класс", doc: "Объяснение последствий" }
-  - { name: "--pad-card", kind: "токен" }
-  - { name: "--radius-md", kind: "токен" }
-  - { name: "--surface-raised", kind: "токен" }
-  - { name: "--border-control", kind: "токен" }
-  - { name: "--accent-border", kind: "токен" }
-  - { name: "--accent-bg", kind: "токен" }
-  - { name: "--accent-solid", kind: "токен" }
-  - { name: "--size-marker", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--leading-ui", kind: "токен" }
-  - { name: "--dur-1", kind: "токен" }
-title-en: "Choice card"
-group-en: "Inputs"
+  - { name: "inst-choice-card", kind: "class", doc: "The `<label>` container. The grid, the border, the states" }
+  - { name: "inst-choice-card-title", kind: "class", doc: "The heading of an option" }
+  - { name: "inst-choice-card-desc", kind: "class", doc: "The explanation of the consequences" }
+  - { name: "--pad-card", kind: "token" }
+  - { name: "--radius-md", kind: "token" }
+  - { name: "--surface-raised", kind: "token" }
+  - { name: "--border-control", kind: "token" }
+  - { name: "--accent-border", kind: "token" }
+  - { name: "--accent-bg", kind: "token" }
+  - { name: "--accent-solid", kind: "token" }
+  - { name: "--size-marker", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--leading-ui", kind: "token" }
+  - { name: "--dur-1", kind: "token" }
 ---
 
-Радиокнопка или чекбокс, у которых есть заголовок и объяснение последствий.
-Голой подписи в одну строку не хватает, когда у вариантов разная цена.
+A radio button or a checkbox that has a heading and an explanation of the
+consequences. A bare one-line label is not enough when the options cost
+differently.
 
 ```html preview
 <label class="inst-choice-card">
   <input type="radio" name="mode" checked>
-  <span><span class="inst-choice-card-title">Параллельно</span>
-    <span class="inst-choice-card-desc">До 12 агентов сразу. Быстрее, но расход токенов выше и порядок вывода не гарантирован.</span></span>
+  <span><span class="inst-choice-card-title">In parallel</span>
+    <span class="inst-choice-card-desc">Up to 12 agents at once. Faster, but the spending of tokens is higher and the order of the output is not guaranteed.</span></span>
 </label>
 <label class="inst-choice-card">
   <input type="radio" name="mode">
-  <span><span class="inst-choice-card-title">Последовательно</span>
-    <span class="inst-choice-card-desc">По одному агенту. Медленнее, зато лог читается сверху вниз без чересполосицы.</span></span>
+  <span><span class="inst-choice-card-title">Sequentially</span>
+    <span class="inst-choice-card-desc">One agent at a time. Slower, but the log reads top to bottom with no interleaving.</span></span>
 </label>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<label>` как контейнер | да | Нажатие в любое место карточки попадает в контрол. Обёртка `<div>` превратила бы карточку в мёртвую площадь вокруг маленького кружка |
-| `<input>` прямым ребёнком | да | Состояния написаны через `:has(> input…)`: контрол в подобёртке их не включит |
-| Один `<span>` под текст | да | Сетка карточки двухколоночная: контрол и **один** текстовый блок. Два соседних узла разъедут колонки |
-| `inst-choice-card-title` | да | Без заголовка это просто чекбокс в рамке |
-| Общий `name` у радиогруппы | да | Без него варианты не исключают друг друга |
-| `fieldset` с `legend` вокруг группы | да | Иначе вопрос, на который отвечают карточки, нигде не назван |
-| `inst-choice-card-desc` | нет, но обычно да | Без объяснения карточка не оправдывает своей площади — берите [переключатели](./toggles.md) |
+| A `<label>` as the container | yes | A press anywhere on the card lands in the control. A `<div>` wrapper would turn the card into dead area around a small circle |
+| An `<input>` as a direct child | yes | The states are written through `:has(> input…)`: a control in a sub-wrapper will not switch them on |
+| One `<span>` for the text | yes | The grid of a card is two columns: the control and **one** block of text. Two sibling nodes will part the columns |
+| `inst-choice-card-title` | yes | With no heading this is just a checkbox in a frame |
+| A shared `name` on a radio group | yes | Without it the options do not exclude one another |
+| A `fieldset` with a `legend` around the group | yes | Otherwise the question the cards answer is named nowhere |
+| `inst-choice-card-desc` | no, but usually yes | With no explanation a card does not justify its area — take [the toggles](./toggles.md) |
 
-Внутри карточки нативный `<input>`, а не `div` с ролью: клавиатура, объявление
-состояния и участие в форме приходят от платформы. `Tab` входит в группу,
-стрелки переключают радиокнопки, `Space` жмёт чекбокс — ничего не
-перехватывается.
+Inside a card is a native `<input>` rather than a `div` with a role: the
+keyboard, the announcement of state and the part in a form come from the
+platform. `Tab` enters the group, the arrows switch the radio buttons, `Space`
+presses a checkbox — nothing is intercepted.
 
-Кольцо фокуса рисуется вокруг **всей карточки**: у контрола внутри оно было бы
-вокруг кружка размером с точку. Заголовок и описание внутри `<label>` целиком
-становятся именем варианта, поэтому отдельный `aria-label` не нужен и вредит —
-он перекрыл бы описание. Группе имя даёт `fieldset` с `legend`, иначе варианты
-объявляются без вопроса.
+The focus ring is drawn around the **whole card**: on the control inside it
+would be around a circle the size of a dot. The heading and the description
+inside the `<label>` become the name of the option entire, so a separate
+`aria-label` is not needed and does harm — it would override the description.
+The group is named by a `fieldset` with a `legend`, otherwise the options are
+announced with no question.
 
-Выбор несёт метку у края и нативную отметку контрола, а не только фон и рамку.
-Цель нажатия — вся карточка, самая большая во всей библиотеке. `disabled` на
-`<input>` гасит карточку целиком, и видно, **какой именно** вариант недоступен.
+The choice carries a mark at the edge and the native check of the control
+rather than a background and a border alone. The tap target is the whole card,
+the largest in the whole library. A `disabled` on the `<input>` dims the card
+entire, and it shows **which** option is unavailable.
 
-## Варианты
+## Variants
 
-Внутри — **настоящий нативный контрол**, и от его типа зависит вся семантика
-выбора. Библиотека не различает эти два случая ничем, кроме того, что рисует
-браузер: правило `:has(> input:checked)` одинаково работает и там, и там.
+Inside is a **real native control**, and the whole semantics of the choice
+depends on its type. The library tells the two cases apart by nothing but what
+the browser draws: the rule `:has(> input:checked)` works alike in both.
 
 ```html preview
 <label class="inst-choice-card">
   <input type="checkbox" checked>
-  <span><span class="inst-choice-card-title">Собирать трассировку</span>
-    <span class="inst-choice-card-desc">Полный лог каждого шага. Прогон становится примерно на 15% медленнее.</span></span>
+  <span><span class="inst-choice-card-title">Collect a trace</span>
+    <span class="inst-choice-card-desc">A full log of every step. The run becomes about 15% slower.</span></span>
 </label>
 <label class="inst-choice-card">
   <input type="checkbox">
-  <span><span class="inst-choice-card-title">Оповестить по завершении</span>
-    <span class="inst-choice-card-desc">Письмо на адрес учётной записи, когда очередь опустеет.</span></span>
+  <span><span class="inst-choice-card-title">Notify on completion</span>
+    <span class="inst-choice-card-desc">An email to the address of the account when the queue empties.</span></span>
 </label>
 ```
 
-| Тип | Когда | Обязательно |
+| Type | When | Required |
 |---|---|---|
-| `type="radio"` | Один из взаимоисключающих режимов | Общий `name` у всей группы, иначе взаимоисключения не будет |
-| `type="checkbox"` | Независимые опции, любое количество | `name` у каждого свой |
+| `type="radio"` | One of several mutually exclusive modes | A shared `name` across the group, otherwise there is no mutual exclusion |
+| `type="checkbox"` | Independent options, any number of them | A `name` of its own on each |
 
-Группа радиокарточек — это группа полей, и у неё должно быть общее имя:
-оберните её в `fieldset` с `legend`, иначе скринридер объявит четыре
-несвязанных варианта без вопроса, на который они отвечают.
+A group of radio cards is a group of fields, and it has to have a shared name:
+wrap it in a `fieldset` with a `legend`, otherwise a screen reader announces
+four unrelated options with no question for them to answer.
 
-## Состояния
+## States
 
 ```html preview
 <label class="inst-choice-card">
   <input type="radio" name="st" checked>
-  <span><span class="inst-choice-card-title">Выбрано</span>
-    <span class="inst-choice-card-desc">Рамка акцентом, тонированный фон и несущая метка у края.</span></span>
+  <span><span class="inst-choice-card-title">Chosen</span>
+    <span class="inst-choice-card-desc">A border in the accent, a tinted background and a load-bearing mark at the edge.</span></span>
 </label>
 <label class="inst-choice-card">
   <input type="radio" name="st">
-  <span><span class="inst-choice-card-title">Не выбрано</span>
-    <span class="inst-choice-card-desc">Обычная рамка контрола.</span></span>
+  <span><span class="inst-choice-card-title">Not chosen</span>
+    <span class="inst-choice-card-desc">The ordinary border of a control.</span></span>
 </label>
 <label class="inst-choice-card">
   <input type="radio" name="st" disabled>
-  <span><span class="inst-choice-card-title">Недоступно</span>
-    <span class="inst-choice-card-desc">Недоступно на текущем тарифе.</span></span>
+  <span><span class="inst-choice-card-title">Unavailable</span>
+    <span class="inst-choice-card-desc">Unavailable on the current plan.</span></span>
 </label>
 ```
 
-| Состояние | Как ставится | Что происходит |
+| State | How it is set | What happens |
 |---|---|---|
-| наведение | `:hover` | Рамка темнеет до `--text-muted` |
-| выбрано | `:has(> input:checked)` | Рамка `--accent-border`, фон `--accent-bg` **и несущая метка у внутреннего края** |
-| фокус | `:has(> input:focus-visible)` | Кольцо вокруг всей карточки, а не вокруг кружка |
-| недоступно | `:has(> input:disabled)` | Прозрачность `0.5`, курсор `not-allowed` |
+| hover | `:hover` | The border darkens to `--text-muted` |
+| chosen | `:has(> input:checked)` | The border `--accent-border`, the background `--accent-bg` **and a load-bearing mark at the inner edge** |
+| focus | `:has(> input:focus-visible)` | A ring around the whole card rather than around the circle |
+| unavailable | `:has(> input:disabled)` | An opacity of `0.5`, the cursor `not-allowed` |
 
-**Выбор несёт не только цвет.** У края выбранной карточки встаёт та же несущая
-метка толщиной `--size-marker`, что у текущего пункта навигации и у активной
-вкладки: один язык на всю библиотеку, и он переживает и дальтонизм, и печать.
+**The choice carries more than colour.** At the edge of a chosen card stands
+the same load-bearing mark of thickness `--size-marker` as on the current
+navigation item and on an active tab: one language for the whole library, and
+it survives both colour blindness and print.
 
-## Композиции
+## Composition
 
-### С бейджем в заголовке
+### With a badge in the heading
 
 ```html preview
 <label class="inst-choice-card">
   <input type="radio" name="tier">
-  <span><span class="inst-choice-card-title">Распределённо
-      <span class="inst-badge" data-tone="warn">бета</span></span>
-    <span class="inst-choice-card-desc">Агенты уезжают на пул воркеров. Пока без гарантий по времени.</span></span>
+  <span><span class="inst-choice-card-title">Distributed
+      <span class="inst-badge" data-tone="warn">beta</span></span>
+    <span class="inst-choice-card-desc">The agents go off to a pool of workers. No guarantees on timing yet.</span></span>
 </label>
 ```
 
-## Сценарии
+## Patterns
 
-### Группа с общим вопросом
+### A group with a shared question
 
 ```html preview context
 <fieldset class="inst-fieldset">
-  <legend>Режим прогона</legend>
+  <legend>Run mode</legend>
   <div class="inst-grid">
     <label class="inst-choice-card">
       <input type="radio" name="run-mode" checked>
-      <span><span class="inst-choice-card-title">Параллельно</span>
-        <span class="inst-choice-card-desc">До 12 агентов сразу.</span></span>
+      <span><span class="inst-choice-card-title">In parallel</span>
+        <span class="inst-choice-card-desc">Up to 12 agents at once.</span></span>
     </label>
     <label class="inst-choice-card">
       <input type="radio" name="run-mode">
-      <span><span class="inst-choice-card-title">Последовательно</span>
-        <span class="inst-choice-card-desc">По одному агенту.</span></span>
+      <span><span class="inst-choice-card-title">Sequentially</span>
+        <span class="inst-choice-card-desc">One agent at a time.</span></span>
     </label>
   </div>
 </fieldset>
 ```
 
-Группа полей идёт **без рамки** по умолчанию: карточки уже обведены, и рамка
-вокруг них дала бы рамку внутри рамки. См. [форму](./form.md).
+A group of fields goes **with no border** by default: the cards are outlined
+already, and a border around them would give a frame inside a frame. See
+[the form](./form.md).
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

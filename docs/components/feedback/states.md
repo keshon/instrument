@@ -1,140 +1,138 @@
 ---
-title: Точка и каретка
-group: Обратная связь
+title: Dot and caret
+group: Feedback
 layout: component
 source: src/status.css
 api:
-  - { name: "inst-dot", kind: "класс", doc: "Точка состояния. Читает `--tone-mark`" }
-  - { name: "inst-caret", kind: "класс", doc: "Каретка потокового текста" }
-  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт. Ставится на точке или на любом её предке" }
-  - { name: "--size-dot", kind: "токен" }
-  - { name: "--radius-full", kind: "токен" }
-  - { name: "--tone-mark", kind: "токен" }
-  - { name: "--text-faint", kind: "токен" }
-  - { name: "--accent-mark", kind: "токен" }
-  - { name: "--ease-in-out", kind: "токен" }
-title-en: "Dot and caret"
-group-en: "Feedback"
+  - { name: "inst-dot", kind: "class", doc: "The state dot. It reads `--tone-mark`" }
+  - { name: "inst-caret", kind: "class", doc: "The caret of streaming text" }
+  - { name: "data-tone", kind: "attribute", doc: "`neutral` `running` `ok` `warn` `error`. Closed. Set on the dot or on any ancestor of it" }
+  - { name: "--size-dot", kind: "token" }
+  - { name: "--radius-full", kind: "token" }
+  - { name: "--tone-mark", kind: "token" }
+  - { name: "--text-faint", kind: "token" }
+  - { name: "--accent-mark", kind: "token" }
+  - { name: "--ease-in-out", kind: "token" }
 ---
 
-Две мельчайшие минимальные метки библиотеки. Точка называет состояние объекта, каретка показывает,
-что текст ещё поступает. Обе — метки без подписи, и потому обе берут
-`--tone-mark`, а не `--tone-ink`.
+The two smallest marks of the library. A dot names the state of an object, a
+caret shows that text is still arriving. Both are marks with no label, and so
+both take `--tone-mark` rather than `--tone-ink`.
 
 ```html preview
-<span class="inst-badge"><span class="inst-dot"></span>в очереди</span>
-<span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
-<span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
-<span class="inst-badge" data-tone="warn"><span class="inst-dot"></span>с замечаниями</span>
-<span class="inst-badge" data-tone="error"><span class="inst-dot"></span>упало</span>
+<span class="inst-badge"><span class="inst-dot"></span>queued</span>
+<span class="inst-badge" data-tone="running"><span class="inst-dot"></span>running</span>
+<span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span>
+<span class="inst-badge" data-tone="warn"><span class="inst-dot"></span>with remarks</span>
+<span class="inst-badge" data-tone="error"><span class="inst-dot"></span>failed</span>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Слово рядом с точкой | да | Точка без подписи — это цвет как единственный носитель, то есть дефект |
-| `data-tone` на точке **или** на её предке | да | Точка не знает своего тона: она читает `--tone-mark` у ближайшего предка, который его поставил |
-| Каретка вплотную к последнему знаку | да | Отбивка на просвет, `0.1em`. Отодвинутая на пробел каретка показывает не туда |
+| A word beside the dot | yes | A dot with no label is colour as the only carrier, that is, a defect |
+| A `data-tone` on the dot **or** on an ancestor of it | yes | A dot does not know its tone: it reads `--tone-mark` from the nearest ancestor that set one |
+| The caret flush against the last character | yes | Set off by a gap of `0.1em`. A caret moved off by a space points at the wrong place |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Цвет не единственный носитель | Точка всегда стоит рядом со словом. Точка без подписи — это цвет как единственный носитель, то есть дефект |
-| Уменьшенное движение точки | Пульсация **замедляется до 3с, а не гаснет**: индикатор занятости должен оставаться видимым |
-| Уменьшенное движение каретки | Мигание **выключается**, каретка остаётся видимой (`opacity: 1`). Исключение из исключения: мигание не несёт информации о скорости, только о факте, а факт передаёт сама каретка |
-| Режим принудительных цветов | Точка переживает сброс (`forced-color-adjust: none`) и переходит на `Highlight`, потому что несёт значение |
-| Печать | Точка печатается, каретка — нет: мигающий курсор на бумаге не значит ничего |
-| Размер | 6px — метка, а не цель нажатия. Нажимается строка целиком, не точка |
+| Colour is not the only carrier | A dot always stands beside a word. A dot with no label is colour as the only carrier, that is, a defect |
+| Reduced motion on the dot | The pulse **slows to 3s rather than going out**: an indicator of busyness has to stay visible |
+| Reduced motion on the caret | The blinking is **switched off** and the caret stays visible (`opacity: 1`). An exception to the exception: the blinking carries no information about speed, only about the fact, and the fact is carried by the caret itself |
+| Forced-colours mode | The dot survives the reset (`forced-color-adjust: none`) and moves to `Highlight`, because it carries meaning |
+| Print | The dot is printed, the caret is not: a blinking cursor on paper means nothing |
+| Size | 6px is a mark rather than a tap target. What is pressed is the whole row, not the dot |
 
-## Устройство
+## Anatomy
 
-### Точка
+### The dot
 
-Круг в `--size-dot` (6px). Носитель **второго признака** состояния: цвет не
-имеет права быть единственным носителем, поэтому статус ходит с точкой *и*
-словом.
+A circle of `--size-dot` (6px). The carrier of the **second mark** of a state:
+colour has no right to be the only carrier, so a status travels with a dot
+*and* a word.
 
-### Каретка
+### The caret
 
-Прямоугольник в высоту строки, мигающий ступенями. Это **курсор терминала**:
-он показывает точку, куда придёт следующий символ.
+A rectangle the height of a line, blinking in steps. It is a **terminal
+cursor**: it shows the point the next character will arrive at.
 
 ```html preview
-<span>Стриминг ответа<span class="inst-caret"></span></span>
+<span>Streaming the answer<span class="inst-caret"></span></span>
 ```
 
-Три решения, каждое из которых легко сделать наоборот:
+Three decisions, each of which is easy to make the other way round:
 
-- **Стоит вплотную к последнему знаку**, отбивка на просвет (`0.1em`).
-  Каретка, отодвинутая на пробел, показывает не туда.
-- **Мигает ступенями** (`steps(2, start)`). Плавное затухание читается как
-  артефакт отрисовки.
-- **Размер в `em`**: `0.45em` на `1.05em`. Каретка привязана к кеглю строки, в
-  которой стоит, и не требует настройки под каждый размер текста.
+- **It stands flush against the last character**, set off by a gap (`0.1em`).
+  A caret moved off by a space points at the wrong place.
+- **It blinks in steps** (`steps(2, start)`). A smooth fade reads as an
+  artefact of the rendering.
+- **The size is in `em`**: `0.45em` by `1.05em`. The caret is tied to the type
+  size of the line it stands in and needs no adjusting for every size of text.
 
-## Варианты
+## Variants
 
-`data-tone` — один словарь на всю библиотеку, и он закрыт.
+`data-tone` is one vocabulary for the whole library, and it is closed.
 
-| Тон | Значит | Точка |
+| Tone | Means | The dot |
 |---|---|---|
-| без атрибута | Ещё не начиналось | `--text-faint` |
-| `data-tone="neutral"` | Явно нейтральное. Оно же исполняет роль info | Нейтральная |
-| `data-tone="running"` | Идёт сейчас | **Пульсирует**: `opacity` 1 → 0.35 за 1.6с |
-| `data-tone="ok"` | Успешно завершено | Тон успеха |
-| `data-tone="warn"` | Завершено с замечаниями | Тон замечания |
-| `data-tone="error"` | Упало | Тон отказа |
+| no attribute | Not begun yet | `--text-faint` |
+| `data-tone="neutral"` | Explicitly neutral. It also plays the part of info | Neutral |
+| `data-tone="running"` | Happening now | **It pulses**: `opacity` 1 → 0.35 over 1.6s |
+| `data-tone="ok"` | Finished successfully | The tone of success |
+| `data-tone="warn"` | Finished with remarks | The tone of a remark |
+| `data-tone="error"` | Failed | The tone of a refusal |
 
-## Поведение
+## Behavior
 
-### Наследование тона
+### Inheriting a tone
 
-Точка не знает своего тона — она читает `--tone-mark` у ближайшего предка,
-который его поставил. Поэтому `data-tone` ставится **один раз на группу**.
+A dot does not know its tone — it reads `--tone-mark` from the nearest ancestor
+that set one. So `data-tone` is set **once per group**.
 
 ```html preview
-<span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
+<span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span>
 <span class="inst-dot" data-tone="error"></span>
 ```
 
-| Где стоит `data-tone` | Когда так |
+| Where the `data-tone` stands | When it is so |
 |---|---|
-| На [бейдже](../display/badge.md), [строке очереди](../../agent/task.md), [шаге](../../agent/step.md) | Обычный случай. Точка наследует |
-| На самой точке | Точка стоит отдельно, без обёртки, несущей тон |
+| On [the badge](../display/badge.md), [the queue row](../../agent/task.md), [the step](../../agent/step.md) | The ordinary case. The dot inherits |
+| On the dot itself | The dot stands apart, with no wrapper carrying a tone |
 
-Пульсация заводится не только от `data-tone="running"`, но и от фазы
-компонента: `.inst-task[data-state="running"]` и
-`.inst-step[data-state="running"]` дают точке ту же анимацию. Список анимируемых
-точек в `src/motion.css` обязан совпадать с этим — иначе часть из них
-перестанет замедляться при `prefers-reduced-motion`.
+The pulse is started not only by `data-tone="running"` but by the phase of a
+component: `.inst-task[data-state="running"]` and
+`.inst-step[data-state="running"]` give the dot the same animation. The list of
+animated dots in `src/motion.css` has to match this — otherwise some of them
+stop slowing down at `prefers-reduced-motion`.
 
-### Анимации
+### The animations
 
-| Что | Как |
+| What | How |
 |---|---|
-| Пульсация точки `running` | `opacity` 1 → 0.35 → 1 за 1.6с, `--ease-in-out`, бесконечно |
-| Мигание каретки | `opacity` 0 на половине цикла, `steps(2, start)`, 1с, бесконечно |
+| The pulse of a `running` dot | `opacity` 1 → 0.35 → 1 over 1.6s, `--ease-in-out`, infinite |
+| The blinking of the caret | `opacity` 0 for half the cycle, `steps(2, start)`, 1s, infinite |
 
-## Настройка
+## Customization
 
-`--tone-mark`, а не `--tone-ink`: у тона **два** передних плана, и брать надо
-тот, что по работе.
+`--tone-mark` rather than `--tone-ink`: a tone has **two** foregrounds, and the
+one to take is the one that matches the work.
 
-| Переменная | Для чего | Порог |
+| Variable | What for | Threshold |
 |---|---|---|
-| `--tone-ink` | Текст | 4.5:1 |
-| `--tone-mark` | Метка без подписи | 3:1, и ещё против дорожки |
+| `--tone-ink` | Text | 4.5:1 |
+| `--tone-mark` | A mark with no label | 3:1, and against the track as well |
 
-У статусов они совпадают, у акцента расходятся.
+On the statuses they coincide, on the accent they part.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

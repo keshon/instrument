@@ -1,174 +1,179 @@
 ---
-title: Токены
-group: Основания
+title: Tokens
+group: Foundations
 layout: foundation
 source: src/tokens.css
 api-from: kit
-title-en: "Tokens"
-group-en: "Foundations"
 ---
 
-Полный справочник. Четыре яруса, и разделение между ними — весь смысл файла:
-**компонент имеет право видеть ярусы 2 и 3, ярус 1 — никогда**.
+The full reference. Four tiers, and the separation between them is the whole
+point of the file: **a component may see tiers 2 and 3, and tier 1 never**.
 
 ```html preview
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Ярусы</span>
+    <span class="inst-panel-title">The tiers</span>
   </div>
   <div class="inst-panel-body">
     <dl class="inst-kv">
-      <dt>1. Рампы</dt><dd>Сырые шаги. Не меняются между темами</dd>
-      <dt>2. Семантика</dt><dd>Для чего цвет нужен. Одно объявление через light-dark()</dd>
-      <dt>3. Роли</dt><dd>Отступы и размеры по назначению. Их перенастраивает плотность</dd>
-      <dt>4. Компонент</dt><dd>--btn-bg и подобные, 2–3 переменные</dd>
+      <dt>1. Ramps</dt><dd>Raw steps. They do not change between themes</dd>
+      <dt>2. Semantics</dt><dd>What a colour is for. One declaration through light-dark()</dd>
+      <dt>3. Roles</dt><dd>Paddings and sizes by purpose. Density retunes these</dd>
+      <dt>4. Component</dt><dd>--btn-bg and the like, 2–3 variables</dd>
     </dl>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Компонент видит **ярусы 2 и 3** — семантику и роли. Ярус 1 не видит никогда.
+A component sees **tiers 2 and 3** — the semantics and the roles. It never sees
+tier 1.
 
 ```css
 .my-thing {
-  /* ярус 2: для чего цвет нужен */
+  /* tier 2: what the colour is for */
   color: var(--text-primary);
-  /* ярус 3: отступ по назначению */
+  /* tier 3: a padding by purpose */
   padding: var(--pad-panel);
-  /* ярус 4: точка настройки самого компонента.
-     У кнопки таких пять: --btn-bg и соседи */
+  /* tier 4: the point of adjustment of the component itself.
+     A button has five of them: --btn-bg and its neighbours */
   background: var(--btn-bg);
 }
 ```
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Ярусы 2 и 3 в компоненте | да | Ярус 1 — сырьё: рампа между темами не меняется, и обращение к ней захардкоживает светлую тему |
-| Один экземпляр каждого параметра | да | Дубликат — это будущее расхождение, и оно наступает быстрее, чем кажется |
-| 2–3 переменные на компонент | да | Ярус 4 — точки настройки, а не копия всех свойств |
-| Значение через `light-dark()` | да | Второй темы как отдельного блока не существует |
+| Tiers 2 and 3 in a component | yes | Tier 1 is raw material: a ramp does not change between themes, and reaching for it hard-codes the light theme |
+| One instance of every parameter | yes | A duplicate is a future divergence, and it arrives sooner than it seems |
+| 2–3 variables per component | yes | Tier 4 is points of adjustment, not a copy of every property |
+| A value through `light-dark()` | yes | A second theme as a separate block does not exist |
 
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Проверка | `go -C tools run ./cmd/contrast` читает настоящий `tokens.css` и резолвит `light-dark()`, `color-mix()` и `var()` так же, как браузер. Новая пара токенов добавляется туда вместе с токеном |
-| Пороги | Текст 4.5:1, метка 3:1 (против поверхности и против дорожки), несущая рамка 3:1 |
-| Шесть тем | Каждая пара проверяется во всех шести, а не в двух |
-| Кегли в `rem` | Настройка «размер шрифта по умолчанию» в браузере работает; высоты применяются как `min-block-size` |
-| Пол кегля | `--text-2xs`, 11px. Ниже токена нет |
+| The check | `go -C tools run ./cmd/contrast` reads the real `tokens.css` and resolves `light-dark()`, `color-mix()` and `var()` the way a browser does. A new pair of tokens is added there together with the token |
+| Thresholds | Text 4.5:1, a mark 3:1 (against the surface and against the track), a load-bearing border 3:1 |
+| Six themes | Every pair is checked in all six rather than in two |
+| Sizes in `rem` | The browser's "default font size" setting works; the heights are applied as `min-block-size` |
+| The floor of the type size | `--text-2xs`, 11px. There is no token below it |
 
-## Устройство
+## Anatomy
 
-Сырые шаги. Между темами не меняются. Рампа непрерывна по определению: шаг, не
-занятый семантикой, — резерв под приложение и графики, а не мусор.
+Raw steps. They do not change between themes. A ramp is continuous by
+definition: a step the semantics has not taken is a reserve for the application
+and for charts rather than rubbish.
 
-| Группа | Токены | Тон |
+| Group | Tokens | Hue |
 |---|---|---|
-| Нейтраль | `--n-0` … `--n-14` | `--hue-neutral` (75 тёплый / 250 холодный) |
-| Акцент | `--a-1` … `--a-6` | 250° |
-| Успех | `--ok-1` `--ok-2` `--ok-3` `--ok-4` `--ok-5` `--ok-6` | 150° |
-| Предупреждение | `--warn-1` `--warn-3` `--warn-4` `--warn-5` `--warn-6` | 85° |
-| Ошибка | `--err-1` `--err-3` `--err-4` `--err-5` `--err-6` | 25° |
+| Neutral | `--n-0` … `--n-14` | `--hue-neutral` (75 warm / 250 cool) |
+| Accent | `--a-1` … `--a-6` | 250° |
+| Success | `--ok-1` `--ok-2` `--ok-3` `--ok-4` `--ok-5` `--ok-6` | 150° |
+| Warning | `--warn-1` `--warn-3` `--warn-4` `--warn-5` `--warn-6` | 85° |
+| Error | `--err-1` `--err-3` `--err-4` `--err-5` `--err-6` | 25° |
 
-Шага 2 у статусов нет: у них закреплённые роли (1 — фон в светлой, 3 — текст в
-тёмной, 4 — заливка в светлой, 5 — текст в светлой, 6 — резерв под графики), и
-свободный шаг между 1 и 3 не понадобился ни разу. Значения светлот и
-разбор ролей — в [цвете](./colors.md).
+The statuses have no step 2: their roles are fixed (1 is the background in a
+light theme, 3 the text in a dark one, 4 the fill in a light one, 5 the text in
+a light one, 6 a reserve for charts), and a free step between 1 and 3 has not
+been wanted once. The lightness values and the analysis of the roles are in
+[colour](./colors.md).
 
-### Ручка тона
+### The hue knob
 
-| Токен | Значение | Что делает |
+| Token | Value | What it does |
 |---|---|---|
-| `--hue-neutral` | 75 | Уклон нейтрали. 75 — тёплый, 250 — холодный. Цветность 0.002–0.006: ниже порога осознанного замечания |
+| `--hue-neutral` | 75 | The cast of the neutral. 75 is warm, 250 cool. A chroma of 0.002–0.006: below the threshold of conscious notice |
 
-### Ярус 2 — семантика
+### Tier 2 — semantics
 
-Одно объявление на токен через `light-dark()`. Второго блока токенов не
-существует, поэтому и расходиться нечему.
+One declaration per token through `light-dark()`. A second block of tokens does
+not exist, so there is nothing to diverge.
 
-### Поверхности
+### Surfaces
 
-| Токен | Светлая | Тёмная |
+| Token | Light | Dark |
 |---|---|---|
 | `--surface-sunken` | `--n-2` | `--n-14` |
 | `--surface-page` | `--n-1` | `--n-13` |
 | `--surface-raised` | `--n-0` | `--n-12` |
 | `--surface-overlay` | `--n-0` | `--n-11` |
-| `--surface-field` | `--surface-recessed`, в обеих темах | |
-| `--surface-hover` | чёрный 3.5% | белый 4.5% |
-| `--surface-active` | чёрный 6.5% | белый 8% |
-| `--surface-selected` | `--a-4` 14%, в обеих темах | |
-| `--surface-recessed` | чёрный 6% | белый 5% |
-| `--surface-recessed-hover` | чёрный 2.5% | белый 1.5% |
-| `--surface-recessed-active` | чёрный 7.5% | белый 6.2% |
+| `--surface-field` | `--surface-recessed`, in both themes | |
+| `--surface-hover` | black 3.5% | white 4.5% |
+| `--surface-active` | black 6.5% | white 8% |
+| `--surface-selected` | `--a-4` 14%, in both themes | |
+| `--surface-recessed` | black 6% | white 5% |
+| `--surface-recessed-hover` | black 2.5% | white 1.5% |
+| `--surface-recessed-active` | black 7.5% | white 6.2% |
 
-Три последних — утопление контрола: умолчание кнопки, тег, запасная заливка
-бейджа. Чёрный поверх, а не своя ступень рампы, и это не мелочь. Ступень задаёт
-светлоту абсолютно и потому знает одну глубину, а контрол лежит то на странице,
-то на панели, то в модалке — и от каждой обязан отойти на одинаковый шаг. На
-приподнятой панели `--surface-sunken` давал провал 0.087 вместо 0.033: панель
-уже сама на шаг выше, и шаги складывались.
+The last three are the recess of a control: the default button, a tag, the
+fallback fill of a badge. Black laid over rather than a step of the ramp of its
+own, and that is no trifle. A step sets lightness absolutely and therefore
+knows one depth, while a control lies now on a page, now on a panel, now in a
+modal — and it has to step away from each of them by the same amount. On a
+raised panel `--surface-sunken` gave a drop of 0.087 instead of 0.033: the
+panel is already a step higher, and the steps added up.
 
-**Направление зависит от того, где мы на рампе**, как и у `--surface-hover`. В
-светлых темах контрол утоплен — чёрная плёнка; в тёмных приподнят — белая.
+**The direction depends on where we are on the ramp**, as with
+`--surface-hover`. In the light themes a control is recessed — a black film; in
+the dark ones it is raised — a white one.
 
-Это не отказ от провала, а единственная доступная его форма. Плёнка вычитает
-светлоту, а на дне рампы вычитать не из чего: страница тёмной темы —
-`rgb(12,12,12)`, и даже сплошной чёрный даёт против неё 1.073 при 1.142 у
-светлых. Нужного перепада затемнением **не существует**. А у умолчания кнопки
-заливка — единственный признак: рамки нет и тени нет, обе снял провал.
+That is not a refusal of the drop but the only form of it available. A film
+subtracts lightness, and at the bottom of the ramp there is nothing to subtract
+from: the page of a dark theme is `rgb(12,12,12)`, and even a solid black gives
+1.073 against it against 1.142 in the light ones. The drop that is wanted
+**does not exist** as a darkening. And the default button has its fill as its
+only mark: there is no border and no shadow, the drop removed both.
 
-Инвариант поэтому формулируется без слова «глубина»: поверхность контрола
-обязана отличаться от своей подложки на различимую ступень.
+The invariant is therefore stated without the word "depth": the surface of a
+control has to differ from its ground by a discernible step.
 
-**Знак плёнки меняется, порядок громкости — нет.** Средняя строка служит двум
-работам сразу: это и наведение умолчания, и заливка покоя мягкого веса
-`inst-btn--soft`. Значит она обязана быть тише умолчания в обеих темах, иначе
-третья ступень лестницы звучит громче второй. Громкость здесь — модуль перепада
-к подложке, а не альфа: в светлых темах тише значит меньше чёрного, в тёмных —
-меньше белого.
+**The sign of the film changes, the order of loudness does not.** The middle
+row serves two jobs at once: it is the hover of the default and the resting
+fill of the soft weight `inst-btn--soft`. So it has to be quieter than the
+default in both themes, otherwise the third step of the ladder sounds louder
+than the second. Loudness here is the modulus of the step against the ground
+rather than the alpha: in the light themes quieter means less black, in the
+dark ones less white.
 
-Сторожат это три пары `cmd/contrast`: «кнопка против панели», «кнопка против
-страницы» и «лестница: мягкая против умолчания».
+Three `cmd/contrast` pairs guard this: "a button against a panel", "a button
+against a page" and "the ladder: soft against default".
 
-### Текст
+### Text
 
-| Токен | Светлая | Тёмная | Порог |
+| Token | Light | Dark | Threshold |
 |---|---|---|---|
 | `--text-primary` | `--n-12` | `--n-1` | 4.5:1 |
 | `--text-secondary` | `--n-9` | `--n-5` | 4.5:1 |
 | `--text-muted` | `--n-8` | `--n-6` | 4.5:1 |
-| `--text-faint` | `--n-7` | `--n-7` | 3:1 — **не для текста, который читают** |
+| `--text-faint` | `--n-7` | `--n-7` | 3:1 — **not for text that gets read** |
 
-### Рамки
+### Borders
 
-| Токен | Светлая | Тёмная | Требование |
+| Token | Light | Dark | Requirement |
 |---|---|---|---|
-| `--border-subtle` | чёрный 7% | белый 6% | Декоративная |
-| `--border` | чёрный 12% | белый 11% | Декоративная |
-| `--border-strong` | чёрный 22% | белый 20% | Декоративная |
-| `--border-control` | чёрный 46% | белый 38% | Несущая, 3:1 |
+| `--border-subtle` | black 7% | white 6% | Decorative |
+| `--border` | black 12% | white 11% | Decorative |
+| `--border-strong` | black 22% | white 20% | Decorative |
+| `--border-control` | black 46% | white 38% | Load-bearing, 3:1 |
 
-### Акцент
+### Accent
 
-| Токен | Светлая | Тёмная | Работа |
+| Token | Light | Dark | Work |
 |---|---|---|---|
-| `--accent-text` | `--a-5` | `--a-3` | Текст, 4.5:1 |
-| `--accent-mark` | `--a-4` | `--a-3` | Метка без подписи, 3:1 против поверхности **и** дорожки |
-| `--accent-bg` | `--a-1` | `--a-4` 15% | Тонированный фон |
-| `--accent-solid` | `--a-4`, в обеих темах | | Заливка кнопки, потолок светлоты 0.56 |
-| `--accent-on` | `--n-0`, в обеих темах | | Подпись на заливке |
-| `--accent-hover` | `--a-5`, в обеих темах | | Уходит **от** цвета подписи, а не к нему |
-| `--accent-border` | `--a-4` | `--a-3` | Рамка акцентированного контрола |
-| `--focus-ring` | `--a-6` | `--a-2` | Кольцо фокуса. Единственный шаг рампы, который никогда не бывает заливкой, поэтому обводит её не сливаясь |
+| `--accent-text` | `--a-5` | `--a-3` | Text, 4.5:1 |
+| `--accent-mark` | `--a-4` | `--a-3` | A mark with no label, 3:1 against the surface **and** the track |
+| `--accent-bg` | `--a-1` | `--a-4` 15% | A tinted background |
+| `--accent-solid` | `--a-4`, in both themes | | The fill of a button, a lightness ceiling that depends on hue |
+| `--accent-on` | `--n-0`, in both themes | | The label on a fill |
+| `--accent-hover` | `--a-5`, in both themes | | It moves **away** from the colour of the label rather than towards it |
+| `--accent-border` | `--a-4` | `--a-3` | The border of an accented control |
+| `--focus-ring` | `--a-6` | `--a-2` | The focus ring. The one step of the ramp that is never a fill, so it outlines one without merging into it |
 
-### Статусы
+### Statuses
 
-| Токен | Светлая | Тёмная |
+| Token | Light | Dark |
 |---|---|---|
 | `--ok-text` | `--ok-5` | `--ok-3` |
 | `--ok-bg` | `--ok-1` | `--ok-4` 16% |
@@ -177,16 +182,16 @@ group-en: "Foundations"
 | `--err-text` | `--err-5` | `--err-3` |
 | `--err-bg` | `--err-1` | `--err-4` 16% |
 
-Третьего токена — «заливки» между текстом и фоном — нет. Исключение одно,
-акцент: у него есть случай, которого нет у статусов, — заливка под белой
-подписью.
+There is no third token — a "fill" between the text and the background. There
+is one exception, the accent: it has a case the statuses do not, a fill under a
+white label.
 
-### Тон через атрибут
+### Tone through an attribute
 
-`data-tone` ставит три переменные, компонент читает их и больше ничего о тоне
-не знает.
+`data-tone` sets three variables, and a component reads them and knows nothing
+else about the tone.
 
-| Значение | `--tone-ink` | `--tone-mark` | `--tone-bg` |
+| Value | `--tone-ink` | `--tone-mark` | `--tone-bg` |
 |---|---|---|---|
 | `neutral` | `--text-secondary` | `--text-secondary` | `--surface-sunken` |
 | `running` | `--accent-text` | `--accent-mark` | `--accent-bg` |
@@ -194,9 +199,9 @@ group-en: "Foundations"
 | `warn` | `--warn-text` | `--warn-text` | `--warn-bg` |
 | `error` | `--err-text` | `--err-text` | `--err-bg` |
 
-### Графики
+### Charts
 
-| Токен | Тон | Светлая | Тёмная |
+| Token | Hue | Light | Dark |
 |---|---|---|---|
 | `--chart-1` | 292° | L 0.520 | L 0.700 |
 | `--chart-2` | 320° | L 0.600 | L 0.760 |
@@ -205,35 +210,35 @@ group-en: "Foundations"
 | `--chart-5` | 115° | L 0.580 | L 0.740 |
 | `--chart-6` | 190° | L 0.620 | L 0.780 |
 
-### Прочее
+### The rest
 
-| Токен | Светлая | Тёмная |
+| Token | Light | Dark |
 |---|---|---|
-| `--track` | чёрный 10% | белый 16% |
-| `--scrim` | чёрный 32% | чёрный 58% |
-| `--shadow-color-near` | чёрный 6% | чёрный 30% |
-| `--shadow-color-far` | чёрный 10% | чёрный 45% |
-| `--shadow-popover` | двухслойная, короткая | |
-| `--shadow-modal` | двухслойная, длинная | |
+| `--track` | black 10% | white 16% |
+| `--scrim` | black 32% | black 58% |
+| `--shadow-color-near` | black 6% | black 30% |
+| `--shadow-color-far` | black 10% | black 45% |
+| `--shadow-popover` | two layers, short | |
+| `--shadow-modal` | two layers, long | |
 
-### Порядок слоёв
+### The order of layers
 
-| Токен | Значение |
+| Token | Value |
 |---|---|
 | `--z-sticky` | 10 |
 | `--z-popover` | 100 |
 | `--z-modal` | 1000 |
 
-### Ярус 3 — роли
+### Tier 3 — roles
 
-Единственный ярус, который перенастраивает плотность, и единственная причина,
-по которой в компонентах нет констант. Объявлен через `:where()` — нулевая
-специфичность, приложение переопределяет без борьбы. Значения ниже — для
-плотности по умолчанию, остальные две — в [плотности](./density.md).
+The one tier density retunes, and the one reason there are no constants in the
+components. Declared through `:where()` — zero specificity, so an application
+overrides without a fight. The values below are for the default density, and
+the other two are in [density](./density.md).
 
-### Высоты и отступы контролов
+### Control heights and paddings
 
-| Токен | Значение |
+| Token | Value |
 |---|---|
 | `--control-h-xs` | 20px |
 | `--control-h-sm` | 26px |
@@ -243,9 +248,9 @@ group-en: "Foundations"
 | `--control-pad-md` | `--space-5` |
 | `--control-pad-lg` | `--space-6` |
 
-### Отступы по назначению
+### Paddings by purpose
 
-| Токен | Значение |
+| Token | Value |
 |---|---|
 | `--pad-panel` | `--space-5` |
 | `--pad-card` | `--space-6` |
@@ -255,21 +260,21 @@ group-en: "Foundations"
 | `--gap-inline` | `--space-4` |
 | `--gap-section` | `--space-7` |
 
-`--gap-section` — четвёртая ступень ритма: просвет **между разделами**, тогда
-как `--gap-row` работает внутри раздела. Значение не назначено, а выведено:
-это `--gap-row`, поднятый на четыре ступени шкалы. Шкала устроена так, что
-+4 ступени дают ровно ×4 в каждой точке — 4→16, 6→24, 8→32, 12→48, 16→64, —
-поэтому отношение держится во всех пятнадцати сочетаниях масштаба и плотности
-без отдельного подбора.
+`--gap-section` is the fourth step of the rhythm: the gap **between sections**,
+where `--gap-row` works inside one. The value is not appointed but derived: it
+is `--gap-row` raised by four steps of the scale. The scale is built so that +4
+steps give exactly ×4 at every point — 4→16, 6→24, 8→32, 12→48, 16→64 — so the
+ratio holds across all fifteen combinations of scale and density with no
+separate fitting.
 
-Роль появилась после обмера собранных экранов. Без неё ярус упирался в 16px:
-самое громкое, чем можно было разделить два блока, было того же порядка, что
-просвет внутри блока, — и экран читался сплошным потоком. Ступени 24, 32, 48
-и 64 при этом лежали в шкале без единой роли.
+The role appeared after assembled screens were measured. Without it the tier
+stopped at 16px: the loudest thing available to part two blocks was of the same
+order as the gap inside a block — and the screen read as one continuous flow.
+The steps 24, 32, 48 and 64 meanwhile lay in the scale without a single role.
 
-### Глифы и жёлобы
+### Glyphs and gutters
 
-| Токен | Значение |
+| Token | Value |
 |---|---|
 | `--size-dot` | 6px |
 | `--size-check` | 15px |
@@ -286,9 +291,9 @@ group-en: "Foundations"
 | `--size-indent` | 14px |
 | `--label-col` | 104px |
 
-### Раскладка
+### Layout
 
-| Токен | Значение |
+| Token | Value |
 |---|---|
 | `--aside-w` | 232px |
 | `--container-max` | 76rem |
@@ -296,51 +301,53 @@ group-en: "Foundations"
 | `--split-main` | 30rem |
 | `--col-min` | 260px |
 
-## Шкала
+## Scale
 
-Не привязаны к теме и не перенастраиваются плотностью. Подробности — в
-[типографике](./typography.md) и [ритме и форме](./spacing.md).
+Not tied to a theme and not retuned by density. The details are in
+[typography](./typography.md) and [rhythm and shape](./spacing.md).
 
-### Типографика
+### Typography
 
-| Группа | Токены |
+| Group | Tokens |
 |---|---|
-| Семейства | `--font-sans` `--font-mono` |
-| Кегли | `--text-2xs` `--text-xs` `--text-sm` `--text-md` `--text-lg` `--text-xl` `--text-2xl` |
-| Начертания | `--weight-normal` `--weight-medium` |
-| Интерлиньяж | `--leading-tight` `--leading-ui` `--leading-code` `--leading-prose` |
-| Трекинг | `--tracking-tight` `--tracking-normal` |
-| Мера | `--measure` |
+| Families | `--font-sans` `--font-mono` |
+| Sizes | `--text-2xs` `--text-xs` `--text-sm` `--text-md` `--text-lg` `--text-xl` `--text-2xl` |
+| Weights | `--weight-normal` `--weight-medium` |
+| Leading | `--leading-tight` `--leading-ui` `--leading-code` `--leading-prose` |
+| Tracking | `--tracking-tight` `--tracking-normal` |
+| Measure | `--measure` |
 
-`--measure` — предельная длина строки, `68ch`. Классическая норма 45–75 знаков;
-68 стоит у верхнего края, потому что интерфейсные описания короткие и
-переносятся редко. Единица `ch`, а не пиксели: иначе мера разъезжается с кеглем
-на каждой из пяти ступеней масштаба.
+`--measure` is the limit on the length of a line, `68ch`. The classical norm is
+45–75 characters; 68 stands at the upper edge, because interface descriptions
+are short and wrap rarely. The unit is `ch` rather than pixels: otherwise the
+measure parts ways with the type size on each of the five steps of scale.
 
-Роль появилась после обмера: `68ch` было вписано литералом в двух местах, а тело
-баннера меры не имело вовсе и на контейнере 1440px доходило до 105 знаков.
-Обрезается **тело** баннера, а не сам баннер: подложка сообщения уровня страницы
-идёт во всю ширину, текст на ней — нет.
+The role appeared after a measurement: `68ch` was written as a literal in two
+places, while the body of a banner had no measure at all and reached 105
+characters on a container of 1440px. What is truncated is the **body** of the
+banner rather than the banner: the ground of a page-level message runs the full
+width, the text on it does not.
 
-### Пространство и форма
+### Space and shape
 
-| Группа | Токены |
+| Group | Tokens |
 |---|---|
-| Шкала | `--space-1` … `--space-10` (2 · 4 · 6 · 8 · 12 · 16 · 24 · 32 · 48 · 64) |
-| Радиусы | `--radius-2xs` 2 · `--radius-xs` 4 · `--radius-sm` 6 · `--radius-md` 8 · `--radius-lg` 12 · `--radius-full`. У контролов — `--radius-control-sm/md/lg`, они едут за плотностью |
-| Линии | `--hairline` (0.5px от 1.5dppx, иначе 1px) · `--stroke` 1px |
+| The scale | `--space-1` … `--space-10` (2 · 4 · 6 · 8 · 12 · 16 · 24 · 32 · 48 · 64) |
+| Radii | `--radius-2xs` 2 · `--radius-xs` 4 · `--radius-sm` 6 · `--radius-md` 8 · `--radius-lg` 12 · `--radius-full`. Controls take `--radius-control-sm/md/lg`, which travel with density |
+| Lines | `--hairline` (0.5px from 1.5dppx, otherwise 1px) · `--stroke` 1px |
 
-### Движение
+### Motion
 
-| Группа | Токены |
+| Group | Tokens |
 |---|---|
-| Длительности | `--dur-1` 80ms · `--dur-2` 140ms · `--dur-3` 220ms |
-| Плавность | `--ease-out` · `--ease-in-out` |
+| Durations | `--dur-1` 80ms · `--dur-2` 140ms · `--dur-3` 220ms |
+| Easing | `--ease-out` · `--ease-in-out` |
 
-### Ярус 4 — компонент
+### Tier 4 — the component
 
-Живёт не здесь, а рядом с компонентом. Правило одно: **2–3 переменные, не
-больше**, и вариант описывается ими, а не переписыванием блока.
+It lives beside the component rather than here. There is one rule: **2–3
+variables, no more**, and a variant is described by them rather than by
+rewriting the block.
 
 ```css
 .my-btn--accent {
@@ -349,57 +356,56 @@ group-en: "Foundations"
 }
 ```
 
-Список переменных конкретного компонента — на его странице: например, у
-[кнопки](../components/actions/button.md) их пять, у
-[таблицы](../components/display/table.md) — свои.
+The list of a particular component's variables is on its page: the
+[button](../components/actions/button.md) has five, the
+[table](../components/display/table.md) has its own.
 
-## Варианты
+## Variants
 
-| Атрибут | `color-scheme` | `--hue-neutral` | Ещё |
+| Attribute | `color-scheme` | `--hue-neutral` | And also |
 |---|---|---|---|
-| нет | по системе | 75 | |
-| `data-theme="light-neutral"` | `light` | 75 | `--tint: 0` — умолчание, чистый серый |
-| `data-theme="light"` | `light` | 75 | `--tint: 2` — тёплая |
-| `data-theme="light-cool"` | `light` | 250 | `--tint: 2` — холодная |
-| `data-theme="dark-soft"` | `dark` | 75 | Стопка на ступень вверх, плюс подписи статусов |
+| none | by the system | 75 | |
+| `data-theme="light-neutral"` | `light` | 75 | `--tint: 0` — the default, a pure grey |
+| `data-theme="light"` | `light` | 75 | `--tint: 2` — warm |
+| `data-theme="light-cool"` | `light` | 250 | `--tint: 2` — cool |
+| `data-theme="dark-soft"` | `dark` | 75 | The stack one step up, plus the status labels |
 | `data-theme="dark"` | `dark` | 75 | |
 
-## Правила
+## Rules
 
-| Правило | Следствие |
+| Rule | Consequence |
 |---|---|
-| Компонент видит ярусы 2 и 3 | `--n-3` в компоненте — захардкоженная светлая тема; `14px` — сломанная плотность |
-| У смыслового тона ровно два токена | `--*-text` (метка) и `--*-bg` (фон). Третий не проходил порог на дорожке |
-| Текст и метка — разные передние планы | `--tone-ink` держит 4.5:1, `--tone-mark` — 3:1, но против двух фонов |
-| Несущая и декоративная рамка — разные токены | `--border-control` обязан 3:1, `--border` — нет |
-| Дефолты объявляются через `:where()` | Дефолт с той же специфичностью, что переопределение, — не дефолт |
-| Новое значение — роль, а не константа | Иначе оно не переживёт `compact` |
-| Второго акцентного тона не бывает | Это не запрос фичи, а сигнал, что смысл несёт что-то другое |
+| A component sees tiers 2 and 3 | A `--n-3` in a component is a hard-coded light theme; a `14px` is a broken density |
+| A tone that carries meaning has exactly two tokens | `--*-text` (the mark) and `--*-bg` (the background). A third did not pass the threshold on a track |
+| Text and a mark are different foregrounds | `--tone-ink` holds 4.5:1, `--tone-mark` 3:1, but against two backgrounds |
+| A load-bearing and a decorative border are different tokens | `--border-control` owes 3:1, `--border` does not |
+| Defaults are declared through `:where()` | A default with the same specificity as an override is not a default |
+| A new value is a role rather than a constant | Otherwise it will not survive `compact` |
+| There is no such thing as a second accent tone | That is not a feature request but a signal that the meaning is carried by something else |
 
-### Что брать, а что нет
+### What to take and what not to
 
-| Используйте | Возьмите другое |
+| Use | Take instead |
 |---|---|
-| Ярус 2 — семантика: `--text-primary`, `--surface-raised`, `--ok-text` | **Ярус 1** (`--n-3`, `--a-4`) — это захардкоженная светлая тема. Разбор рамп — в [цвете](./colors.md) |
-| Ярус 3 — роли: `--pad-panel`, `--control-h-md`, `--size-dot` | **Число в компоненте** — оно сломает плотность, см. [плотность](./density.md) |
-| Ярус 4 — 2–3 переменные компонента для варианта | **Копию всего блока правил** — вариант должен быть двумя строками, как у [кнопки](../components/actions/button.md) |
-| Новый параметр — как роль | **Новую константу** — константа переживёт вас и сломает `compact`. Шкалы — в [ритме и форме](./spacing.md) |
-| Переопределение роли в приложении | **`!important`** — роли объявлены через `:where()`, борьбы не будет. Пример — [форма](../components/inputs/form.md) |
+| Tier 2 — the semantics: `--text-primary`, `--surface-raised`, `--ok-text` | **Tier 1** (`--n-3`, `--a-4`) — that is a hard-coded light theme. The ramps are analysed in [colour](./colors.md) |
+| Tier 3 — the roles: `--pad-panel`, `--control-h-md`, `--size-dot` | **A number in a component** — it will break density, see [density](./density.md) |
+| Tier 4 — 2–3 variables of a component for a variant | **A copy of the whole block of rules** — a variant should be two lines, as on [the button](../components/actions/button.md) |
+| A new parameter — as a role | **A new constant** — a constant will outlive you and break `compact`. The scales are in [rhythm and shape](./spacing.md) |
+| Overriding a role in an application | **`!important`** — the roles are declared through `:where()`, there will be no fight. An example is [the form](../components/inputs/form.md) |
 
 ## API
 
-Перечисляет генератор, читая `src/tokens.css`. Список не пишется руками и
-потому не может отстать от исходников.
+Listed by a generator reading `src/tokens.css`. The list is not typed by hand
+and therefore cannot fall behind the sources.
 
 ```api
 ```
-## Связанное
+## Related
 
-[Цвет](./colors.md)
-[Типографика](./typography.md)
-[Ритм и форма](./spacing.md)
-[Высота и поверхности](./elevation.md)
-[Движение](./motion.md)
-[Плотность](./density.md)
-[Иконки](./icons.md)
-
+[Colour](./colors.md)
+[Typography](./typography.md)
+[Rhythm and shape](./spacing.md)
+[Elevation and surfaces](./elevation.md)
+[Motion](./motion.md)
+[Density](./density.md)
+[Icons](./icons.md)

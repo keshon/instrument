@@ -40,6 +40,13 @@ type zone struct {
 	// without one is indistinguishable from a forgotten file, and a list of
 	// those turns the gate back into a wish.
 	except []exception
+	// skipSuffix takes a whole CLASS of files out of the zone, and it exists
+	// for exactly one thing: the Russian half of a bilingual corpus. Ninety-four
+	// files cannot be listed one by one as exceptions, and a list that long
+	// would say nothing anyway — what matters is the rule, and the rule is that
+	// a page named `*.ru.md` is Russian BY ITS NAME. Everything else under the
+	// zone is English and is checked.
+	skipSuffix string
 }
 
 type exception struct {
@@ -88,40 +95,42 @@ var zones = []zone{
 			{
 				path: "tools/cmd/mutate/main.go",
 				why: "the mutation table holds two kinds of Russian, and neither is text. " +
-					"An anchor points at documentation that is still Russian until step 4, " +
-					"and a payload is the very string a gate has to reject: feeding cmd/lang " +
-					"or the comment rule English would test nothing.",
+					"An anchor points into a `*.ru.md` page, and a payload is the very " +
+					"string a gate has to reject: feeding cmd/lang or the comment rule " +
+					"English would test nothing.",
 			},
 			{
 				path: "tools/cmd/registry/main.go",
 				why: "the frontmatter says the kind of an API entry in Russian, and the " +
-					"ownership map is built by matching it. Both spellings are listed in the " +
-					"pattern; the Russian one goes when the pages do, on step 4.",
+					"ownership map is built by matching it. Both spellings are listed in " +
+					"the pattern because both kinds of page are permanent.",
 			},
 			{
 				path: "tools/cmd/docscheck/contract.go",
-				why: "the Russian words heading the contract table on a page, and the Russian " +
-					"for yes and for if, are the PATTERN a row is parsed by rather than a phrase. " +
-					"The English spellings stand beside them because a Russian page and its " +
-					"translation live side by side through step 4; the Russian half leaves with " +
-					"the last Russian page, not before it.",
+				why: "the Russian words heading the contract table on a page, and the " +
+					"Russian for yes and for if, are the PATTERN a row is parsed by rather " +
+					"than a phrase. Both spellings stand here because the corpus is " +
+					"bilingual by design rather than in transit: a `*.ru.md` page is read " +
+					"by the same parser as its English base.",
 			},
 			{
 				path: "tools/cmd/docscheck/tokens.go",
 				why: "the Russian words for black and white are how an alpha cell is " +
-					"written in docs/foundations/tokens.md. They are the pattern a cell is " +
-					"matched against rather than a phrase, and they leave together with the " +
-					"page on step 4.",
+					"written in docs/foundations/tokens.ru.md. They are the pattern a cell " +
+					"is matched against rather than a phrase.",
 			},
 		},
 	},
 	{
 		name: "site",
 		// The build output is not on the list, and not because it is
-		// gitignored: `site/dist` is the RENDERED Russian pages. It turns
-		// English when they do, on step 4, and a zone that watched it would be
-		// red for the whole of that step while saying nothing about the site's
-		// own sources. `public` holds CNAME and robots.txt.
+		// gitignored: `site/dist` holds the RENDERED pages of both languages,
+		// so a zone that watched it would be red on every Russian page for as
+		// long as the site is bilingual — which is to say for good — while
+		// saying nothing about the site's own sources. What the built page IS
+		// checked for is the other direction: `site/internal/check` forbids
+		// Cyrillic on a page that is not Russian. `public` holds CNAME and
+		// robots.txt.
 		paths: []string{"site/cmd", "site/internal", "site/public", "site/go.mod"},
 		on:    true,
 		step:  "3",
@@ -134,14 +143,14 @@ var zones = []zone{
 			{
 				path: "site/internal/i18n/i18n.go",
 				why: "the Russian half of every entry IS the translation rather than text " +
-					"awaiting one. The base language flips on step 5, and the map is not " +
-					"touched by that — only Prefix, Suffix and the order of All change.",
+					"awaiting one. The base language flipped on step 5 and the map was not " +
+					"touched by it: only Base and the order of All changed.",
 			},
 			{
 				path: "site/internal/content/sections.go",
-				why: "the aliases are the headings printed on a page, and a page is matched " +
-					"to a section by them. Both spellings stand there while both kinds of " +
-					"page exist; the Russian half goes on step 4.",
+				why: "the aliases are the headings printed on a page, and a page is " +
+					"matched to a section by them. Both spellings stand there because both " +
+					"kinds of page are permanent.",
 			},
 			{
 				path: "site/internal/content/markdown.go",
@@ -170,10 +179,12 @@ var zones = []zone{
 		},
 	},
 	{
-		name:  "documentation",
-		paths: []string{"docs/start", "docs/foundations", "docs/components", "docs/agent", "docs/layout", "docs/blocks", "docs/about"},
-		step:  "4",
-		why:   "Russian moves into *.ru.md when the base language is flipped",
+		name:       "documentation",
+		paths:      []string{"docs/start", "docs/foundations", "docs/components", "docs/agent", "docs/layout", "docs/blocks", "docs/about"},
+		on:         true,
+		step:       "5",
+		skipSuffix: ".ru.md",
+		why:        "the base language is flipped: `page.md` is English, and Russian lives in `page.ru.md`",
 	},
 	{
 		name:  "root",
@@ -245,6 +256,9 @@ func (z zone) scan(path, root string) []string {
 			rel = filepath.ToSlash(r)
 		}
 		if z.excepted(rel) {
+			return nil
+		}
+		if z.skipSuffix != "" && strings.HasSuffix(rel, z.skipSuffix) {
 			return nil
 		}
 		text := strings.ReplaceAll(string(b), "\r\n", "\n")

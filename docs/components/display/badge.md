@@ -1,128 +1,127 @@
 ---
-title: Бейдж
-group: Отображение данных
+title: Badge
+group: Data display
 layout: component
 source: src/status.css
 api:
-  - { name: "inst-badge", kind: "класс", doc: "Базовый" }
-  - { name: "inst-badge--outline", kind: "модификатор", doc: "Тон несёт рамка, заливки нет. Для ряда, где бейдж стоит рядом со значками и плашка тяжелее всего ряда" }
-  - { name: "inst-badge--count", kind: "модификатор", doc: "Круглый счётчик-накладка на значок: без горизонтального отступа, сплошная заливка акцентом" }
-  - { name: "inst-dot", kind: "класс", doc: "Точка состояния внутри. Наследует тон от бейджа" }
-  - { name: "inst-nav-count", kind: "класс", doc: "Модификатор положения для счётчика в навигации" }
-  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт" }
-  - { name: "--control-h-xs", kind: "токен" }
-  - { name: "--radius-xs", kind: "токен" }
-  - { name: "--text-2xs", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--size-dot", kind: "токен" }
-  - { name: "--tone-ink", kind: "токен" }
-  - { name: "--tone-bg", kind: "токен" }
-title-en: "Badge"
-group-en: "Data display"
+  - { name: "inst-badge", kind: "class", doc: "The base one" }
+  - { name: "inst-badge--outline", kind: "modifier", doc: "The tone is carried by the border, with no fill. For a row where a badge stands beside icons and a plate is the heaviest thing in it" }
+  - { name: "inst-badge--count", kind: "modifier", doc: "A round counter laid over an icon: no horizontal padding, a solid fill in the accent" }
+  - { name: "inst-dot", kind: "class", doc: "The state dot inside. It inherits the tone from the badge" }
+  - { name: "inst-nav-count", kind: "class", doc: "A modifier of position for a counter in navigation" }
+  - { name: "data-tone", kind: "attribute", doc: "`neutral` `running` `ok` `warn` `error`. Closed" }
+  - { name: "--control-h-xs", kind: "token" }
+  - { name: "--radius-xs", kind: "token" }
+  - { name: "--text-2xs", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--size-dot", kind: "token" }
+  - { name: "--tone-ink", kind: "token" }
+  - { name: "--tone-bg", kind: "token" }
 ---
 
-Состояние объекта, названное словом из фиксированного словаря библиотеки. Пять
-значений, и добавить шестое случайно нельзя.
+The state of an object, named by a word from the library's fixed vocabulary.
+Five values, and a sixth cannot be added by accident.
 
 ```html preview
-<span class="inst-badge"><span class="inst-dot"></span>в очереди</span>
-<span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
-<span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
-<span class="inst-badge" data-tone="warn"><span class="inst-dot"></span>с замечаниями</span>
-<span class="inst-badge" data-tone="error"><span class="inst-dot"></span>упало</span>
+<span class="inst-badge"><span class="inst-dot"></span>queued</span>
+<span class="inst-badge" data-tone="running"><span class="inst-dot"></span>running</span>
+<span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span>
+<span class="inst-badge" data-tone="warn"><span class="inst-dot"></span>with remarks</span>
+<span class="inst-badge" data-tone="error"><span class="inst-dot"></span>failed</span>
 
 <span class="inst-badge inst-badge--outline" data-tone="ok">New</span>
 <span class="inst-badge inst-badge--outline" data-tone="warn">beta</span>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Слово внутри бейджа | да | Цвет не имеет права быть единственным носителем состояния |
-| `data-tone` из закрытого словаря | да, у статуса | Пять значений. Выдуманное шестое не покрасится вовсе |
-| `inst-dot` внутри | да, у статуса | Второй носитель признака рядом со словом |
-| `data-tone` на точке | нет | Точка наследует тон от бейджа: атрибут ставится **один раз на группу** |
+| A word inside the badge | yes | Colour has no right to be the only carrier of a state |
+| A `data-tone` from the closed vocabulary | yes, on a status | Five values. An invented sixth will not be painted at all |
+| An `inst-dot` inside | yes, on a status | A second carrier of the mark beside the word |
+| A `data-tone` on the dot | no | The dot inherits the tone from the badge: the attribute is set **once per group** |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Цвет не единственный носитель | Статус несёт точку **и** слово. Читатель, не различающий тон, читает подпись |
-| Контраст | Подпись каждого тона проверена на 4.5:1 против собственного тонированного фона в пяти темах. Ради этого у тона есть отдельный шаг рампы под текст: шаг заливки не вытягивает 4.5:1 на самом себе |
-| Уменьшенное движение | Пульсация точки `running` **замедляется, а не гаснет**: индикатор занятости должен оставаться видимым |
-| Режим принудительных цветов | Точка переживает сброс (`forced-color-adjust: none`), потому что несёт значение |
-| Кегль | `--text-2xs` — 11px, нижний предел кегля. Ниже не опускаемся |
+| Colour is not the only carrier | A status carries a dot **and** a word. A reader who does not tell tones apart reads the label |
+| Contrast | The label of every tone is checked at 4.5:1 against its own tinted background in five themes. That is what the tone has a separate step of the ramp for text for: the step of the fill does not reach 4.5:1 on itself |
+| Reduced motion | The pulse of a `running` dot **slows down rather than going out**: an indicator of busyness has to stay visible |
+| Forced-colours mode | The dot survives the reset (`forced-color-adjust: none`), because it carries meaning |
+| Type size | `--text-2xs` — 11px, the lower limit of type size. We go no lower |
 
-## Устройство
+## Anatomy
 
-Точка — носитель второго признака: **цвет не имеет права быть единственным
-носителем состояния**, поэтому статус ходит с точкой *и*
-словом. Бейдж без точки применяется там, где он не статус, а метка объекта.
+The dot is the carrier of a second mark: **colour has no right to be the only
+carrier of a state**, so a status travels with a dot *and* a word. A badge with
+no dot is used where it is not a status but a label of an object.
 
 ```html preview
-<span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
-<span class="inst-badge" data-tone="ok">готово</span>
+<span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span>
+<span class="inst-badge" data-tone="ok">done</span>
 <span class="inst-badge">terrain_chunk_04</span>
 ```
 
-Бейдж читает `--tone-ink` и `--tone-bg` и больше ничего о тоне не знает.
+A badge reads `--tone-ink` and `--tone-bg` and knows nothing else about the
+tone.
 
-## Варианты
+## Variants
 
-Тон — это `data-tone`, **один словарь на всю библиотеку**. Тот же атрибут с теми же
-значениями работает на сноске, баннере, точке и строке лога.
+A tone is `data-tone`, **one vocabulary for the whole library**. The same
+attribute with the same values works on a note, a banner, a dot and a log row.
 
-| Тон | Значит |
+| Tone | Means |
 |---|---|
-| без атрибута | Нейтральное, ещё не начавшееся |
-| `data-tone="neutral"` | Явно нейтральное. Оно же исполняет роль info — синий в библиотеке занят акцентом |
-| `data-tone="running"` | Идёт сейчас. Точка внутри **пульсирует** |
-| `data-tone="ok"` | Успешно завершено |
-| `data-tone="warn"` | Завершено с замечаниями |
-| `data-tone="error"` | Упало |
+| no attribute | Neutral, not yet begun |
+| `data-tone="neutral"` | Explicitly neutral. It also plays the part of info — blue in the library is taken by the accent |
+| `data-tone="running"` | Happening now. The dot inside **pulses** |
+| `data-tone="ok"` | Finished successfully |
+| `data-tone="warn"` | Finished with remarks |
+| `data-tone="error"` | Failed |
 
-## Композиции
+## Composition
 
-### Счётчик в навигации
+### A counter in navigation
 
 ```html preview
-<a class="inst-nav-item" href="#">Очередь
+<a class="inst-nav-item" href="#">Queue
   <span class="inst-badge inst-nav-count">7</span></a>
 ```
 
-### В шапке панели
+### In a panel header
 
 ```html preview context
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Прогон</span>
-    <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
+    <span class="inst-panel-title">Run</span>
+    <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>running</span>
   </div>
-  <div class="inst-panel-body">worldgen-01 · 4 файла</div>
+  <div class="inst-panel-body">worldgen-01 · 4 files</div>
 </div>
 ```
 
-## Настройка
+## Customization
 
-Если строите на тоне свой компонент: у тона **два** передних плана, и брать
-надо тот, что по работе.
+If you are building a component of your own on a tone: a tone has **two**
+foregrounds, and the one to take is the one that matches the work.
 
-| Переменная | Для чего | Порог |
+| Variable | What for | Threshold |
 |---|---|---|
-| `--tone-ink` | Текст | 4.5:1 |
-| `--tone-mark` | Метка без подписи: точка, каретка, заливка меры | 3:1, и ещё против дорожки |
+| `--tone-ink` | Text | 4.5:1 |
+| `--tone-mark` | A mark with no label: a dot, a caret, the fill of a meter | 3:1, and against the track as well |
 
-У статусов они совпадают, у акцента расходятся.
+On the statuses they coincide, on the accent they part.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

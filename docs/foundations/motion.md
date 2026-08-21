@@ -1,34 +1,32 @@
 ---
-title: Движение
-group: Основания
+title: Motion
+group: Foundations
 layout: foundation
 source: src/tokens.css
 api:
-  - { name: "--dur-1", kind: "токен" }
-  - { name: "--dur-2", kind: "токен" }
-  - { name: "--dur-3", kind: "токен" }
-  - { name: "--ease-out", kind: "токен" }
-  - { name: "--ease-in-out", kind: "токен" }
-title-en: "Motion"
-group-en: "Foundations"
+  - { name: "--dur-1", kind: "token" }
+  - { name: "--dur-2", kind: "token" }
+  - { name: "--dur-3", kind: "token" }
+  - { name: "--ease-out", kind: "token" }
+  - { name: "--ease-in-out", kind: "token" }
 ---
 
-Три длительности и две функции плавности. Достаточно быстро, чтобы движение
-читалось **причиной, а не анимацией**: всё, что вызвал пользователь, обязано
-разрешиться внутри `--dur-2`.
+Three durations and two easing functions. Fast enough for motion to read as
+**a cause rather than an animation**: everything the user set off has to
+resolve within `--dur-2`.
 
 ```html preview
 <div class="inst-cluster">
-  <button class="inst-btn" type="button">Наведите и нажмите</button>
-  <button class="inst-btn inst-btn--primary" type="button" aria-busy="true">Запустить</button>
-  <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
+  <button class="inst-btn" type="button">Hover and press</button>
+  <button class="inst-btn inst-btn--primary" type="button" aria-busy="true">Run</button>
+  <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>running</span>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Движение в библиотеке отвечает на один вопрос: **что изменилось**. Длительность
-берётся из шкалы, функция плавности — из двух.
+Motion in the library answers one question: **what changed**. The duration
+comes from the scale, the easing from the two.
 
 ```css
 .my-thing {
@@ -36,75 +34,74 @@ group-en: "Foundations"
 }
 ```
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Длительность из `--dur-*` | да | Четыре ступени. Число на месте расходится с остальным библиотекой на первой же правке |
-| `--ease-out` для появления | да | Вход быстрый в начале и мягкий в конце; `--ease-in-out` — только для того, что ходит туда-обратно |
-| Уменьшенное движение учтено | да | Бесконечные индикаторы **замедляются, а не гаснут**: остановленный индикатор сообщает «ничего не происходит», когда происходит |
-| Анимация у данных | нет | График — это состояние, а не процесс. Движется то, что меняется по действию |
+| A duration from `--dur-*` | yes | Four steps. A number in place parts from the rest of the library on the first edit |
+| `--ease-out` for an appearance | yes | The entry is fast at the start and soft at the end; `--ease-in-out` is only for what travels back and forth |
+| Reduced motion accounted for | yes | Infinite indicators **slow down rather than go out**: a stopped indicator says "nothing is happening" while something is |
+| An animation on data | no | A chart is a state rather than a process. What moves is what changes on an action |
 
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Уменьшенное движение | Переходы схлопываются до 0.01ms; индикаторы активности **замедляются, а не останавливаются** |
-| Занятость | Озвучивается `aria-busy`, а не анимацией. Движение — второй носитель, не единственный |
-| Прогресс | Неопределённая мера не имеет `aria-valuenow`, и это само по себе сообщение |
-| Фокус | Не анимируется: кольцо появляется сразу |
-| Мигание | Ничто в библиотеке не мигает чаще 3 Гц |
-| Слой | `kit.motion` объявлен последним, поэтому перебивает компоненты и не перебивает приложение — без единого `!important` |
+| Reduced motion | Transitions collapse to 0.01ms; indicators of activity **slow down rather than stop** |
+| Busy | Spoken by `aria-busy` rather than by an animation. Motion is a second carrier, not the only one |
+| Progress | An indeterminate meter has no `aria-valuenow`, and that is a message in itself |
+| Focus | Not animated: the ring appears at once |
+| Flashing | Nothing in the library flashes faster than 3 Hz |
+| Layer | `kit.motion` is declared last, so it beats the components and does not beat the application — without a single `!important` |
 
-## Шкала
+## Scale
 
-| Токен | Значение | Где |
+| Token | Value | Where |
 |---|---|---|
-| `--dur-1` | 80ms | Наведение, нажатие, фокус, поворот шеврона, подчёркивание ссылки. Это большинство переходов библиотеки |
-| `--dur-2` | 140ms | Свитч, появление и исчезновение поповера. Потолок для всего, что вызвал пользователь |
-| `--dur-3` | 220ms | Заполнение меры — единственное, что меняет геометрию по данным, а не по касанию |
+| `--dur-1` | 80ms | Hover, press, focus, the turn of a chevron, the underline of a link. This is most of the library's transitions |
+| `--dur-2` | 140ms | A switch, the appearance and disappearance of a popover. The ceiling for everything the user set off |
+| `--dur-3` | 220ms | The filling of a meter — the only thing that changes geometry from data rather than from a touch |
 
-Всё, что не укладывается в `--dur-2`, **требует состояния, а не перехода**: если
-процесс длиннее, показывать его должен индикатор занятости, а не растянутая
-анимация.
+Everything that does not fit within `--dur-2` **calls for a state rather than a
+transition**: if a process is longer, what should show it is an indicator of
+busyness, not a stretched animation.
 
-### Функции плавности
+### Easing functions
 
-| Токен | Значение | Где |
+| Token | Value | Where |
 |---|---|---|
-| `--ease-out` | `cubic-bezier(0.22, 0.61, 0.36, 1)` | Все переходы. Резкий старт и мягкая остановка читаются как отклик на действие |
-| `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Бесконечные циклы: пульсация точки, дыхание скелетона, неопределённая мера |
+| `--ease-out` | `cubic-bezier(0.22, 0.61, 0.36, 1)` | Every transition. A sharp start and a soft stop read as a response to an action |
+| `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Infinite cycles: the pulse of a dot, the breathing of a skeleton, an indeterminate meter |
 
-Линейная остаётся там, где вращение обязано быть равномерным. Кольцо
-спиннера и кольцо занятой кнопки крутятся `linear`: замедление в цикле
-читается как рывок.
+Linear stays where a rotation has to be even. The ring of a spinner and the
+ring of a busy button turn `linear`: a slowdown within a cycle reads as a jerk.
 
-## Поведение
+## Behavior
 
-| Что | Длительность | Как |
+| What | Duration | How |
 |---|---|---|
-| Наведение и нажатие кнопки | `--dur-1` | `background`, `border-color`, `transform` |
-| Нажатие | `--dur-1` | `scale(0.985)` — нажатие надо почувствовать, а не разглядывать |
-| Фокус | — | Кольцо появляется мгновенно: задержка на фокусе читается как лаг |
-| Шеврон селекта и раскрытого шага | `--dur-1` | `rotate` |
-| Свитч | `--dur-2` | Положение бегунка и заливка дорожки |
-| Поповер | `--dur-2` | `opacity` + `translate`, плюс `display` и `overlay` через `allow-discrete` |
-| Заполнение меры | `--dur-3` | `inline-size` |
-| Точка `running` | 1.6s, бесконечно | Пульсация прозрачности |
-| Спиннер и кольцо занятой кнопки | 0.7s, бесконечно | Вращение |
-| Скелетон | 1.6s, бесконечно | Дыхание прозрачностью, **а не блик**: градиенты запрещены |
-| Неопределённая мера | 1.3s, бесконечно | Проход отрезка по дорожке |
-| Каретка стриминга | 1s, бесконечно | Мигание шагами |
+| Hover and press of a button | `--dur-1` | `background`, `border-color`, `transform` |
+| A press | `--dur-1` | `scale(0.985)` — a press is to be felt rather than examined |
+| Focus | — | The ring appears instantly: a delay on focus reads as lag |
+| The chevron of a select and of an opened step | `--dur-1` | `rotate` |
+| A switch | `--dur-2` | The position of the thumb and the fill of the track |
+| A popover | `--dur-2` | `opacity` + `translate`, plus `display` and `overlay` through `allow-discrete` |
+| The filling of a meter | `--dur-3` | `inline-size` |
+| A `running` dot | 1.6s, infinite | A pulse of opacity |
+| A spinner and the ring of a busy button | 0.7s, infinite | Rotation |
+| A skeleton | 1.6s, infinite | Breathing by opacity, **not a sheen**: gradients are forbidden |
+| An indeterminate meter | 1.3s, infinite | A segment travelling along the track |
+| The caret of streaming | 1s, infinite | Blinking in steps |
 
-### Уменьшенное движение
+### Reduced motion
 
-`prefers-reduced-motion: reduce` обрабатывается в отдельном каскадном слое,
-объявленном последним. Слой нужен, чтобы правило перебивало компоненты (у
-`.inst-btn` специфичность выше, чем у `*`) и при этом **не перебивало
-приложение**: без слоя это требовало бы `!important`, а `!important` внутри слоя
-выигрывает у неважных объявлений приложения — то есть библиотека нарушала бы
-собственное обещание.
+`prefers-reduced-motion: reduce` is handled in a cascade layer of its own,
+declared last. The layer is needed so that the rule beats the components
+(`.inst-btn` has a higher specificity than `*`) while **not beating the
+application**: without the layer that would call for `!important`, and an
+`!important` inside a layer beats the application's ordinary declarations —
+that is, the library would break its own promise.
 
-### Переходы схлопываются
+### Transitions collapse
 
 ```css
 *, *::before, *::after {
@@ -114,74 +111,74 @@ group-en: "Foundations"
 }
 ```
 
-`0.01ms`, не `none`. Событие `transitionend` продолжает приходить, и машины
-состояний приложения, которые его слушают, продолжают работать. Выключенный
-переход тихо остановил бы их.
+`0.01ms`, not `none`. The `transitionend` event keeps arriving, and the
+application's state machines that listen for it keep working. A switched-off
+transition would stop them in silence.
 
-### Индикаторы не гаснут
+### Indicators do not go out
 
-Здесь библиотека расходится с общепринятым «выключить всё».
+Here the library parts from the customary "switch everything off".
 
-Бесконечную анимацию **нельзя** схлопнуть. Сжатая до `0.01ms` анимация с одной
-итерацией — это не сжатие длительности, это остановка: спиннер замирает в
-случайной фазе, точка перестаёт пульсировать, каретка застывает. Индикатор при
-этом сообщает, что работа встала. У занятой кнопки остановка превращает её в
-пустой прямоугольник: подпись погашена, а кольцо стоит.
+An infinite animation **may not** be collapsed. An animation of one iteration
+squeezed to `0.01ms` is not a squeezed duration, it is a stop: the spinner
+freezes at a random phase, the dot stops pulsing, the caret sets. And the
+indicator then says the work has halted. On a busy button a stop turns it into
+an empty rectangle: the label is dimmed and the ring stands still.
 
-Поэтому индикаторы уходят на частоту, которая читается как «идёт», но не дёргает
-периферийное зрение. Укачивают **амплитуда и частота**, а не движение само по
-себе.
+So the indicators move to a frequency that reads as "running" without tugging
+at peripheral vision. What makes people sick is **amplitude and frequency**,
+not motion in itself.
 
-| Индикатор | Обычно | При `reduce` |
+| Indicator | Ordinarily | At `reduce` |
 |---|---|---|
 | `.inst-spinner` | 0.7s | 2.4s |
 | `.inst-btn[aria-busy="true"]` | 0.7s | 2.4s |
 | `.inst-skeleton` | 1.6s | 3s |
-| `.inst-meter` в неопределённом состоянии | 1.3s | 3s |
-| `.inst-dot` в тоне `running` | 1.6s | 3s |
-| `.inst-dot` внутри `.inst-task` и `.inst-step` в состоянии `running` | 1.6s | 3s |
-| `.inst-caret` | 1s | Мигание снято, каретка остаётся видимой |
+| `.inst-meter` in the indeterminate state | 1.3s | 3s |
+| `.inst-dot` in the `running` tone | 1.6s | 3s |
+| `.inst-dot` inside `.inst-task` and `.inst-step` in the `running` state | 1.6s | 3s |
+| `.inst-caret` | 1s | The blinking is removed, the caret stays visible |
 
-У каретки мигание говорит только о факте, не о скорости. Поэтому гасится
-мигание, а сама каретка остаётся.
+On a caret the blinking says only that it is there, nothing about speed. So the
+blinking is suppressed and the caret itself stays.
 
 :::note
-Список замедляемых точек обязан совпадать с тем, что заводит пульсацию в
-компонентах. Разошёлся — и где-то остался индикатор, замирающий в случайной
-фазе.
+The list of dots that get slowed has to match what starts the pulse in the
+components. Let it part, and somewhere an indicator is left freezing at a
+random phase.
 :::
 
-## Правила
+## Rules
 
-### Что брать, а что нет
+### What to take and what not to
 
-| Используйте | Возьмите другое |
+| Use | Take instead |
 |---|---|
-| Переход поверхности и рамки по действию пользователя | **Движение layout** — ховер не двигает раскладку. Состояние показывает [бейдж](../components/display/badge.md) |
-| Бесконечный индикатор для занятости машины | **Определённая полоса, если процент неизвестен** — застрявшая на 90% полоса врёт. У неопределённой [меры](../components/charts/meter.md) нет `aria-valuenow` |
-| `--dur-3` для заполнения меры | **Та же длительность для ховера** — 220ms на наведении читаются как задержка интерфейса, см. [кнопку](../components/actions/button.md) |
-| Переход, который может не доиграть | **Анимация как носитель смысла в одиночку** — состояние обязано быть и в разметке: `aria-busy`, `data-state`. См. [шаг](../agent/step.md) |
-| Появление оверлея через `@starting-style` | **Ручное открытие на JS** — верхний слой и Escape даёт платформа, см. [поповер](../components/overlays/popover.md) |
+| A transition of surface and border on a user's action | **Motion of the layout** — a hover does not move the layout. State is shown by [a badge](../components/display/badge.md) |
+| An infinite indicator for a machine being busy | **A determinate bar when the percentage is unknown** — a bar stuck at 90% lies. An indeterminate [meter](../components/charts/meter.md) has no `aria-valuenow` |
+| `--dur-3` for the filling of a meter | **The same duration for a hover** — 220ms on a hover reads as lag in the interface, see [the button](../components/actions/button.md) |
+| A transition that may not play out | **An animation as the sole carrier of meaning** — the state has to be in the markup too: `aria-busy`, `data-state`. See [the step](../agent/step.md) |
+| The appearance of an overlay through `@starting-style` | **Opening by hand in JS** — the top layer and Escape are given by the platform, see [the popover](../components/overlays/popover.md) |
 
 ## API
 
 ```api
 ```
 
-### Что не анимируется
+### What is not animated
 
-| Не анимируется | Почему |
+| Not animated | Why |
 |---|---|
-| Раскладка на наведении | Ховер не двигает layout, не меняет кегль и не добавляет тень |
-| Появление контента при прокрутке | Инструментальный интерфейс читают, а не смотрят |
-| `scroll-behavior: smooth` глобально | Воюет с навигацией с клавиатуры и делает длинные логи вязкими. Включается точечно, на конкретное взаимодействие |
-| Цвет текста при смене темы | Переключение темы — не переход, а другое состояние документа |
+| The layout on hover | A hover does not move the layout, does not change the type size and does not add a shadow |
+| Content appearing on scroll | A tooling interface is read rather than watched |
+| `scroll-behavior: smooth` globally | It fights keyboard navigation and makes long logs viscous. It is switched on pointwise, for a particular interaction |
+| The colour of text on a change of theme | Switching the theme is not a transition but another state of the document |
 
-## Связанное
+## Related
 
-[Высота и поверхности](./elevation.md)
-[Токены](./tokens.md)
-[Кнопка](../components/actions/button.md)
-[Мера](../components/charts/meter.md)
-[Шаг](../agent/step.md)
-[Строка очереди](../agent/task.md)
+[Elevation and surfaces](./elevation.md)
+[Tokens](./tokens.md)
+[Button](../components/actions/button.md)
+[Meter](../components/charts/meter.md)
+[Step](../agent/step.md)
+[Queue row](../agent/task.md)

@@ -1,59 +1,58 @@
 ---
-title: Ввод
-group: Ввод
+title: Inputs
+group: Inputs
 layout: index
-title-en: "Inputs"
-group-en: "Inputs"
 ---
 
-Десять компонентов, и первый вопрос к любому из них один: **значение вводят или
-выбирают?** Вводят — поле; выбирают — зависит от того, сколько вариантов и
-видны ли они все сразу.
+Ten components, and the first question to any of them is one: **is the value
+typed or chosen?** Typed means a field; chosen depends on how many options
+there are and whether they are all visible at once.
 
-Сравнение стоит здесь, а не на страницах: «возьмите другое» — это утверждение о
-СОСЕДЯХ, и повторённое десять раз оно расходится с ними по одной строке за
-правку.
+The comparison stands here rather than on the pages: "take instead" is a
+statement about NEIGHBOURS, and repeated ten times it parts from them by one
+line per edit.
 
-## Значение вводят
+## The value is typed
 
-| Что нужно | Возьмите | Почему не соседа |
+| What is wanted | Take | Why not the neighbour |
 |---|---|---|
-| Произвольный текст: имя, путь, запрос | [Текстовое поле](./input.md) | У селекта нет свободного ввода |
-| Число, которое тянут мышью, в плотном ряду инспектора | [Числовое поле](./num-field.md) | В обычной форме буква оси ничего не значит — там текстовое поле с суффиксом |
-| Приблизительное значение из непрерывного диапазона: громкость, порог | [Слайдер](./slider.md) | Попасть бегунком в 47 из 100 нельзя — если нужно точное, это числовое поле |
-| Фильтрация списка, которую часто стирают целиком | [Поиск](./search.md) | `input[type=search]` даёт нативный крестик, у текстового поля его нет |
-| Загрузка файла или зона перетаскивания | [Поле файла](./file.md) | «Экспортировать» — это [кнопка](../actions/button.md), а не зона |
-| Ключи шаблона под полем, которые вставляют в текст | [Подстановки](./inserts.md) | У них нет выбранного состояния: это вставка, а не выбор |
+| Arbitrary text: a name, a path, a query | [The text field](./input.md) | A select has no free input |
+| A number dragged with the mouse, in a dense inspector row | [The number field](./num-field.md) | In an ordinary form the letter of an axis means nothing — there a text field with a suffix does |
+| An approximate value from a continuous range: volume, a threshold | [The slider](./slider.md) | Hitting 47 of 100 with a thumb is impossible — if an exact value is wanted, that is a number field |
+| Filtering a list, often cleared entirely | [Search](./search.md) | An `input[type=search]` gives the native cross, a text field has none |
+| Uploading a file or a drop zone | [The file field](./file.md) | "Export" is [a button](../actions/button.md) rather than a zone |
+| Template keys under a field, pasted into the text | [Inserts](./inserts.md) | They have no chosen state: this is pasting rather than choosing |
 
-## Значение выбирают
+## The value is chosen
 
-| Сколько вариантов | Возьмите | Почему не соседа |
+| How many options | Take | Why not the neighbour |
 |---|---|---|
-| Два состояния: включено или нет | [свитч или чекбокс](./toggles.md) | У одного варианта нет пары |
-| 2–4 равноправных, все на виду | [сегментированный контрол](../actions/segmented.md) | Селект прячет выбранное за раскрытием |
-| 2–4, и у каждого есть что объяснить | [Выбираемую карточку](./choice-card.md) | Карточка вокруг слова «Да» — лишняя рамка |
-| Больше пяти взаимоисключающих | [Селект](./select.md) | Двенадцать карточек — это не выбор, а страница |
-| Несколько включённых сразу и все на виду | [чип](../actions/chip.md) | В селекте выбран ровно один, если не `multiple` |
+| Two states: on or not | [a switch or a checkbox](./toggles.md) | A single option has no pair |
+| 2–4 equals, all in view | [a segmented control](../actions/segmented.md) | A select hides the chosen one behind an expansion |
+| 2–4, and each has something to explain | [The choice card](./choice-card.md) | A card around the word "Yes" is a superfluous frame |
+| More than five mutually exclusive | [The select](./select.md) | Twelve cards are not a choice but a page |
+| Several switched on at once and all in view | [a chip](../actions/chip.md) | In a select exactly one is chosen unless it is `multiple` |
 
-## Когда ни один не подходит
+## When none of them fits
 
-| Что нужно | Возьмите | Почему не отсюда |
+| What is wanted | Take | Why not from here |
 |---|---|---|
-| Настройка применяется сразу, без отправки | [свитчи](./toggles.md) в [списке свойств](../display/kv.md) | Форма с кнопкой там соврёт: она обещает «применится по нажатию» |
-| Список, который нужно искать или дополнять | комбобокса в ките пока нет | Селект берёт готовый список и не дополняется |
-| Действия, а не значения | [меню](../overlays/menu.md) в поповере | Селект хранит выбранное, меню — нет |
-| Показ величины без ввода | [мера](../charts/meter.md) | Слайдер выглядит контролом и приглашает себя тянуть |
-| Значение только для чтения | `readonly`, а не `disabled` | `disabled` выкидывает поле из обхода и из отправки формы |
+| A setting applied at once, with no submitting | [switches](./toggles.md) in [a property list](../display/kv.md) | A form with a button would lie there: it promises "it will apply on the press" |
+| A list that has to be searched or added to | there is no combobox in the kit yet | A select takes a ready list and is not added to |
+| Actions rather than values | [a menu](../overlays/menu.md) in a popover | A select holds what is chosen, a menu does not |
+| Showing a quantity with no input | [a meter](../charts/meter.md) | A slider looks like a control and invites dragging |
+| A read-only value | `readonly` rather than `disabled` | `disabled` throws a field out of the traversal and out of the submission |
 
-## Общее для всех десяти
+## Common to all ten
 
-**Форма нужна, когда полей больше двух и они применяются по отправке.** Одно
-поле само по себе формы не требует — [форма](./form.md) вокруг него избыточна.
+**A form is wanted when there are more than two fields and they apply on
+submission.** One field by itself calls for no form — [a form](./form.md)
+around it is excessive.
 
-**Подпись обязательна у каждого поля.** `placeholder` подписью не является: он
-исчезает при вводе, и человек, отвлёкшийся на середине, теряет имя того, что
-заполняет.
+**A label is obligatory on every field.** A `placeholder` is not a label: it
+disappears on input, and somebody distracted halfway through loses the name of
+what they are filling in.
 
-**Состояние ошибки живёт на `:user-invalid`, а не на классе.** Браузер знает,
-трогали ли поле; класс не знает и красит пустое поле красным до первого
-касания.
+**The error state lives on `:user-invalid` rather than on a class.** The browser
+knows whether a field has been touched; a class does not and paints an empty
+field red before the first touch.

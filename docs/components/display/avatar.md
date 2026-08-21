@@ -1,87 +1,86 @@
 ---
-title: Аватар
-group: Отображение данных
+title: Avatar
+group: Data display
 layout: component
 source: src/data.css
 api:
-  - { name: "inst-avatar", kind: "класс", doc: "Один аватар. Размер `--control-h-md`" }
-  - { name: "inst-avatars", kind: "класс", doc: "Группа с наложением" }
-  - { name: "inst-avatars-more", kind: "класс", doc: "Счётчик «ещё N» в конце группы" }
-  - { name: "inst-avatar--sm", kind: "модификатор", doc: "Размер" }
-  - { name: "inst-avatar--lg", kind: "модификатор", doc: "Размер" }
-  - { name: "--control-h-sm/md/lg", kind: "токен" }
-  - { name: "--radius-full", kind: "токен" }
-  - { name: "--surface-sunken", kind: "токен" }
-  - { name: "--surface-raised", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--size-marker", kind: "токен" }
-title-en: "Avatar"
-group-en: "Data display"
+  - { name: "inst-avatar", kind: "class", doc: "One avatar. The size is `--control-h-md`" }
+  - { name: "inst-avatars", kind: "class", doc: "A group with overlap" }
+  - { name: "inst-avatars-more", kind: "class", doc: "The \"N more\" counter at the end of a group" }
+  - { name: "inst-avatar--sm", kind: "modifier", doc: "The size" }
+  - { name: "inst-avatar--lg", kind: "modifier", doc: "The size" }
+  - { name: "--control-h-sm/md/lg", kind: "token" }
+  - { name: "--radius-full", kind: "token" }
+  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--surface-raised", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--size-marker", kind: "token" }
 ---
 
-Опознавательный знак человека или агента: изображение либо инициалы.
+The identifying mark of a person or an agent: an image or initials.
 
 ```html preview
-<span class="inst-avatar">ИС</span>
-<span class="inst-avatar">АП</span>
-<span class="inst-avatar">МК</span>
+<span class="inst-avatar">IS</span>
+<span class="inst-avatar">AP</span>
+<span class="inst-avatar">MK</span>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `aria-hidden="true"`, если имя есть рядом текстом | да | Иначе аватар озвучится как «И С» рядом с уже прочитанным именем |
-| `alt` или `aria-label`, если имени рядом нет | да | Инициалы доступным именем не являются: скринридер читает их по буквам |
-| `aria-label` на группе — составом или числом | да, у `inst-avatars` | «7 участников» вместо череды инициалов |
+| `aria-hidden="true"` if the name is beside it as text | yes | Otherwise the avatar is spoken as "I S" next to a name already read |
+| An `alt` or an `aria-label` if there is no name beside it | yes | Initials are not an accessible name: a screen reader reads them letter by letter |
+| An `aria-label` on the group, by its make-up or by a number | yes | "7 participants" rather than a string of initials |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Аватар — не подпись | Если имя есть рядом текстом, аватар декоративен: `aria-hidden="true"`. Иначе он озвучится как «И С» рядом с уже прочитанным именем |
-| Аватар вместо подписи | Тогда он несёт имя: `<img alt="Иннокентий Соколов">` или `aria-label` на контейнере |
-| Инициалы | Не являются доступным именем: «ИС» скринридер прочитает по буквам |
-| Группа | Дайте контейнеру `aria-label` с полным составом или числом: «7 участников». Иначе прозвучит череда инициалов |
-| Счётчик | `inst-avatars-more` содержит «+4» текстом — это данные, а не декорация |
-| Контраст | Инициалы берут `--text-secondary` на `--surface-sunken` и держат 4.5:1 в пяти темах |
+| An avatar is not a label | If the name is beside it as text, the avatar is decorative: `aria-hidden="true"`. Otherwise it is spoken as "I S" next to a name already read |
+| An avatar instead of a label | Then it carries the name: `<img alt="Innokentiy Sokolov">` or an `aria-label` on the container |
+| Initials | They are not an accessible name: a screen reader reads "IS" letter by letter |
+| A group | Give the container an `aria-label` with the full make-up or a number: "7 participants". Otherwise a string of initials is spoken |
+| The counter | `inst-avatars-more` holds "+4" as text — that is data rather than decoration |
+| Contrast | The initials take `--text-secondary` on `--surface-sunken` and hold 4.5:1 in five themes |
 
-## Размеры
+## Sizes
 
 ```html preview
 <span class="inst-avatar inst-avatar--sm">W1</span>
-<span class="inst-avatar">ИС</span>
+<span class="inst-avatar">IS</span>
 <span class="inst-avatar inst-avatar--lg">B4</span>
 ```
 
-Размеры берутся из яруса ролей (`--control-h-*`), поэтому аватар и стоящая
-рядом [кнопка](../actions/button.md) того же размера физически не могут
-разойтись по высоте.
+The sizes come from the tier of roles (`--control-h-*`), so an avatar and a
+[button](../actions/button.md) of the same size standing beside it physically
+cannot part in height.
 
-## Композиции
+## Composition
 
-### Группа с наложением
+### A group with overlap
 
 ```html preview
-<span class="inst-avatars" aria-label="7 участников">
-  <span class="inst-avatar">ИС</span>
-  <span class="inst-avatar">АП</span>
-  <span class="inst-avatar">МК</span>
+<span class="inst-avatars" aria-label="7 participants">
+  <span class="inst-avatar">IS</span>
+  <span class="inst-avatar">AP</span>
+  <span class="inst-avatar">MK</span>
   <span class="inst-avatars-more">+4</span>
 </span>
 ```
 
-Кольцо вокруг каждого аватара в группе — не обводка, а **цвет поверхности
-под ним**: оно отделяет соседей друг от друга. На другой поверхности группа
-потребует переопределить это кольцо, иначе появится ореол.
+The ring around every avatar in a group is not an outline but **the colour of
+the surface under it**: it parts the neighbours from one another. On another
+surface a group will call for that ring to be overridden, otherwise a halo
+appears.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

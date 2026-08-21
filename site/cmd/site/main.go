@@ -134,9 +134,9 @@ func main() {
 		}
 	}
 	fmt.Printf("pages: %d  ·  live examples: %d  ·  navigation sections: %d\n",
-		len(byLang[i18n.RU]), len(demos), len(sections[i18n.RU]))
+		len(byLang[i18n.Base]), len(demos), len(sections[i18n.Base]))
 	onContract := 0
-	for _, p := range byLang[i18n.RU] {
+	for _, p := range byLang[i18n.Base] {
 		if p.Layout == "component" {
 			onContract++
 		}

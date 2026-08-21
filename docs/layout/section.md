@@ -1,78 +1,76 @@
 ---
-title: Секция
-group: Раскладка
+title: Section
+group: Layout
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-section", kind: "класс", doc: "Колонка с зазором `--gap-row`" }
-  - { name: "inst-section-head", kind: "класс", doc: "Строка заголовка. Выравнивание по базовой линии" }
-  - { name: "inst-section-title", kind: "класс", doc: "Подпись секции" }
-  - { name: "inst-section-actions", kind: "класс", doc: "Хвост строки заголовка, прижатый к дальнему краю" }
-  - { name: "--gap-row", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--text-secondary", kind: "токен" }
-title-en: "Section"
-group-en: "Layout"
+  - { name: "inst-section", kind: "class", doc: "A column with a gap of `--gap-row`" }
+  - { name: "inst-section-head", kind: "class", doc: "The row of the heading. Aligned to the baseline" }
+  - { name: "inst-section-title", kind: "class", doc: "The label of a section" }
+  - { name: "inst-section-actions", kind: "class", doc: "The tail of the heading row, pushed to the far edge" }
+  - { name: "--gap-row", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--text-secondary", kind: "token" }
 ---
 
-Именованный блок внутри экрана: подпись, необязательные действия и содержимое.
-Подпись **тише данных**, которые она подписывает.
+A named block inside a screen: a label, optional actions and contents. The
+label is **quieter than the data** it labels.
 
 ```html preview
 <div class="inst-section">
   <div class="inst-section-head">
-    <h2 class="inst-section-title">Сводка за сутки</h2>
+    <h2 class="inst-section-title">The summary for the day</h2>
     <span class="inst-section-actions">
-      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Период</button></span>
+      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Period</button></span>
   </div>
   <div class="inst-grid inst-grid--tight">
-    <div class="inst-metric"><div class="inst-metric-label">В работе</div><div class="inst-metric-value">7</div></div>
-    <div class="inst-metric"><div class="inst-metric-label">В очереди</div><div class="inst-metric-value">5</div></div>
-    <div class="inst-metric"><div class="inst-metric-label">Упало</div><div class="inst-metric-value">1</div></div>
+    <div class="inst-metric"><div class="inst-metric-label">In work</div><div class="inst-metric-value">7</div></div>
+    <div class="inst-metric"><div class="inst-metric-label">In the queue</div><div class="inst-metric-value">5</div></div>
+    <div class="inst-metric"><div class="inst-metric-label">Fell</div><div class="inst-metric-value">1</div></div>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Настоящий заголовок нужного уровня | да | `inst-section-title` оформляет, но не объявляет: навигация по заголовкам без него не работает |
-| `<section>` или `<div>` | нет | Тег роли не меняет: секция ничего не рисует, кроме ритма |
-| `inst-section-head` | нет | Нужна там, где есть заголовок или действия |
-| `inst-section-actions` — только для этого блока | да | Действия уровня экрана живут в [шапке экрана](./page-header.md) |
+| A real heading of the wanted level | yes | `inst-section-title` styles but does not declare: navigation by headings does not work without it |
+| A `<section>` or a `<div>` | no | The tag changes no role: a section draws nothing except rhythm |
+| An `inst-section-head` | no | Wanted where there is a heading or there are actions |
+| An `inst-section-actions` — for this block alone | yes | Actions at the level of a screen live in [the page header](./page-header.md) |
 
-Секция ничего не рисует, кроме ритма: это стопка с зазором `--gap-row` и
-строкой заголовка. Рамка вокруг четырёх метрик превратила бы одну группу в
-четыре объекта.
+A section draws nothing except rhythm: it is a stack with a gap of `--gap-row`
+and a row of heading. A border around four metrics would turn one group into
+four objects.
 
-| Что | Почему |
+| What | Why |
 |---|---|
-| Тег заголовка по уровню (`<h2>`, `<h3>`) | Класс даёт кегль, а не уровень. Скринридер строит оглавление по тегам |
-| `inst-section-head` как обёртка | Без неё заголовок и действия становятся детьми колонки и встают друг под друга |
-| `type="button"` у действий | Иначе внутри формы они её отправят |
+| The tag of the heading by level (`<h2>`, `<h3>`) | The class gives the size rather than the level. A screen reader builds the table of contents from the tags |
+| An `inst-section-head` as the wrapper | Without it the heading and the actions become children of the column and line up one under another |
+| A `type="button"` on the actions | Otherwise inside a form they will submit it |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Уровень заголовка | Выбирается по структуре документа, а не по внешнему виду. Автоматически он не назначается |
-| Ориентир | Если блок действительно самостоятельный раздел, ставьте `<section>` с `aria-labelledby` на заголовок; `<div>` ориентира не даёт, и это нормально для группировки |
-| Контраст | Подпись — `--text-secondary`, 4.5:1 в пяти темах. Она тише данных по цвету, но не ниже порога чтения |
-| Кегль | `--text-sm`, тот же, что у базы документа: подпись не крупнее содержимого |
-| Порядок | Действия идут в разметке после заголовка и обходятся после него |
+| The level of the heading | Chosen by the structure of the document rather than by the look. It is not assigned automatically |
+| The landmark | If the block really is a self-standing division, put a `<section>` with an `aria-labelledby` on the heading; a `<div>` gives no landmark, and that is fine for grouping |
+| Contrast | The label is `--text-secondary`, 4.5:1 in five themes. It is quieter than the data by colour, but not below the floor of reading |
+| Type size | `--text-sm`, the same as the base of the document: the label is not larger than the contents |
+| Order | The actions stand after the heading in the markup and are traversed after it |
 
-## Устройство
+## Anatomy
 
 ```html preview
 <div class="inst-section">
   <div class="inst-section-head">
-    <h2 class="inst-section-title">Активные прогоны</h2>
+    <h2 class="inst-section-title">Active runs</h2>
     <span class="inst-badge inst-nav-count">7</span>
     <span class="inst-section-actions">
-      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Все</button></span>
+      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">All</button></span>
   </div>
   <div class="inst-stack inst-stack--tight">
     <div class="inst-card"><div class="inst-card-title">worldgen · #4127</div></div>
@@ -81,27 +79,29 @@ group-en: "Layout"
 </div>
 ```
 
-`inst-section-head` выравнивает детей **по базовой линии**: заголовок, счётчик
-и кнопка стоят на одной строке текста, а не по центру своих коробок. Поэтому в
-строку заголовка можно класть что угодно, не подгоняя высоты.
+`inst-section-head` aligns its children **to the baseline**: the heading, the
+counter and the button stand on one line of text rather than by the centres of
+their boxes. So anything at all can be put into the heading row without fitting
+heights to one another.
 
-`inst-section-actions` прижимается к дальнему краю `margin-inline-start: auto` —
-тем же приёмом, что `inst-cluster-spacer` и `inst-page-actions`. Одна ось —
-одна механика.
+`inst-section-actions` is pushed to the far edge by `margin-inline-start: auto`
+— by the same device as `inst-cluster-spacer` and `inst-page-actions`. One axis
+— one mechanism.
 
-### Заголовок
+### The heading
 
-`inst-section-title` — `--text-sm`, `--weight-medium`, `--text-secondary`. То
-есть **тише содержимого**: подпись обслуживает данные. Капса и
-трекинга здесь нет по той же причине, что и везде в библиотеке, а веса 700 в
-библиотеке не существует вовсе.
+`inst-section-title` is `--text-sm`, `--weight-medium`, `--text-secondary`.
+That is, **quieter than the contents**: the label serves the data. There are no
+caps and no tracking here for the same reason as everywhere in the library, and
+a weight of 700 does not exist in the library at all.
 
-Класс задаёт кегль, но не уровень. Уровень выбирается по месту в структуре
-документа: под `<h1>` шапки экрана обычно `<h2>`.
+The class sets the size but not the level. The level is chosen by the place in
+the structure of the document: under the `<h1>` of the page header it is
+usually an `<h2>`.
 
-## Композиции
+## Composition
 
-### Несколько секций на экране
+### Several sections on a screen
 
 ```html
 <div class="inst-container inst-stack inst-stack--loose">
@@ -111,15 +111,15 @@ group-en: "Layout"
 </div>
 ```
 
-Зазор между секциями ставит внешняя стопка, а не сами секции: зазор — между
-соседями, а не вокруг каждого.
+The gap between sections is set by the outer stack rather than by the sections
+themselves: a gap is between neighbours rather than around each one.
 
-### Секция без действий
+### A section with no actions
 
 ```html
 <div class="inst-section">
   <div class="inst-section-head">
-    <h2 class="inst-section-title">Параметры прогона</h2>
+    <h2 class="inst-section-title">The parameters of a run</h2>
   </div>
   <div class="inst-kv">…</div>
 </div>
@@ -130,7 +130,7 @@ group-en: "Layout"
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

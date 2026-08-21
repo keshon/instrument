@@ -1,138 +1,141 @@
 ---
-title: Чип
-group: Действия
+title: Chip
+group: Actions
 layout: component
 source: src/actions.css
-js: Переключение, стрелки и бегущий tabindex — делает `instrument.js`
+js: Toggling, arrows and the roving tabindex are done by `instrument.js`
 api:
-  - { name: "inst-chips", kind: "класс", doc: "Полоса. Несёт `role=\"listbox\"` и переносится по ширине" }
-  - { name: "inst-chip", kind: "класс", doc: "Один фильтр. Несёт `role=\"option\"`" }
-  - { name: "aria-orientation", kind: "атрибут", value: "horizontal", doc: "На `.inst-chips`. Обязателен: полоса идёт вбок, а `listbox` по умолчанию вертикальный" }
-  - { name: "aria-multiselectable", kind: "атрибут", value: "true", doc: "На `.inst-chips`. Включает несколько сразу: стрелка тогда двигает только фокус, а включает пробел" }
-  - { name: "aria-selected", kind: "атрибут", doc: "`true` · `false` на каждом чипе. Носитель выбора" }
-  - { name: "data-value", kind: "атрибут", doc: "На `.inst-chip`. Что придёт в `detail` события `inst:select` вместо текста" }
-  - { name: "aria-disabled", kind: "атрибут", value: "true", doc: "Фильтр недоступен: например, под него нет ни одной строки" }
-  - { name: "--control-h-sm", kind: "токен" }
-  - { name: "--radius-sm", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--surface-recessed", kind: "токен" }
-  - { name: "--accent-text", kind: "токен" }
-  - { name: "--accent-border", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-title-en: "Chip"
-group-en: "Actions"
+  - { name: "inst-chips", kind: "class", doc: "The strip. It carries `role=\"listbox\"` and wraps across the width" }
+  - { name: "inst-chip", kind: "class", doc: "One filter. It carries `role=\"option\"`" }
+  - { name: "aria-orientation", kind: "attribute", value: "horizontal", doc: "On `.inst-chips`. Obligatory: the strip runs sideways, and a `listbox` is vertical by default" }
+  - { name: "aria-multiselectable", kind: "attribute", value: "true", doc: "On `.inst-chips`. It switches several on at once: an arrow then moves only the focus, and space switches on" }
+  - { name: "aria-selected", kind: "attribute", doc: "`true` · `false` on every chip. The carrier of the choice" }
+  - { name: "data-value", kind: "attribute", doc: "On `.inst-chip`. What arrives in the `detail` of `inst:select` instead of the text" }
+  - { name: "aria-disabled", kind: "attribute", value: "true", doc: "The filter is unavailable: there is not one row under it, for instance" }
+  - { name: "--control-h-sm", kind: "token" }
+  - { name: "--radius-sm", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--surface-recessed", kind: "token" }
+  - { name: "--accent-text", kind: "token" }
+  - { name: "--accent-border", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--hairline", kind: "token" }
 ---
 
-Фильтр, который видно и который включают нажатием. Включённых бывает несколько
-сразу — и в этом отличие от [сегментированного контрола](./segmented.md), где
-выбранное значение всегда ровно одно.
+A filter that is visible and is switched on by pressing. Several are on at
+once — and that is the difference from [the segmented
+control](./segmented.md), where exactly one value is always chosen.
 
 ```html preview
 <div class="inst-chips" role="listbox" aria-multiselectable="true"
-     aria-orientation="horizontal" aria-label="Фильтр по состоянию">
-  <span class="inst-chip" role="option" aria-selected="true" tabindex="0">идёт</span>
-  <span class="inst-chip" role="option" aria-selected="true" tabindex="-1">упало</span>
-  <span class="inst-chip" role="option" aria-selected="false" tabindex="-1">в очереди</span>
-  <span class="inst-chip" role="option" aria-selected="false" tabindex="-1">готово</span>
-  <span class="inst-chip" role="option" aria-selected="false" aria-disabled="true" tabindex="-1">отменено</span>
+     aria-orientation="horizontal" aria-label="Filter by state">
+  <span class="inst-chip" role="option" aria-selected="true" tabindex="0">running</span>
+  <span class="inst-chip" role="option" aria-selected="true" tabindex="-1">failed</span>
+  <span class="inst-chip" role="option" aria-selected="false" tabindex="-1">queued</span>
+  <span class="inst-chip" role="option" aria-selected="false" tabindex="-1">done</span>
+  <span class="inst-chip" role="option" aria-selected="false" aria-disabled="true" tabindex="-1">cancelled</span>
 </div>
 ```
 ```js target
 chips.addEventListener('inst:select', (e) => {
-  const on = e.detail.selected ? 'включён' : 'выключен';
-  console.log(`фильтр ${e.detail.value} ${on}`);
+  const on = e.detail.selected ? 'on' : 'off';
+  console.log(`filter ${e.detail.value} ${on}`);
 });
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `role="listbox"` на полосе | да | Без него `role="option"` невалиден, а стрелки не заработают |
-| `aria-label` на полосе | да | «Фильтр по состоянию»: иначе скринридер объявит список без имени |
-| `aria-selected` на каждом чипе | да | Носитель выбора. `false` тоже пишется — отсутствие атрибута значит «выбор здесь не предусмотрен» |
-| `tabindex` | да, начальный | Ноль у одного, `-1` у остальных. Дальше его ведёт [instrument.js](../../foundations/behavior.md). Без бегущего `tabindex` `Tab` пройдёт по каждому чипу и полоса перестанет быть одним контролом |
-| `aria-orientation="horizontal"` | да | Полоса идёт вбок, а `listbox` по умолчанию вертикальный: без атрибута перебор повесился бы на `↑` `↓` при ряде, идущем вправо |
-| `aria-multiselectable="true"` | нет | Ставится, когда включённых бывает несколько. Без него полоса ведёт себя как одиночный список: выбор идёт за фокусом |
+| `role="listbox"` on the strip | yes | Without it `role="option"` is invalid, and the arrows will not work |
+| `aria-label` on the strip | yes | "Filter by state": otherwise a screen reader announces a list with no name |
+| `aria-selected` on every chip | yes | The carrier of the choice. `false` is written too — the absence of the attribute means "no choice is provided here" |
+| `tabindex` | yes, the initial one | Zero on one, `-1` on the rest. After that it is led by [instrument.js](../../foundations/behavior.md). Without a roving `tabindex` `Tab` goes through every chip and the strip stops being one control |
+| `aria-orientation="horizontal"` | yes | The strip runs sideways, and a `listbox` is vertical by default: without the attribute the traversal would hang on `↑` `↓` while the row runs to the right |
+| `aria-multiselectable="true"` | no | Set when several are on at once. Without it the strip behaves as a single-choice list: the selection follows the focus |
 
-Клавиатура: `Tab` — вход в полосу и выход из неё, `←` `→` — перебор, пробел —
-включить или выключить.
+The keyboard: `Tab` enters and leaves the strip, `←` `→` traverse it, space
+switches on and off.
 
-Выбранный чип несёт **два** признака, а не один цвет: цвет подписи и заливку.
-Наведение занимает третий канал — рамку — и потому не спорит с выбором. Подпись
-невыбранного `--text-secondary`, выбранного `--accent-text`, обе проверены на
-4.5:1 в пяти темах и четырёх акцентах. Цель нажатия — высота `--control-h-sm`
-с зазором полосы `--space-2`, проверено `cmd/targets` во всех пятнадцати
-сочетаниях масштаба и плотности.
+A selected chip carries **two** marks rather than one colour: the colour of the
+label and the fill. Hover takes a third channel — the border — and so does not
+argue with the selection. The label of an unselected one is `--text-secondary`,
+of a selected one `--accent-text`, and both are checked at 4.5:1 in five themes
+and four accents. The tap target is the height `--control-h-sm` with the
+strip's gap of `--space-2`, checked by `cmd/targets` in all fifteen
+combinations of scale and density.
 
-Событие `inst:select` приходит с `detail.selected` — включили или выключили.
-Отменённое событие оставляет разметку нетронутой: приложение взяло состояние на
-себя и поставит `aria-selected` само.
+The `inst:select` event arrives with `detail.selected` — switched on or off. A
+cancelled event leaves the markup untouched: the application has taken the
+state on itself and will set `aria-selected` itself.
 
-## Состояния
+## States
 
-Чип **не имеет тона**. Он называет фильтр, а не состояние: покрасив «упало» в
-красный, мы сказали бы, что сам фильтр аварийный. Цвет в чипе означает ровно
-одно — включён он или нет.
+A chip **has no tone**. It names a filter rather than a state: painting
+"failed" red would say the filter itself is the emergency. Colour in a chip
+means exactly one thing — whether it is on.
 
-Три канала, и они не пересекаются, поэтому читаются вместе:
+Three channels, and they do not overlap, so they read together:
 
-| Канал | Что кодирует |
+| Channel | What it encodes |
 |---|---|
-| Цвет подписи | выбран — `--accent-text`, нет — `--text-secondary` |
-| Цвет рамки | под курсором — `--accent-border`, иначе — `--border` |
-| Заливка | есть, если выбран или под курсором |
+| The colour of the label | selected — `--accent-text`, not — `--text-secondary` |
+| The colour of the border | under the cursor — `--accent-border`, otherwise — `--border` |
+| The fill | present when selected or under the cursor |
 
-Начертание при выборе не меняется намеренно: полоса переносится по ширине, и
-потолстевшая подпись переложила бы соседей на другую строку в момент нажатия.
+The weight deliberately does not change on selection: the strip wraps across
+the width, and a label grown thicker would move its neighbours onto another
+line at the moment of the press.
 
 ## JS
 
-Модуль подключается [один раз на страницу](../../foundations/behavior.md) —
-инициализировать компоненты по отдельности не нужно.
+The module is included [once per page](../../foundations/behavior.md) — there
+is no need to initialise the components one by one.
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Примеры на этой странице живые: войдите в полосу `Tab`, дальше `←` и `→`,
-включение — пробелом. Мышью тоже.
+The examples on this page are live: enter the strip with `Tab`, then `←` and
+`→`, switching on with space. With a mouse too.
 
-Полоса объявлена как `role="listbox"`, и `instrument.js` выполняет её контракт:
-`←` `→` между чипами, `Home` и `End`, один `Tab` на всю полосу.
+The strip is declared as `role="listbox"`, and `instrument.js` carries out its
+contract: `←` `→` between the chips, `Home` and `End`, one `Tab` for the whole
+strip.
 
-### Одиночный и множественный
+### Single and multiple
 
-Атрибут `aria-multiselectable` меняет не только объявление, но и поведение
-клавиатуры, и это требование [APG](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/),
-а не решение библиотеки.
+The `aria-multiselectable` attribute changes not only the declaration but the
+behaviour of the keyboard, and that is a requirement of
+[APG](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/) rather than a decision
+of the library.
 
-| | стрелка | пробел |
+| | arrow | space |
 |---|---|---|
-| Без атрибута | двигает фокус **и выбор** | ничего нового |
-| `aria-multiselectable="true"` | двигает **только фокус** | включает и выключает |
+| Without the attribute | moves the focus **and the selection** | nothing new |
+| `aria-multiselectable="true"` | moves **the focus only** | switches on and off |
 
-Иначе пройти полосу стрелками значило бы включить всё, мимо чего прошёл.
+Otherwise going through the strip with arrows would mean switching on
+everything passed along the way.
 
-### События
+### Events
 
-`inst:select` всплывает с переключённого чипа. В `detail.selected` — стало
-включено или выключено; код — на вкладке JS у примера в шапке.
+`inst:select` bubbles from the toggled chip. In `detail.selected` is whether it
+became on or off; the code is on the JS tab of the example in the header.
 
-### Опции
+### Options
 
-| Атрибут | Что делает |
+| Attribute | What it does |
 |---|---|
-| `data-value` | Значение в `detail` вместо подписи чипа |
-| `aria-orientation="vertical"` | Стрелки по вертикали. Для полосы, поставленной столбиком |
+| `data-value` | The value in `detail` instead of the chip's label |
+| `aria-orientation="vertical"` | Arrows on the vertical. For a strip set in a column |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

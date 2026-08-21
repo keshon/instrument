@@ -1,66 +1,64 @@
 ---
-title: Отображение данных
-group: Отображение данных
+title: Data display
+group: Data display
 layout: index
-title-en: "Data display"
-group-en: "Data display"
 ---
 
-Двенадцать компонентов, и выбор между ними почти всегда сводится к одному
-вопросу: **сколько объектов и сравнивают ли их между собой.** Один объект —
-список свойств; много однородных, которые сравнивают, — таблица; много
-разнородных — карточки.
+Twelve components, and the choice between them almost always comes down to one
+question: **how many objects, and are they compared with one another.** One
+object is a property list; many of one kind, compared, is a table; many of
+different kinds is cards.
 
-Сравнение стоит здесь, а не на страницах: «возьмите другое» — это утверждение о
-СОСЕДЯХ, и повторённое двенадцать раз оно расходится с ними по одной строке за
-правку.
+The comparison stands here rather than on the pages: "take instead" is a
+statement about NEIGHBOURS, and repeated twelve times it parts from them by one
+line per edit.
 
-## Как показать данные
+## How to show the data
 
-| Что нужно | Возьмите | Почему не соседа |
+| What is wanted | Take | Why not the neighbour |
 |---|---|---|
-| Свойства **одного** объекта, 3–15 пар | [Список свойств](./kv.md) | В таблице колонки сравнивают, а сравнивать не с чем |
-| Записи, которые сравнивают по одним и тем же полям | [Таблицу](./table.md) | У карточек половина ячеек оказалась бы пустой |
-| Объекты списка со своим заголовком и составом | [Карточки](./card.md) | В таблице разнородное не выстраивается в колонки |
-| Число-герой, за которым следят | [Метрику](./metric.md) | Таблица нужна, когда чисел много и есть разбивка |
-| Разнородные события во времени | [Ленту](./timeline.md) | У лога колонки и моноширинный набор |
-| Обзор месяца с раскладкой по неделям | [Календарь](./calendar.md) | Ввод одной даты — это `<input type="date">` |
-| Команду, фрагмент конфига, разметку | [Код](./code.md) | У лога есть уровень и время, у дифа — стороны |
+| The properties of **one** object, 3–15 pairs | [The property list](./kv.md) | In a table the columns compare, and there is nothing to compare with |
+| Records compared by the same fields | [The table](./table.md) | Half the cells of cards would be empty |
+| Objects of a list with a heading and a make-up of their own | [Cards](./card.md) | In a table things of different kinds do not line up into columns |
+| A hero number people watch | [The metric](./metric.md) | A table is wanted when there are many numbers and a breakdown |
+| Events of different kinds in time | [The timeline](./timeline.md) | A log has columns and monospaced setting |
+| An overview of a month laid out by weeks | [The calendar](./calendar.md) | Entering one date is an `<input type="date">` |
+| A command, a fragment of config, markup | [Code](./code.md) | A log has a level and a time, a diff has sides |
 
-## Чем пометить объект
+## How to mark an object
 
-| Что нужно | Возьмите | Почему не соседа |
+| What is wanted | Take | Why not the neighbour |
 |---|---|---|
-| Состояние из перечислимого набора: идёт, готово, упало | [Бейдж](./badge.md) | Бейдж — словарь библиотеки, тег — слова пользователя |
-| Метку, заведённую пользователем и снимаемую | [Тег](./tag.md) | Бейдж не снимается |
-| Судьбу файла в списке изменений | [Метку изменения](./change.md) | «Удалён» — не оценка, а бейдж с тоном её подразумевает |
-| Опознать человека или агента | [Аватар](./avatar.md) | Аватар отвечает «кто», а не «как дела» |
-| Область приложения с шапкой и прокруткой | [Панель](./panel.md) | Панелей несколько и они не меняются; карточек сколько угодно и они из данных |
+| A state from an enumerable set: running, done, failed | [The badge](./badge.md) | A badge is the library's vocabulary, a tag is the user's words |
+| A label started by the user and removable | [The tag](./tag.md) | A badge is not removed |
+| The fate of a file in a list of changes | [The change mark](./change.md) | "Deleted" is not a judgement, and a badge with a tone implies one |
+| Recognising a person or an agent | [The avatar](./avatar.md) | An avatar answers "who" rather than "how are things" |
+| A region of the application with a header and scrolling | [The panel](./panel.md) | There are a few panels and they do not change; there are any number of cards and they come from data |
 
-## Когда ни один не подходит
+## When none of them fits
 
-| Что нужно | Возьмите | Почему не отсюда |
+| What is wanted | Take | Why not from here |
 |---|---|---|
-| Выбор фильтра | [чип](../actions/chip.md) | Тег показывает уже выбранное, но не переключает |
-| Выбор варианта | [выбираемую карточку](../inputs/choice-card.md) | У карточки нет состояния «выбрана» |
-| Строки с состоянием и прогрессом | [очередь](../../agent/task.md) | Она плоская: на сотне строк рамки превращаются в сетку |
-| Поток строк от машины | [лог](../../agent/log.md) | Уровень, время и хвост, который читают вместо страницы |
-| Изменения в файле | [диф](../../agent/diff.md) | У него две стороны и счёт строк |
-| Прогресс к пределу | [меру](../charts/meter.md) | У метрики нет максимума |
-| Ряд значений во времени | [спарклайн](../charts/sparkline.md) | Метрика показывает одно число |
-| Редактируемые свойства | инспектор (`inst-props`) | Список свойств — только для чтения |
-| Десятки тысяч строк | виртуализация | Её в библиотеке нет, и таблица на них ляжет |
+| Choosing a filter | [a chip](../actions/chip.md) | A tag shows what is already chosen but does not toggle |
+| Choosing an option | [a choice card](../inputs/choice-card.md) | A card has no "chosen" state |
+| Rows with a state and progress | [a queue](../../agent/task.md) | It is flat: at a hundred rows the borders turn into a grid |
+| A stream of rows from a machine | [a log](../../agent/log.md) | A level, a time and a tail people read instead of a page |
+| Changes in a file | [a diff](../../agent/diff.md) | It has two sides and a count of lines |
+| Progress towards a limit | [a meter](../charts/meter.md) | A metric has no maximum |
+| A series of values in time | [a sparkline](../charts/sparkline.md) | A metric shows one number |
+| Editable properties | the inspector (`inst-props`) | A property list is read-only |
+| Tens of thousands of rows | virtualisation | The library has none, and a table will lie down under them |
 
-## Общее для всех двенадцати
+## Common to all twelve
 
-**Тон несёт значение, а не настроение.** Бейдж, метка изменения и точка
-состояния берут тон из словаря; «удалён» при этом не «плохо», и красить его
-как ошибку — врать про смысл.
+**A tone carries meaning rather than a mood.** A badge, a change mark and a
+state dot take their tone from the vocabulary; "deleted" is not "bad", and
+painting it as an error lies about the meaning.
 
-**Рамка объявляет объект.** Четыре метрики без рамок — одна группа; четыре
-метрики в рамках — четыре объекта. Поэтому ряд чисел рамок не получает, а
-карточка получает.
+**A border declares an object.** Four metrics without borders are one group;
+four metrics in borders are four objects. So a row of numbers gets no borders
+and a card does.
 
-**Цифры табличные везде.** `font-variant-numeric: tabular-nums` стоит в базе:
-в инструментальном интерфейсе почти любое число либо стоит в колонке, либо
-обновляется на месте, и пропорциональные цифры дёргают оба случая.
+**The figures are tabular everywhere.** `font-variant-numeric: tabular-nums`
+stands in the base: in a tooling interface almost any number either stands in a
+column or updates in place, and proportional figures tug at both cases.

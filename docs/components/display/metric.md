@@ -1,165 +1,164 @@
 ---
-title: Метрика
-group: Отображение данных
+title: Metric
+group: Data display
 layout: component
 source: src/surfaces.css
 api:
-  - { name: "inst-metric", kind: "класс", doc: "Одна метрика" }
-  - { name: "inst-metric-row", kind: "класс", doc: "Ряд метрик" }
-  - { name: "inst-metric-label", kind: "класс", doc: "Подпись над числом" }
-  - { name: "inst-metric-value", kind: "класс", doc: "Само число" }
-  - { name: "inst-metric-unit", kind: "класс", doc: "Единица внутри числа: мельче и тише" }
-  - { name: "inst-metric-delta", kind: "класс", doc: "Изменение к прошлому периоду" }
-  - { name: "data-dir", kind: "атрибут", value: "up · down", doc: "на `inst-metric-delta`" }
-  - { name: "data-tone", kind: "атрибут", value: "neutral · running · ok · warn · error", doc: "там же" }
-  - { name: "--surface-sunken", kind: "токен" }
-  - { name: "--radius-md", kind: "токен" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--text-2xl", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--tracking-tight", kind: "токен" }
-  - { name: "--tone-ink", kind: "токен" }
-  - { name: "--size-chevron", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-title-en: "Metric"
-group-en: "Data display"
+  - { name: "inst-metric", kind: "class", doc: "One metric" }
+  - { name: "inst-metric-row", kind: "class", doc: "A row of metrics" }
+  - { name: "inst-metric-label", kind: "class", doc: "The label above the number" }
+  - { name: "inst-metric-value", kind: "class", doc: "The number itself" }
+  - { name: "inst-metric-unit", kind: "class", doc: "The unit inside the number: smaller and quieter" }
+  - { name: "inst-metric-delta", kind: "class", doc: "The change against the previous period" }
+  - { name: "data-dir", kind: "attribute", value: "up · down", doc: "on `inst-metric-delta`" }
+  - { name: "data-tone", kind: "attribute", value: "neutral · running · ok · warn · error", doc: "in the same place" }
+  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--radius-md", kind: "token" }
+  - { name: "--pad-panel", kind: "token" }
+  - { name: "--text-2xl", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--tracking-tight", kind: "token" }
+  - { name: "--tone-ink", kind: "token" }
+  - { name: "--size-chevron", kind: "token" }
+  - { name: "--space-2", kind: "token" }
 ---
 
-Одно число, за которым следят. Единица набирается мельче и тише самого числа:
-«42 с» одним кеглем читается как одно слово, а разделив размер и цвет, глаз
-хватает число, и «с» уходит в фон.
+One number people watch. The unit is set smaller and quieter than the number
+itself: "42 s" at one size reads as one word, and once size and colour are
+parted the eye grabs the number and the "s" recedes.
 
 ```html preview
 <div class="inst-metric-row">
   <div class="inst-metric">
-    <div class="inst-metric-label">Прогонов за сутки</div>
+    <div class="inst-metric-label">Runs per day</div>
     <div class="inst-metric-value">128</div>
-    <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% к прошлому</div>
+    <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% against the last</div>
   </div>
   <div class="inst-metric">
-    <div class="inst-metric-label">Среднее время</div>
-    <div class="inst-metric-value">4,2<span class="inst-metric-unit">с</span></div>
+    <div class="inst-metric-label">Average time</div>
+    <div class="inst-metric-value">4.2<span class="inst-metric-unit">s</span></div>
   </div>
   <div class="inst-metric">
-    <div class="inst-metric-label">Предупреждений</div>
+    <div class="inst-metric-label">Warnings</div>
     <div class="inst-metric-value">5</div>
-    <div class="inst-metric-delta" data-dir="up" data-tone="error">5 новых</div>
+    <div class="inst-metric-delta" data-dir="up" data-tone="error">5 new</div>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `inst-metric-label` | да | «128» без ответа на «чего» не является метрикой |
-| Знак изменения словом в дельте | да | Стрелка — второй носитель, а не единственный: «↓ 18%» читается и без тона |
-| Доступное имя из подписи и числа | да, если метрика кликабельна | Иначе прозвучит «128» без ответа на «чего» |
-| `data-dir` и `data-tone` | нет | Без первого дельта идёт без стрелки, без второго — нейтральным цветом |
+| `inst-metric-label` | yes | "128" with no answer to "of what" is not a metric |
+| The sign of the change in words in the delta | yes | The arrow is a second carrier rather than the only one: "↓ 18%" reads without a tone too |
+| An accessible name from the label and the number | yes, if the metric is clickable | Otherwise "128" is spoken with no answer to "of what" |
+| `data-dir` and `data-tone` | no | Without the first the delta goes with no arrow, without the second in a neutral colour |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Подпись и число | Связаны визуально порядком. Если метрика кликабельна, доступное имя должно включать оба — иначе прозвучит «128» без ответа на «чего» |
-| Не только цвет | Дельта несёт стрелку **и** знак изменения в тексте. Читатель, не различающий тон, читает «↓ 18%» |
-| Контраст | Дельта берёт `--tone-ink` — порог текста 4.5:1, а не метки 3:1 |
-| Кегль числа | `--text-2xl` предназначен **только** для числа-героя. Заголовок этого размера кричит громче данных |
-| Табличные цифры | Включены по умолчанию: число, обновляемое на месте, не дёргает соседей |
+| The label and the number | Tied visually by their order. If the metric is clickable, the accessible name has to include both — otherwise "128" is spoken with no answer to "of what" |
+| Not colour alone | The delta carries an arrow **and** the sign of the change in the text. A reader who does not tell tones apart reads "↓ 18%" |
+| Contrast | The delta takes `--tone-ink` — the threshold of text at 4.5:1 rather than of a mark at 3:1 |
+| The size of the number | `--text-2xl` is meant for a hero number **only**. A heading of that size shouts louder than the data |
+| Tabular figures | On by default: a number updating in place does not tug at its neighbours |
 
-## Устройство
+## Anatomy
 
-### Направление и оценка — разные атрибуты
+### Direction and judgement are different attributes
 
-Это главная ловушка компонента. Стрелка вниз у времени прогона — хорошо,
-стрелка вверх у предупреждений — плохо. Атрибут, названный стрелкой и
-означающий оценку, — гарантированная ошибка применения.
+This is the main trap of the component. An arrow down on the time of a run is
+good, an arrow up on warnings is bad. An attribute named after the arrow and
+meaning the judgement is a guaranteed mistake of application.
 
-| Атрибут | Что кодирует | Значения |
+| Attribute | What it encodes | Values |
 |---|---|---|
-| `data-dir` | **Куда** изменилось | `up` · `down` |
-| `data-tone` | **Хорошо это или плохо** | `ok` · `warn` · `error` · `neutral` · `running` |
+| `data-dir` | **Which way** it changed | `up` · `down` |
+| `data-tone` | **Whether that is good or bad** | `ok` · `warn` · `error` · `neutral` · `running` |
 
 ```html preview
 <div class="inst-metric-row">
   <div class="inst-metric">
-    <div class="inst-metric-label">Время прогона</div>
-    <div class="inst-metric-value">42<span class="inst-metric-unit">&nbsp;с</span></div>
-    <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% — упало, и это хорошо</div>
+    <div class="inst-metric-label">Run time</div>
+    <div class="inst-metric-value">42<span class="inst-metric-unit">&nbsp;s</span></div>
+    <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% — it fell, and that is good</div>
   </div>
   <div class="inst-metric">
-    <div class="inst-metric-label">Предупреждений</div>
+    <div class="inst-metric-label">Warnings</div>
     <div class="inst-metric-value">12</div>
-    <div class="inst-metric-delta" data-dir="up" data-tone="error">5 новых — выросло, и это плохо</div>
+    <div class="inst-metric-delta" data-dir="up" data-tone="error">5 new — it grew, and that is bad</div>
   </div>
 </div>
 ```
 
-Оба атрибута необязательны: дельта без `data-dir` идёт без стрелки, без
-`data-tone` — нейтральным цветом.
+Both attributes are optional: a delta with no `data-dir` goes with no arrow,
+with no `data-tone` in a neutral colour.
 
-## Композиции
+## Composition
 
-### Ряд метрик — без рамок
+### A row of metrics — with no borders
 
 ```html preview
 <div class="inst-metric-row">
   <div class="inst-metric">
-    <div class="inst-metric-label">Всего</div>
+    <div class="inst-metric-label">Total</div>
     <div class="inst-metric-value">128</div>
   </div>
   <div class="inst-metric">
-    <div class="inst-metric-label">Успешно</div>
+    <div class="inst-metric-label">Succeeded</div>
     <div class="inst-metric-value">121</div>
   </div>
   <div class="inst-metric">
-    <div class="inst-metric-label">Упало</div>
+    <div class="inst-metric-label">Failed</div>
     <div class="inst-metric-value">7</div>
   </div>
 </div>
 ```
 
-Четыре числа — это **одна** группа. Рамка вокруг каждого превращает их в
-четыре объекта, между которыми читатель начинает искать различия, которых нет.
-Поэтому метрика стоит на приглушённой поверхности, а не в карточке.
+Four numbers are **one** group. A border around each turns them into four
+objects, between which the reader starts looking for differences that are not
+there. So a metric stands on a muted surface rather than in a card.
 
-## Сценарии
+## Patterns
 
-### Сводка прогона
+### The summary of a run
 
-Порознь метрика — просто крупное число; смысл появляется в ряду.
+On its own a metric is just a large number; the meaning appears in a row.
 
-Что видно только здесь:
+What is visible only here:
 
-- **рамок нет ни у одной.** Четыре числа — одна группа; рамка вокруг каждого
-  превратила бы их в четыре объекта, между которыми читатель начнёт искать
-  различия;
-- **единица мельче и тише числа.** «42 с» одним кеглем читается как одно
-  слово; разделив размер и цвет, глаз хватает число, а «с» уходит в фон;
-- **направление и оценка независимы.** Стрелка вниз у времени — хорошо,
-  стрелка вверх у предупреждений — плохо.
+- **none of them has a border.** Four numbers are one group; a border around
+  each would turn them into four objects, between which the reader starts
+  looking for differences;
+- **the unit is smaller and quieter than the number.** "42 s" at one size reads
+  as one word; once size and colour are parted the eye grabs the number and the
+  "s" recedes;
+- **direction and judgement are independent.** An arrow down on the time is
+  good, an arrow up on warnings is bad.
 
 ```html preview context
 <div class="inst-metric-row">
   <div class="inst-metric">
-    <div class="inst-metric-label">Время прогона</div>
-    <div class="inst-metric-value">42<span class="inst-metric-unit">&nbsp;с</span></div>
-    <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% к прошлому</div>
+    <div class="inst-metric-label">Run time</div>
+    <div class="inst-metric-value">42<span class="inst-metric-unit">&nbsp;s</span></div>
+    <div class="inst-metric-delta" data-dir="down" data-tone="ok">18% against the last</div>
   </div>
   <div class="inst-metric">
-    <div class="inst-metric-label">Тесты пройдены</div>
+    <div class="inst-metric-label">Tests passed</div>
     <div class="inst-metric-value">248<span class="inst-metric-unit">/251</span></div>
-    <div class="inst-metric-delta" data-tone="warn">3 падают</div>
+    <div class="inst-metric-delta" data-tone="warn">3 failing</div>
   </div>
   <div class="inst-metric">
-    <div class="inst-metric-label">Размер бандла</div>
-    <div class="inst-metric-value">7,4<span class="inst-metric-unit">&nbsp;МБ</span></div>
-    <div class="inst-metric-delta">без изменений</div>
+    <div class="inst-metric-label">Bundle size</div>
+    <div class="inst-metric-value">7.4<span class="inst-metric-unit">&nbsp;MB</span></div>
+    <div class="inst-metric-delta">unchanged</div>
   </div>
   <div class="inst-metric">
-    <div class="inst-metric-label">Предупреждений</div>
+    <div class="inst-metric-label">Warnings</div>
     <div class="inst-metric-value">12</div>
-    <div class="inst-metric-delta" data-dir="up" data-tone="error">5 новых</div>
+    <div class="inst-metric-delta" data-dir="up" data-tone="error">5 new</div>
   </div>
 </div>
 ```
@@ -169,7 +168,7 @@ group-en: "Data display"
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

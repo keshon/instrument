@@ -1,195 +1,196 @@
 ---
-title: Меню
-group: Оверлеи
+title: Menu
+group: Overlays
 layout: component
 source: src/overlay.css
-js: Стрелки и бегущий tabindex делает `instrument.js`. Открытие и закрытие берёт на себя Popover API
+js: The arrows and the roving tabindex are done by `instrument.js`. Opening and closing are taken on by the Popover API
 api:
-  - { name: "inst-menu", kind: "класс", doc: "Контейнер. Колонка пунктов с зазором `--space-1`" }
-  - { name: "inst-menu-item", kind: "класс", doc: "Пункт: `<button>` или `<a>`" }
-  - { name: "inst-menu-item-main", kind: "класс", doc: "Обёртка названия и пояснения. Её наличие делает пункт двухстрочным — модификатора для этого нет" }
-  - { name: "inst-menu-item-sub", kind: "класс", doc: "Пояснение под названием. Для меню выбора, где одно название ни о чём не говорит" }
-  - { name: "inst-menu-label", kind: "класс", doc: "Подпись группы. Не интерактивна" }
-  - { name: "inst-menu-sep", kind: "класс", doc: "Разделитель толщиной в волосок" }
-  - { name: "inst-menu-shortcut", kind: "класс", doc: "Горячая клавиша у дальнего края пункта" }
-  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт. На пункте осмыслен только `error`" }
-  - { name: "aria-checked", kind: "атрибут", doc: "`true` — пункт отмечен" }
-  - { name: "aria-current", kind: "атрибут", doc: "Любое значение, кроме `false`" }
-  - { name: "aria-disabled", kind: "атрибут", doc: "`true` — пункт недоступен" }
-  - { name: "--space-1", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--space-6", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--control-h-sm", kind: "токен" }
-  - { name: "--radius-sm", kind: "токен" }
-  - { name: "--text-2xs", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--border-subtle", kind: "токен" }
-  - { name: "--surface-hover", kind: "токен" }
-  - { name: "--accent-text", kind: "токен" }
-  - { name: "--err-text", kind: "токен" }
-  - { name: "--err-bg", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-  - { name: "--leading-ui", kind: "токен" }
-title-en: "Menu"
-group-en: "Overlays"
+  - { name: "inst-menu", kind: "class", doc: "The container. A column of items with a gap of `--space-1`" }
+  - { name: "inst-menu-item", kind: "class", doc: "An item: a `<button>` or an `<a>`" }
+  - { name: "inst-menu-item-main", kind: "class", doc: "The wrapper of the name and the explanation. Its presence makes the item two lines — there is no modifier for that" }
+  - { name: "inst-menu-item-sub", kind: "class", doc: "The explanation under the name. For a menu of choice, where a name alone says nothing" }
+  - { name: "inst-menu-label", kind: "class", doc: "The label of a group. Not interactive" }
+  - { name: "inst-menu-sep", kind: "class", doc: "A divider a hairline thick" }
+  - { name: "inst-menu-shortcut", kind: "class", doc: "A hotkey at the far edge of an item" }
+  - { name: "data-tone", kind: "attribute", doc: "`neutral` `running` `ok` `warn` `error`. Closed. On an item only `error` makes sense" }
+  - { name: "aria-checked", kind: "attribute", doc: "`true` — the item is checked" }
+  - { name: "aria-current", kind: "attribute", doc: "Any value but `false`" }
+  - { name: "aria-disabled", kind: "attribute", doc: "`true` — the item is unavailable" }
+  - { name: "--space-1", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--space-6", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--control-h-sm", kind: "token" }
+  - { name: "--radius-sm", kind: "token" }
+  - { name: "--text-2xs", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--border-subtle", kind: "token" }
+  - { name: "--surface-hover", kind: "token" }
+  - { name: "--accent-text", kind: "token" }
+  - { name: "--err-text", kind: "token" }
+  - { name: "--err-bg", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
+  - { name: "--leading-ui", kind: "token" }
 ---
 
-Список действий над объектом. Меню — это **содержимое**
-[поповера](./popover.md), а не самостоятельный оверлей: верхний слой,
-закрытие и фокус приходят оттуда.
+A list of actions on an object. A menu is the **content** of
+[a popover](./popover.md) rather than an overlay in its own right: the top
+layer, the closing and the focus come from there.
 
 ```html preview
-<button class="inst-btn" type="button" popovertarget="menu-run">Действия</button>
+<button class="inst-btn" type="button" popovertarget="menu-run">Actions</button>
 <div class="inst-popover inst-popover--anchored" id="menu-run" popover>
   <div class="inst-menu" role="menu">
-    <span class="inst-menu-label">Прогон #4127</span>
+    <span class="inst-menu-label">Run #4127</span>
     <button class="inst-menu-item" type="button" role="menuitem">
-      <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Перезапустить
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Restart
       <span class="inst-menu-shortcut"><kbd>R</kbd></span></button>
     <button class="inst-menu-item" type="button" role="menuitem">
-      <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>Скопировать id</button>
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>Copy the id</button>
     <button class="inst-menu-item" type="button" role="menuitem" aria-checked="true">
-      <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>Показывать лог</button>
+      <svg class="inst-icon" aria-hidden="true"><use href="#i-list"/></svg>Show the log</button>
     <span class="inst-menu-sep"></span>
-    <button class="inst-menu-item" type="button" role="menuitem" data-tone="error">Удалить прогон</button>
-    <button class="inst-menu-item" type="button" role="menuitem" aria-disabled="true">Архивировать</button>
+    <button class="inst-menu-item" type="button" role="menuitem" data-tone="error">Delete the run</button>
+    <button class="inst-menu-item" type="button" role="menuitem" aria-disabled="true">Archive</button>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `role="menu"` на контейнере | да | Без него `role="menuitem"` невалиден |
-| `role="menuitem"` на пунктах | да | Библиотека рисует состояние, но не выдумывает роль |
-| `type="button"` у пунктов-кнопок | да | Иначе внутри формы меню её отправит |
-| `aria-hidden="true"` у иконки | да | Имя пункту даёт подпись, а не иконка |
-| Обёртка [поповера](./popover.md) | да | Меню само по себе не всплывает: верхний слой и закрытие приходят от `popover` |
+| A `role="menu"` on the container | yes | Without it a `role="menuitem"` is invalid |
+| A `role="menuitem"` on the items | yes | The library draws the state but does not invent the role |
+| A `type="button"` on items that are buttons | yes | Otherwise inside a form the menu will submit it |
+| An `aria-hidden="true"` on the icon | yes | The name of an item is given by the label rather than by the icon |
+| The wrapper of [a popover](./popover.md) | yes | A menu does not pop up by itself: the top layer and the closing come from the `popover` |
 
 :::warn
-Перемещение стрелками и бегущий `tabindex` выполняет
-[`instrument.js`](../../foundations/behavior.md). Открытие, закрытие по `Escape` и по
-клику мимо, возврат фокуса на кнопку скрипта не требуют вовсе — их берёт на
-себя Popover API.
+Moving by arrows and the roving `tabindex` are done by
+[`instrument.js`](../../foundations/behavior.md). Opening, closing on `Escape`
+and on a click outside, and returning the focus to the button call for no
+script at all — they are taken on by the Popover API.
 :::
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Клавиатура | `Tab` до кнопки, `Enter` — открыть, `Escape` — закрыть. **Стрелки внутри меню ставит приложение**: без них меню проходится табом, что для длинного списка мучительно |
-| Роли | `role="menu"` + `role="menuitem"` обязательны. `aria-checked` без `role="menuitem"` не озвучивается |
-| Недоступный пункт | `aria-disabled="true"`, а не `disabled`: пункт остаётся в обходе стрелками и получает бегущий `tabindex`, но не выбирается — ни щелчок, ни `Enter` не зовут приложение ([поведение](../../foundations/behavior.md)). `disabled` убирает пункт из обхода силами платформы, и о действии не узнают вовсе |
-| Цвет не единственный носитель | Разрушительный пункт красный **и** назван словом «Удалить». Отмеченный несёт `aria-checked`, а не только цвет |
-| Цель нажатия | Пункт высотой `--control-h-sm` во всю ширину поповера: попасть мышью проще, чем в текст |
-| Перенос | `white-space: nowrap` — пункт не переносится. Длинную подпись сокращайте, а не надейтесь на перенос |
+| The keyboard | `Tab` to the button, `Enter` to open, `Escape` to close. **The arrows inside the menu are set by the application**: without them a menu is traversed by tab, which for a long list is agony |
+| The roles | A `role="menu"` + a `role="menuitem"` are required. An `aria-checked` with no `role="menuitem"` is not spoken |
+| An unavailable item | `aria-disabled="true"` rather than `disabled`: the item stays in the arrow traversal and gets a roving `tabindex` but is not chosen — neither a click nor `Enter` calls the application ([behaviour](../../foundations/behavior.md)). A `disabled` removes the item from the traversal by the platform's own means, and the action is never learned of |
+| Colour is not the only carrier | A destructive item is red **and** named by the word "Delete". A checked one carries an `aria-checked` rather than a colour alone |
+| The tap target | An item of height `--control-h-sm` across the whole width of the popover: it is easier to hit with a mouse than the text |
+| Wrapping | `white-space: nowrap` — an item does not wrap. Shorten a long label rather than hoping for a wrap |
 
-## Устройство
+## Anatomy
 
-Подпись группы, разделитель и горячая клавиша — три разные работы, и путать их
-дорого.
+The label of a group, the divider and the hotkey are three different jobs, and
+confusing them is expensive.
 
 ```html
 <div class="inst-menu" role="menu">
-  <span class="inst-menu-label">Прогон #4127</span>
-  <button class="inst-menu-item" type="button" role="menuitem">Перезапустить
+  <span class="inst-menu-label">Run #4127</span>
+  <button class="inst-menu-item" type="button" role="menuitem">Restart
     <span class="inst-menu-shortcut"><kbd>R</kbd></span></button>
   <span class="inst-menu-sep"></span>
-  <button class="inst-menu-item" type="button" role="menuitem">Экспорт</button>
+  <button class="inst-menu-item" type="button" role="menuitem">Export</button>
 </div>
 ```
 
-| Класс | Работа |
+| Class | The work |
 |---|---|
-| `inst-menu-label` | Подпись группы. Не интерактивна и не попадает в обход |
-| `inst-menu-item` | Пункт. `<button>` для действия, `<a>` для перехода |
-| `inst-menu-sep` | Разделитель групп. `<span>`, а не `<hr>`: он оформление, и озвучивать его нечем |
-| `inst-menu-shortcut` | Горячая клавиша у дальнего края |
+| `inst-menu-label` | The label of a group. Not interactive and not in the traversal |
+| `inst-menu-item` | An item. A `<button>` for an action, an `<a>` for a transition |
+| `inst-menu-sep` | The divider between groups. A `<span>` rather than an `<hr>`: it is styling, and there is nothing to speak |
+| `inst-menu-shortcut` | A hotkey at the far edge |
 
-Горячая клавиша прижимается к дальнему краю и тише подписи: она **подсказка, а
-не второе название пункта**.
+A hotkey is pushed to the far edge and is quieter than the label: it is a
+**hint rather than a second name of the item**.
 
-Пункт — это `<button>` или `<a>`, смотря по работе. Действие — кнопка, переход
-по адресу — ссылка: кнопка, ведущая на адрес, ломает средний клик и «открыть в
-новой вкладке».
+An item is a `<button>` or an `<a>`, by the work. An action is a button, a
+transition to an address a link: a button leading to an address breaks the
+middle click and "open in a new tab".
 
-## Состояния
+## States
 
 ```html preview
 <div class="inst-popover" popover id="menu-kinds">
   <div class="inst-menu" role="menu">
-    <span class="inst-menu-label">Вид</span>
-    <button class="inst-menu-item" type="button" role="menuitem">Обычный</button>
-    <button class="inst-menu-item" type="button" role="menuitem" aria-checked="true">Отмеченный</button>
-    <a class="inst-menu-item" href="#menu" role="menuitem" aria-current="page">Текущий адрес</a>
+    <span class="inst-menu-label">Kind</span>
+    <button class="inst-menu-item" type="button" role="menuitem">Ordinary</button>
+    <button class="inst-menu-item" type="button" role="menuitem" aria-checked="true">Checked</button>
+    <a class="inst-menu-item" href="#menu" role="menuitem" aria-current="page">The current address</a>
     <span class="inst-menu-sep"></span>
-    <button class="inst-menu-item" type="button" role="menuitem" data-tone="error">Разрушительный</button>
-    <button class="inst-menu-item" type="button" role="menuitem" aria-disabled="true">Недоступный</button>
+    <button class="inst-menu-item" type="button" role="menuitem" data-tone="error">Destructive</button>
+    <button class="inst-menu-item" type="button" role="menuitem" aria-disabled="true">Unavailable</button>
   </div>
 </div>
-<button class="inst-btn" type="button" popovertarget="menu-kinds">Виды пунктов</button>
+<button class="inst-btn" type="button" popovertarget="menu-kinds">Kinds of item</button>
 ```
 
-Пункт с пояснением. Обёртка `.inst-menu-item-main` делает пункт двухстрочным
-сама — модификатора для этого нет, потому что это не выбор автора разметки, а
-следствие того, что внутри. Меню выбора без пояснения превращается в список
-кодовых слов.
+An item with an explanation. The `.inst-menu-item-main` wrapper makes the item
+two lines by itself — there is no modifier for that, because it is not a choice
+of the author of the markup but a consequence of what is inside. A menu of
+choice with no explanation turns into a list of code words.
 
 ```html preview
 <div class="inst-popover" popover id="menu-model">
   <div class="inst-menu" role="menu">
     <button class="inst-menu-item" type="button" role="menuitem">
-      <span class="inst-menu-item-main">Быстрый
-        <span class="inst-menu-item-sub">Для коротких прогонов</span></span></button>
+      <span class="inst-menu-item-main">Fast
+        <span class="inst-menu-item-sub">For short runs</span></span></button>
     <button class="inst-menu-item" type="button" role="menuitem" aria-checked="true">
-      <span class="inst-menu-item-main">Полный
-        <span class="inst-menu-item-sub">Для сложных задач</span></span></button>
+      <span class="inst-menu-item-main">Full
+        <span class="inst-menu-item-sub">For complex tasks</span></span></button>
     <button class="inst-menu-item" type="button" role="menuitem">
-      <span class="inst-menu-item-main">Экономный
-        <span class="inst-menu-item-sub">Дешевле всего на повседневном</span></span></button>
+      <span class="inst-menu-item-main">Thrifty
+        <span class="inst-menu-item-sub">Cheapest of all on everyday work</span></span></button>
   </div>
 </div>
-<button class="inst-btn" type="button" popovertarget="menu-model">Режим прогона</button>
+<button class="inst-btn" type="button" popovertarget="menu-model">Run mode</button>
 ```
 
-| Состояние пункта | Как ставится | Что происходит |
+| The state of an item | How it is set | What happens |
 |---|---|---|
-| обычный | — | `--text-primary` |
-| наведение | `:hover` | `--surface-hover` |
-| отмеченный | `aria-checked="true"` | `--accent-text` и средняя насыщенность |
-| текущий | `aria-current` (любое значение, кроме `false`) | То же оформление, что у отмеченного |
-| разрушительный | `data-tone="error"` | `--err-text`, а на наведении `--err-bg` |
-| недоступный | `aria-disabled="true"` или `disabled` | Прозрачность `0.5`, мышь снята |
+| ordinary | — | `--text-primary` |
+| hover | `:hover` | `--surface-hover` |
+| checked | `aria-checked="true"` | `--accent-text` and a medium weight |
+| current | `aria-current` (any value but `false`) | The same styling as a checked one |
+| destructive | `data-tone="error"` | `--err-text`, and `--err-bg` on hover |
+| unavailable | `aria-disabled="true"` or `disabled` | An opacity of `0.5`, the mouse removed |
 
 ## JS
 
-Подключите модуль один раз на страницу — инициализировать компоненты по
-отдельности не нужно, `instrument.js` работает делегированием и видит узлы, пришедшие
-позже.
+Include the module once per page — there is no need to initialise the
+components one by one, `instrument.js` works by delegation and sees nodes that
+arrived later.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Пример в шапке живой: откройте меню и пройдите по пунктам стрелками.
+The example in the header is live: open the menu and go through the items with
+the arrows.
 
-Стрелки между пунктами, `Home`, `End`, перебор по кругу и бегущий `tabindex`.
-Выделения у пункта нет и не будет: пункт меню — действие, а не выбор, и
-`aria-selected` на нём соврал бы вспомогательной технологии.
+Arrows between the items, `Home`, `End`, a traversal that wraps and a roving
+`tabindex`. An item has no selection and will have none: a menu item is an
+action rather than a choice, and an `aria-selected` on it would lie to
+assistive technology.
 
-Открытие, закрытие, возврат фокуса и закрытие по `Escape` берёт на себя
-Popover API — скрипта они не требуют.
+Opening, closing, returning the focus and closing on `Escape` are taken on by
+the Popover API — they call for no script.
 
-### События
+### Events
 
-Своих нет. Пункт — это `<button>`, и его `click` работает так же, как везде.
+There are none of its own. An item is a `<button>`, and its `click` works the
+same way as everywhere.
 
 ```js
 menu.addEventListener('click', (e) => {
@@ -200,15 +201,15 @@ menu.addEventListener('click', (e) => {
 });
 ```
 
-Меню закрывается **до** действия: действие может открыть модалку, и меню
-осталось бы висеть поверх неё.
+The menu is closed **before** the action: the action may open a modal, and the
+menu would be left hanging over it.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

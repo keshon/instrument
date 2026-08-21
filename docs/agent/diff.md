@@ -1,36 +1,34 @@
 ---
-title: Диф
-group: Агентный слой
+title: Diff
+group: Agent layer
 layout: component
 source: src/agent.css
 api:
-  - { name: "inst-diff", kind: "класс", doc: "Контейнер" }
-  - { name: "inst-diff--flush", kind: "модификатор", doc: "Без рамки и радиуса: диф занимает панель целиком, и своя рамка легла бы второй линией поверх её границы" }
-  - { name: "inst-diff-head", kind: "класс", doc: "Шапка: путь и статистика" }
-  - { name: "inst-diff-path", kind: "класс", doc: "Путь к файлу. Обрезается с конца" }
-  - { name: "inst-diff-stat", kind: "класс", doc: "`+N` / `−M`" }
-  - { name: "inst-diff-body", kind: "класс", doc: "Тело, прокручивается" }
-  - { name: "inst-diff-line", kind: "класс", doc: "Строка" }
-  - { name: "inst-diff-num", kind: "класс", doc: "Номер строки. Не выделяется мышью" }
-  - { name: "inst-diff-code", kind: "класс", doc: "Сам код" }
-  - { name: "inst-diff-fold", kind: "класс", doc: "Свёрнутый участок" }
-  - { name: "data-kind", kind: "атрибут", value: "add · del", doc: "на `inst-diff-line` и на числах в `inst-diff-stat`" }
-  - { name: "--font-mono", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--ok-bg", kind: "токен" }
-  - { name: "--ok-text", kind: "токен" }
-  - { name: "--err-bg", kind: "токен" }
-  - { name: "--err-text", kind: "токен" }
-  - { name: "--border-subtle", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--radius-lg", kind: "токен" }
-  - { name: "--pad-cell-x", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-title-en: "Diff"
-group-en: "Agent layer"
+  - { name: "inst-diff", kind: "class", doc: "The container" }
+  - { name: "inst-diff--flush", kind: "modifier", doc: "With no border and no radius: a diff takes the panel entire, and a border of its own would lie as a second line over its boundary" }
+  - { name: "inst-diff-head", kind: "class", doc: "The header: the path and the statistics" }
+  - { name: "inst-diff-path", kind: "class", doc: "The path to the file. Truncated from the end" }
+  - { name: "inst-diff-stat", kind: "class", doc: "`+N` / `−M`" }
+  - { name: "inst-diff-body", kind: "class", doc: "The body; it scrolls" }
+  - { name: "inst-diff-line", kind: "class", doc: "A line" }
+  - { name: "inst-diff-num", kind: "class", doc: "The line number. Not selected by the mouse" }
+  - { name: "inst-diff-code", kind: "class", doc: "The code itself" }
+  - { name: "inst-diff-fold", kind: "class", doc: "A folded stretch" }
+  - { name: "data-kind", kind: "attribute", value: "add · del", doc: "on `inst-diff-line` and on the numbers in `inst-diff-stat`" }
+  - { name: "--font-mono", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--ok-bg", kind: "token" }
+  - { name: "--ok-text", kind: "token" }
+  - { name: "--err-bg", kind: "token" }
+  - { name: "--err-text", kind: "token" }
+  - { name: "--border-subtle", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--radius-lg", kind: "token" }
+  - { name: "--pad-cell-x", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
 ---
 
-Основной артефакт работы агента: что именно он изменил в файле.
+The main artefact of an agent's work: what exactly it changed in a file.
 
 ```html preview
 <div class="inst-diff">
@@ -42,74 +40,76 @@ group-en: "Agent layer"
     <div class="inst-diff-line"><span class="inst-diff-num">41</span><span class="inst-diff-code">const size = 256;</span></div>
     <div class="inst-diff-line" data-kind="del"><span class="inst-diff-num">42</span><span class="inst-diff-code">let seed = 0;</span></div>
     <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num">42</span><span class="inst-diff-code">let seed = Date.now();</span></div>
-    <div class="inst-diff-fold">— пропущено 18 строк —</div>
+    <div class="inst-diff-fold">— 18 lines skipped —</div>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `data-kind` на строке | да | Носитель категории. Строка без него — контекст, и это верное умолчание |
-| `inst-diff-num` отдельным узлом | да | Номер не выделяется мышью: скопированный диф иначе приходит вперемешку с номерами строк |
-| `inst-diff-code` вокруг кода | да | Только он держит моноширинный набор и не переносит строку |
-| `inst-diff-fold` на месте пропуска | нет, но обычно да | Свёрнутый участок — данные о том, что показано не всё |
+| A `data-kind` on a line | yes | The carrier of the category. A line without one is context, and that is the right default |
+| An `inst-diff-num` as a separate node | yes | The number is not selected by the mouse: otherwise a copied diff arrives mixed up with line numbers |
+| An `inst-diff-code` around the code | yes | Only it holds the monospaced setting and does not wrap the line |
+| An `inst-diff-fold` in the place of a gap | no, but usually yes | A folded stretch is data about not everything being shown |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Не только цвет | Знак `+`/`−` в первой колонке. Это главное требование компонента |
-| Номера строк | `user-select: none` — при копировании фрагмента номера не попадают в буфер вместе с кодом |
-| Копирование | Знак — псевдоэлемент, поэтому копируется чистый код, а не `+const size` |
-| Путь к файлу | Обрезается с конца многоточием. Полный путь обязан оставаться в `title` — иначе диф безымянен |
-| Прокрутка | Тело прокручивается по горизонтали и должно быть достижимо с клавиатуры |
-| Печать | Тонированные фоны в `@media print` заменяются на печатаемые, знак остаётся: на бумаге тон исчезает вовсе |
+| Not colour alone | A `+`/`−` sign in the first column. That is the main requirement of the component |
+| Line numbers | `user-select: none` — when a fragment is copied the numbers do not reach the clipboard along with the code |
+| Copying | The sign is a pseudo-element, so what is copied is clean code rather than `+const size` |
+| The path to the file | Truncated from the end with an ellipsis. The full path has to stay in a `title` — otherwise the diff has no name |
+| Scrolling | The body scrolls horizontally and has to be reachable from the keyboard |
+| Print | The tinted backgrounds are replaced with printable ones in `@media print`, and the sign stays: on paper the tone disappears altogether |
 
-## Устройство
+## Anatomy
 
-Строка добавления несёт `+`, строка удаления `−`. Это выполнение закона библиотеки:
-**цвет не имеет права быть единственным носителем состояния**. Диф, где
-изменения различаются только зелёным и красным фоном, для дальтоника — и на
-чёрно-белой печати — превращается в сплошной текст.
+A line of addition carries a `+`, a line of deletion a `−`. That is the
+library's law being carried out: **colour has no right to be the only carrier
+of a state**. A diff where the changes are told apart by green and red
+backgrounds alone turns into a continuous text for somebody colour-blind — and
+in black-and-white print.
 
-Знак рисуется псевдоэлементом из `data-kind`, поэтому он не попадает в
-выделение и не копируется вместе с кодом.
+The sign is drawn by a pseudo-element from `data-kind`, so it does not reach a
+selection and is not copied along with the code.
 
-## Варианты
+## Variants
 
 ```html
 <div class="inst-diff-line" data-kind="add">…</div>
 ```
 
-| Значение | Что значит |
+| Value | What it means |
 |---|---|
-| нет атрибута | Строка контекста, не изменялась |
-| `add` | Добавлена |
-| `del` | Удалена |
+| no attribute | A line of context, unchanged |
+| `add` | Added |
+| `del` | Deleted |
 
-Добавленная строка **не находится в состоянии «ok»** — она относится к виду
-«добавление». Поэтому здесь свой атрибут, а не `data-tone`: тон соврал бы про
-смысл. Тот же `data-kind` несут и числа в шапке дифа — одна ось, одна запись.
+An added line **is not in the "ok" state** — it belongs to the kind
+"addition". So it has an attribute of its own rather than a `data-tone`: a tone
+would lie about the meaning. The numbers in the header of a diff carry the same
+`data-kind` — one axis, one record.
 
-## Поведение
+## Behavior
 
 ```html
-<div class="inst-diff-fold">— пропущено 18 строк —</div>
+<div class="inst-diff-fold">— 18 lines skipped —</div>
 ```
 
-Как и свёрнутый вывод шага, участок **называет своё число словами**. Молча
-пропустить строки — то же враньё про объём.
+As with the folded output of a step, a stretch **names its number in words**.
+Skipping lines in silence is the same lie about the volume.
 
-## Сценарии
+## Patterns
 
-Диф с шапкой, статистикой и свёрнутым участком.
+A diff with a header, statistics and a folded stretch.
 
-Что проверить руками: **выделите несколько строк и скопируйте**. В буфер
-уйдёт чистый код — без номеров строк и без знаков `+` и `−`. Номера несут
-`user-select: none`, знак рисуется псевдоэлементом. Диф, из которого нельзя
-скопировать код, бесполезен в тот момент, когда он нужен.
+What to check by hand: **select several lines and copy them**. What reaches the
+clipboard is clean code — with no line numbers and no `+` and `−` signs. The
+numbers carry `user-select: none` and the sign is drawn by a pseudo-element. A
+diff whose code cannot be copied is useless at the moment it is wanted.
 
 ```html preview context
 <div class="inst-diff inst-diff--flush">
@@ -118,12 +118,12 @@ group-en: "Agent layer"
     <span class="inst-diff-stat"><span data-kind="add">+3</span> <span data-kind="del">−2</span></span>
   </div>
   <div class="inst-diff-body">
-    <div class="inst-diff-fold">свёрнуто 118 строк</div>
+    <div class="inst-diff-fold">118 lines folded</div>
     <div class="inst-diff-line"><span class="inst-diff-num">119</span><span class="inst-diff-num">119</span><span class="inst-diff-code">  const seed = opts.seed ?? 0;</span></div>
     <div class="inst-diff-line" data-kind="del"><span class="inst-diff-num">120</span><span class="inst-diff-num"></span><span class="inst-diff-code">  const noise = simplex2(seed);</span></div>
     <div class="inst-diff-line" data-kind="del"><span class="inst-diff-num">121</span><span class="inst-diff-num"></span><span class="inst-diff-code">  if (noise &gt; 0.5) return TUNDRA;</span></div>
     <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">120</span><span class="inst-diff-code">  const noise = simplex2(seed, { octaves: 3 });</span></div>
-    <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">121</span><span class="inst-diff-code">  // тундра и степь перекрывались в 12 клетках — разводим по высоте</span></div>
+    <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">121</span><span class="inst-diff-code">  // tundra and steppe overlapped in 12 cells — parting them by height</span></div>
     <div class="inst-diff-line" data-kind="add"><span class="inst-diff-num"></span><span class="inst-diff-num">122</span><span class="inst-diff-code">  if (noise &gt; 0.5 &amp;&amp; height &gt; 0.72) return TUNDRA;</span></div>
     <div class="inst-diff-line"><span class="inst-diff-num">122</span><span class="inst-diff-num">123</span><span class="inst-diff-code">  return STEPPE;</span></div>
   </div>
@@ -135,7 +135,7 @@ group-en: "Agent layer"
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

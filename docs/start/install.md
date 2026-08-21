@@ -1,17 +1,15 @@
 ---
-title: Установка
-group: Начало
+title: Install
+group: Start
 source: dist/instrument.min.css
-title-en: "Install"
-group-en: "Start"
 ---
 
-Библиотека подключается двумя тегами и не требует сборки. Ниже — целая
-страница, которую можно скопировать и открыть.
+The library is added with two tags and needs no build step. Below is a whole
+page you can copy and open.
 
-## Установка
+## Install
 
-Три способа. Файл во всех трёх один и тот же.
+Three ways. The file is the same in all three.
 
 **npm**
 
@@ -21,11 +19,12 @@ npm i @keshon/instrument
 
 ```js
 import '@keshon/instrument/min';        // dist/instrument.min.css
-import '@keshon/instrument/js';         // поведение, по желанию
+import '@keshon/instrument/js';         // behaviour, optional
 ```
 
-Пакет также экспортирует несжатый CSS (`@keshon/instrument`), спрайт
-(`@keshon/instrument/sprite.svg`) и исходники (`@keshon/instrument/src/*`).
+The package also exports the uncompressed CSS (`@keshon/instrument`), the
+sprite (`@keshon/instrument/sprite.svg`) and the sources
+(`@keshon/instrument/src/*`).
 
 **CDN**
 
@@ -33,84 +32,86 @@ import '@keshon/instrument/js';         // поведение, по желани
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.7.0/dist/instrument.min.css">
 ```
 
-Версия в адресе указывается точно. `@latest` кэшируется на неделю и может
-обновиться в произвольный момент.
+Name the version exactly. `@latest` is cached for a week and may update at an
+arbitrary moment.
 
-**Файлом**
+**As a file**
 
 ```html
 <link rel="stylesheet" href="instrument.min.css">
 ```
 
-Возьмите `dist/instrument.min.css` — 108 КБ, 17 КБ в gzip. Это вся библиотека:
-токены, пять тем, пять масштабов, три плотности, все компоненты. `dist/instrument.css` — то же
-самое без сжатия и с комментариями.
+Take `dist/instrument.min.css` — 108 KB, 17 KB gzipped. That is the whole
+library: the tokens, five themes, five scales, three densities, every
+component. `dist/instrument.css` is the same thing uncompressed and with the
+comments.
 
-## Иконки
+## Icons
 
-Иконка рисуется ссылкой на символ: `<use href="#i-refresh">`. Символы должны
-быть в самом документе: ссылка вида `href="https://cdn…/sprite.svg#i-refresh"`
-подчиняется правилу одного источника и не отрисуется — без ошибки в консоли.
+An icon is drawn by a reference to a symbol: `<use href="#i-refresh">`. The
+symbols have to be in the document itself: a reference of the form
+`href="https://cdn…/sprite.svg#i-refresh"` is subject to the same-origin rule
+and will not render — with no error in the console.
 
-Вставьте содержимое `assets/sprite.svg` первым элементом внутри `<body>` — один
-раз на страницу.
+Paste the contents of `assets/sprite.svg` as the first element inside `<body>`
+— once per page.
 
 ```html
 <body>
   <svg class="inst-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-    <!-- сюда содержимое assets/sprite.svg -->
+    <!-- the contents of assets/sprite.svg go here -->
   </svg>
 ```
 
-Без спрайта работает всё остальное, иконки просто не рисуются. Полный список из
-101 символ — на странице [иконок](../foundations/icons.md).
+Without the sprite everything else works, the icons simply are not drawn. The
+full list of 101 symbols is on the [icons](../foundations/icons.md) page.
 
-## Поведение с клавиатуры
+## Keyboard behaviour
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-Отдельный файл и по желанию. Он выполняет то, что библиотека обещает разметкой:
-стрелки в списках и вкладках, копирование, снятие тега, перетаскивание оси.
-Оформление он не трогает. Подробности — в
-[поведении](../foundations/behavior.md).
+A separate file, and optional. It carries out what the library promises by its
+markup: arrows in lists and tabs, copying, removing a tag, dragging an axis. It
+does not touch the styling. The details are in
+[behaviour](../foundations/behavior.md).
 
-## Целая страница
+## A whole page
 
 ```html
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Моё приложение</title>
+  <title>My application</title>
   <link rel="stylesheet" href="instrument.min.css">
   <script type="module" src="instrument.js"></script>
 </head>
 <body>
   <div class="inst-shell">
     <header class="inst-shell-header">
-      <strong>Моё приложение</strong>
-      <button class="inst-btn inst-btn--primary" type="button">Запустить</button>
+      <strong>My application</strong>
+      <button class="inst-btn inst-btn--primary" type="button">Run</button>
     </header>
 
     <main class="inst-shell-main">
       <div class="inst-container">
         <div class="inst-panel">
           <div class="inst-panel-header">
-            <span class="inst-panel-title">Очередь</span>
+            <span class="inst-panel-title">Queue</span>
           </div>
           <div class="inst-panel-body">
-            <div role="listbox" aria-label="Очередь задач">
+            <div role="listbox" aria-label="Task queue">
               <div class="inst-task" role="option" data-state="running"
                    aria-selected="true" tabindex="0">
                 <span class="inst-task-gutter"><span class="inst-dot"></span></span>
                 <span class="inst-task-main">
-                  <span class="inst-task-title">Разбор карты высот</span>
+                  <span class="inst-task-title">Parsing the heightmap</span>
                   <span class="inst-task-sub">terrain/heightmap.ts</span>
                 </span>
-                <span class="inst-task-meta">2,1 с</span>
+                <span class="inst-task-meta">2.1 s</span>
               </div>
             </div>
           </div>
@@ -122,27 +123,27 @@ import '@keshon/instrument/js';         // поведение, по желани
 </html>
 ```
 
-Вот как это выглядит:
+Here is what it looks like:
 
 ```html preview context
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Очередь</span>
+    <span class="inst-panel-title">Queue</span>
   </div>
   <div class="inst-panel-body">
-    <div role="listbox" aria-label="Очередь задач">
+    <div role="listbox" aria-label="Task queue">
       <div class="inst-task" role="option" data-state="running" aria-selected="true" tabindex="0">
         <span class="inst-task-gutter"><span class="inst-dot"></span></span>
         <span class="inst-task-main">
-          <span class="inst-task-title">Разбор карты высот</span>
+          <span class="inst-task-title">Parsing the heightmap</span>
           <span class="inst-task-sub">terrain/heightmap.ts</span>
         </span>
-        <span class="inst-task-meta">2,1 с</span>
+        <span class="inst-task-meta">2.1 s</span>
       </div>
       <div class="inst-task" role="option" data-state="queued" aria-selected="false" tabindex="-1">
         <span class="inst-task-gutter"><span class="inst-dot"></span></span>
         <span class="inst-task-main">
-          <span class="inst-task-title">Сборка биомов</span>
+          <span class="inst-task-title">Building the biomes</span>
         </span>
         <span class="inst-task-meta">—</span>
       </div>
@@ -151,53 +152,55 @@ import '@keshon/instrument/js';         // поведение, по желани
 </div>
 ```
 
-## Тема и плотность
+## Theme and density
 
-Оба — атрибуты, и оба работают на любом поддереве, а не только на документе.
+Both are attributes, and both work on any subtree rather than only on the
+document.
 
 ```html
-<html data-theme="dark">              <!-- пять тем; без атрибута — по настройке ОС -->
-<html data-accent="clay">             <!-- петроль (умолчание) · graphite · indigo · clay -->
+<html data-theme="dark">              <!-- five themes; without the attribute, the OS setting -->
+<html data-accent="clay">             <!-- petrol (default) · graphite · indigo · clay -->
 <section data-density="compact">      <!-- compact · comfortable -->
 ```
 
-| Тема | |
+| Theme | |
 |---|---|
-| `light-neutral` `light` `light-cool` | светлые: нейтральная, тёплая, холодная |
-| `dark-soft` `dark` | тёмные, различаются глубиной поверхностей |
+| `light-neutral` `light` `light-cool` | light: neutral, warm, cool |
+| `dark-soft` `dark` | dark, differing in the depth of the surfaces |
 
-Без атрибута тема выбирается по настройке ОС. Что именно меняет каждая ручка —
-в [цвете](../foundations/colors.md) и [плотности](../foundations/density.md).
+Without the attribute the theme follows the OS setting. What exactly each knob
+changes is in [colour](../foundations/colors.md) and
+[density](../foundations/density.md).
 
-## Ваши стили выигрывают
+## Your styles win
 
-Библиотека целиком лежит в каскадных слоях, а ваши стили — вне их. Поэтому любое
-ваше правило перебивает её, и `!important` не нужен нигде.
+The library lies entirely in cascade layers, and your styles lie outside them.
+So any rule of yours beats it, and `!important` is needed nowhere.
 
 ```css
-.inst-btn { border-radius: 0; }   /* сработает, специфичность неважна */
+.inst-btn { border-radius: 0; }   /* works, specificity does not matter */
 ```
 
-Порядок слоёв — в [токенах](../foundations/tokens.md#порядок-слоёв).
+The order of the layers is in [tokens](../foundations/tokens.md#the-order-of-layers).
 
-## Требования
+## Requirements
 
-Chrome 123+, Safari 17.5+, Firefox 128+ — по `light-dark()`, `oklch()`,
-каскадным слоям, вложенности, `:has()`, единице `lh` и `@property`.
-Полифилов нет.
+Chrome 123+, Safari 17.5+, Firefox 128+ — because of `light-dark()`, `oklch()`,
+cascade layers, nesting, `:has()`, the `lh` unit and `@property`. There are no
+polyfills.
 
-Границу держит `@property`: незаследуемое пользовательское свойство — это то,
-чем колонка говорит своим детям, что они меряются содержимым, не перечисляя
-их по именам. Firefox умеет его с 128, остальные два браузера — задолго до
-своих порогов выше.
+The boundary is held by `@property`: a non-inheriting custom property is how a
+column tells its children that they are measured by their content, without
+naming them one by one. Firefox has had it since 128, the other two browsers
+long before their thresholds above.
 
-## Дальше
+## Next
 
-[Консоль прогонов](../blocks/console.md) — собранный экран, из которого видно,
-как компоненты стыкуются.
+[The run console](../blocks/console.md) — an assembled screen that shows how
+the components join up.
 
-[Оболочка приложения](../layout/shell.md) — шапка, боковая панель, основная
-область.
+[The application shell](../layout/shell.md) — the header, the side panel, the
+working area.
 
-[Принципы дизайна](../about/design-principles.md) — правила, из которых
-выводятся компоненты.
+[Design principles](../about/design-principles.md) — the rules the components
+are derived from.

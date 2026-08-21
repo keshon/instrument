@@ -1,117 +1,116 @@
 ---
-title: Шаги мастера
-group: Навигация
+title: Wizard steps
+group: Navigation
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-stepper", kind: "класс", doc: "Список шагов. Ставится на `<ol>`" }
-  - { name: "inst-stepper-item", kind: "класс", doc: "Шаг. Носитель `data-state`" }
-  - { name: "inst-stepper-name", kind: "класс", doc: "Название шага" }
-  - { name: "inst-stepper-note", kind: "класс", doc: "Слово состояния под названием" }
-  - { name: "data-state", kind: "атрибут", doc: "`todo` `current` `done`. Закрыт, база — `todo`" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-4", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--size-marker", kind: "токен" }
-  - { name: "--radius-full", kind: "токен" }
-  - { name: "--track", kind: "токен" }
-  - { name: "--accent-mark", kind: "токен" }
-  - { name: "--text-primary", kind: "токен" }
-  - { name: "--text-secondary", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-title-en: "Wizard steps"
-group-en: "Navigation"
+  - { name: "inst-stepper", kind: "class", doc: "The list of steps. Put on an `<ol>`" }
+  - { name: "inst-stepper-item", kind: "class", doc: "A step. The carrier of `data-state`" }
+  - { name: "inst-stepper-name", kind: "class", doc: "The name of the step" }
+  - { name: "inst-stepper-note", kind: "class", doc: "The word of the state under the name" }
+  - { name: "data-state", kind: "attribute", doc: "`todo` `current` `done`. Closed, with `todo` as the base" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-4", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--size-marker", kind: "token" }
+  - { name: "--radius-full", kind: "token" }
+  - { name: "--track", kind: "token" }
+  - { name: "--accent-mark", kind: "token" }
+  - { name: "--text-primary", kind: "token" }
+  - { name: "--text-secondary", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
 ---
 
-Последовательность этапов процесса с отметкой, где он сейчас. Состояние несёт
-**слово** под подписью — цвета полосы мало.
+A sequence of the stages of a process with a mark of where it is now. The state
+is carried by a **word** under the label — the colour of the bar is not enough.
 
 ```html preview
 <ol class="inst-stepper">
   <li class="inst-stepper-item" data-state="done">
-    <span class="inst-stepper-name">Источник</span><span class="inst-stepper-note">готово</span></li>
+    <span class="inst-stepper-name">Source</span><span class="inst-stepper-note">done</span></li>
   <li class="inst-stepper-item" data-state="done">
-    <span class="inst-stepper-name">Правила</span><span class="inst-stepper-note">готово</span></li>
+    <span class="inst-stepper-name">Rules</span><span class="inst-stepper-note">done</span></li>
   <li class="inst-stepper-item" data-state="current">
-    <span class="inst-stepper-name">Проверка</span><span class="inst-stepper-note">сейчас</span></li>
+    <span class="inst-stepper-name">Check</span><span class="inst-stepper-note">now</span></li>
   <li class="inst-stepper-item" data-state="todo">
-    <span class="inst-stepper-name">Запуск</span><span class="inst-stepper-note">дальше</span></li>
+    <span class="inst-stepper-name">Launch</span><span class="inst-stepper-note">next</span></li>
 </ol>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<ol>` с `<li>` | да | Шаги упорядочены, и порядок — весь смысл компонента |
-| `data-state` на каждом шаге, включая `todo` | да | Отсутствие атрибута неотличимо от опечатки в нём |
-| `inst-stepper-note` со словом состояния | да | Цвет полосы не имеет права быть единственным носителем |
+| An `<ol>` with `<li>` | yes | The steps are ordered, and the order is the whole meaning of the component |
+| A `data-state` on every step, `todo` included | yes | The absence of the attribute is indistinguishable from a typo in it |
+| An `inst-stepper-note` with the word of the state | yes | The colour of the bar has no right to be the only carrier |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Порядок | `<ol>` сообщает номер шага и их общее число без подписей вида «3 из 5» |
-| Цвет не единственный носитель | Состояние ходит словом (`inst-stepper-note`) **и** полосой |
-| Контраст | Название — `--text-secondary` (4.5:1), слово состояния — `--text-muted`; это данные, а не декорация, и `--text-faint` им не положен |
-| Полоса | `--accent-mark` держит 3:1 против дорожки `--track` — это метка, а не текст |
-| Кегль | Слово состояния — `--text-xs`, ниже 11px кегль не опускается |
-| Печать | Шаги печатаются: слово состояния читается на бумаге, где полоса могла бы слиться |
+| The order | An `<ol>` reports the number of a step and their total without labels of the form "3 of 5" |
+| Colour is not the only carrier | The state travels as a word (`inst-stepper-note`) **and** as a bar |
+| Contrast | The name is `--text-secondary` (4.5:1), the word of the state `--text-muted`; this is data rather than decoration, and `--text-faint` is not due to it |
+| The bar | `--accent-mark` holds 3:1 against the `--track` — it is a mark rather than text |
+| Type size | The word of the state is `--text-xs`; the size does not go below 11px |
+| Print | The steps are printed: the word of the state reads on paper, where a bar might merge into it |
 
-## Устройство
+## Anatomy
 
-### Подпись состояния
+### The label of the state
 
-`inst-stepper-note` — не украшение и не подзаголовок. Это второй носитель
-состояния: «готово», «сейчас», «дальше» читаются и на распечатке, и тем, кто не
-различает оттенок полосы. Строка с датой или счётчиком в этом слоте состояние
-не сообщает и его не заменяет.
+`inst-stepper-note` is neither decoration nor a subheading. It is the second
+carrier of the state: "done", "now", "next" read on a printout and to somebody
+who does not tell the shade of the bar apart. A line with a date or a counter
+in that slot reports no state and does not replace it.
 
-### Раскладка
+### The layout
 
-Полоса переносится сама: у элемента `flex: 1 1 10rem`, и на узком экране шаги
-встают в несколько рядов без единого медиазапроса. Полоса состояния — это
-`::before` шириной во весь элемент, поэтому она не расходится с подписью при
-любом числе шагов.
+The strip wraps by itself: an item has `flex: 1 1 10rem`, and on a narrow
+screen the steps stand in several rows with not a single media query. The bar
+of the state is a `::before` the full width of the item, so it does not part
+from the label at any number of steps.
 
-## Состояния
+## States
 
-`data-state` — фаза жизни, словарь у компонента **свой и закрытый**:
+`data-state` is a phase of life, and the vocabulary is the component's **own
+and closed**:
 
 ```html preview
 <ol class="inst-stepper">
   <li class="inst-stepper-item" data-state="done">
-    <span class="inst-stepper-name">Пройден</span><span class="inst-stepper-note">готово</span></li>
+    <span class="inst-stepper-name">Passed</span><span class="inst-stepper-note">done</span></li>
   <li class="inst-stepper-item" data-state="current">
-    <span class="inst-stepper-name">Текущий</span><span class="inst-stepper-note">сейчас</span></li>
+    <span class="inst-stepper-name">Current</span><span class="inst-stepper-note">now</span></li>
   <li class="inst-stepper-item" data-state="todo">
-    <span class="inst-stepper-name">Предстоящий</span><span class="inst-stepper-note">дальше</span></li>
+    <span class="inst-stepper-name">Upcoming</span><span class="inst-stepper-note">next</span></li>
 </ol>
 ```
 
-| Значение | Значит | Что рисует |
+| Value | Means | What it draws |
 |---|---|---|
-| `todo` | Ещё не начат. **База** | Полоса `--track`, подпись `--text-secondary` |
-| `current` | Идёт сейчас | Полоса `--accent-mark`, подпись `--text-primary` и `--weight-medium` |
-| `done` | Завершён | Полоса `--accent-mark`, подпись `--text-secondary` |
+| `todo` | Not begun yet. **The base** | The bar `--track`, the label `--text-secondary` |
+| `current` | Happening now | The bar `--accent-mark`, the label `--text-primary` and `--weight-medium` |
+| `done` | Finished | The bar `--accent-mark`, the label `--text-secondary` |
 
-Базовое значение `todo` **пишется в разметке**, хотя правил под него нет:
-`data-state="todo"` читается, а его отсутствие — нет, и опечатка выглядела бы
-как база.
+The base value `todo` **is written in the markup**, though there are no rules
+for it: a `data-state="todo"` is read and its absence is not, and a typo would
+look like the base.
 
-Пройденный и текущий шаг делят один цвет полосы намеренно: различает их
-`inst-stepper-note` — «готово» против «сейчас» — и начертание подписи. Второго
-акцентного тона в библиотеке нет.
+A passed step and the current one share one colour of bar deliberately: what
+tells them apart is the `inst-stepper-note` — "done" against "now" — and the
+weight of the label. There is no second accent tone in the library.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

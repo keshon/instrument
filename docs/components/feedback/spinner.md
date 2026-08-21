@@ -1,88 +1,88 @@
 ---
-title: Спиннер
-group: Обратная связь
+title: Spinner
+group: Feedback
 layout: component
 source: src/status.css
 api:
-  - { name: "inst-spinner", kind: "класс", doc: "Базовый. Ставится на `<svg>`" }
-  - { name: "inst-spinner-track", kind: "класс", doc: "Дорожка. Прямой потомок `inst-spinner`" }
-  - { name: "inst-spinner-arc", kind: "класс", doc: "Дуга. Прямой потомок `inst-spinner`" }
-  - { name: "--size-spinner", kind: "токен" }
-  - { name: "--border-control", kind: "токен" }
-  - { name: "--accent-mark", kind: "токен" }
-title-en: "Spinner"
-group-en: "Feedback"
+  - { name: "inst-spinner", kind: "class", doc: "The base one. Put on an `<svg>`" }
+  - { name: "inst-spinner-track", kind: "class", doc: "The track. A direct child of `inst-spinner`" }
+  - { name: "inst-spinner-arc", kind: "class", doc: "The arc. A direct child of `inst-spinner`" }
+  - { name: "--size-spinner", kind: "token" }
+  - { name: "--border-control", kind: "token" }
+  - { name: "--accent-mark", kind: "token" }
 ---
 
-Кольцо, показывающее, что машина занята, когда долю выполненного назвать
-нечем. Настоящий SVG из двух окружностей, а не рамка на `div`.
+A ring showing that the machine is busy when there is nothing to name the share
+done with. A real SVG of two circles rather than a border on a `div`.
 
 ```html preview
-<svg class="inst-spinner" viewBox="0 0 16 16" role="status" aria-label="Загрузка">
+<svg class="inst-spinner" viewBox="0 0 16 16" role="status" aria-label="Loading">
   <circle class="inst-spinner-track" cx="8" cy="8" r="6.5"/>
   <circle class="inst-spinner-arc" cx="8" cy="8" r="6.5"/>
 </svg>
 ```
 
-## Контракт
+## Contract
 
-Разметка фиксирована: `viewBox="0 0 16 16"`, две окружности радиуса `6.5` в
-центре `8 8`. Копируется целиком.
+The markup is fixed: `viewBox="0 0 16 16"`, two circles of radius `6.5` centred
+at `8 8`. It is copied entire.
 
-| Что | Почему нельзя изменить |
+| What | Why it cannot be changed |
 |---|---|
-| `viewBox="0 0 16 16"` | Толщина обводки и `stroke-dasharray` посчитаны под эту систему координат |
-| `r="6.5"` `cx="8"` `cy="8"` | Длина окружности при `r=6.5` — около 40.8, и `11 30` даёт ровно четверть на дугу |
-| `role="status"` | Иначе появление спиннера ничего не сообщает |
-| `aria-label` | У `role="status"` должно быть имя: «Загрузка», «Идёт прогон» |
+| `viewBox="0 0 16 16"` | The thickness of the stroke and the `stroke-dasharray` are computed for this coordinate system |
+| `r="6.5"` `cx="8"` `cy="8"` | The circumference at `r=6.5` is about 40.8, and `11 30` gives exactly a quarter to the arc |
+| `role="status"` | Otherwise the appearance of the spinner says nothing |
+| `aria-label` | A `role="status"` has to have a name: "Loading", "The run is going" |
 
-Обе окружности — прямые потомки. Вложить их глубже нельзя: обводка не
-применится.
+Both circles are direct children. Nesting them deeper is not allowed: the
+stroke will not apply.
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Роль | `role="status"` + `aria-label`. Спиннер без роли — просто картинка, и для скринридера ожидание не начинается |
-| Не единственный носитель | Долгое ожидание сопровождается словами: «Идёт прогон», а не одним крутящимся кольцом |
-| Уменьшенное движение | Оборот **замедляется до 2.4с, а не останавливается**. Схлопнуть анимацию до `0.01ms` — это не сжатие длительности, а остановка: спиннер замер бы в случайной фазе, и индикатор перестал бы показывать, что машина занята |
-| Контраст | Дуга `--accent-mark` держит 3:1 против дорожки, а не только против фона |
-| Печать | На листе не печатается: печать статична |
+| The role | `role="status"` + `aria-label`. A spinner with no role is just a picture, and for a screen reader the waiting does not begin |
+| Not the only carrier | A long wait comes with words: "The run is going" rather than one turning ring |
+| Reduced motion | The turn **slows to 2.4s rather than stopping**. Collapsing an animation to `0.01ms` is not a squeezed duration but a stop: the spinner would freeze at a random phase, and the indicator would stop showing that the machine is busy |
+| Contrast | The arc `--accent-mark` holds 3:1 against the track rather than against the background alone |
+| Print | It is not printed on paper: print is static |
 
-## Устройство
+## Anatomy
 
-| Элемент | Работа |
+| Element | The work |
 |---|---|
-| `inst-spinner` | `<svg>`. Размер, толщина обводки, вращение |
-| `inst-spinner-track` | Первая окружность — дорожка, `--border-control` |
-| `inst-spinner-arc` | Вторая окружность — дуга, `--accent-mark`. Четверть длины через `stroke-dasharray: 11 30` |
+| `inst-spinner` | The `<svg>`. The size, the thickness of the stroke, the rotation |
+| `inst-spinner-track` | The first circle — the track, `--border-control` |
+| `inst-spinner-arc` | The second circle — the arc, `--accent-mark`. A quarter of the length through `stroke-dasharray: 11 30` |
 
-Обе окружности одинаковы; отличает их только обводка. Дорожка нужна, чтобы
-кольцо было видно целиком: одна дуга без неё читается как обрывок.
+Both circles are identical; what sets them apart is only the stroke. The track
+is wanted so that the ring is seen entire: one arc without it reads as a
+fragment.
 
-| Свойство | Значение |
+| Property | Value |
 |---|---|
-| размер | `--size-spinner` — 14px; 13px в плотном режиме, 16px в просторном |
-| толщина обводки | `2` |
-| концы | `stroke-linecap: round` |
-| оборот | 0.7с, линейно, бесконечно |
+| size | `--size-spinner` — 14px; 13px in the compact mode, 16px in the comfortable one |
+| stroke thickness | `2` |
+| ends | `stroke-linecap: round` |
+| turn | 0.7s, linear, infinite |
 
-`--accent-mark`, а не `--accent-text`: у тона два передних плана, и метка без
-подписи берёт тот, что проверен на 3:1 против дорожки.
+`--accent-mark` rather than `--accent-text`: a tone has two foregrounds, and a
+mark with no label takes the one checked at 3:1 against the track.
 
-### Почему SVG
+### Why SVG
 
-Круг из `border-radius` на боксе в 13px при дробном DPR растрируется с центром
-на полупикселе, и на вращении это видно как **биение**. У SVG центр задан в
-системе координат `viewBox`, поворот применяется к боксу целиком,
-растеризация происходит после — биения нет ни при каком DPR.
+A circle made of a `border-radius` on a box of 13px at a fractional DPR
+rasterises with its centre on half a pixel, and on a rotation that shows as
+**wobble**. In an SVG the centre is set in the coordinate system of the
+`viewBox`, the rotation is applied to the box entire and the rasterisation
+happens after — there is no wobble at any DPR.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

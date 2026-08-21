@@ -1,67 +1,65 @@
 ---
-title: Цвет
-group: Основания
+title: Colour
+group: Foundations
 layout: foundation
 source: src/tokens.css
 api:
-  - { name: "inst-theme", kind: "класс", doc: "Корень области темы. Заново объявляет `color` и `background`, чтобы `data-theme` работал на поддереве" }
-  - { name: "data-theme", kind: "атрибут", value: "light-neutral · light · light-cool · dark-soft · dark", doc: "Тема. На корне документа или на любом поддереве вместе с `inst-theme`" }
-  - { name: "--text-primary", kind: "токен", doc: "Основной текст" }
-  - { name: "--text-secondary", kind: "токен", doc: "Вторичный текст. Порог чтения держит" }
-  - { name: "--text-muted", kind: "токен", doc: "Подписи и вспомогательное" }
-  - { name: "--text-faint", kind: "токен", doc: "Декорация. Текстом не красится" }
-  - { name: "--surface-page", kind: "токен", doc: "Фон страницы" }
-  - { name: "--surface-sunken", kind: "токен", doc: "Врез: утопленная поверхность" }
-  - { name: "--surface-raised", kind: "токен", doc: "Поднятая поверхность: панель, карточка" }
-  - { name: "--surface-overlay", kind: "токен", doc: "Всплывающее: поповер, модалка" }
-  - { name: "--surface-field", kind: "токен", doc: "Врез поля ввода" }
-  - { name: "--surface-hover", kind: "токен", doc: "Под курсором" }
-  - { name: "--surface-active", kind: "токен", doc: "При нажатии" }
-  - { name: "--surface-selected", kind: "токен", doc: "Выбранное" }
-  - { name: "--border", kind: "токен", doc: "Основная граница" }
-  - { name: "--border-subtle", kind: "токен", doc: "Разделитель внутри блока" }
-  - { name: "--border-strong", kind: "токен", doc: "Усиленная граница" }
-  - { name: "--border-control", kind: "токен", doc: "Граница контрола. Держит 3:1" }
-  - { name: "--accent-text", kind: "токен", doc: "Акцент для текста, 4.5:1" }
-  - { name: "--accent-mark", kind: "токен", doc: "Акцент для метки без подписи, 3:1" }
-  - { name: "--accent-solid", kind: "токен", doc: "Сплошная заливка акцентом" }
-  - { name: "--accent-on", kind: "токен", doc: "Передний план на сплошном акценте" }
-  - { name: "--accent-bg", kind: "токен", doc: "Тонированный фон акцента" }
-  - { name: "--accent-border", kind: "токен", doc: "Граница акцентом" }
-  - { name: "--tone-ink", kind: "токен", doc: "Передний план тона для ТЕКСТА, 4.5:1" }
-  - { name: "--tone-mark", kind: "токен", doc: "Передний план тона для МЕТКИ, 3:1" }
-  - { name: "--tone-bg", kind: "токен", doc: "Тонированный фон" }
-  - { name: "--ok-text", kind: "токен", doc: "Тон успеха" }
-  - { name: "--warn-text", kind: "токен", doc: "Тон замечания" }
-  - { name: "--err-text", kind: "токен", doc: "Тон отказа" }
-  - { name: "--focus-ring", kind: "токен", doc: "Кольцо фокуса" }
-  - { name: "--scrim", kind: "токен", doc: "Подложка модалки" }
-  - { name: "--track", kind: "токен", doc: "Дорожка меры, слайдера, кольца" }
-title-en: "Colour"
-group-en: "Foundations"
+  - { name: "inst-theme", kind: "class", doc: "The root of a theme region. Redeclares `color` and `background` so that `data-theme` works on a subtree" }
+  - { name: "data-theme", kind: "attribute", value: "light-neutral · light · light-cool · dark-soft · dark", doc: "The theme. On the root of the document or on any subtree together with `inst-theme`" }
+  - { name: "--text-primary", kind: "token", doc: "The main text" }
+  - { name: "--text-secondary", kind: "token", doc: "Secondary text. It holds the threshold of reading" }
+  - { name: "--text-muted", kind: "token", doc: "Labels and the auxiliary" }
+  - { name: "--text-faint", kind: "token", doc: "Decoration. Text is not painted with it" }
+  - { name: "--surface-page", kind: "token", doc: "The background of the page" }
+  - { name: "--surface-sunken", kind: "token", doc: "A recess: a sunken surface" }
+  - { name: "--surface-raised", kind: "token", doc: "A raised surface: a panel, a card" }
+  - { name: "--surface-overlay", kind: "token", doc: "Something popping up: a popover, a modal" }
+  - { name: "--surface-field", kind: "token", doc: "The recess of an input field" }
+  - { name: "--surface-hover", kind: "token", doc: "Under the cursor" }
+  - { name: "--surface-active", kind: "token", doc: "On a press" }
+  - { name: "--surface-selected", kind: "token", doc: "What is selected" }
+  - { name: "--border", kind: "token", doc: "The main boundary" }
+  - { name: "--border-subtle", kind: "token", doc: "A divider inside a block" }
+  - { name: "--border-strong", kind: "token", doc: "A strengthened boundary" }
+  - { name: "--border-control", kind: "token", doc: "The boundary of a control. It holds 3:1" }
+  - { name: "--accent-text", kind: "token", doc: "The accent for text, 4.5:1" }
+  - { name: "--accent-mark", kind: "token", doc: "The accent for a mark with no label, 3:1" }
+  - { name: "--accent-solid", kind: "token", doc: "A solid fill in the accent" }
+  - { name: "--accent-on", kind: "token", doc: "The foreground on a solid accent" }
+  - { name: "--accent-bg", kind: "token", doc: "The tinted background of the accent" }
+  - { name: "--accent-border", kind: "token", doc: "A boundary in the accent" }
+  - { name: "--tone-ink", kind: "token", doc: "The foreground of a tone for TEXT, 4.5:1" }
+  - { name: "--tone-mark", kind: "token", doc: "The foreground of a tone for a MARK, 3:1" }
+  - { name: "--tone-bg", kind: "token", doc: "The tinted background" }
+  - { name: "--ok-text", kind: "token", doc: "The tone of success" }
+  - { name: "--warn-text", kind: "token", doc: "The tone of a remark" }
+  - { name: "--err-text", kind: "token", doc: "The tone of a refusal" }
+  - { name: "--focus-ring", kind: "token", doc: "The focus ring" }
+  - { name: "--scrim", kind: "token", doc: "The ground under a modal" }
+  - { name: "--track", kind: "token", doc: "The track of a meter, a slider, a ring" }
 ---
 
-Два яруса. Внизу **рампы** — сырые шаги, они не меняются никогда. Сверху
-**семантика** — для чего цвет нужен. Компонент видит только семантику: тот, кто
-написал `--n-3`, только что захардкодил светлую тему.
+Two tiers. Below are the **ramps** — raw steps, and they never change. Above is
+the **semantics** — what a colour is for. A component sees the semantics only:
+whoever wrote `--n-3` has just hard-coded the light theme.
 
 ```html preview
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Прогон #4127</span>
-    <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
+    <span class="inst-panel-title">Run #4127</span>
+    <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>running</span>
   </div>
   <div class="inst-panel-body inst-stack">
     <input class="inst-input" type="text" value="terrain_chunk_04">
-    <div class="inst-note" data-tone="warn">Три теста упали после последнего прохода.</div>
+    <div class="inst-note" data-tone="warn">Three tests failed after the last pass.</div>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Компонент обращается к **семантике**, и только к ней. Рампа — сырьё, из
-которого семантика сделана, и в разметке ей делать нечего.
+A component reaches for the **semantics**, and for nothing else. A ramp is the
+raw material the semantics is made of, and it has no business in markup.
 
 ```css
 .my-thing {
@@ -71,28 +69,28 @@ group-en: "Foundations"
 }
 ```
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Только ярус семантики | да | Тот, кто написал `--n-3`, только что захардкодил светлую тему: рампа между темами не меняется |
-| Тон через `data-tone`, а не свой цвет | да | Пять значений, один словарь на всю библиотеку. Шестое не покрасится |
-| Два передних плана по работе | да | `--tone-ink` для текста (4.5:1), `--tone-mark` для метки без подписи (3:1) |
-| Цвет не единственный носитель | да | Состояние ходит со словом и знаком. Первый закон |
+| The semantic tier only | yes | Whoever wrote `--n-3` has just hard-coded the light theme: a ramp does not change between themes |
+| A tone through `data-tone` rather than a colour of your own | yes | Five values, one vocabulary for the whole library. A sixth will not be painted |
+| Two foregrounds by the work | yes | `--tone-ink` for text (4.5:1), `--tone-mark` for a mark with no label (3:1) |
+| Colour is not the only carrier | yes | A state travels with a word and a sign. The first law |
 
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Проверка | `go -C tools run ./cmd/contrast` читает настоящий `tokens.css` и резолвит `light-dark()`, `color-mix()` и `var()` так же, как браузер |
-| Порог текста | 4.5:1 во всех пяти темах. `--text-faint` из этого исключён и потому не носит текст |
-| Порог метки | 3:1, но против **двух** фонов сразу: поверхности и дорожки. Отсюда `--tone-mark` отдельно от `--tone-ink` |
-| Цвет не единственный носитель | Статус несёт точку **и** слово, сноска несёт иконку, строка дифа несёт знак |
-| Тёмная тема | Не инверсия: контраст между соседними поверхностями расширяется, цветность опускается, рамки переходят с тёмной альфы на светлую |
-| Режим принудительных цветов | Носители значения переживают сброс через `forced-color-adjust: none` |
+| The check | `go -C tools run ./cmd/contrast` reads the real `tokens.css` and resolves `light-dark()`, `color-mix()` and `var()` the way a browser does |
+| The threshold of text | 4.5:1 in all five themes. `--text-faint` is excluded from it and therefore carries no text |
+| The threshold of a mark | 3:1, but against **two** backgrounds at once: the surface and the track. Hence `--tone-mark` apart from `--tone-ink` |
+| Colour is not the only carrier | A status carries a dot **and** a word, a note carries an icon, a diff row carries a sign |
+| The dark theme | Not an inversion: the contrast between neighbouring surfaces widens, the chroma comes down, the borders move from a dark alpha to a light one |
+| Forced-colours mode | The carriers of meaning survive the reset through `forced-color-adjust: none` |
 
-## Устройство
+## Anatomy
 
-### Нейтраль — 15 шагов
+### The neutral — 15 steps
 
 ```html preview
 <div class="ramp">
@@ -119,35 +117,36 @@ group-en: "Foundations"
 </div>
 ```
 
-Переключите тему стола: рампа **не изменится**. Она сырая и не знает о темах —
-меняется только то, какие её шаги берёт семантика.
+Switch the theme of the table: the ramp **will not change**. It is raw and
+knows nothing of themes — what changes is only which of its steps the semantics
+takes.
 
-Одна ручка задаёт направление уклона: `--hue-neutral: 75` — тёплый, `250` —
-холодный. Цветность 0.002–0.006: ниже порога осознанного замечания, и в этом её
-работа. Пятнадцатый шаг существует потому, что тёмному концу нужно четыре
-различимые поверхности подряд, а на четырнадцати их помещалось три.
+One knob sets the direction of the cast: `--hue-neutral: 75` is warm, `250`
+cool. A chroma of 0.002–0.006: below the threshold of conscious notice, and
+that is its job. The fifteenth step exists because the dark end needs four
+discernible surfaces in a row, and on fourteen only three fitted.
 
-| Шаг | Светлота | Где занят |
+| Step | Lightness | Where it is taken |
 |---|---|---|
-| `--n-0` | 1.000 | `--surface-raised`, `--surface-overlay` (светлая), `--accent-on` |
-| `--n-1` | 0.976 | `--surface-page`, `--surface-field` (светлая), `--text-primary` (тёмная) |
-| `--n-2` | 0.952 | `--surface-sunken` (светлая) |
-| `--n-3` | 0.922 | Резерв |
-| `--n-4` | 0.878 | Резерв |
-| `--n-5` | 0.806 | `--text-secondary` (тёмная) |
-| `--n-6` | 0.706 | `--text-muted` (тёмная) |
-| `--n-7` | 0.605 | `--text-faint` (обе темы) |
-| `--n-8` | 0.500 | `--text-muted` (светлая) |
-| `--n-9` | 0.400 | `--text-secondary` (светлая) |
+| `--n-0` | 1.000 | `--surface-raised`, `--surface-overlay` (light), `--accent-on` |
+| `--n-1` | 0.976 | `--surface-page` (light), `--text-primary` (dark) |
+| `--n-2` | 0.952 | `--surface-sunken` (light) |
+| `--n-3` | 0.922 | Reserve |
+| `--n-4` | 0.878 | Reserve |
+| `--n-5` | 0.806 | `--text-secondary` (dark) |
+| `--n-6` | 0.706 | `--text-muted` (dark) |
+| `--n-7` | 0.605 | `--text-faint` (both themes) |
+| `--n-8` | 0.500 | `--text-muted` (light) |
+| `--n-9` | 0.400 | `--text-secondary` (light) |
 | `--n-10` | 0.322 | `--surface-overlay` (`dark-soft`) |
-| `--n-11` | 0.242 | `--surface-overlay` (тёмная), `--surface-raised` (`dark-soft`) |
-| `--n-12` | 0.196 | `--text-primary` (светлая), `--surface-raised` (тёмная), `--surface-page` (`dark-soft`) |
-| `--n-13` | 0.155 | `--surface-page` (тёмная), `--surface-sunken` и `--surface-field` (`dark-soft`) |
-| `--n-14` | 0.120 | `--surface-sunken`, `--surface-field` (тёмная) |
+| `--n-11` | 0.242 | `--surface-overlay` (dark), `--surface-raised` (`dark-soft`) |
+| `--n-12` | 0.196 | `--text-primary` (light), `--surface-raised` (dark), `--surface-page` (`dark-soft`) |
+| `--n-13` | 0.155 | `--surface-page` (dark), `--surface-sunken` (`dark-soft`) |
+| `--n-14` | 0.120 | `--surface-sunken` (dark) |
 
-Шаги без семантики — резерв под приложение и графики.
+The steps with no semantics are a reserve for the application and for charts.
 
-### Акцент — один тон
+### The accent — one hue
 
 ```html preview
 <div class="ramp">
@@ -163,29 +162,30 @@ group-en: "Foundations"
 </div>
 ```
 
-Второй акцентный тон не заводится. Это не запрос фичи, а сигнал, что смысл
-должно нести что-то другое.
+A second accent hue is not started. That is not a feature request but a signal
+that the meaning ought to be carried by something else.
 
-| Шаг | Светлота | Где занят |
+| Step | Lightness | Where it is taken |
 |---|---|---|
-| `--a-1` | 0.960 | `--accent-bg` (светлая) |
-| `--a-2` | 0.800 | `--focus-ring` (тёмная) |
-| `--a-3` | 0.700 | `--accent-text`, `--accent-mark`, `--accent-border` (тёмная) |
-| `--a-4` | 0.545 | `--accent-solid`, `--accent-mark`, `--accent-border` (светлая) |
-| `--a-5` | 0.450 | `--accent-text` (светлая), `--accent-hover` |
-| `--a-6` | 0.330 | `--focus-ring` (светлая) |
+| `--a-1` | 0.960 | `--accent-bg` (light) |
+| `--a-2` | 0.800 | `--focus-ring` (dark) |
+| `--a-3` | 0.700 | `--accent-text`, `--accent-mark`, `--accent-border` (dark) |
+| `--a-4` | 0.545 | `--accent-solid`, `--accent-mark`, `--accent-border` (light) |
+| `--a-5` | 0.450 | `--accent-text` (light), `--accent-hover` |
+| `--a-6` | 0.330 | `--focus-ring` (light) |
 
-Тон — 215°. Светлота `--accent-solid` ограничена **сверху** белой подписью, и
-предел ХЬЮ-ЗАВИСИМЫЙ: 0.545 на 215°, 0.568 на 250°, 0.576 на 275°, 0.580 на 45°.
-Единого числа тут быть не может — «светлее 0.56 подпись не держит 4.5:1» это
-измерение одного синего. Каждый набор держит свой предел сам, проверяет гейт.
+The hue is 215°. The lightness of `--accent-solid` is bounded **from above** by
+the white label, and the bound DEPENDS ON HUE: 0.545 at 215°, 0.568 at 250°,
+0.576 at 275°, 0.580 at 45°. There can be no single number here — "lighter than
+0.56 and the label loses 4.5:1" is the measurement of one blue. Each set holds
+its own bound, and the gate checks it.
 
-Кольцо фокуса стоит на шагах 6 и 2, а не 4 и 3, и это не третий синий по
-недосмотру: кольцо обводит заливку, и в светлых темах шаг 4 — это РОВНО
-`--accent-solid`. Кольцо вокруг сплошной кнопки было того же цвета, что кнопка,
-контраст 1.00.
+The focus ring stands on steps 6 and 2 rather than 4 and 3, and that is not a
+third blue by oversight: the ring outlines a fill, and in the light themes step
+4 is EXACTLY `--accent-solid`. The ring around a solid button was the colour of
+the button, contrast 1.00.
 
-### Статусы — три зарезервированных тона
+### Statuses — three reserved hues
 
 ```html preview
 <div class="ramp">
@@ -215,29 +215,29 @@ group-en: "Foundations"
 </div>
 ```
 
-Шага 2 в статусных рядах нет — он не понадобился ни одной роли.
+There is no step 2 in the status rows — no role has wanted it.
 
-`ok` — 150°, `warn` — 85°, `err` — 25°. Никогда не используются как украшение
-или как «четвёртая серия на графике».
+`ok` is 150°, `warn` 85°, `err` 25°. They are never used as decoration or as "a
+fourth series on a chart".
 
-| Шаг | Роль | Почему именно так |
+| Step | Role | Why exactly so |
 |---|---|---|
-| 1 | Тонированный фон в **светлой** теме | `--ok-1` `--warn-1` `--err-1` |
-| 2 | Текст на **приподнятых** тёмных поверхностях | Существует ради `dark-soft`: сквозь прозрачную тоновую заливку там просвечивает поднятая панель, и шаг 3 роняет подпись до 4.15 |
-| 3 | Текст в **тёмных** темах на дне рампы | Светлее соседей по ряду |
-| 4 | Заливка и индикатор в **светлой** | `--ok-4` `--warn-4` `--err-4` |
-| 5 | Текст в **светлой**, поверх шага 1 | Шаг 4 не вытягивает 4.5:1 на собственном тонированном фоне |
-| 6 | Резерв под графики | |
+| 1 | The tinted background in a **light** theme | `--ok-1` `--warn-1` `--err-1` |
+| 2 | Text on **raised** dark surfaces | It exists for the sake of `dark-soft`: a raised panel shows through the translucent tone fill there, and step 3 drops the label to 4.15 |
+| 3 | Text in the **dark** themes at the bottom of the ramp | Lighter than its neighbours in the row |
+| 4 | The fill and the indicator in a **light** theme | `--ok-4` `--warn-4` `--err-4` |
+| 5 | Text in a **light** theme, over step 1 | Step 4 does not reach 4.5:1 on its own tinted background |
+| 6 | A reserve for charts | |
 
-Шаг 5 существует именно потому, что шаг 4 не проходит порог на самом себе.
-Пока его не было, жёлтый бейдж жил на контрасте 3.02.
+Step 5 exists precisely because step 4 does not pass the threshold on itself.
+While it was not there, a yellow badge lived on a contrast of 3.02.
 
-## Шкала
+## Scale
 
-Одно объявление на токен через `light-dark()`. Второй темы как отдельного блока
-не существует — значит, и расходиться нечему.
+One declaration per token through `light-dark()`. A second theme as a separate
+block does not exist — so there is nothing to diverge.
 
-### Поверхности
+### Surfaces
 
 ```html preview
 <div class="swatches">
@@ -249,123 +249,129 @@ group-en: "Foundations"
 </div>
 ```
 
-Переключите тему стола — вот здесь всё и меняется. Рампа осталась прежней,
-а семантика взяла другие её шаги: в тёмной теме перепад между соседними
-поверхностями шире, потому что тёмная тема **не инверсия**, а авторская.
+Switch the theme of the table — here is where everything changes. The ramp has
+stayed as it was, and the semantics has taken other steps of it: in a dark
+theme the step between neighbouring surfaces is wider, because a dark theme is
+**not an inversion** but written by hand.
 
-Читаются как стопка. Глубина передаётся **порядком светлоты и никогда тенью**.
+They read as a stack. Depth is carried by the **order of lightness and never by
+a shadow**.
 
-| Токен | Работа |
+| Token | Work |
 |---|---|
-| `--surface-sunken` | Дно: врез, дорожка, шапка таблицы |
-| `--surface-page` | Фон документа |
-| `--surface-raised` | Панель, карточка, шапка оболочки |
-| `--surface-overlay` | Поповер, меню, тултип, модалка |
-| `--surface-field` | Врез под ввод. Отдельная роль, а не переиспользование `raised`: пока поле красилось цветом панели, его единственной границей была рамка на 1.31:1 |
-| `--surface-hover` `--surface-active` | Альфа поверх чего угодно |
-| `--surface-selected` | Выделение. Тоже альфа — чтобы наведение по выделенной строке оставалось видно |
+| `--surface-sunken` | The bottom: a recess, a track, the head of a table |
+| `--surface-page` | The background of the document |
+| `--surface-raised` | A panel, a card, the header of the shell |
+| `--surface-overlay` | A popover, a menu, a tooltip, a modal |
+| `--surface-field` | The recess under input. A role of its own rather than a reuse of `raised`: while a field was painted the colour of a panel, its only boundary was a border at 1.31:1 |
+| `--surface-hover` `--surface-active` | Alpha over anything at all |
+| `--surface-selected` | Selection. Alpha too — so that a hover over a selected row stays visible |
 
-### Текст
+### Text
 
-| Токен | Порог | Для чего |
+| Token | Threshold | What for |
 |---|---|---|
-| `--text-primary` | 4.5:1 | Данные, заголовки, подписи контролов |
-| `--text-secondary` | 4.5:1 | Второстепенное: описания, единицы |
-| `--text-muted` | 4.5:1 | Метаданные и таймстемпы — это **данные**, им положен читаемый порог |
-| `--text-faint` | 3:1 | **Не применяется к тексту, который читают.** Порог декорации |
+| `--text-primary` | 4.5:1 | Data, headings, control labels |
+| `--text-secondary` | 4.5:1 | The secondary: descriptions, units |
+| `--text-muted` | 4.5:1 | Metadata and timestamps are **data**, and a readable threshold is due to them |
+| `--text-faint` | 3:1 | **Not applied to text that gets read.** The threshold of decoration |
 
-### Рамки
+### Borders
 
-Несущая и декоративная — разные токены, потому что к ним разные требования.
+Load-bearing and decorative are different tokens, because the requirements on
+them differ.
 
-| Токен | Когда |
+| Token | When |
 |---|---|
-| `--border-subtle` | Разделитель внутри уже ограниченной области |
-| `--border` | Панель, карточка, ячейка: рядом есть перепад поверхностей |
-| `--border-strong` | Скроллбар, акцентированный шов |
-| `--border-control` | Граница, которая **и есть контрол**: чекбокс, поле, дорожка свитча. Обязана держать 3:1 |
+| `--border-subtle` | A divider inside an already bounded region |
+| `--border` | A panel, a card, a cell: there is a step between surfaces beside it |
+| `--border-strong` | A scrollbar, an accented seam |
+| `--border-control` | A boundary that **is the control**: a checkbox, a field, the track of a switch. It has to hold 3:1 |
 
-### Тоны
+### Tones
 
-У смыслового тона три токена: текст, метка и фон.
+A tone that carries meaning has three tokens: text, mark and background.
 
-Текст и метка разошлись по той же причине, что у акцента. Шаг 5 рассчитан на
-чтение, и пока тон стоял в подписи бейджа, разницы не было. На заливке во всю
-строку — полоса истории, дуга кольца, лента меры — он читается темнее и глуше,
-чем акцентная метка рядом, и палитра распадается на два регистра. Метке
-довольно 3:1, и на шаге 4 все минимальные метки библиотеки стоят в одном.
+Text and mark parted for the same reason as with the accent. Step 5 is
+calculated for reading, and while the tone stood in the label of a badge there
+was no difference. Across a full-width fill — a history bar, the arc of a ring,
+the ribbon of a meter — it reads darker and duller than the accent mark beside
+it, and the palette falls into two registers. A mark makes do with 3:1, and on
+step 4 every minimal mark of the library stands in one.
 
-| Тон | Текст (4.5:1) | Метка (3:1) | Фон |
+| Tone | Text (4.5:1) | Mark (3:1) | Background |
 |---|---|---|---|
-| акцент | `--accent-text` | `--accent-mark` | `--accent-bg` |
+| accent | `--accent-text` | `--accent-mark` | `--accent-bg` |
 | ok | `--ok-text` | `--ok-mark` | `--ok-bg` |
 | warn | `--warn-text` | `--warn-mark` | `--warn-bg` |
 | error | `--err-text` | `--err-mark` | `--err-bg` |
 
-Третьего — «заливки» между текстом и фоном — нет. Он жил на шаге 4 и не
-проходил там, где под ним оказывалась дорожка: жёлтая заливка меры давала 2.49
-при норме 3.0.
+There is no third one — a "fill" between the text and the background. It lived
+on step 4 and did not pass where a track ended up under it: a yellow meter fill
+gave 2.49 against a norm of 3.0.
 
-У акцента есть случай, которого нет у статусов, — заливка под белой подписью
-(`--accent-solid` и `--accent-on`).
+The accent has a case the statuses do not — a fill under a white label
+(`--accent-solid` and `--accent-on`).
 
-### Тон как атрибут
+### Tone as an attribute
 
-`data-tone` ставится один раз на группу; вложенные элементы читают
-`--tone-ink`, `--tone-mark` и `--tone-bg` и больше ничего о тоне не знают.
+`data-tone` is set once on a group; the elements inside read `--tone-ink`,
+`--tone-mark` and `--tone-bg` and know nothing else about the tone.
 
-| Значение | Значит |
+| Value | Means |
 |---|---|
-| `neutral` | Явно нейтральное. Оно же исполняет роль info |
-| `running` | Идёт сейчас. Носитель — пульсация, тон вторичен |
-| `ok` | Успешно завершено |
-| `warn` | Завершено с замечаниями |
-| `error` | Упало |
+| `neutral` | Explicitly neutral. It also plays the part of info |
+| `running` | Happening now. The carrier is the pulse, the tone is secondary |
+| `ok` | Finished successfully |
+| `warn` | Finished with remarks |
+| `error` | Failed |
 
-Словарь закрыт. Шестое значение не заводится.
+The vocabulary is closed. A sixth value is not started.
 
-## Варианты
+## Variants
 
-Тема — это **три независимых ручки**: тон нейтрали, сила уклона и глубина
-тёмных поверхностей. Седьмая тема стоит одну строку.
+A theme is **three independent knobs**: the hue of the neutral, the strength of
+the cast and the depth of the dark surfaces. A seventh theme costs one line.
 
-Светлые различаются уклоном, тёмные — глубиной, и это не небрежность. На
-светлом фоне глаз ловит температуру: тёплая бумага и холодная бумага читаются
-как разные. На тёмном температуру почти не видно, зато сразу заметно, насколько
-панель отделяется от страницы. Ручки разные, потому что в светлом и тёмном
-замечают разное.
+The light ones differ by the cast, the dark ones by depth, and that is not
+carelessness. On a light background the eye catches temperature: warm paper and
+cool paper read as different. On a dark one the temperature is barely visible,
+while how far the panel parts from the page shows at once. The knobs differ
+because different things are noticed in light and in dark.
 
-| Атрибут | `color-scheme` | `--hue-neutral` | `--tint` | Что ещё |
+| Attribute | `color-scheme` | `--hue-neutral` | `--tint` | And also |
 |---|---|---|---|---|
-| нет | по системе | 75 | **0** | Слушает настройку ОС |
-| `data-theme="light-neutral"` | `light` | 75 | **0** | Умолчание: чистый серый |
-| `data-theme="light"` | `light` | 75 | **2** | Тёплая |
-| `data-theme="light-cool"` | `light` | 250 | **2** | Холодная |
-| `data-theme="dark-soft"` | `dark` | 75 | **0** | Стопка поднимается на ступень: переопределены ровно пять токенов |
-| `data-theme="dark"` | `dark` | 75 | **0** | Дно рампы, без переопределений |
+| none | by the system | 75 | **0** | It follows the OS setting |
+| `data-theme="light-neutral"` | `light` | 75 | **0** | The default: a pure grey |
+| `data-theme="light"` | `light` | 75 | **2** | Warm |
+| `data-theme="light-cool"` | `light` | 250 | **2** | Cool |
+| `data-theme="dark-soft"` | `dark` | 75 | **0** | The stack rises by a step: exactly five tokens are overridden |
+| `data-theme="dark"` | `dark` | 75 | **0** | The bottom of the ramp, with no overrides |
 
-`--tint` — множитель, а не абсолютная величина: шаги рампы сохраняют свои доли
-уклона (у светлого конца он слабее, у тёмного сильнее), и при нуле весь ряд
-одновременно становится серым. Нейтральная тема — не третий тон, а его
-отсутствие: любой `--hue-neutral` при нулевой цветности даёт один и тот же серый.
+`--tint` is a multiplier rather than an absolute quantity: the steps of the ramp
+keep their own shares of the cast (weaker at the light end, stronger at the
+dark one), and at zero the whole row becomes grey at once. The neutral theme is
+not a third hue but the absence of one: any `--hue-neutral` at zero chroma
+gives one and the same grey.
 
 ```html
-<html data-theme="dark">   <!-- принудительно -->
-<html>                     <!-- по системной настройке -->
+<html data-theme="dark">   <!-- forced -->
+<html>                     <!-- by the system setting -->
 ```
 
-Светлая глубина не регулируется. Сверху рампы шаги идут плотно, и «менее
-светлая» светлая тема даёт просто серый фон.
+The light depth is not adjustable. At the top of the ramp the steps run close
+together, and a "less light" light theme is just a grey background.
 
-### Потолок глубины
+### The ceiling of depth
 
-Тёмных тем две, и третьей вверх не будет. Выше «серой» рампа перестаёт быть
-тёмной: на `--n-10` даже `--text-muted` даёт 3.29 при норме 4.5, а прозрачная
-тоновая заливка, сквозь которую просвечивает панель, роняет подпись бейджа ещё
-раньше. Ровно поэтому `dark-soft` кроме четырёх поверхностей переопределяет и
-подписи статусов — они уходят на шаг 2 рампы.
+There are two dark themes, and there will be no third one upwards. Above the
+"grey" one the ramp stops being dark: at `--n-10` even `--text-muted` gives
+3.29 against a norm of 4.5, and a translucent tone fill, through which the
+panel shows, drops the label of a badge earlier still. That is exactly why
+`dark-soft` overrides the status labels along with the four surfaces — they
+move to step 2 of the ramp.
 
-### Категориальная палитра
+### The categorical palette
 
 ```html preview
 <div class="ramp">
@@ -381,66 +387,68 @@ group-en: "Foundations"
 </div>
 ```
 
-Светлота внутри ряда **разная**. Так ряды различимы и при дальтонизме, и на
-чёрно-белой печати, где тон исчезает вовсе. Прищурьтесь — порядок по светлоте
-всё ещё читается.
+The lightness within the row **differs**. That keeps the series discernible
+under colour blindness and in black-and-white print, where hue disappears
+altogether. Squint — the order by lightness still reads.
 
-Здесь цвет кодирует ряд, а не состояние, — единственное такое место в библиотеке.
-Отсюда и отдельные правила.
+Here colour encodes a series rather than a state — the one such place in the
+library. Hence the separate rules.
 
-| Токен | Тон | Ряд |
+| Token | Hue | Series |
 |---|---|---|
-| `--chart-1` | 292° | Первый |
-| `--chart-2` | 320° | Второй |
-| `--chart-3` | 355° | Третий |
-| `--chart-4` | 55° | Четвёртый |
-| `--chart-5` | 115° | Пятый |
-| `--chart-6` | 190° | Шестой |
+| `--chart-1` | 292° | The first |
+| `--chart-2` | 320° | The second |
+| `--chart-3` | 355° | The third |
+| `--chart-4` | 55° | The fourth |
+| `--chart-5` | 115° | The fifth |
+| `--chart-6` | 190° | The sixth |
 
-- **Порядок — часть контракта.** Ряд №1 всегда `--chart-1`, иначе один и тот же
-  показатель меняет цвет от экрана к экрану.
-- **Минимум 25° от каждого статусного тона** (25, 85, 150): категориальный
-  цвет не должен прочитаться как «упало». С акцентом угловой гарантии нет — он
-  ручка на четыре положения (215, 250, 275, 45), и глина стоит в 10° от ряда
-  №4. Вместо неё разделение областей: акцент не заходит внутрь графика,
-  категориальный цвет не выходит наружу.
-- **Светлота внутри палитры разная намеренно** — ряды остаются различимыми при
-  дальтонизме и на чёрно-белой печати, где тон исчезает вовсе.
-- **Шесть — потолок.** Седьмой ряд означает, что это не график, а
-  [таблица](../components/display/table.md).
-- **Вне графика и его легенды запрещена.** В роли статуса, заливки кнопки или
-  подсветки строки категориального цвета не бывает.
+- **The order is part of the contract.** Series no. 1 is always `--chart-1`,
+  otherwise one and the same measure changes colour from screen to screen.
+- **At least 25° from every status hue** (25, 85, 150): a categorical colour
+  must not read as "it failed". Against the accent there is no angular
+  guarantee — it is a knob with four positions (215, 250, 275, 45), and clay
+  stands 10° from series no. 4. In place of a guarantee, a division of
+  territory: the accent does not step inside a chart, a categorical colour does
+  not step outside.
+- **The lightness within the palette differs deliberately** — the series stay
+  discernible under colour blindness and in black-and-white print, where hue
+  disappears altogether.
+- **Six is the ceiling.** A seventh series means this is not a chart but
+  [a table](../components/display/table.md).
+- **Forbidden outside a chart and its legend.** There is no categorical colour
+  in the role of a status, of a button fill or of a row highlight.
 
-### Прочее
+### The rest
 
-| Токен | Работа |
+| Token | Work |
 |---|---|
-| `--focus-ring` | Кольцо фокуса, одно на всю библиотеку |
-| `--track` | Пустая дорожка меры и слайдера. Намеренно тихая: её работа — дать заливке отделиться, а не отделиться самой |
-| `--scrim` | Подложка модалки. В тёмной теме гуще. Затемнение, а не размытие |
-| `--shadow-color-near` `--shadow-color-far` | Цвета двух теней — см. [высоту](./elevation.md) |
+| `--focus-ring` | The focus ring, one for the whole library |
+| `--track` | The empty track of a meter and a slider. Deliberately quiet: its job is to let the fill part from it, not to part from anything itself |
+| `--scrim` | The ground under a modal. Denser in a dark theme. A dimming rather than a blur |
+| `--shadow-color-near` `--shadow-color-far` | The colours of the two shadows — see [elevation](./elevation.md) |
 
-## Правила
+## Rules
 
-### Что брать, а что нет
+### What to take and what not to
 
-| Используйте | Возьмите другое |
+| Use | Take instead |
 |---|---|
-| Семантический токен: `--text-primary`, `--surface-raised`, `--ok-text` | **Шаг рампы напрямую** (`--n-3`, `--a-4`) — это светлая тема, вписанная в компонент. Список семантики целиком — [токены](./tokens.md) |
-| Состояние объекта — атрибут `data-tone`, один словарь на всю библиотеку | **Свой цвет под своё состояние** — заведите тон и покажите его [бейджем](../components/display/badge.md): цвет не имеет права быть единственным носителем |
-| Ряд графика — `--chart-1` … `--chart-6` по порядку | **Статусный тон как «ещё одна серия»** — тона `ok`/`warn`/`error` зарезервированы. Ряды подписывает [легенда](../components/charts/legend.md) |
-| Глубина — перепад поверхностей | **Тень ради глубины** — тень означает «временное и сверху», см. [высоту](./elevation.md) |
-| Информационное сообщение — тон `neutral` | **Синий как «info»** — синий занят акцентом и состоянием «идёт», см. [сноску в карточке](../components/display/card.md) |
+| A semantic token: `--text-primary`, `--surface-raised`, `--ok-text` | **A step of a ramp directly** (`--n-3`, `--a-4`) — that is the light theme written into a component. The whole list of the semantics is in [tokens](./tokens.md) |
+| The state of an object — the `data-tone` attribute, one vocabulary for the whole library | **A colour of your own for a state of your own** — start a tone and show it with [a badge](../components/display/badge.md): colour has no right to be the only carrier |
+| A series of a chart — `--chart-1` … `--chart-6` in order | **A status hue as "one more series"** — the tones `ok`/`warn`/`error` are reserved. The series are labelled by [the legend](../components/charts/legend.md) |
+| Depth — a step between surfaces | **A shadow for the sake of depth** — a shadow means "temporary and above", see [elevation](./elevation.md) |
+| An informational message — the `neutral` tone | **Blue as "info"** — blue is taken by the accent and by the "running" state, see [the note in a card](../components/display/card.md) |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
-[Токены](./tokens.md)
-[Высота и поверхности](./elevation.md)
-[Бейдж](../components/display/badge.md)
-[Легенда графика](../components/charts/legend.md)
-[Метрика](../components/display/metric.md)
+[Tokens](./tokens.md)
+[Elevation and surfaces](./elevation.md)
+[Badge](../components/display/badge.md)
+[Chart legend](../components/charts/legend.md)
+[Metric](../components/display/metric.md)

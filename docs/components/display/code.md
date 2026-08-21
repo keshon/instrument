@@ -1,97 +1,98 @@
 ---
-title: Код и копируемое значение
-group: Отображение данных
+title: Code and copyable value
+group: Data display
 layout: component
 source: src/agent.css
-js: Копирование в буфер — делает `instrument.js`
+js: Copying to the clipboard is done by `instrument.js`
 api:
-  - { name: "inst-code", kind: "класс", doc: "Блок кода. Прокручивается по горизонтали" }
-  - { name: "inst-code--numbered", kind: "модификатор", doc: "Листинг с колонкой номеров строк" }
-  - { name: "inst-code-line", kind: "класс", doc: "Строка листинга. Только внутри `--numbered`" }
-  - { name: "inst-code-num", kind: "класс", doc: "Номер. `--text-muted`, потому что его читают. Не выделяется мышью" }
-  - { name: "inst-code-src", kind: "класс", doc: "Сам код. Единственное место, где живёт `overflow-wrap: anywhere`" }
-  - { name: "inst-copyable", kind: "класс", doc: "Однострочное значение с кнопкой" }
-  - { name: "inst-copy", kind: "класс", doc: "Кнопка копирования. Работу выполняет [instrument.js](../../foundations/behavior.md). Внутри `.inst-code` встаёт в дальний верхний угол сама" }
-  - { name: "data-copy", kind: "атрибут", doc: "Копировать это значение, а не текст блока" }
-  - { name: "data-copied-label", kind: "атрибут", doc: "Своя фраза для скринридера вместо «Copied»" }
-  - { name: "data-failed-label", kind: "атрибут", doc: "То же для неудачи. По умолчанию «Could not copy»" }
-  - { name: "data-copied", kind: "атрибут", value: "true · false", doc: "Ответ кнопки. Ставит и снимает `instrument.js`" }
-  - { name: "--surface-sunken", kind: "токен" }
-  - { name: "--border-subtle", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--radius-md", kind: "токен" }
-  - { name: "--space-4", kind: "токен" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--font-mono", kind: "токен" }
-title-en: "Code and copyable value"
-group-en: "Data display"
+  - { name: "inst-code", kind: "class", doc: "A block of code. It scrolls horizontally" }
+  - { name: "inst-code--numbered", kind: "modifier", doc: "A listing with a column of line numbers" }
+  - { name: "inst-code-line", kind: "class", doc: "A line of a listing. Inside `--numbered` only" }
+  - { name: "inst-code-num", kind: "class", doc: "The number. `--text-muted`, because it gets read. Not selected by the mouse" }
+  - { name: "inst-code-src", kind: "class", doc: "The code itself. The one place `overflow-wrap: anywhere` lives in" }
+  - { name: "inst-copyable", kind: "class", doc: "A single-line value with a button" }
+  - { name: "inst-copy", kind: "class", doc: "The copy button. The work is done by [instrument.js](../../foundations/behavior.md). Inside `.inst-code` it takes the far top corner by itself" }
+  - { name: "data-copy", kind: "attribute", doc: "Copy this value rather than the text of the block" }
+  - { name: "data-copied-label", kind: "attribute", doc: "A phrase of your own for a screen reader instead of «Copied»" }
+  - { name: "data-failed-label", kind: "attribute", doc: "The same for a failure. «Could not copy» by default" }
+  - { name: "data-copied", kind: "attribute", value: "true · false", doc: "The response of the button. Set and removed by `instrument.js`" }
+  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--border-subtle", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--radius-md", kind: "token" }
+  - { name: "--space-4", kind: "token" }
+  - { name: "--pad-panel", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--font-mono", kind: "token" }
 ---
 
-Блок кода и однострочное значение, которое хочется скопировать: путь, хеш,
-идентификатор.
+A block of code and a single-line value one wants to copy: a path, a hash, an
+identifier.
 
-Страница про оба: первый показывают, второй забирают.
+The page is about both: the first is shown, the second is taken.
 
 ```html preview
 <div class="inst-code">go -C tools run ./cmd/contrast
-  <button class="inst-copy" type="button" aria-label="Скопировать команду">
+  <button class="inst-copy" type="button" aria-label="Copy the command">
     <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
   </button>
 </div>
 <span class="inst-copyable">a4f7c2e91b0d5537
-  <button class="inst-copy" type="button" aria-label="Скопировать a4f7c2e91b0d5537">
+  <button class="inst-copy" type="button" aria-label="Copy a4f7c2e91b0d5537">
     <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
   </button>
 </span>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `tabindex="0"` и `role="region"` с именем | да, если внутри нет фокусируемого | Блок прокручивается по горизонтали, и до прокрутки надо добраться с клавиатуры |
-| `aria-label` **со значением** у кнопки копирования | да | Ряд кнопок «Скопировать» на слух неразличим: «Скопировать a4f7c2e» |
-| Ничего для озвучивания копирования | — | `instrument.js` заводит общую живую область `[data-inst-live]` сам и говорит в неё словом. Приложению здесь делать нечего |
+| `tabindex="0"` and a named `role="region"` | yes, if there is nothing focusable inside | The block scrolls horizontally, and the scrolling has to be reachable from the keyboard |
+| An `aria-label` **with the value** on the copy button | yes | A row of "Copy" buttons is indistinguishable by ear: "Copy a4f7c2e" |
+| Nothing for speaking the copy | — | `instrument.js` starts a shared live region `[data-inst-live]` itself and speaks into it in words. There is nothing for the application to do here |
 
-Переноса строк в блоке кода нет: перенос в команде меняет её смысл.
-Отсюда горизонтальная прокрутка, а `scrollbar-gutter` зарезервирован, чтобы
-появление полосы не сдвигало код на пиксель при каждом обновлении.
+There is no line wrapping in a block of code: a wrap in a command changes its
+meaning. Hence the horizontal scrolling, and `scrollbar-gutter` is reserved so
+that the appearance of the bar does not shift the code by a pixel on every
+update.
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Прокрутка | Блок прокручивается по горизонтали, поэтому обязан быть достижим с клавиатуры: `tabindex="0"` и `role="region"` с именем, если внутри нет фокусируемого |
-| `scrollbar-gutter` | Зарезервирован, чтобы появление полосы не сдвигало код на пиксель при каждом обновлении |
-| Имя кнопки копирования | `aria-label` **со значением**: «Скопировать a4f7c2e». Ряд кнопок «Скопировать» на слух неразличим |
-| Результат копирования | `instrument.js` меняет вид кнопки **и** говорит словом: смена глифа для скринридера — событие без содержания. Живая область у кита одна на документ, заводится при первом сообщении и переиспользуется |
-| Перенос строк | В блоке кода его нет: перенос в команде меняет её смысл. Отсюда горизонтальная прокрутка |
-| Кегль | `--text-xs` — 12,5px. Ниже `--text-2xs` кегль не опускается |
+| Scrolling | The block scrolls horizontally, so it has to be reachable from the keyboard: `tabindex="0"` and a named `role="region"` if there is nothing focusable inside |
+| `scrollbar-gutter` | Reserved so that the appearance of the bar does not shift the code by a pixel on every update |
+| The name of the copy button | An `aria-label` **with the value**: "Copy a4f7c2e". A row of "Copy" buttons is indistinguishable by ear |
+| The result of a copy | `instrument.js` changes the look of the button **and** says it in words: a change of glyph is an event with no content for a screen reader. The kit has one live region per document, started at the first message and reused |
+| Line wrapping | There is none in a block of code: a wrap in a command changes its meaning. Hence the horizontal scrolling |
+| Type size | `--text-xs` — 12.5px. The size does not go below `--text-2xs` |
 
-## Варианты
+## Variants
 
-### Копируемое значение
+### A copyable value
 
-Однострочное значение с кнопкой — хеш, идентификатор, путь.
+A single-line value with a button — a hash, an identifier, a path.
 
 ```html preview
 <span class="inst-copyable">a4f7c2e
-  <button class="inst-copy" type="button" aria-label="Скопировать a4f7c2e">
+  <button class="inst-copy" type="button" aria-label="Copy a4f7c2e">
     <svg class="inst-icon inst-icon--sm" aria-hidden="true"><use href="#i-copy"/></svg>
   </button>
 </span>
 ```
 
-Кнопка стоит **в потоке**, с просветом, и видна всегда. Абсолют в углу с
-проявлением по наведению — приём блока кода: там угол свободен и текста много.
-У однострочного значения угла нет, и значок ложился на последние символы, а на
-касании его не было вовсе, потому что наведения на касании не бывает.
+The button stands **in the flow**, with a gap, and is always visible. An
+absolute in the corner appearing on hover is a trick of a block of code: there
+the corner is free and there is plenty of text. A single-line value has no
+corner, and the icon lay over the last characters — and on touch it was not
+there at all, because on touch there is no hover.
 
-Область нажатия у кнопки растёт до нормы невидимым `::before` — тем же приёмом,
-что у флажка: растёт область, а не значок, и строка остаётся прежней высоты.
+The tap area of the button grows to the norm by an invisible `::before` — the
+same trick as on a checkbox: the area grows rather than the glyph, and the line
+stays the same height.
 
-### Листинг с номерами строк
+### A listing with line numbers
 
 ```html preview
 <div class="inst-code inst-code--numbered">
@@ -101,59 +102,61 @@ group-en: "Data display"
 </div>
 ```
 
-Номер не выделяется мышью — `user-select: none`: копируют код, а не страницу.
-Колонка номеров ровно `5ch`, и это не запас на глаз: пятизначный номер строки
-встречается в настоящих файлах, а колонка, растущая от содержимого, сдвигала
-бы код при каждой подгрузке.
+A number is not selected by the mouse — `user-select: none`: what gets copied
+is the code rather than the page. The column of numbers is exactly `5ch`, and
+that is not a margin by eye: a five-digit line number occurs in real files, and
+a column growing from its content would shift the code on every load.
 
 | | `inst-code` | `inst-copyable` |
 |---|---|---|
-| Сколько строк | Сколько угодно | Одна |
-| Прокрутка | По горизонтали | Нет |
-| Кнопка | Нет | Есть |
-| Пример | Команда, конфиг | Хеш, путь, идентификатор |
+| How many lines | Any number | One |
+| Scrolling | Horizontal | None |
+| The button | No | Yes |
+| An example | A command, a config | A hash, a path, an identifier |
 
 ## JS
 
-Подключите модуль один раз на страницу — инициализировать компоненты по
-отдельности не нужно, `instrument.js` работает делегированием и видит узлы, пришедшие
-позже.
+Include the module once per page — there is no need to initialise the
+components one by one, `instrument.js` works by delegation and sees nodes that
+arrived later.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Примеры на этой странице живые: наведите на блок кода и нажмите кнопку копирования — значок сменится на галку.
+The examples on this page are live: hover over the block of code and press the
+copy button — the glyph turns into a tick.
 
-Копирование целиком: текст в буфер, цветной ответ на кнопке и объявление
-результата вслух. Ответ обязателен — буфер обмена ничего не показывает, и без
-него человек жмёт кнопку второй раз.
+Copying entire: the text into the clipboard, a coloured response on the button
+and the result announced aloud. The response is obligatory — a clipboard shows
+nothing, and without it a person presses the button a second time.
 
-Источник — текст ближайшего `.inst-code` или `.inst-copyable` **без самой
-кнопки**. Читается `textContent`, а не `innerText`: второй у свёрнутого блока
-возвращает пустую строку, и копирование ушло бы в ничто беззвучно.
+The source is the text of the nearest `.inst-code` or `.inst-copyable`
+**without the button itself**. `textContent` is read rather than `innerText`:
+the second returns an empty string on a collapsed block, and the copy would go
+nowhere in silence.
 
-### Опции
+### Options
 
-| Атрибут | Что делает |
+| Attribute | What it does |
 |---|---|
-| `data-copy` | Копировать это значение, а не текст блока. Нужно, когда видно сокращение, а копировать надо полное |
-| `data-copied-label` | Своя фраза для скринридера вместо «Copied» |
-| `data-failed-label` | То же для неудачи. По умолчанию «Could not copy» |
+| `data-copy` | Copy this value rather than the text of the block. Wanted when an abbreviation is shown and the full thing has to be copied |
+| `data-copied-label` | A phrase of your own for a screen reader instead of «Copied» |
+| `data-failed-label` | The same for a failure. «Could not copy» by default |
 
 ```html
 <span class="inst-copyable">a4f7c2e
   <button class="inst-copy" type="button" data-copy="a4f7c2e91b0d5537"
-          aria-label="Скопировать полный хеш"></button>
+          aria-label="Copy the full hash"></button>
 </span>
 ```
 
-### События
+### Events
 
-`inst:copy` всплывает с `{ text }` и отменяем: `preventDefault()` означает
-«копирую сам», и `instrument.js` не трогает буфер.
+`inst:copy` bubbles with `{ text }` and is cancellable: `preventDefault()`
+means "I copy it myself", and `instrument.js` does not touch the clipboard.
 
 ```js
 document.addEventListener('inst:copy', (e) => {
@@ -161,16 +164,17 @@ document.addEventListener('inst:copy', (e) => {
 });
 ```
 
-### Чего `instrument.js` не делает
+### What `instrument.js` does not do
 
-Подсветку синтаксиса. Она требует разбора языка, и это работа приложения.
+Syntax highlighting. It calls for parsing a language, and that is the work of
+the application.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

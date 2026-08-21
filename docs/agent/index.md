@@ -1,77 +1,77 @@
 ---
-title: Агентный слой
-group: Агентный слой
+title: Agent layer
+group: Agent layer
 layout: index
-title-en: "Agent layer"
-group-en: "Agent layer"
 ---
 
-Двенадцать компонентов, и все они про одно: **показать человеку работу машины,
-которая идёт прямо сейчас.** Отсюда и различия — не в виде, а в том, что именно
-показывается: единица работы, её вывод, её время или её цена.
+Twelve components, and all of them are about one thing: **showing a human the
+work of a machine that is going on right now.** Hence the differences — not in
+the look but in what exactly is shown: the unit of work, its output, its time
+or its price.
 
-| | единица | форма |
+| | the unit | the form |
 |---|---|---|
-| [Прогон](./run.md) | фаза, попытка, шард | счётные точки |
-| [Строка очереди](./task.md) | задача | плоская строка, их сотни |
-| [Шаг](./step.md) | вызов инструмента | раскрывается, внутри вывод |
-| [Лог](./log.md) | строка от машины | поток с уровнем и временем |
-| [Диф](./diff.md) | правка в файле | две стороны |
-| [Дорожки](./lane.md) | исполнитель | отрезки на общей оси |
-| [История](./history.md) | попытка с исходом | ряд равных событий |
-| [Бюджет](./budget.md) | ресурс с лимитом | расход против предела |
-| [Дерево](./tree.md) | узел | иерархия неизвестной глубины |
-| [Согласование](./approval.md) | решение человека | остаётся в потоке |
-| [Отказ](./failure.md) | сбой | причина и повтор |
+| [The run](./run.md) | a phase, an attempt, a shard | countable dots |
+| [The queue row](./task.md) | a task | a flat row, and there are hundreds |
+| [The step](./step.md) | a tool call | it expands, with the output inside |
+| [The log](./log.md) | a line from the machine | a stream with a level and a time |
+| [The diff](./diff.md) | an edit in a file | two sides |
+| [The lanes](./lane.md) | a worker | segments on a shared axis |
+| [The history](./history.md) | an attempt with an outcome | a row of equal events |
+| [The budget](./budget.md) | a resource with a limit | spending against a ceiling |
+| [The tree](./tree.md) | a node | a hierarchy of unknown depth |
+| [The approval](./approval.md) | a decision by a human | it stays in the flow |
+| [The failure](./failure.md) | a breakdown | a reason and a retry |
 
-Сравнение стоит здесь, а не на страницах: «возьмите другое» — это утверждение о
-СОСЕДЯХ, и повторённое двенадцать раз оно расходится с ними по одной строке за
-правку.
+The comparison stands here rather than on the pages: "take instead" is a
+statement about NEIGHBOURS, and repeated twelve times it parts from them by one
+line per edit.
 
-## Что показать
+## What to show
 
-| Что нужно | Возьмите | Почему не соседа |
+| What is wanted | Take | Why not the neighbour |
 |---|---|---|
-| Задачи списком, их сотни, у каждой состояние | [Очередь](./task.md) | Строка плоская: у шага есть тело, и на сотне строк оно не читается |
-| Вызов инструмента со входом и выводом | [Шаг](./step.md) | В очереди вывода нет, а сворачивать нечего |
-| Однородный поток строк от машины | [Лог](./log.md) | У шагов тело, у ленты разный состав |
-| Что агент изменил в файле | [Диф](./diff.md) | Диф без изменений — это просто [код](../components/display/code.md) |
-| Параллельных исполнителей на общей оси | [Дорожки](./lane.md) | У очереди нет оси времени |
-| Ряд равных попыток с исходом | [Историю](./history.md) | У спарклайна важно значение, а не исход |
-| Расход против явного лимита | [Бюджет](./budget.md) | У метрики нет предела, у меры нет прогноза исчерпания |
-| Счётные единицы работы: фазы, шарды | [Прогон](./run.md) | Пятьдесят точек глазом не считаются — там нужна мера с числом |
-| Иерархию неизвестной глубины | [Дерево](./tree.md) | Дерево на одном уровне — это список с лишними ролями |
+| Tasks as a list, hundreds of them, each with a state | [The queue](./task.md) | The row is flat: a step has a body, and at a hundred rows it does not read |
+| A tool call with its input and its output | [The step](./step.md) | A queue has no output, and there is nothing to collapse |
+| A uniform stream of lines from a machine | [The log](./log.md) | Steps have a body, a timeline has a varying make-up |
+| What the agent changed in a file | [The diff](./diff.md) | A diff with no changes is just [code](../components/display/code.md) |
+| Parallel workers on a shared axis | [The lanes](./lane.md) | A queue has no axis of time |
+| A row of equal attempts with an outcome | [The history](./history.md) | On a sparkline what matters is the value rather than the outcome |
+| Spending against an explicit limit | [The budget](./budget.md) | A metric has no ceiling, a meter has no forecast of exhaustion |
+| Countable units of work: phases, shards | [The run](./run.md) | Fifty dots are not counted by eye — there a meter with a number is wanted |
+| A hierarchy of unknown depth | [The tree](./tree.md) | A tree of one level is a list with superfluous roles |
 
-## Что делать, когда работа встала
+## What to do when the work has stopped
 
-| Что случилось | Возьмите | Почему не соседа |
+| What happened | Take | Why not the neighbour |
 |---|---|---|
-| Агент ждёт разрешения продолжить | [Согласование](./approval.md) | Модалка блокирует всё остальное, а решение здесь часть ленты |
-| Агент упал | [Отказ](./failure.md) | В согласовании нет причины и того, что уже пробовали |
-| Решение обязано быть принято немедленно | [модалка](../components/overlays/dialog.md) | Согласование остаётся в потоке и ждёт |
-| Сообщение без выбора | [баннер](../components/feedback/banner.md) с тоном `warn` | У согласования есть варианты, и они перечислимы |
+| The agent is waiting for permission to go on | [The approval](./approval.md) | A modal blocks everything else, and the decision here is part of the feed |
+| The agent has failed | [The failure](./failure.md) | An approval has no reason and nothing about what has already been tried |
+| The decision has to be taken immediately | [a modal](../components/overlays/dialog.md) | An approval stays in the flow and waits |
+| A message with no choice | [a banner](../components/feedback/banner.md) with the `warn` tone | An approval has options, and they are enumerable |
 
-## Когда ни один не подходит
+## When none of them fits
 
-| Что нужно | Возьмите | Почему не отсюда |
+| What is wanted | Take | Why not from here |
 |---|---|---|
-| Именованные шаги, известные наперёд | [шаги мастера](../components/navigation/steps.md) | Там конечная последовательность, здесь состав приходит из работы |
-| События с разным составом | [ленту](../components/display/timeline.md) | У лога однородные строки и колонки |
-| Непрерывную величину | [меру](../components/charts/meter.md) | Прогон считает единицы, а не проценты |
-| Сравнение записей по полям | [таблицу](../components/display/table.md) | Дерево про структуру, а не про сравнение |
-| Свойства одного объекта | [список свойств](../components/display/kv.md) | У дерева узлы раскрываются, у свойств нечего раскрывать |
+| Named steps known in advance | [wizard steps](../components/navigation/steps.md) | There the sequence is finite, here the make-up comes from the work |
+| Events of a varying make-up | [a timeline](../components/display/timeline.md) | A log has uniform lines and columns |
+| A continuous quantity | [a meter](../components/charts/meter.md) | A run counts units rather than percentages |
+| Comparing records by fields | [a table](../components/display/table.md) | A tree is about structure rather than about comparison |
+| The properties of one object | [a property list](../components/display/kv.md) | The nodes of a tree expand, and properties have nothing to expand |
 
-## Общее для всех двенадцати
+## Common to all twelve
 
-**Состояние живёт в `data-state`, а не в классе.** Словарь закрытый: значение
-вне его не даёт ошибки нигде — оно просто ничего не делает, и потому
-сторожится [реестром](../about/audit.md).
+**The state lives in `data-state` rather than in a class.** The vocabulary is
+closed: a value outside it gives an error nowhere — it simply does nothing, and
+that is why it is guarded by [the registry](../about/audit.md).
 
-**Бесконечное движение означает «идёт».** Пульсирующая точка, вращающееся
-кольцо, бегущая каретка — всё это при `prefers-reduced-motion` замедляется, но
-не останавливается: остановленный индикатор сообщает «ничего не происходит»
-ровно тогда, когда происходит.
+**Infinite motion means "running".** A pulsing dot, a turning ring, a
+travelling caret — all of it slows at `prefers-reduced-motion` without
+stopping: a stopped indicator says "nothing is happening" at exactly the moment
+something is.
 
-**Узлы приходят во время работы.** Строки очереди, шаги и узлы дерева
-появляются по одной, поэтому `instrument.js` работает делегированием и следит
-за появлением групп наблюдателем — [подробнее](../foundations/behavior.md).
+**The nodes arrive while the work goes on.** Queue rows, steps and tree nodes
+appear one at a time, so `instrument.js` works by delegation and watches for
+groups appearing with an observer — [more in
+behaviour](../foundations/behavior.md).

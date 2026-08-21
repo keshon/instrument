@@ -1,64 +1,63 @@
 ---
-title: Типографика
-group: Основания
+title: Typography
+group: Foundations
 layout: foundation
 source: src/tokens.css
 api:
-  - { name: "inst-prose", kind: "класс", doc: "Абзацный режим: 16/1.65, пропорциональные цифры, 68ch" }
-  - { name: "inst-u-mono", kind: "класс", doc: "Моноширинный кусок в потоке" }
-  - { name: "inst-u-prose-nums", kind: "класс", doc: "Пропорциональные цифры точечно" }
-  - { name: "inst-u-dim", kind: "класс", doc: "Приглушение до `--text-secondary`" }
-  - { name: "inst-u-truncate", kind: "класс", doc: "Обрезка одной строки многоточием" }
-  - { name: "--font-sans", kind: "токен" }
-  - { name: "--font-mono", kind: "токен" }
-  - { name: "--text-2xs/xs/sm/md/lg/xl/2xl", kind: "токен" }
-  - { name: "--weight-normal", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--leading-tight/ui/prose", kind: "токен" }
-  - { name: "--tracking-tight", kind: "токен" }
-  - { name: "--tracking-normal", kind: "токен" }
-title-en: "Typography"
-group-en: "Foundations"
+  - { name: "inst-prose", kind: "class", doc: "Paragraph mode: 16/1.65, proportional figures, 68ch" }
+  - { name: "inst-u-mono", kind: "class", doc: "A monospaced piece in the flow" }
+  - { name: "inst-u-prose-nums", kind: "class", doc: "Proportional figures, pointwise" }
+  - { name: "inst-u-dim", kind: "class", doc: "Muting to `--text-secondary`" }
+  - { name: "inst-u-truncate", kind: "class", doc: "Truncating one line with an ellipsis" }
+  - { name: "--font-sans", kind: "token" }
+  - { name: "--font-mono", kind: "token" }
+  - { name: "--text-2xs/xs/sm/md/lg/xl/2xl", kind: "token" }
+  - { name: "--weight-normal", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--leading-tight/ui/prose", kind: "token" }
+  - { name: "--tracking-tight", kind: "token" }
+  - { name: "--tracking-normal", kind: "token" }
 ---
 
-Семь ступеней и два начертания. База документа — **интерфейс, а не проза**:
-14/1.4, потому что подписи, ячейки, кнопки и строки задач — частый случай.
+Seven steps and two weights. The base of the document is the **interface, not
+prose**: 14/1.4, because labels, cells, buttons and task rows are the frequent
+case.
 
 ```html preview
 <div class="inst-stack inst-stack--tight">
-  <span style="font-size:var(--text-2xl)">2xl · 28px · число-герой</span>
-  <span style="font-size:var(--text-xl)">xl · 22px · заголовок раздела</span>
-  <span style="font-size:var(--text-lg)">lg · 18px · заголовок блока</span>
-  <span style="font-size:var(--text-md)">md · 16px · проза, имя панели</span>
-  <span style="font-size:var(--text-sm)">sm · 14px · база интерфейса</span>
-  <span style="font-size:var(--text-xs)">xs · 12.5px · время, метаданные</span>
-  <span style="font-size:var(--text-2xs)">2xs · 11px · бейдж, подпись оси</span>
+  <span style="font-size:var(--text-2xl)">2xl · 28px · a hero number</span>
+  <span style="font-size:var(--text-xl)">xl · 22px · a section heading</span>
+  <span style="font-size:var(--text-lg)">lg · 18px · a block heading</span>
+  <span style="font-size:var(--text-md)">md · 16px · prose, a panel name</span>
+  <span style="font-size:var(--text-sm)">sm · 14px · the interface base</span>
+  <span style="font-size:var(--text-xs)">xs · 12.5px · times, metadata</span>
+  <span style="font-size:var(--text-2xs)">2xs · 11px · a badge, an axis label</span>
 </div>
 ```
 
-Ступень существует, только если её видно. Отношения соседних кеглей —
-1.222 · 1.273 в дисплейной части и 1.136 · 1.12 · 1.143 · 1.125 в рабочей:
-ниже этого глаз перестаёт различать размеры, и три ступени начинают работать
-как одна.
+A step exists only if it is seen. The ratios of neighbouring sizes are
+1.222 · 1.273 in the display part and 1.136 · 1.12 · 1.143 · 1.125 in the
+working part: below that the eye stops telling sizes apart, and three steps
+begin to work as one.
 
-Так шкала выглядит в деле — интерфейс, проза и метка на одном экране:
+Here is the scale at work — interface, prose and a mark on one screen:
 
 ```html preview
 <div class="inst-stack">
-  <h2>Заголовок раздела</h2>
-  <p>Интерфейс по умолчанию: подписи, кнопки, ячейки.</p>
+  <h2>A section heading</h2>
+  <p>The interface by default: labels, buttons, cells.</p>
   <div class="inst-prose">
-    <p>Тело ответа агента набирается <code>.inst-prose</code>: 16/1.65,
-    пропорциональные цифры и строка, ограниченная 68 знаками.</p>
+    <p>The body of an agent's reply is set in <code>.inst-prose</code>: 16/1.65,
+    proportional figures and a line bounded at 68 characters.</p>
   </div>
-  <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
+  <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Кегль берётся из шкалы, начертание — из трёх. Заголовок **не имеет права**
-кричать громче данных, которые он подписывает.
+The type size comes from the scale, the weight from three. A heading **has no
+right** to shout louder than the data it labels.
 
 ```css
 .my-label {
@@ -68,72 +67,73 @@ group-en: "Foundations"
 }
 ```
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Кегль из `--text-*` | да | Семь ступеней. Восьмая, выдуманная на месте, ломает лестницу заголовков |
-| Интерлиньяж по работе | да | `--leading-ui` для интерфейса, `--leading-prose` для текста, который читают абзацами |
-| Три начертания | да | `normal`, `medium`, `mono`. Вес 700 в библиотеке запрещён |
-| Никакого капса с трекингом | да | Он кричит громче числа, которое подписывает. `text-transform` не встречается в библиотеке ни разу |
+| A size from `--text-*` | yes | Seven steps. An eighth, invented in place, breaks the ladder of headings |
+| Leading by the work | yes | `--leading-ui` for the interface, `--leading-prose` for text read in paragraphs |
+| Three weights | yes | `normal`, `medium`, `mono`. Weight 700 is forbidden in the library |
+| No tracked capitals | yes | They shout louder than the number they label. `text-transform` does not occur in the library once |
 
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Масштабирование | Кегли в `rem`, поэтому настройка «размер шрифта по умолчанию» в браузере работает. Высоты контролов — `min-block-size`, текст не упирается в потолок |
-| Пол кегля | 11px. Ниже в библиотеке размера нет и не заводится |
-| Порог чтения | Любой читаемый текст стоит на токене с порогом 4.5:1. `--text-faint` (3:1) для текста не применяется — см. [цвет](./colors.md) |
-| Мера строки | Проза ограничена 68 знаками: длинная строка теряет начало следующей |
-| Заголовки | Уровни `h1`–`h6` — настоящие. Кегль не заменяет структуру: скринридер читает уровень, а не размер |
-| Обрезка | `.inst-u-truncate` прячет текст визуально, но не от скринридера. Полный текст нужен в `title` — так делает [инспектор](../components/display/kv.md) |
+| Zoom | The sizes are in `rem`, so the browser's "default font size" setting works. The control heights are `min-block-size`, and the text does not hit a ceiling |
+| The floor of the type size | 11px. There is no smaller size in the library and none is started |
+| The threshold of reading | Any readable text stands on a token with a 4.5:1 threshold. `--text-faint` (3:1) is not applied to text — see [colour](./colors.md) |
+| The measure of a line | Prose is bounded at 68 characters: a long line loses the start of the next one |
+| Headings | The levels `h1`–`h6` are real. Type size does not replace structure: a screen reader reads the level, not the size |
+| Truncation | `.inst-u-truncate` hides text visually but not from a screen reader. The full text is wanted in a `title` — that is what [the inspector](../components/display/kv.md) does |
 
-## Шкала
+## Scale
 
-Семь ступеней, не больше. Каждая лишняя — это решение, которое кто-то примет
-неправильно.
+Seven steps, no more. Every extra one is a decision somebody will take wrongly.
 
-| Токен | Значение | При корне 16px | Отношение | Для чего |
+| Token | Value | At a root of 16px | Ratio | What for |
 |---|---|---|---|---|
-| `--text-2xs` | `0.6875rem` | 11px | — | Бейджи, подписи осей. **Минимальный кегль**, ниже не опускаемся |
-| `--text-xs` | `0.78125rem` | 12.5px | 1.136 | Метаданные, время, подсказки |
-| `--text-sm` | `0.875rem` | 14px | 1.12 | База интерфейса: подписи, кнопки, ячейки |
-| `--text-md` | `1rem` | 16px | 1.143 | Проза, тела сообщений, имя панели |
-| `--text-lg` | `1.125rem` | 18px | 1.125 | Заголовок блока |
-| `--text-xl` | `1.375rem` | 22px | 1.222 | Заголовок раздела |
-| `--text-2xl` | `1.75rem` | 28px | 1.273 | Только числа-герои |
+| `--text-2xs` | `0.6875rem` | 11px | — | Badges, axis labels. **The minimum size**, we go no lower |
+| `--text-xs` | `0.78125rem` | 12.5px | 1.136 | Metadata, times, hints |
+| `--text-sm` | `0.875rem` | 14px | 1.12 | The interface base: labels, buttons, cells |
+| `--text-md` | `1rem` | 16px | 1.143 | Prose, message bodies, a panel name |
+| `--text-lg` | `1.125rem` | 18px | 1.125 | A block heading |
+| `--text-xl` | `1.375rem` | 22px | 1.222 | A section heading |
+| `--text-2xl` | `1.75rem` | 28px | 1.273 | Hero numbers only |
 
 
-**Ступень существует, только если её видно.** В рабочей части шкалы отношения
-держатся в полосе 1.12–1.143. Это порог: ниже него глаз перестаёт различать
-кегли, и соседние ступени начинают работать как одна — иерархию приходится
-целиком перекладывать на цвет и вес, а их разрядов мало. Дисплейные ступени
-расходятся шире, 1.222 и 1.273, и тоже намеренно: заголовок отличается от
-заголовка на бо́льшую долю, чем подпись от подписи.
+**A step exists only if it is seen.** In the working part of the scale the
+ratios stay in the band 1.12–1.143. That is a threshold: below it the eye stops
+telling sizes apart, and neighbouring steps begin to work as one — the whole
+hierarchy has to be laid on colour and weight, and they have few registers. The
+display steps part more widely, 1.222 and 1.273, and that too is deliberate: a
+heading differs from a heading by a larger share than a caption from a caption.
 
-Шкала считается снизу вверх, от пола в 11px, а не от корня документа. То, что
-`--text-md` совпал с 16px, — удобное совпадение, а не привязка.
+The scale is counted from the bottom up, from the floor of 11px, rather than
+from the root of the document. That `--text-md` coincides with 16px is a
+convenient coincidence rather than a tie.
 
-Начертаний по-прежнему два, и 700 запрещён. Значит, крупную иерархию несёт
-**только** размер — тем более он обязан быть различимым.
+There are still two weights, and 700 is forbidden. So the large-scale hierarchy
+is carried by size **alone** — all the more reason for it to be
+distinguishable.
 
-**Кегль — единственный ярус в `rem`.** Интерфейс обязан уважать увеличенный
-размер шрифта по умолчанию в браузере: в админке сидят весь день, и это первая
-настройка, которую делает человек с ослабленным зрением. Масштабирование
-страницы работает и с `px`, но настройку «размер шрифта по умолчанию» `px`
-игнорирует молча.
+**Type size is the only tier in `rem`.** An interface has to respect an
+increased default font size in the browser: people sit in an admin panel all
+day, and that is the first setting somebody with weakened sight changes. Page
+zoom works with `px` too, but the "default font size" setting is ignored by
+`px` silently.
 
-Всё остальное остаётся в `px`, потому что это **геометрия, а не текст**:
-хайрлайн, точка состояния, жёлоб, радиус. Следствие, которое нельзя
-игнорировать: если текст растёт, а высоты контролов заданы в `px`, текст
-однажды упрётся в потолок — поэтому высоты применяются как `min-block-size`,
-а не `block-size`.
+Everything else stays in `px`, because it is **geometry rather than text**: the
+hairline, the state dot, the gutter, the radius. A consequence that cannot be
+ignored: if the text grows while the control heights are set in `px`, the text
+will one day hit the ceiling — so the heights are applied as `min-block-size`
+rather than `block-size`.
 
-### Заголовки
+### Headings
 
-Умолчания элементов, класса не требуют. Все несут `--weight-medium`,
-`--leading-tight`, `--tracking-tight` и `text-wrap: balance`.
+Defaults of the elements; they need no class. All carry `--weight-medium`,
+`--leading-tight`, `--tracking-tight` and `text-wrap: balance`.
 
-| Элемент | Кегль |
+| Element | Size |
 |---|---|
 | `<h1>` | `--text-2xl` |
 | `<h2>` | `--text-xl` |
@@ -142,149 +142,150 @@ group-en: "Foundations"
 
 ```html preview
 <div class="inst-prose">
-  <h2>Заголовок раздела</h2>
-  <p>Внутри <code>.inst-prose</code> у заголовка свой ритм: воздуха сверху
-  вдвое больше, чем снизу. Заголовок принадлежит тому, что под ним, и
-  разделять текст поровну ему нельзя.</p>
-  <h3>Подзаголовок</h3>
-  <p>Без этого правила заголовок висит посередине между своим абзацем и
-  чужим — и не отделяет ни одного от другого.</p>
+  <h2>A section heading</h2>
+  <p>Inside <code>.inst-prose</code> a heading has a rhythm of its own: twice as
+  much air above as below. A heading belongs to what is under it, and dividing
+  the text evenly is not allowed to it.</p>
+  <h3>A subheading</h3>
+  <p>Without that rule a heading hangs midway between its own paragraph and
+  somebody else's — and parts neither from the other.</p>
 </div>
 ```
 
-ЗАГОЛОВКИ КАПСОМ и Title Case запрещены: только обычное предложение.
+HEADINGS IN CAPITALS and Title Case are forbidden: an ordinary sentence only.
 
-## Варианты
+## Variants
 
-Два. 700 в шрифте есть и всё равно запрещён: на макете из хайрлайнов и воздуха
-он читается как крик.
+Two. 700 exists in the font and is forbidden all the same: on a layout of
+hairlines and air it reads as a shout.
 
-**Медиум — 600, а не 500, и это признание факта.** У Segoe UI настоящего 500
-нет, и системный стек снапает его к Semibold: замер по пикселям показал, что
-500 и 600 совпадают строка в строку. На macOS SF Pro даёт настоящий Medium — то
-есть рисунок различался на двух платформах, и выбирал это шрифт, а не
-автор.
+**Medium is 600 rather than 500, and that is an admission of fact.** Segoe UI
+has no true 500, and the system stack snaps it to Semibold: a measurement over
+the pixels showed that 500 and 600 match line for line. On macOS SF Pro gives a
+true Medium — that is, the drawing differed on two platforms, and what chose it
+was the font rather than the author.
 
-| Токен | Значение | Где |
+| Token | Value | Where |
 |---|---|---|
-| `--weight-normal` | 400 | Всё по умолчанию |
-| `--weight-medium` | 600 | Заголовки, подписи кнопок, шапка таблицы, бейдж |
+| `--weight-normal` | 400 | Everything by default |
+| `--weight-medium` | 600 | Headings, button labels, a table head, a badge |
 
 ```html preview
 <div class="inst-stack inst-stack--tight">
-  <span>400 — обычный текст, ячейки, подписи полей</span>
-  <span style="font-weight:var(--weight-medium)">600 — заголовок, кнопка, шапка таблицы</span>
-  <span style="font-weight:700">700 — в библиотеке запрещено: на плоском макете читается как крик</span>
+  <span>400 — ordinary text, cells, field labels</span>
+  <span style="font-weight:var(--weight-medium)">600 — a heading, a button, a table head</span>
+  <span style="font-weight:700">700 — forbidden in the library: on a flat layout it reads as a shout</span>
 </div>
 ```
 
-### Интерлиньяж
+### Leading
 
-| Токен | Значение | Для чего |
+| Token | Value | What for |
 |---|---|---|
-| `--leading-tight` | 1.25 | Заголовки, однострочный интерфейс |
-| `--leading-ui` | 1.4 | База документа: переносящиеся подписи, ячейки таблиц |
-| `--leading-prose` | 1.65 | Проза |
+| `--leading-tight` | 1.25 | Headings, a single-line interface |
+| `--leading-ui` | 1.4 | The base of the document: wrapping labels, table cells |
+| `--leading-prose` | 1.65 | Prose |
 
-### Трекинг
+### Tracking
 
-Оптическая коррекция, не стиль: крупный кегль по умолчанию выглядит
-разреженным.
+An optical correction rather than a style: large type looks loose by default.
 
-| Токен | Значение | Где |
+| Token | Value | Where |
 |---|---|---|
-| `--tracking-tight` | `-0.01em` | Заголовки |
-| `--tracking-normal` | `0` | Всё остальное |
+| `--tracking-tight` | `-0.01em` | Headings |
+| `--tracking-normal` | `0` | Everything else |
 
-Мелкий кегль не разрежается никогда: разрядка на 11px — это не акцент, а потеря
-слова.
+Small type is never loosened: letterspacing at 11px is not an accent but the
+loss of a word.
 
-### Семейства
+### Families
 
-| Токен | Стек |
+| Token | Stack |
 |---|---|
 | `--font-sans` | `ui-sans-serif`, `system-ui`, `-apple-system`, `Segoe UI`, `Roboto`, `Helvetica Neue`, `Arial` |
 | `--font-mono` | `ui-monospace`, `Cascadia Code`, `JetBrains Mono`, `SF Mono`, `Consolas`, `Liberation Mono` |
 
-Шрифт системный: веб-шрифт добавил бы сетевой запрос и вспышку подмены ради
-эффекта, который в плоском инструментальном интерфейсе не читается.
+The font is the system one: a web font would add a network request and a flash
+of substitution for the sake of an effect that does not read in a flat tooling
+interface.
 
-Моноширинный приходит вместе с оптической поправкой `0.925em` — моно
-воспринимается крупнее санса на том же кегле. Поправка объявлена **один раз**
-на `code`, `kbd`, `samp`, `pre` и `.inst-u-mono`: когда у утилиты было своё
-правило, `<code class="inst-u-mono">` получал `0.925 × 0.925` и уезжал под пол
-в 11px. Внутри блока кода поправка уже применена контейнером и второй раз не
-накладывается.
+The monospaced one comes with an optical correction of `0.925em` — mono is
+perceived as larger than a sans at the same size. The correction is declared
+**once** on `code`, `kbd`, `samp`, `pre` and `.inst-u-mono`: while the utility
+had a rule of its own, a `<code class="inst-u-mono">` got `0.925 × 0.925` and
+went under the floor of 11px. Inside a block of code the correction is already
+applied by the container and is not laid on a second time.
 
-### Табличные цифры
+### Tabular figures
 
-`font-variant-numeric: tabular-nums` стоит **на `body`**, то есть по умолчанию
-на всём. В инструментальном интерфейсе почти любое число либо стоит в колонке,
-либо обновляется на месте, и пропорциональные цифры дёргают оба случая.
+`font-variant-numeric: tabular-nums` stands **on `body`**, that is, on
+everything by default. In a tooling interface almost any number either stands
+in a column or updates in place, and proportional figures tug at both cases.
 
-| Что | Как отключить |
+| What | How to switch it off |
 |---|---|
-| Абзац прозы | `.inst-prose` — уже отключает |
-| Отдельный кусок текста | `.inst-u-prose-nums` |
+| A paragraph of prose | `.inst-prose` — it switches them off already |
+| A single piece of text | `.inst-u-prose-nums` |
 
-Обратного переключателя нет: табличные и так везде.
+There is no switch the other way: tabular is everywhere anyway.
 
-## Композиции
+## Composition
 
-Опт-ин, а не умолчание. Базой должен быть частый случай, иначе каждый компонент
-вынужден переобъявлять размер, а любой `div` приложения без класса наследует не
-тот кегль.
+Opt-in rather than the default. The base has to be the frequent case,
+otherwise every component is forced to redeclare the size, and any `div` of an
+application without a class inherits the wrong one.
 
 ```html
 <div class="inst-prose">
-  <p>Тело ответа агента.</p>
-  <p>Второй абзац отступает от первого сам.</p>
+  <p>The body of an agent's reply.</p>
+  <p>The second paragraph steps away from the first by itself.</p>
 </div>
 ```
 
-| Что делает `.inst-prose` | Значение |
+| What `.inst-prose` does | Value |
 |---|---|
-| Кегль и интерлиньяж | `--text-md` / `--leading-prose` |
-| Цифры | Пропорциональные |
-| Ширина строки | `68ch` — мера читаемости |
-| Перенос | `text-wrap: pretty` у абзацев |
-| Ритм | Зазор ставится **между** соседями: `> * + *` получает `--space-5` |
-| Списки | Отступ `--space-7`, между пунктами `--space-2` |
+| Size and leading | `--text-md` / `--leading-prose` |
+| Figures | Proportional |
+| The width of a line | `68ch` — the measure of readability |
+| Wrapping | `text-wrap: pretty` on the paragraphs |
+| Rhythm | The gap is set **between** neighbours: `> * + *` gets `--space-5` |
+| Lists | An indent of `--space-7`, `--space-2` between the items |
 
-Отдельного компонента для стриминга нет и не нужно: тело — это `.inst-prose`,
-а признак того, что текст ещё поступает, — `.inst-caret`.
+There is no separate component for streaming and none is needed: the body is
+`.inst-prose`, and the mark that text is still arriving is `.inst-caret`.
 
-### Клавиши
+### Keys
 
-Инструмент живёт на клавиатуре, поэтому клавиша — элемент интерфейса, а не
-безымянный моноширинный кусок. `<kbd>` оформлен в базе и класса не требует.
+A tool lives on the keyboard, so a key is an element of the interface rather
+than a nameless monospaced piece. `<kbd>` is styled in the base and needs no
+class.
 
 ```html preview
-<span><kbd>Ctrl</kbd> <kbd>K</kbd> — поиск по прогонам</span>
-<span><kbd>Esc</kbd> — остановить прогон</span>
+<span><kbd>Ctrl</kbd> <kbd>K</kbd> — search the runs</span>
+<span><kbd>Esc</kbd> — stop the run</span>
 ```
 
-## Правила
+## Rules
 
-### Что брать, а что нет
+### What to take and what not to
 
-| Используйте | Возьмите другое |
+| Use | Take instead |
 |---|---|
-| `--text-sm` — умолчание интерфейса. Ничего не пишете, всё уже так | **Абзацы, которые читают подряд** — класс `.inst-prose`, он же тело ответа агента |
-| `--text-2xl` — число-герой, одно на блок | **Заголовок экрана** — `--text-xl` через `<h2>`. Крупный кегль у подписи кричит громче числа, которое он подписывает |
-| `--text-2xs` — бейдж, подпись оси | **Метаданные и время** — `--text-xs`: 11px это пол, а не рабочий кегль. Пример — [строка лога](../agent/log.md) |
-| `--weight-medium` для акцента | **700** — его в библиотеке нет. Разделяйте кеглем и цветом, как в [метрике](../components/display/metric.md) |
-| Моноширинный для идентификаторов и путей | **Моноширинный для прозы** — обычный текст остаётся сансом, см. [блок кода](../components/display/code.md) |
+| `--text-sm` — the interface default. You write nothing, it is already so | **Paragraphs read one after another** — the class `.inst-prose`, which is also the body of an agent's reply |
+| `--text-2xl` — a hero number, one per block | **A screen title** — `--text-xl` through an `<h2>`. A large size on a label shouts louder than the number it labels |
+| `--text-2xs` — a badge, an axis label | **Metadata and times** — `--text-xs`: 11px is a floor rather than a working size. An example is [a log row](../agent/log.md) |
+| `--weight-medium` for an accent | **700** — it is not in the library. Part things by size and colour, as in [the metric](../components/display/metric.md) |
+| Monospaced for identifiers and paths | **Monospaced for prose** — ordinary text stays a sans, see [the block of code](../components/display/code.md) |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
-[Цвет](./colors.md)
-[Плотность](./density.md)
-[Блок кода](../components/display/code.md)
-[Метрика](../components/display/metric.md)
-[Строка лога](../agent/log.md)
+[Colour](./colors.md)
+[Density](./density.md)
+[Block of code](../components/display/code.md)
+[Metric](../components/display/metric.md)
+[Log row](../agent/log.md)

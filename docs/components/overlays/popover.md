@@ -1,145 +1,144 @@
 ---
-title: Поповер
-group: Оверлеи
+title: Popover
+group: Overlays
 layout: component
 source: src/overlay.css
 api:
-  - { name: "inst-popover", kind: "класс", doc: "Плавающая поверхность: рамка, радиус, фон, тень, внутренний отступ" }
-  - { name: "inst-popover--anchored", kind: "модификатор", doc: "Привязка к вызвавшей кнопке. Под `@supports`" }
-  - { name: "inst-popover--fill", kind: "модификатор", doc: "Ширина во всю ширину родителя вместо `max-content`. Для выпадающего списка под полем" }
-  - { name: "popover", kind: "атрибут", value: "auto · manual", doc: "Добавляет к поверхности верхний слой, закрытие по `Escape` и переход появления" }
-  - { name: "popovertarget", kind: "атрибут", doc: "На кнопке. Связка и неявный якорь одновременно" }
-  - { name: "--surface-overlay", kind: "токен" }
-  - { name: "--shadow-popover", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--radius-md", kind: "токен" }
-  - { name: "--space-1", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-8", kind: "токен" }
-  - { name: "--dur-2", kind: "токен" }
-  - { name: "--ease-out", kind: "токен" }
-title-en: "Popover"
-group-en: "Overlays"
+  - { name: "inst-popover", kind: "class", doc: "The floating surface: the border, the radius, the background, the shadow, the inner padding" }
+  - { name: "inst-popover--anchored", kind: "modifier", doc: "Anchoring to the button that called it. Under an `@supports`" }
+  - { name: "inst-popover--fill", kind: "modifier", doc: "The full width of the parent instead of `max-content`. For a dropdown list under a field" }
+  - { name: "popover", kind: "attribute", value: "auto · manual", doc: "It adds the top layer, closing on `Escape` and the transition of appearing to the surface" }
+  - { name: "popovertarget", kind: "attribute", doc: "On the button. The tie and the implicit anchor at once" }
+  - { name: "--surface-overlay", kind: "token" }
+  - { name: "--shadow-popover", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--radius-md", kind: "token" }
+  - { name: "--space-1", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-8", kind: "token" }
+  - { name: "--dur-2", kind: "token" }
+  - { name: "--ease-out", kind: "token" }
 ---
 
-Небольшой блок, всплывающий над интерфейсом по нажатию на кнопку и исчезающий
-по клику мимо. Целиком на платформе: `popover` + `popovertarget`, без единой
-строки скрипта.
+A small block popping up over the interface on a press of a button and
+disappearing on a click outside. Entirely on the platform: `popover` +
+`popovertarget`, with not one line of script.
 
 ```html preview
-<button class="inst-btn" type="button" popovertarget="pop-actions">Действия</button>
+<button class="inst-btn" type="button" popovertarget="pop-actions">Actions</button>
 <div class="inst-popover inst-popover--anchored" id="pop-actions" popover>
   <div class="inst-menu" role="menu">
-    <span class="inst-menu-label">Прогон #4127</span>
-    <button class="inst-menu-item" type="button" role="menuitem">Перезапустить</button>
-    <button class="inst-menu-item" type="button" role="menuitem">Скопировать id</button>
+    <span class="inst-menu-label">Run #4127</span>
+    <button class="inst-menu-item" type="button" role="menuitem">Restart</button>
+    <button class="inst-menu-item" type="button" role="menuitem">Copy the id</button>
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `popover` на блоке | да, у всплывающего | Без него это плавающая поверхность в потоке: ни верхнего слоя, ни закрытия по `Escape` |
-| `id` на блоке | да | Кнопка ссылается на него по имени |
-| `popovertarget="id"` на кнопке | да | Связка и неявный якорь одновременно |
-| `type="button"` на кнопке | да | Иначе внутри формы она её отправит |
-| `inst-popover--fill` для плашки под полем | да | Список уже или шире поля читается как чужой элемент рядом, а не как его продолжение |
+| A `popover` on the block | yes, on something popping up | Without it this is a floating surface in the flow: no top layer and no closing on `Escape` |
+| An `id` on the block | yes | The button refers to it by name |
+| A `popovertarget="id"` on the button | yes | The tie and the implicit anchor at once |
+| A `type="button"` on the button | yes | Otherwise inside a form it will submit it |
+| An `inst-popover--fill` for a plate under a field | yes | A list narrower or wider than the field reads as somebody else's element beside it rather than as its continuation |
 
-Содержимое поповера своего класса не имеет: чаще всего это [меню](./menu.md),
-но может быть любая разметка.
+The content of a popover has no class of its own: most often it is
+[a menu](./menu.md), but it can be any markup.
 
 :::note
-**Вид отделён от механизма.** `.inst-popover` — это поверхность; поведение
-верхнего слоя добавляет атрибут `popover`. Поэтому тот же вид можно взять для
-того, что плавает, но поповером не является: списка результатов комбобокса,
-подсказки автодополнения. Без атрибута блок просто виден, показом управляет
-приложение.
+**The look is parted from the mechanism.** `.inst-popover` is a surface; the
+behaviour of the top layer is added by the `popover` attribute. So the same
+look can be taken for something that floats without being a popover: the
+results list of a combobox, an autocomplete hint. With no attribute the block
+is simply visible, and the showing is led by the application.
 :::
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Клавиатура | `Enter`/`Space` на кнопке открывает, `Escape` закрывает, фокус возвращается на кнопку. Всё нативное, `instrument.js` ничего не перехватывает |
-| Подложки нет | `::backdrop` прозрачен: поповер не блокирует страницу и не притворяется модальным |
-| Роль содержимого | Роли не выдумываются. Если внутри меню — `role="menu"` и `role="menuitem"` ставятся в разметке |
-| Поверхность без атрибута | `.inst-popover` без `popover` не имеет ни верхнего слоя, ни закрытия по `Escape`: показ, скрытие и роль — на приложении |
-| Уменьшенное движение | Переход схлопывается до `0.01ms`, а не выключается: машины состояний, слушающие `transitionend`, продолжают работать |
-| Печать | Поповер на листе не печатается: он по определению временный |
+| The keyboard | `Enter`/`Space` on the button opens, `Escape` closes, and the focus returns to the button. All of it native, and `instrument.js` intercepts nothing |
+| There is no ground | The `::backdrop` is transparent: a popover does not block the page and does not pretend to be modal |
+| The role of the content | Roles are not invented. If there is a menu inside, `role="menu"` and `role="menuitem"` are put in the markup |
+| A surface with no attribute | An `.inst-popover` with no `popover` has neither a top layer nor closing on `Escape`: the showing, the hiding and the role belong to the application |
+| Reduced motion | The transition collapses to `0.01ms` rather than being switched off: the state machines listening for `transitionend` keep working |
+| Print | A popover is not printed on paper: it is temporary by definition |
 
-## Варианты
+## Variants
 
 ```html preview
-<button class="inst-btn" type="button" popovertarget="pop-anchored">Под кнопкой</button>
+<button class="inst-btn" type="button" popovertarget="pop-anchored">Under the button</button>
 <div class="inst-popover inst-popover--anchored" id="pop-anchored" popover>
-  Встаёт под кнопкой и переворачивается, если снизу не помещается.
+  It stands under the button and flips if there is no room below.
 </div>
-<button class="inst-btn" type="button" popovertarget="pop-centered">По центру</button>
+<button class="inst-btn" type="button" popovertarget="pop-centered">At the centre</button>
 <div class="inst-popover" id="pop-centered" popover>
-  Без модификатора поповер стоит по центру экрана.
+  With no modifier a popover stands at the centre of the screen.
 </div>
 ```
 
-| Модификатор | Где встаёт | Как меряется ширина |
+| Modifier | Where it stands | How the width is measured |
 |---|---|---|
-| без модификатора | По центру экрана | `max-content` в пределах 11–22rem |
-| `inst-popover--anchored` | Под вызвавшей кнопкой | То же |
-| `inst-popover--fill` | Там, куда его поставили | Во всю ширину родителя |
+| no modifier | At the centre of the screen | `max-content` within 11–22rem |
+| `inst-popover--anchored` | Under the button that called it | The same |
+| `inst-popover--fill` | Where it was put | The full width of the parent |
 
-Якорь у `--anchored` — **неявный**: кнопка с `popovertarget` уже является
-якорем для своего поповера, поэтому имена якорей заводить не нужно.
+The anchor of `--anchored` is **implicit**: a button with a `popovertarget` is
+already the anchor for its popover, so there is no need to start names of
+anchors.
 
-Правило спрятано под `@supports (position-area: block-end)`. Где
-`position-area` не поддержан, поповер встаёт по центру экрана: **деградирует, а
-не ломается**. Раскладка задана логическими значениями, поэтому в RTL
-зеркалится сама. Если снизу или сбоку не помещается,
-`position-try-fallbacks` переворачивает поповер по нужной оси, а не выпускает
-его за край экрана.
+The rule is hidden under an `@supports (position-area: block-end)`. Where
+`position-area` is not supported a popover stands at the centre of the screen:
+it **degrades rather than breaking**. The layout is set in logical values, so
+in RTL it mirrors itself. If there is no room below or at the side,
+`position-try-fallbacks` flips the popover along the axis wanted rather than
+letting it out past the edge of the screen.
 
-`inst-popover--fill` нужен там, где плашка обязана совпасть по ширине с тем,
-под чем стоит: выпадающий список под полем. Список у́же или ши́ре поля читается
-как чужой элемент, случайно оказавшийся рядом.
+`inst-popover--fill` is wanted where a plate has to match the width of what it
+stands under: a dropdown list under a field. A list narrower or wider than the
+field reads as somebody else's element that happened to end up beside it.
 
-## Размеры
+## Sizes
 
-| Свойство | Значение |
+| Property | Value |
 |---|---|
-| минимальная ширина | `11rem` |
-| максимальная ширина | `min(22rem, 100vw - var(--space-8))` — на узком экране поповер не вылезет за край |
-| ширина по содержимому | `max-content` в этих пределах |
-| с `--fill` | `100%` родителя, без потолка |
+| minimum width | `11rem` |
+| maximum width | `min(22rem, 100vw - var(--space-8))` — on a narrow screen a popover does not go past the edge |
+| width by content | `max-content` within those bounds |
+| with `--fill` | `100%` of the parent, with no ceiling |
 
-Тень здесь при деле: `--shadow-popover` означает «плавает сверху и сейчас
-исчезнет» — то есть описывает поповер целиком. Второй и последний носитель
-тени в библиотеке — [модалка](./dialog.md).
+The shadow is at work here: `--shadow-popover` means "it floats above and is
+about to disappear" — that is, it describes a popover entire. The second and
+last carrier of a shadow in the library is [the modal](./dialog.md).
 
-## Поведение
+## Behavior
 
-Поповер не имеет ни одной строки поведения в библиотеке, потому что всё это уже
-есть в браузере.
+A popover has not one line of behaviour in the library, because all of it is in
+the browser already.
 
-| Что | Кто делает |
+| What | Who does it |
 |---|---|
-| Верхний слой — поповер не срежет ни `overflow`, ни `z-index` соседа | Платформа |
-| Закрытие по `Escape` | Платформа |
-| Закрытие по клику мимо (лёгкое закрытие) | Платформа |
-| Возврат фокуса на вызвавшую кнопку | Платформа |
-| Связка кнопки и блока | `popovertarget="id"` |
-| Появление и исчезновение | Библиотека: переход по `opacity` и `translate` |
+| The top layer — a popover is cut off by neither an `overflow` nor a neighbour's `z-index` | The platform |
+| Closing on `Escape` | The platform |
+| Closing on a click outside (light dismiss) | The platform |
+| Returning the focus to the button that called it | The platform |
+| The tie between the button and the block | `popovertarget="id"` |
+| Appearing and disappearing | The library: a transition of `opacity` and `translate` |
 
-Переход доигрывает и на закрытии, потому что в правиле объявлены
-`display` и `overlay` с `allow-discrete`. Без них поповер исчезал бы мгновенно,
-не дождавшись собственной анимации.
+The transition plays out on closing too, because the rule declares `display`
+and `overlay` with `allow-discrete`. Without them a popover would disappear
+instantly, without waiting for its own animation.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

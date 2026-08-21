@@ -1,205 +1,206 @@
 ---
-title: Числовое поле инспектора
-group: Ввод
+title: Inspector number field
+group: Inputs
 layout: component
 source: src/table.css
-js: Перетаскивание подписи оси — делает `instrument.js`
+js: Dragging the label of an axis is done by `instrument.js`
 api:
-  - { name: "inst-num-field", kind: "класс", doc: "Обёртка: рамка, врез, фокус. Высота — `--control-h-sm`" }
-  - { name: "inst-num-axis", kind: "класс", doc: "Буква оси. Ручка перетаскивания, **не подпись**" }
-  - { name: "inst-vec", kind: "класс", doc: "Ряд из нескольких полей равной ширины" }
-  - { name: "inst-prop", kind: "класс", doc: "Строка свойства инспектора" }
-  - { name: "inst-prop-label", kind: "класс", doc: "Имя свойства. Обрезается, поэтому обязателен `title`" }
-  - { name: "inst-prop-control", kind: "класс", doc: "Контрольная часть строки" }
-  - { name: "--control-h-sm", kind: "токен" }
-  - { name: "--radius-sm", kind: "токен" }
-  - { name: "--surface-field", kind: "токен" }
-  - { name: "--border-control", kind: "токен" }
-  - { name: "--accent-border", kind: "токен" }
-  - { name: "--text-2xs", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-title-en: "Inspector number field"
-group-en: "Inputs"
+  - { name: "inst-num-field", kind: "class", doc: "The wrapper: the border, the recess, the focus. The height is `--control-h-sm`" }
+  - { name: "inst-num-axis", kind: "class", doc: "The letter of the axis. A drag handle, **not a label**" }
+  - { name: "inst-vec", kind: "class", doc: "A row of several fields of equal width" }
+  - { name: "inst-prop", kind: "class", doc: "A property row of the inspector" }
+  - { name: "inst-prop-label", kind: "class", doc: "The name of a property. It is truncated, so a `title` is required" }
+  - { name: "inst-prop-control", kind: "class", doc: "The control part of the row" }
+  - { name: "--control-h-sm", kind: "token" }
+  - { name: "--radius-sm", kind: "token" }
+  - { name: "--surface-field", kind: "token" }
+  - { name: "--border-control", kind: "token" }
+  - { name: "--accent-border", kind: "token" }
+  - { name: "--text-2xs", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-3", kind: "token" }
 ---
 
-Число с буквой оси слева — примитив инспектора: три таких поля составляют
-вектор, и в панели свойств их десятки. Компактнее [текстового
-поля](./input.md), потому что подпись оси занимает место степпера, а не
-отдельную колонку.
+A number with the letter of an axis at the left — a primitive of the
+inspector: three such fields make a vector, and a property panel holds dozens
+of them. More compact than [the text field](./input.md), because the label of
+the axis takes the place of the stepper rather than a column of its own.
 
 ```html preview
 <span class="inst-num-field">
   <span class="inst-num-axis">X</span>
-  <input type="number" value="128" aria-label="Позиция X">
+  <input type="number" value="128" aria-label="Position X">
 </span>
 <span class="inst-num-field">
   <span class="inst-num-axis">Y</span>
-  <input type="number" value="0" aria-label="Позиция Y">
+  <input type="number" value="0" aria-label="Position Y">
 </span>
 <span class="inst-num-field">
   <span class="inst-num-axis">Z</span>
-  <input type="number" value="-64" aria-label="Позиция Z">
+  <input type="number" value="-64" aria-label="Position Z">
 </span>
 ```
 
-## Контракт
+## Contract
 
-Здесь легко получить поле, которое выглядит подписанным и не является им.
+It is easy to get a field here that looks labelled and is not.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `aria-label` на `<input>`, **включающий ось** | да | Скринридер иначе прочитает «поле, 128» и не скажет, чего именно. Ось — часть имени: «Позиция X», а не «X» |
-| `inst-num-axis` **не** `<label>` | да | Это ручка перетаскивания и визуальный маркер, а не подпись. `<label for>` сделал бы буквой «X» полное доступное имя поля — вместо имени свойства получилось бы одно слово |
-| `type="number"` | да | Клавиатурные стрелки, шаг и числовая клавиатура на сенсорных — от платформы |
-| `<input>` прямым ребёнком | да | Правила написаны через `& > input` |
-| `title` на `inst-prop-label` | да, в строке свойства | Обрезанное имя свойства иначе не прочитать |
+| An `aria-label` on the `<input>` **including the axis** | yes | Otherwise a screen reader reads "field, 128" and does not say of what. The axis is part of the name: "Position X" rather than "X" |
+| `inst-num-axis` is **not** a `<label>` | yes | It is a drag handle and a visual marker rather than a label. A `<label for>` would make the letter "X" the full accessible name of the field — instead of the name of the property there would be one word |
+| `type="number"` | yes | The keyboard arrows, the step and the numeric keypad on touch come from the platform |
+| An `<input>` as a direct child | yes | The rules are written through `& > input` |
+| A `title` on `inst-prop-label` | yes, in a property row | Otherwise a truncated property name cannot be read |
 
-Отсюда следствие, которое проще нарушить, чем заметить: **буква оси не должна
-быть единственным местом, где написано, какое это поле**. Имя свойства живёт в
-`inst-prop-label` рядом и повторяется в `aria-label` каждого поля — три
-одинаковых квадратика с буквами X, Y, Z вне контекста строки не значат ничего.
+Hence a consequence that is easier to break than to notice: **the letter of the
+axis must not be the only place saying which field this is**. The name of the
+property lives in the `inst-prop-label` beside it and is repeated in the
+`aria-label` of every field — three identical squares with the letters X, Y, Z
+mean nothing outside the context of the row.
 
 :::note
-**Перетаскивание делает [instrument.js](#js).** Курсор `ew-resize` на подписи оси
-означает «отсюда тянут», и модуль это обещание выполняет: `Shift` ускоряет в
-десять раз, `Alt` замедляет в десять.
+**The dragging is done by [instrument.js](#js).** An `ew-resize` cursor on the
+label of an axis means "drag from here", and the module keeps that promise:
+`Shift` speeds it up tenfold, `Alt` slows it down tenfold.
 
-Без модуля поле остаётся обычным числовым вводом, и он полностью работает:
-цифры, стрелки, колесо, вставка.
+Without the module the field stays an ordinary number input, and that works
+entire: digits, arrows, the wheel, pasting.
 :::
 
-`aria-label` обязан включать ось **и** свойство: «X» именем не является. Сама
-`inst-num-axis` подписью не размечена — иначе она перебила бы `aria-label` и
-стала бы полным именем поля.
+The `aria-label` has to include the axis **and** the property: "X" is not a
+name. `inst-num-axis` itself is not marked up as a label — otherwise it would
+beat the `aria-label` and become the full name of the field.
 
-Клавиатура нативная: стрелки меняют значение на `step`, `PageUp` и `PageDown` —
-на десять шагов. Степперы сняты оформлением, поведение не тронуто. Кольцо
-фокуса висит на обёртке через `:focus-within`, поэтому виден весь контрол, а не
-только цифры.
+The keyboard is native: the arrows change the value by `step`, `PageUp` and
+`PageDown` by ten steps. The steppers are removed by styling, the behaviour is
+untouched. The focus ring hangs on the wrapper through `:focus-within`, so the
+whole control is seen rather than the digits alone.
 
-Рамка берёт `--border-control` и держит 3:1: здесь граница и есть контрол. В
-`forced-colors` обёртка получает рамку `CanvasText` — без неё поле схлопывается
-с поверхностью панели. Высота `--control-h-sm` даёт 26px, а в плотном режиме
-22px, то есть **ниже 24px по WCAG 2.5.8**: это осознанная цена панели
-инспектора, где на экране десятки полей.
+The border takes `--border-control` and holds 3:1: here the boundary is the
+control. In `forced-colors` the wrapper gets a `CanvasText` border — without it
+the field collapses into the surface of the panel. The height `--control-h-sm`
+gives 26px, and 22px in the compact mode, that is **below the 24px of WCAG
+2.5.8**: a deliberate price of an inspector panel, where a screen holds dozens
+of fields.
 
-## Состояния
+## States
 
 ```html preview
 <span class="inst-num-field">
   <span class="inst-num-axis">X</span>
-  <input type="number" value="128" aria-label="Позиция X">
+  <input type="number" value="128" aria-label="Position X">
 </span>
 <span class="inst-num-field">
   <span class="inst-num-axis">Y</span>
-  <input type="number" value="0" aria-label="Позиция Y" readonly>
+  <input type="number" value="0" aria-label="Position Y" readonly>
 </span>
 <span class="inst-num-field">
   <span class="inst-num-axis">Z</span>
-  <input type="number" value="-64" aria-label="Позиция Z" disabled>
+  <input type="number" value="-64" aria-label="Position Z" disabled>
 </span>
 ```
 
-| Состояние | Как ставится | Что происходит |
+| State | How it is set | What happens |
 |---|---|---|
-| наведение | `:hover` на обёртке | Рамка темнеет до `--text-muted` |
-| фокус | `:focus-within` на обёртке | Рамка акцентом. Кольцо рисует **обёртка**, а не поле: у поля рамки нет вовсе |
-| только чтение | `readonly` на `<input>` | Значение читается и копируется. Не `disabled` — разницу см. в [текстовом поле](./input.md) |
-| недоступно | `disabled` на `<input>` | Нативная недоступность |
+| hover | `:hover` on the wrapper | The border darkens to `--text-muted` |
+| focus | `:focus-within` on the wrapper | The border in the accent. The ring is drawn by the **wrapper** rather than by the field: the field has no border at all |
+| read-only | `readonly` on the `<input>` | The value is read and copied. Not `disabled` — the difference is in [the text field](./input.md) |
+| unavailable | `disabled` on the `<input>` | Native unavailability |
 
-Нативные стрелки-степперы сняты (`appearance: textfield`): в плотном ряду
-инспектора они съедали треть ширины поля и попадали под курсор чаще, чем сам
-ввод. Клавиатурные стрелки при этом продолжают работать — снято оформление, а
-не поведение.
+The native stepper arrows are removed (`appearance: textfield`): in a dense row
+of the inspector they ate a third of the width of a field and came under the
+cursor more often than the input itself. The keyboard arrows keep working — the
+styling was removed rather than the behaviour.
 
 ## JS
 
-Подключите модуль один раз на страницу — инициализировать компоненты по
-отдельности не нужно, `instrument.js` работает делегированием и видит узлы, пришедшие
-позже.
+Include the module once per page — there is no need to initialise the
+components one by one, `instrument.js` works by delegation and sees nodes that
+arrived later.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Пример в шапке живой: потяните букву оси влево-вправо, с `Shift` — в десять раз быстрее.
+The example in the header is live: drag the letter of the axis left and right,
+with `Shift` ten times faster.
 
-Перетаскивание буквы оси меняет значение. Курсор `ew-resize` на ней —
-обещание, данное картинкой, и `instrument.js` его выполняет.
+Dragging the letter of an axis changes the value. The `ew-resize` cursor on it
+is a promise given by a picture, and `instrument.js` keeps it.
 
-| Модификатор | Множитель шага |
+| Modifier | The multiplier of the step |
 |---|---|
 | — | ×1 |
 | `Shift` | ×10 |
 | `Alt` | ×0.1 |
 
-Границы берутся из `min` и `max`, шаг — из `step`. Поле с `disabled` или
-`readonly` не тянется.
+The bounds are taken from `min` and `max`, the step from `step`. A field with
+`disabled` or `readonly` is not dragged.
 
-### События
+### Events
 
-Своих событий нет: `instrument.js` меняет `<input>` и шлёт нативные `input` во время
-перетаскивания и `change` по отпусканию. Фреймворк видит их без единой строки
-клея.
+There are no events of its own: `instrument.js` changes the `<input>` and sends
+the native `input` while dragging and `change` on release. A framework sees
+them with not one line of glue.
 
 ```js
 input.addEventListener('change', (e) => scene.setX(+e.target.value));
 ```
 
-### Опции
+### Options
 
-| Атрибут | Что делает |
+| Attribute | What it does |
 |---|---|
-| `step` | Шаг перетаскивания. По умолчанию 1 |
-| `min`, `max` | Границы. Без них значение не ограничено |
+| `step` | The step of the dragging. 1 by default |
+| `min`, `max` | The bounds. Without them the value is unbounded |
 
 ```html
 <span class="inst-num-field">
   <span class="inst-num-axis">X</span>
   <input type="number" value="0.5" step="0.01" min="0" max="1"
-         aria-label="Прозрачность X">
+         aria-label="Opacity X">
 </span>
 ```
 
-## Композиции
+## Composition
 
-### Вектор
+### A vector
 
 ```html preview
 <span class="inst-vec">
-  <span class="inst-num-field"><span class="inst-num-axis">X</span><input type="number" value="128" aria-label="Позиция X"></span>
-  <span class="inst-num-field"><span class="inst-num-axis">Y</span><input type="number" value="0" aria-label="Позиция Y"></span>
-  <span class="inst-num-field"><span class="inst-num-axis">Z</span><input type="number" value="-64" aria-label="Позиция Z"></span>
+  <span class="inst-num-field"><span class="inst-num-axis">X</span><input type="number" value="128" aria-label="Position X"></span>
+  <span class="inst-num-field"><span class="inst-num-axis">Y</span><input type="number" value="0" aria-label="Position Y"></span>
+  <span class="inst-num-field"><span class="inst-num-axis">Z</span><input type="number" value="-64" aria-label="Position Z"></span>
 </span>
 ```
 
-`inst-vec` раздаёт трём полям равные доли ширины, поэтому вектор не
-перекашивается, когда в одну компоненту вводят шестизначное число.
+`inst-vec` hands the three fields equal shares of the width, so a vector does
+not skew when a six-digit number is typed into one component.
 
-### Одиночное значение с осью-именем
+### A single value with the axis as a name
 
 ```html preview
 <span class="inst-num-field">
   <span class="inst-num-axis">R</span>
-  <input type="number" value="45" step="5" aria-label="Радиус влияния">
+  <input type="number" value="45" step="5" aria-label="Radius of influence">
 </span>
 ```
 
-## Сценарии
+## Patterns
 
-### Строка свойства инспектора
+### A property row of the inspector
 
 ```html preview context
 <div class="inst-prop">
-  <span class="inst-prop-label" title="Позиция">Позиция</span>
+  <span class="inst-prop-label" title="Position">Position</span>
   <span class="inst-prop-control inst-vec">
-    <span class="inst-num-field"><span class="inst-num-axis">X</span><input type="number" value="128" aria-label="Позиция X"></span>
-    <span class="inst-num-field"><span class="inst-num-axis">Y</span><input type="number" value="0" aria-label="Позиция Y"></span>
-    <span class="inst-num-field"><span class="inst-num-axis">Z</span><input type="number" value="-64" aria-label="Позиция Z"></span>
+    <span class="inst-num-field"><span class="inst-num-axis">X</span><input type="number" value="128" aria-label="Position X"></span>
+    <span class="inst-num-field"><span class="inst-num-axis">Y</span><input type="number" value="0" aria-label="Position Y"></span>
+    <span class="inst-num-field"><span class="inst-num-axis">Z</span><input type="number" value="-64" aria-label="Position Z"></span>
   </span>
 </div>
 ```
@@ -209,7 +210,7 @@ input.addEventListener('change', (e) => scene.setX(+e.target.value));
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

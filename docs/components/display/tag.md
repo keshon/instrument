@@ -1,114 +1,114 @@
 ---
-title: Тег
-group: Отображение данных
+title: Tag
+group: Data display
 layout: component
 source: src/data.css
-js: Снятие тега — делает `instrument.js`
+js: Removing a tag is done by `instrument.js`
 api:
-  - { name: "inst-tag", kind: "класс", doc: "Метка" }
-  - { name: "inst-tag-remove", kind: "класс", doc: "Кнопка снятия. Настоящая `<button>`; снятие выполняет [instrument.js](../../foundations/behavior.md)" }
-  - { name: "data-value", kind: "атрибут", doc: "На `.inst-tag`. Что придёт в `detail` события `inst:remove` вместо текста метки" }
-  - { name: "--control-h-sm", kind: "токен" }
-  - { name: "--radius-sm", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--surface-recessed", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--size-chevron", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-  - { name: "--err-text", kind: "токен" }
-title-en: "Tag"
-group-en: "Data display"
+  - { name: "inst-tag", kind: "class", doc: "The label" }
+  - { name: "inst-tag-remove", kind: "class", doc: "The removal button. A real `<button>`; the removal is carried out by [instrument.js](../../foundations/behavior.md)" }
+  - { name: "data-value", kind: "attribute", doc: "On `.inst-tag`. What arrives in the `detail` of `inst:remove` instead of the label's text" }
+  - { name: "--control-h-sm", kind: "token" }
+  - { name: "--radius-sm", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--surface-recessed", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--size-chevron", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
+  - { name: "--err-text", kind: "token" }
 ---
 
-Произвольная метка, которую завёл пользователь. Её можно снять — и это главное
-отличие от [бейджа](./badge.md), у которого пять значений из словаря библиотеки и
-снять его нельзя.
+An arbitrary label started by the user. It can be removed — and that is the
+main difference from [a badge](./badge.md), which has five values from the
+library's vocabulary and cannot be removed.
 
 ```html preview
-<span class="inst-tag">worldgen<button class="inst-tag-remove" type="button" aria-label="Убрать метку worldgen"></button></span>
-<span class="inst-tag">ночной<button class="inst-tag-remove" type="button" aria-label="Убрать метку ночной"></button></span>
-<span class="inst-tag">приоритет:высокий</span>
+<span class="inst-tag">worldgen<button class="inst-tag-remove" type="button" aria-label="Remove the worldgen label"></button></span>
+<span class="inst-tag">nightly<button class="inst-tag-remove" type="button" aria-label="Remove the nightly label"></button></span>
+<span class="inst-tag">priority:high</span>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Настоящая `<button>` для снятия | да | Крестик текстом нельзя нажать с клавиатуры и нечем озвучить |
-| `aria-label` **со словом метки** | да | «Убрать метку worldgen», а не «Убрать»: ряд из десяти «Убрать» на слух неразличим |
-| Перевод фокуса после снятия | да, на приложении | Исчезнувший элемент уводит фокус в никуда |
-| Кнопка снятия | нет | Добавляется только там, где снятие возможно |
+| A real `<button>` for removal | yes | A cross as text cannot be pressed from the keyboard and there is nothing to speak |
+| An `aria-label` **with the word of the label** | yes | "Remove the worldgen label" rather than "Remove": a row of ten "Remove"s is indistinguishable by ear |
+| Moving the focus after a removal | yes, in the application | A vanished element takes the focus nowhere |
+| The removal button | no | It is added only where removal is possible |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Кнопка снятия | Настоящая `<button>`, а не крестик текстом: её надо уметь нажать с клавиатуры и озвучить |
-| Имя кнопки | `aria-label` **со словом метки**: «Убрать метку worldgen», а не «Убрать». Ряд из десяти кнопок «Убрать» на слух неразличим |
-| Фокус после снятия | Уходит в никуда, если элемент исчез. Приложение обязано перевести его на следующий тег или на контейнер |
-| Цель нажатия | Глиф — `--size-chevron`, то есть 10px. Это **ниже 24px по WCAG 2.5.8**: область нажатия расширяется псевдоэлементом, сам глиф остаётся мелким |
-| Тон | У тега его нет, поэтому вопрос «цвет как единственный носитель» не возникает |
+| The removal button | A real `<button>` rather than a cross as text: it has to be pressable from the keyboard and speakable |
+| The name of the button | An `aria-label` **with the word of the label**: "Remove the worldgen label" rather than "Remove". A row of ten "Remove" buttons is indistinguishable by ear |
+| The focus after a removal | It goes nowhere if the element has vanished. The application has to move it to the next tag or to the container |
+| The tap target | The glyph is `--size-chevron`, that is 10px. This is **below the 24px of WCAG 2.5.8**: the tap area is widened by a pseudo-element while the glyph itself stays small |
+| Tone | A tag has none, so the question of "colour as the only carrier" does not arise |
 
-## Варианты
+## Variants
 
-### Без кнопки снятия
+### Without a removal button
 
 ```html preview
-<span class="inst-tag">только чтение</span>
-<span class="inst-tag">приоритет:высокий</span>
+<span class="inst-tag">read-only</span>
+<span class="inst-tag">priority:high</span>
 ```
 
-Кнопка добавляется только там, где снятие действительно возможно. Крестик,
-который ничего не делает, хуже его отсутствия.
+The button is added only where removal is really possible. A cross that does
+nothing is worse than no cross.
 
 ## JS
 
-Подключите модуль один раз на страницу — инициализировать компоненты по
-отдельности не нужно, `instrument.js` работает делегированием и видит узлы, пришедшие
-позже.
+Include the module once per page — there is no need to initialise the
+components one by one, `instrument.js` works by delegation and sees nodes that
+arrived later.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Пример в шапке живой: нажмите крестик — тег снимется, а фокус уйдёт на соседний.
+The example in the header is live: press the cross — the tag is removed and the
+focus goes to its neighbour.
 
-Нажатие на `.inst-tag-remove` снимает тег и **переводит фокус на соседний
-крестик** — иначе удалённый элемент уводит фокус в никуда, и человек с
-клавиатуры оказывается в начале документа.
+A press on `.inst-tag-remove` removes the tag and **moves the focus to the
+neighbouring cross** — otherwise a deleted element takes the focus nowhere, and
+somebody on a keyboard ends up at the start of the document.
 
-### События
+### Events
 
-`inst:remove` всплывает с тега, `detail` — `{ value }`: `data-value`, если он
-есть, иначе текст метки.
+`inst:remove` bubbles from the tag, and its `detail` is `{ value }`: the
+`data-value` if there is one, otherwise the text of the label.
 
-Событие отменяемо, и в приложении на данных отменять его — норма: разметку
-там пересоздаёт перерисовка, а не `instrument.js`.
+The event is cancellable, and in a data-driven application cancelling it is the
+norm: the markup there is recreated by a re-render rather than by
+`instrument.js`.
 
 ```js
 list.addEventListener('inst:remove', (e) => {
-  e.preventDefault();            // тег останется в разметке
-  store.dropTag(e.detail.value); // уберёт его перерисовка
+  e.preventDefault();            // the tag will stay in the markup
+  store.dropTag(e.detail.value); // the re-render will take it away
 });
 ```
 
-### Опции
+### Options
 
-| Атрибут | Что делает |
+| Attribute | What it does |
 |---|---|
-| `data-value` | Что придёт в `detail` вместо текста метки — идентификатор вместо человеческого имени |
+| `data-value` | What arrives in `detail` instead of the label's text — an identifier rather than a human name |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

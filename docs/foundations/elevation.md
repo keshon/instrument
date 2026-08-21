@@ -1,54 +1,53 @@
 ---
-title: Высота и поверхности
-group: Основания
+title: Elevation and surfaces
+group: Foundations
 layout: foundation
 source: src/tokens.css
 api:
-  - { name: "--surface-sunken", kind: "токен" }
-  - { name: "--surface-page", kind: "токен" }
-  - { name: "--surface-raised", kind: "токен" }
-  - { name: "--surface-overlay", kind: "токен" }
-  - { name: "--surface-field", kind: "токен" }
-  - { name: "--surface-hover", kind: "токен" }
-  - { name: "--surface-active", kind: "токен" }
-  - { name: "--surface-selected", kind: "токен" }
-  - { name: "--shadow-popover", kind: "токен" }
-  - { name: "--shadow-modal", kind: "токен" }
-  - { name: "--shadow-color-near", kind: "токен" }
-  - { name: "--shadow-color-far", kind: "токен" }
-  - { name: "--scrim", kind: "токен" }
-  - { name: "--z-sticky", kind: "токен" }
-  - { name: "--z-popover", kind: "токен" }
-  - { name: "--z-modal", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--border-subtle", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-title-en: "Elevation and surfaces"
-group-en: "Foundations"
+  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--surface-page", kind: "token" }
+  - { name: "--surface-raised", kind: "token" }
+  - { name: "--surface-overlay", kind: "token" }
+  - { name: "--surface-field", kind: "token" }
+  - { name: "--surface-hover", kind: "token" }
+  - { name: "--surface-active", kind: "token" }
+  - { name: "--surface-selected", kind: "token" }
+  - { name: "--shadow-popover", kind: "token" }
+  - { name: "--shadow-modal", kind: "token" }
+  - { name: "--shadow-color-near", kind: "token" }
+  - { name: "--shadow-color-far", kind: "token" }
+  - { name: "--scrim", kind: "token" }
+  - { name: "--z-sticky", kind: "token" }
+  - { name: "--z-popover", kind: "token" }
+  - { name: "--z-modal", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--border-subtle", kind: "token" }
+  - { name: "--hairline", kind: "token" }
 ---
 
-Глубину передаёт **порядок светлоты**. Тень означает здесь одно — «плавает
-сверху и сейчас исчезнет», — и носителей у неё два: поповер и модалка.
+Depth is carried by the **order of lightness**. A shadow means one thing here —
+"it floats above and is about to disappear" — and it has two carriers: the
+popover and the modal.
 
 ```html preview context
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Прогон #4127</span>
+    <span class="inst-panel-title">Run #4127</span>
   </div>
   <div class="inst-panel-body inst-stack">
     <div class="inst-card">
       <div class="inst-card-title">worldgen-01</div>
-      <div class="inst-card-sub">Карточка на панели: ступень поверхности, ни одной тени</div>
+      <div class="inst-card-sub">A card on a panel: a step of surface, not one shadow</div>
     </div>
     <input class="inst-input" type="text" value="terrain_chunk_04">
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Глубину передаёт **поверхность**. Тень означает «плавает сверху и сейчас
-исчезнет» и принадлежит трём компонентам.
+Depth is carried by the **surface**. A shadow means "it floats above and is
+about to disappear" and belongs to three components.
 
 ```css
 .my-panel {
@@ -57,147 +56,152 @@ group-en: "Foundations"
 }
 ```
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| Поверхность из семантики | да | Четыре ступени названы работой, а не номером: страница, врез, поднятая, оверлей |
-| Тень только у всплывающего | да | Поповер, модалка, уведомление. Четвёртого носителя тени в библиотеке нет |
-| Рамка `CanvasText` в `forced-colors` | да | Поверхности в этом режиме схлопываются, и без рамки блок сливается с фоном |
-| `z-index` из словаря | да | Четыре токена. Число, выдуманное на месте, работает до первого чужого числа побольше |
+| A surface from the semantics | yes | Four steps named by work rather than by number: the page, the recess, the raised one, the overlay |
+| A shadow only on something popping up | yes | A popover, a modal, a notification. There is no fourth carrier of a shadow in the library |
+| A `CanvasText` border in `forced-colors` | yes | The surfaces collapse in that mode, and without a border a block merges with the background |
+| A `z-index` from the vocabulary | yes | Four tokens. A number invented in place works until the first larger number of somebody else's |
 
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Глубина не только цветом | Каждая ступень поверхности сопровождается рамкой или перепадом ритма: различение стопки не требует различения светлот |
-| Контраст ступеней | Соседние поверхности проверены как пара во всех пяти темах — иначе поле на панели пропадает |
-| Тень не несёт смысла в одиночку | Оверлей опознаётся ролью и поведением (`popover`, `<dialog>`), а не тенью. В режиме принудительных цветов тень исчезает, и это ничего не ломает |
-| Прокрутка под модалкой | Останавливается: `showModal()` делает фон инертным для кликов, но не для колеса, и пользователь терял место, к которому вернётся |
-| Уменьшенное движение | Появление оверлея схлопывается до 0.01ms, но не выключается — машины состояний, слушающие `transitionend`, продолжают работать. См. [движение](./motion.md) |
+| Depth not by colour alone | Every step of surface comes with a border or a change of rhythm: telling the stack apart does not require telling lightnesses apart |
+| The contrast of the steps | Neighbouring surfaces are checked as a pair in all five themes — otherwise a field on a panel disappears |
+| A shadow does not carry meaning alone | An overlay is recognised by its role and behaviour (`popover`, `<dialog>`) rather than by a shadow. In forced-colours mode the shadow disappears, and nothing breaks |
+| Scrolling under a modal | It stops: `showModal()` makes the background inert to clicks but not to the wheel, and the user lost the place they were coming back to |
+| Reduced motion | The appearance of an overlay collapses to 0.01ms but is not switched off — the state machines listening for `transitionend` keep working. See [motion](./motion.md) |
 
-## Устройство
+## Anatomy
 
-Объявлен в одном месте, чтобы не разъезжался по компонентам.
+Declared in one place so that it does not drift across components.
 
-| Токен | Значение | Кто |
+| Token | Value | Who |
 |---|---|---|
-| `--z-sticky` | 10 | Липкая шапка таблицы, полоса действий формы |
-| `--z-popover` | 100 | Поповер, меню, тултип |
-| `--z-modal` | 1000 | Модалка, шторка |
+| `--z-sticky` | 10 | The sticky head of a table, the action bar of a form |
+| `--z-popover` | 100 | A popover, a menu, a tooltip |
+| `--z-modal` | 1000 | A modal, a drawer |
 
-Поповер и модалка на Popover API и `<dialog>` живут в верхнем слое браузера, где
-`z-index` уже не решает. Токены остаются для того, что верхнего слоя не
-получает, — и для приложения, которому нужно встроиться в тот же порядок.
+A popover and a modal built on the Popover API and `<dialog>` live in the
+browser's top layer, where `z-index` no longer decides. The tokens stay for
+what does not get the top layer — and for an application that needs to fit into
+the same order.
 
-## Шкала
+## Scale
 
-Читаются как стопка снизу вверх. Ступень выбирается по **роли области**, а не
-по желаемой яркости.
+They read as a stack from the bottom up. A step is chosen by the **role of the
+region** rather than by a wanted brightness.
 
-| Токен | Ступень | Кто носит |
+| Token | Step | Who carries it |
 |---|---|---|
-| `--surface-sunken` | Дно | Дорожка, шапка таблицы, блок кода, тело шага, фон бокового столбца |
-| `--surface-page` | Страница | `body`, фон рабочей области |
-| `--surface-raised` | Поднято | Панель, карточка, шапка оболочки, полоса действий формы, `<kbd>` |
-| `--surface-overlay` | Оверлей | Поповер, меню, тултип, модалка, шторка |
+| `--surface-sunken` | The bottom | A track, the head of a table, a block of code, the body of a step, the background of a side column |
+| `--surface-page` | The page | `body`, the background of the working area |
+| `--surface-raised` | Raised | A panel, a card, the header of the shell, the action bar of a form, `<kbd>` |
+| `--surface-overlay` | The overlay | A popover, a menu, a tooltip, a modal, a drawer |
 
-Пятая роль стоит **вне** стопки, потому что она не про глубину, а про ввод:
+The fifth role stands **outside** the stack, because it is not about depth but
+about input:
 
-| Токен | Работа |
+| Token | Work |
 |---|---|
-| `--surface-field` | Врез под поле. Отдельная роль, а не переиспользование `raised`: пока поле красилось цветом панели, его единственной границей была рамка на 1.31:1 — то есть поля на панели не было видно вообще |
+| `--surface-field` | The recess under a field. A role of its own rather than a reuse of `raised`: while a field was painted the colour of a panel, its only boundary was a border at 1.31:1 — that is, a field on a panel was not visible at all |
 
-В тёмной теме между соседними ступенями расстояние **шире**, чем в светлой:
-тёмный конец рампы различается хуже, и зеркальная светлая раскладка дала бы
-четыре одинаковых чёрных прямоугольника. В теме `dark-soft` вся стопка
-поднимается на шаг рампы — переопределяются четыре поверхности, а остальная
-семантика не знает, что тема сменилась. Выше этого места нет: следующий шаг
-рампы уже не держит текст. Ровно так же ведёт себя светлый конец, где `raised`
-и `overlay` обе сидят на `--n-0`.
+In a dark theme the distance between neighbouring steps is **wider** than in a
+light one: the dark end of the ramp is harder to tell apart, and a mirrored
+light arrangement would give four identical black rectangles. In the `dark-soft`
+theme the whole stack rises by one step of the ramp — four surfaces are
+overridden, and the rest of the semantics does not know the theme has changed.
+There is no room above that: the next step of the ramp no longer holds text.
+The light end behaves in exactly the same way, where `raised` and `overlay`
+both sit on `--n-0`.
 
-### Состояния поверх поверхности
+### States over a surface
 
-Наведение и выделение — **альфа**. Непрозрачная заливка не давала бы им
-складываться: наведение по выделенной строке пропадало бы.
+Hover and selection are **alpha**. An opaque fill would keep them from adding
+up: a hover over a selected row would disappear.
 
-| Токен | Работа |
+| Token | Work |
 |---|---|
-| `--surface-hover` | Наведение |
-| `--surface-active` | Нажатие |
-| `--surface-selected` | Выделенная строка |
+| `--surface-hover` | Hover |
+| `--surface-active` | Press |
+| `--surface-selected` | A selected row |
 
-## Варианты
+## Variants
 
-Обе функциональны. Обе объявлены целиком в токенах — компонент подставляет
-готовое значение и не собирает тень сам.
+Both are functional. Both are declared entire in the tokens — a component
+substitutes a ready value and does not assemble a shadow itself.
 
-| Токен | Значение | Кто носит |
+| Token | Value | Who carries it |
 |---|---|---|
-| `--shadow-popover` | `0 4px 12px -2px` дальняя + `0 2px 4px -2px` ближняя | Поповер, меню, тултип |
-| `--shadow-modal` | `0 16px 40px -8px` дальняя + `0 4px 10px -4px` ближняя | Модалка, шторка |
+| `--shadow-popover` | `0 4px 12px -2px` far + `0 2px 4px -2px` near | A popover, a menu, a tooltip |
+| `--shadow-modal` | `0 16px 40px -8px` far + `0 4px 10px -4px` near | A modal, a drawer |
 
-Каждая тень двухслойная: дальняя даёт расстояние до фона, ближняя — контакт
-края. Одним слоем это выглядит либо приклеенным, либо парящим без опоры.
+Every shadow has two layers: the far one gives the distance to the background,
+the near one the contact of the edge. In one layer it looks either glued down
+or floating with no support.
 
-Цвет тени вынесен отдельно, потому что `light-dark()` принимает только `<color>`
-и целое значение тени через неё не проходит:
+The colour of a shadow is kept separate, because `light-dark()` accepts only a
+`<color>` and a whole shadow value does not pass through it:
 
-| Токен | Светлая | Тёмная |
+| Token | Light | Dark |
 |---|---|---|
 | `--shadow-color-near` | `oklch(0 0 0 / 0.06)` | `oklch(0 0 0 / 0.30)` |
 | `--shadow-color-far` | `oklch(0 0 0 / 0.10)` | `oklch(0 0 0 / 0.45)` |
 
-В тёмной теме тень **гуще**. Слабая тень на тёмном фоне невидима, а светлая
-тень — это уже свечение, а свечения запрещены.
+In a dark theme a shadow is **denser**. A weak shadow on a dark background is
+invisible, and a light shadow is a glow already, and glows are forbidden.
 
-### Правило
+### The rule
 
-**Тень получает только то, что появилось по действию и исчезнет по Escape.**
-Всё, что стоит на экране постоянно, отделяется поверхностью и рамкой. Карточка
-не получает тень — она получает поверхность.
+**A shadow is given only to what appeared on an action and will disappear on
+Escape.** Everything that stands on the screen permanently is parted by a
+surface and a border. A card gets no shadow — it gets a surface.
 
-| Элемент | Тень |
+| Element | Shadow |
 |---|---|
-| Панель, карточка, таблица, полоса действий | Нет |
-| Поповер, меню, тултип | `--shadow-popover` |
-| Модалка, шторка | `--shadow-modal` |
-| Всё остальное | Нет, и нового получателя не заводится |
+| A panel, a card, a table, an action bar | None |
+| A popover, a menu, a tooltip | `--shadow-popover` |
+| A modal, a drawer | `--shadow-modal` |
+| Everything else | None, and no new recipient is started |
 
-### Подложка
+### The ground
 
-| Токен | Светлая | Тёмная |
+| Token | Light | Dark |
 |---|---|---|
 | `--scrim` | `oklch(0 0 0 / 0.32)` | `oklch(0 0 0 / 0.58)` |
 
-В тёмной теме подложка гуще: на светлой странице затемнение само по себе
-создаёт контраст, на тёмной его приходится добавлять. Это **затемнение, а не
-размытие** — градиенты, свечения и размытия запрещены целиком.
+In a dark theme the ground is denser: on a light page a dimming creates
+contrast by itself, on a dark one it has to be added. This is a **dimming, not
+a blur** — gradients, glows and blurs are forbidden entirely.
 
-Подложка ставится на `::backdrop` нативного `<dialog>`, поэтому верхний слой,
-захват фокуса и закрытие по Escape приходят от платформы, а не от библиотеки.
+The ground is put on the `::backdrop` of a native `<dialog>`, so the top layer,
+the focus trap and closing on Escape come from the platform rather than from
+the library.
 
-## Правила
+## Rules
 
-### Что брать, а что нет
+### What to take and what not to
 
-| Используйте | Возьмите другое |
+| Use | Take instead |
 |---|---|
-| Перепад поверхностей для постоянной структуры | **Тень у карточки или панели** — тень означает «временное». Структура строится [карточкой](../components/display/card.md) и [панелью](../components/display/panel.md) |
-| `--shadow-popover` для того, что исчезнет по Escape | **Тень «для объёма»** — у неё нет получателя, кроме [поповера](../components/overlays/popover.md) |
-| `--shadow-modal` + `--scrim` для того, что блокирует экран | **Поповер вместо модалки**, если решение обязательно — берите [модалку](../components/overlays/dialog.md) |
-| `--surface-field` под ввод | **`--surface-raised` под ввод** — поле сольётся с панелью, см. [поле](../components/inputs/input.md) |
-| Размытие фона под оверлеем | **Размытия не используются** — затемнение делает [`--scrim`](#podlozhka) |
+| A step of surface for permanent structure | **A shadow on a card or a panel** — a shadow means "temporary". Structure is built by [the card](../components/display/card.md) and [the panel](../components/display/panel.md) |
+| `--shadow-popover` for what will disappear on Escape | **A shadow "for volume"** — it has no recipient other than [the popover](../components/overlays/popover.md) |
+| `--shadow-modal` + `--scrim` for what blocks the screen | **A popover instead of a modal** when a decision is obligatory — take [the modal](../components/overlays/dialog.md) |
+| `--surface-field` under input | **`--surface-raised` under input** — the field will merge with the panel, see [the field](../components/inputs/input.md) |
+| Blurring the background under an overlay | **Blurs are not used** — the dimming is done by [`--scrim`](#the-ground) |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
-[Цвет](./colors.md)
-[Движение](./motion.md)
-[Панель](../components/display/panel.md)
-[Карточка](../components/display/card.md)
-[Поповер](../components/overlays/popover.md)
-[Модалка](../components/overlays/dialog.md)
+[Colour](./colors.md)
+[Motion](./motion.md)
+[Panel](../components/display/panel.md)
+[Card](../components/display/card.md)
+[Popover](../components/overlays/popover.md)
+[Modal](../components/overlays/dialog.md)

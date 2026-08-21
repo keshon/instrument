@@ -1,80 +1,79 @@
 ---
-title: Крошки
-group: Навигация
+title: Breadcrumbs
+group: Navigation
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-crumbs", kind: "класс", doc: "Список пути. Ставится на `<ol>`" }
-  - { name: "--space-2", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--size-chevron", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-  - { name: "--text-faint", kind: "токен" }
-  - { name: "--text-primary", kind: "токен" }
-title-en: "Breadcrumbs"
-group-en: "Navigation"
+  - { name: "inst-crumbs", kind: "class", doc: "The list of the path. Put on an `<ol>`" }
+  - { name: "--space-2", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--size-chevron", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
+  - { name: "--text-faint", kind: "token" }
+  - { name: "--text-primary", kind: "token" }
 ---
 
-Путь от корня до текущего экрана. Отвечает на вопрос «где я и как отсюда
-выбраться на уровень выше», а не «какие ещё есть разделы».
+The path from the root to the current screen. It answers "where am I and how do
+I get one level up from here" rather than "what other sections are there".
 
 ```html preview
-<nav aria-label="Хлебные крошки">
+<nav aria-label="Breadcrumbs">
   <ol class="inst-crumbs">
-    <li><a href="#">Проекты</a></li>
+    <li><a href="#">Projects</a></li>
     <li><a href="#">worldgen</a></li>
-    <li><span aria-current="page">Прогон #4127</span></li>
+    <li><span aria-current="page">Run #4127</span></li>
   </ol>
 </nav>
 ```
 
-## Контракт
+## Contract
 
-Крошки — **упорядоченный список внутри `<nav>`**, и оба элемента обязательны:
-`<ol>` сообщает порядок и длину пути, `<nav aria-label>` даёт ориентир, который
-отличим от остальных навигаций экрана.
+Breadcrumbs are an **ordered list inside a `<nav>`**, and both are required:
+the `<ol>` reports the order and the length of the path, and the
+`<nav aria-label>` gives a landmark that is distinguishable from the other
+navigations on the screen.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<nav>` + `aria-label` | да | Навигаций на экране несколько; без имени крошки неотличимы от остальных ориентиров |
-| `<ol>` с `<li>` | да | Путь упорядочен, и порядок — часть смысла. `<div>` его теряет |
-| `aria-current="page"` на последнем | да | Помечает текущий экран и получает `--text-primary` вместо приглушённого |
-| Последний элемент — **не** `<a>` | да | Ссылка на страницу, где уже находишься, — ложное действие |
+| A `<nav>` + an `aria-label` | yes | There are several navigations on a screen; with no name the breadcrumbs are indistinguishable from the other landmarks |
+| An `<ol>` with `<li>` | yes | The path is ordered, and the order is part of the meaning. A `<div>` loses it |
+| An `aria-current="page"` on the last one | yes | It marks the current screen and gets `--text-primary` instead of the muted colour |
+| The last element is **not** an `<a>` | yes | A link to the page you are already on is a false action |
 
-Отдельного класса у элемента и у ссылки нет: оформляются `& > li` и `& a`
-внутри списка. Разметка и есть API.
+The item and the link have no class of their own: `& > li` and `& a` inside the
+list are styled. The markup is the API.
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Клавиатура | Нативные ссылки. `Tab` — обход, `Enter` — переход |
-| Ориентир | `<nav aria-label="Хлебные крошки">` — отдельная точка в списке ориентиров |
-| Разделитель не читается | Шеврон — псевдоэлемент, его нет ни в тексте, ни в дереве доступности |
-| Контраст | Путь — `--text-muted` (4.5:1), а не `--text-faint`: `--text-faint` это порог декорации, и текст, который читают, им не красится. Шеврон — наоборот, декорация |
-| Наведение | Ссылка получает подчёркивание **и** полный цвет: подчёркивание работает там, где цвет не различается |
-| Кегль | `--text-xs`. Путь тише заголовка экрана, который он предваряет |
+| The keyboard | Native links. `Tab` traverses, `Enter` goes |
+| The landmark | A `<nav aria-label="Breadcrumbs">` — a point of its own in the list of landmarks |
+| The separator is not read | The chevron is a pseudo-element; it is in neither the text nor the accessibility tree |
+| Contrast | The path is `--text-muted` (4.5:1) rather than `--text-faint`: `--text-faint` is the threshold of decoration, and text that gets read is not painted with it. The chevron is the other way round — decoration |
+| Hover | The link gets an underline **and** the full colour: an underline works where colour is not told apart |
+| Type size | `--text-xs`. The path is quieter than the screen title it precedes |
 
-## Устройство
+## Anatomy
 
-Шеврон между элементами рисует `li + li::before` — псевдоэлемент, а не символ в
-разметке. Два следствия, ради которых так и сделано:
+The chevron between the items is drawn by `li + li::before` — a pseudo-element
+rather than a character in the markup. Two consequences it was made for:
 
-- разделитель **не попадает в текст**: скринридер и копирование получают
-  «Проекты worldgen Прогон #4127», а не строку с угловыми скобками;
-- форма приходит маской, цвет — токеном `--text-faint`. Цвета внутри data-URI
-  в библиотеке нет, поэтому шеврон переживает смену темы и режим принудительных
-  цветов без второй копии картинки.
+- the separator **does not reach the text**: a screen reader and a copy get
+  "Projects worldgen Run #4127" rather than a line with angle brackets;
+- the shape comes as a mask and the colour as the `--text-faint` token. There
+  is no colour inside a data URI in the library, so the chevron survives a
+  change of theme and forced-colours mode with no second copy of the picture.
 
-Полоса переносится (`flex-wrap`): длинный путь в узкой шапке уходит на вторую
-строку, а не выталкивает документ за вьюпорт.
+The strip wraps (`flex-wrap`): a long path in a narrow header goes onto a
+second line rather than pushing the document past the viewport.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

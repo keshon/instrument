@@ -1,53 +1,53 @@
 ---
-title: Графики
-group: Графики
+title: Charts
+group: Charts
 layout: index
-title-en: "Charts"
-group-en: "Charts"
 ---
 
-Пять компонентов, и ни один из них не график в обычном смысле: у них нет осей.
-Это **показания**, встроенные в интерфейс, — доля, тренд, расшифровка цветов.
-Как только у картинки спрашивают значения, ей нужны оси, а с осями она
-заслуживает собственного места на экране, а не строки под числом.
+Five components, and not one of them is a chart in the ordinary sense: they
+have no axes. These are **readings** built into the interface — a share, a
+trend, a key to the colours. As soon as a picture is asked for values it needs
+axes, and with axes it deserves a place of its own on the screen rather than a
+line under a number.
 
-Сравнение стоит здесь, а не на страницах: «возьмите другое» — это утверждение о
-СОСЕДЯХ, и повторённое пять раз оно расходится с ними по одной строке за
-правку.
+The comparison stands here rather than on the pages: "take instead" is a
+statement about NEIGHBOURS, and repeated five times it parts from them by one
+line per edit.
 
-## Что выбрать
+## What to choose
 
-| Что нужно | Возьмите | Почему не соседа |
+| What is wanted | Take | Why not the neighbour |
 |---|---|---|
-| Доля от известного целого во всю ширину блока | [Меру](./meter.md) | Полоса длиннее кольца, значит точнее |
-| Ту же долю в тесном месте: у заголовка карточки, в строке | [Кольцо](./ring.md) | Мера во всю ширину там не помещается |
-| Направление изменения под числом | [Спарклайн](./sparkline.md) | У меры и кольца нет истории |
-| Расшифровку рядов, различаемых цветом | [Легенду](./legend.md) | При двух и более рядах она **не опция, а обязанность** |
-| Цвет ряда по его номеру из данных | [Палитру](./palette.md) | Статусные тона закреплены и в палитре не участвуют |
+| A share of a known whole across the width of a block | [The meter](./meter.md) | A bar is longer than a ring, so it is more precise |
+| The same share in a tight place: beside a card title, in a row | [The ring](./ring.md) | A full-width meter does not fit there |
+| The direction of a change under a number | [The sparkline](./sparkline.md) | A meter and a ring have no history |
+| A key to series told apart by colour | [The legend](./legend.md) | With two or more series it is **an obligation rather than an option** |
+| The colour of a series by its number in the data | [The palette](./palette.md) | The status hues are reserved and take no part in the palette |
 
-## Когда ни один не подходит
+## When none of them fits
 
-| Что нужно | Возьмите | Почему не отсюда |
+| What is wanted | Take | Why not from here |
 |---|---|---|
-| Значения, а не форму | полноценный график с осями | Спарклайн отвечает на «растёт или падает», а не «сколько» |
-| Точные значения, которые читают по строкам | [таблицу](../display/table.md) | Цифры читаются цифрами, а не формой |
-| Седьмой ряд | [таблицу](../display/table.md) | Пять-шесть рядов — потолок различимости цветом |
-| Состояние объекта из словаря | [бейдж](../display/badge.md) с точкой | Статус не категория, и цвет у него закреплён |
-| Ожидание без величины вовсе | [скелетон](../feedback/skeleton.md) или [спиннер](../feedback/spinner.md) | У меры обязан быть потолок |
-| Число само по себе | [метрику](../display/metric.md) | Кольцо без величины у потолка ничего не добавляет |
-| Список пар «имя — значение» без графика | [список свойств](../display/kv.md) | Квадратик ряда сообщал бы о цвете, которого нет |
-| Расход исчерпаемого ресурса в прогоне | [бюджет прогона](../../agent/budget.md) | Он знает про лимит и про то, что бывает при его достижении |
+| Values rather than a shape | a full chart with axes | A sparkline answers "rising or falling", not "how much" |
+| Exact values read row by row | [a table](../display/table.md) | Figures are read as figures rather than as a shape |
+| A seventh series | [a table](../display/table.md) | Five or six series is the ceiling of telling them apart by colour |
+| The state of an object from the vocabulary | [a badge](../display/badge.md) with a dot | A status is not a category, and its colour is fixed |
+| Waiting with no quantity at all | [a skeleton](../feedback/skeleton.md) or [a spinner](../feedback/spinner.md) | A meter has to have a ceiling |
+| A number by itself | [a metric](../display/metric.md) | A ring with no quantity at the ceiling adds nothing |
+| A list of name–value pairs with no chart | [a property list](../display/kv.md) | A series square would report a colour that is not there |
+| The spending of an exhaustible resource in a run | [a run budget](../../agent/budget.md) | It knows about the limit and about what happens when it is reached |
 
-## Общее для всех пяти
+## Common to all five
 
-**Величина живёт в атрибуте, а не в ширине.** `aria-valuenow` обязателен: без
-него значение существует только в пикселях и недоступно ни скринридеру, ни
-тесту.
+**The quantity lives in an attribute rather than in the width.**
+`aria-valuenow` is obligatory: without it the value exists in pixels only and
+is available neither to a screen reader nor to a test.
 
-**Категориальный цвет — только на графике.** Заливка кнопки, подсветка строки,
-тон бейджа берутся из семантики; палитра рядов вне графика запрещена, иначе
-цвет перестаёт что-либо означать.
+**A categorical colour belongs to a chart only.** The fill of a button, the
+highlight of a row, the tone of a badge are taken from the semantics; the
+palette of series outside a chart is forbidden, otherwise colour stops meaning
+anything.
 
-**Пять-шесть рядов — потолок.** Он не про палитру, а про глаз: седьмой цвет
-человек уже не сопоставляет с легендой, и картинка перестаёт отвечать на
-вопрос, ради которого нарисована.
+**Five or six series is the ceiling.** It is not about the palette but about
+the eye: a seventh colour is no longer matched to the legend, and the picture
+stops answering the question it was drawn for.

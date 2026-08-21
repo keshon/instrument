@@ -1,0 +1,85 @@
+---
+title: Аватар
+group: Отображение данных
+layout: component
+source: src/data.css
+api:
+  - { name: "inst-avatar", kind: "класс", doc: "Один аватар. Размер `--control-h-md`" }
+  - { name: "inst-avatars", kind: "класс", doc: "Группа с наложением" }
+  - { name: "inst-avatars-more", kind: "класс", doc: "Счётчик «ещё N» в конце группы" }
+  - { name: "inst-avatar--sm", kind: "модификатор", doc: "Размер" }
+  - { name: "inst-avatar--lg", kind: "модификатор", doc: "Размер" }
+  - { name: "--control-h-sm/md/lg", kind: "токен" }
+  - { name: "--radius-full", kind: "токен" }
+  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--surface-raised", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--size-marker", kind: "токен" }
+---
+
+Опознавательный знак человека или агента: изображение либо инициалы.
+
+```html preview
+<span class="inst-avatar">ИС</span>
+<span class="inst-avatar">АП</span>
+<span class="inst-avatar">МК</span>
+```
+
+## Контракт
+
+| Что | Обязательно | Почему |
+|---|---|---|
+| `aria-hidden="true"`, если имя есть рядом текстом | да | Иначе аватар озвучится как «И С» рядом с уже прочитанным именем |
+| `alt` или `aria-label`, если имени рядом нет | да | Инициалы доступным именем не являются: скринридер читает их по буквам |
+| `aria-label` на группе — составом или числом | да, у `inst-avatars` | «7 участников» вместо череды инициалов |
+
+### Доступность
+
+| | |
+|---|---|
+| Аватар — не подпись | Если имя есть рядом текстом, аватар декоративен: `aria-hidden="true"`. Иначе он озвучится как «И С» рядом с уже прочитанным именем |
+| Аватар вместо подписи | Тогда он несёт имя: `<img alt="Иннокентий Соколов">` или `aria-label` на контейнере |
+| Инициалы | Не являются доступным именем: «ИС» скринридер прочитает по буквам |
+| Группа | Дайте контейнеру `aria-label` с полным составом или числом: «7 участников». Иначе прозвучит череда инициалов |
+| Счётчик | `inst-avatars-more` содержит «+4» текстом — это данные, а не декорация |
+| Контраст | Инициалы берут `--text-secondary` на `--surface-sunken` и держат 4.5:1 в пяти темах |
+
+## Размеры
+
+```html preview
+<span class="inst-avatar inst-avatar--sm">W1</span>
+<span class="inst-avatar">ИС</span>
+<span class="inst-avatar inst-avatar--lg">B4</span>
+```
+
+Размеры берутся из яруса ролей (`--control-h-*`), поэтому аватар и стоящая
+рядом [кнопка](../actions/button.md) того же размера физически не могут
+разойтись по высоте.
+
+## Композиции
+
+### Группа с наложением
+
+```html preview
+<span class="inst-avatars" aria-label="7 участников">
+  <span class="inst-avatar">ИС</span>
+  <span class="inst-avatar">АП</span>
+  <span class="inst-avatar">МК</span>
+  <span class="inst-avatars-more">+4</span>
+</span>
+```
+
+Кольцо вокруг каждого аватара в группе — не обводка, а **цвет поверхности
+под ним**: оно отделяет соседей друг от друга. На другой поверхности группа
+потребует переопределить это кольцо, иначе появится ореол.
+
+## API
+
+```api
+```
+
+## Связанное
+
+```related
+```

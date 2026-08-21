@@ -380,9 +380,6 @@ type frontmatter struct {
 	Layout   string   `yaml:"layout"`
 	API      []APIRow `yaml:"api"`
 	APIFrom  string   `yaml:"api-from"`
-
-	TitleEN string `yaml:"title-en"`
-	GroupEN string `yaml:"group-en"`
 }
 
 var fmRe = regexp.MustCompile(`(?s)\A---\r?\n(.*?)\r?\n---\r?\n`)
@@ -406,7 +403,7 @@ func Collect(root string) (map[i18n.Lang][]*Page, error) {
 		}
 		base := strings.TrimSuffix(rel, ".md")
 		for _, l := range i18n.Known {
-			if l != i18n.RU && strings.HasSuffix(base, l.Suffix()) {
+			if l != i18n.Base && strings.HasSuffix(base, l.Suffix()) {
 				return nil
 			}
 		}
@@ -423,7 +420,7 @@ func Collect(root string) (map[i18n.Lang][]*Page, error) {
 		for _, rel := range sources {
 			file := filepath.Join(root, filepath.FromSlash(rel))
 			translated := false
-			if lang != i18n.RU {
+			if lang != i18n.Base {
 				alt := filepath.Join(root, filepath.FromSlash(
 					strings.TrimSuffix(rel, ".md")+lang.Suffix()+".md"))
 				if _, err := os.Stat(alt); err == nil {
@@ -488,15 +485,6 @@ func parse(fsPath, rel string, lang i18n.Lang, translated bool) (*Page, error) {
 		APIFrom:    meta.APIFrom,
 		Lang:       lang,
 		Translated: translated,
-	}
-
-	if !translated && lang == i18n.EN {
-		if meta.TitleEN != "" {
-			p.Title = meta.TitleEN
-		}
-		if meta.GroupEN != "" {
-			p.Group = meta.GroupEN
-		}
 	}
 
 	for i, row := range p.API {

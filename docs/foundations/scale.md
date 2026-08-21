@@ -1,98 +1,100 @@
 ---
-title: Масштаб
-group: Основания
+title: Scale
+group: Foundations
 layout: foundation
 source: src/tokens.css
 api:
-  - { name: "data-scale", kind: "атрибут", doc: "`15` `16` `17` `18` — базовый кегль интерфейса. Отсутствие атрибута — база 14px" }
-  - { name: "--text-2xs/xs/sm/md/lg/xl/2xl", kind: "токен" }
-  - { name: "--radius-2xs/xs/sm/md/lg", kind: "токен" }
-  - { name: "--control-h-xs/sm/md/lg", kind: "токен" }
-  - { name: "--radius-control-sm/md/lg", kind: "токен" }
-  - { name: "--size-dot", kind: "токен" }
-  - { name: "--size-icon", kind: "токен" }
-  - { name: "--size-icon-lg", kind: "токен" }
-  - { name: "--size-icon-sm", kind: "токен" }
-  - { name: "--size-chevron", kind: "токен" }
-  - { name: "--size-track", kind: "токен" }
-  - { name: "--size-meter", kind: "токен" }
-  - { name: "--size-tick", kind: "токен" }
-  - { name: "--size-marker", kind: "токен" }
-  - { name: "--label-col", kind: "токен" }
-  - { name: "--aside-w", kind: "токен" }
-  - { name: "--col-min", kind: "токен" }
-  - { name: "--container-max", kind: "токен" }
-title-en: "Scale"
-group-en: "Foundations"
+  - { name: "data-scale", kind: "attribute", doc: "`15` `16` `17` `18` — the base type size of the interface. The absence of the attribute is a base of 14px" }
+  - { name: "--text-2xs/xs/sm/md/lg/xl/2xl", kind: "token" }
+  - { name: "--radius-2xs/xs/sm/md/lg", kind: "token" }
+  - { name: "--control-h-xs/sm/md/lg", kind: "token" }
+  - { name: "--radius-control-sm/md/lg", kind: "token" }
+  - { name: "--size-dot", kind: "token" }
+  - { name: "--size-icon", kind: "token" }
+  - { name: "--size-icon-lg", kind: "token" }
+  - { name: "--size-icon-sm", kind: "token" }
+  - { name: "--size-chevron", kind: "token" }
+  - { name: "--size-track", kind: "token" }
+  - { name: "--size-meter", kind: "token" }
+  - { name: "--size-tick", kind: "token" }
+  - { name: "--size-marker", kind: "token" }
+  - { name: "--label-col", kind: "token" }
+  - { name: "--aside-w", kind: "token" }
+  - { name: "--col-min", kind: "token" }
+  - { name: "--container-max", kind: "token" }
 ---
 
-Масштаб — **атрибут контейнера**, как и [плотность](./density.md). Разница
-между ними одна, и она вся в кегле.
+Scale is an **attribute of a container**, as [density](./density.md) is. There
+is one difference between them, and it is all in the type size.
 
-**Плотность двигает геометрию и не трогает кегль.** Текст остаётся 14px во всех
-трёх режимах, меняется воздух вокруг него: сколько строк влезло на экран.
+**Density moves geometry and does not touch type size.** The text stays 14px in
+all three modes, and what changes is the air around it: how many rows fit on a
+screen.
 
-**Масштаб двигает кегль вместе с геометрией.** Соотношения те же, рисунок
-сохраняется, экран целиком становится крупнее.
+**Scale moves type size together with geometry.** The proportions are the same,
+the drawing holds, and the screen as a whole becomes larger.
 
-Ступень названа своим базовым кеглем: `data-scale="16"` значит «база интерфейса
-16px». Имя ступени и есть ответ на вопрос, который человек задаёт, выбирая
-масштаб.
+A step is named by its base type size: `data-scale="16"` means "the interface
+base is 16px". The name of the step is the answer to the question a person asks
+when choosing a scale.
 
 ```html preview
 <div class="inst-cluster" data-scale="16">
   <button class="inst-btn inst-btn--sm" type="button">sm</button>
   <button class="inst-btn" type="button">md</button>
-  <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
+  <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span>
   <input class="inst-input inst-input--sm" type="text" value="16">
 </div>
 ```
 
-## Контракт
+## Contract
 
 ```html
-<html data-scale="16">               <!-- настройка человека, на корне -->
-  <section data-density="compact">   <!-- плотная область внутри -->
+<html data-scale="16">               <!-- a person's setting, on the root -->
+  <section data-density="compact">   <!-- a dense region inside -->
 ```
 
-Обычное расположение именно такое: масштаб выбирает человек и ставит на корень,
-плотность выбирает автор экрана и ставит на область. Обе оси складываются —
-сочетание описано отдельной ячейкой токенов.
+The usual arrangement is exactly this: the scale is chosen by a person and put
+on the root, the density is chosen by the author of the screen and put on a
+region. Both axes add up — the combination is described by a cell of tokens of
+its own.
 
-| Значение | База | Для чего |
+| Value | Base | What for |
 |---|---|---|
-| атрибута нет | 14px | Умолчание. Рабочее расстояние: ноутбук или монитор при системном масштабе |
-| `data-scale="15"` | 15px | Ступень запаса: длинная сессия, средний монитор |
-| `data-scale="16"` | 16px | Крупный монитор при системном масштабе 100%, работа стоя |
-| `data-scale="17"` | 17px | Показ на проекторе, чтение с двух метров |
-| `data-scale="18"` | 18px | Настенная панель, дежурный экран, ослабленное зрение |
+| no attribute | 14px | The default. Working distance: a laptop or a monitor at the system scale |
+| `data-scale="15"` | 15px | A step of margin: a long session, a middling monitor |
+| `data-scale="16"` | 16px | A large monitor at 100% system scaling, working while standing |
+| `data-scale="17"` | 17px | Showing on a projector, reading from two metres |
+| `data-scale="18"` | 18px | A wall panel, a duty screen, weakened sight |
 
-### Масштаб первичен
+### Scale comes first
 
-При одиночном совпадении токен забирает масштаб: блоки `[data-scale]` стоят в
-токенах после блоков плотности, а специфичность у них одинаковая. Плотность
-возвращает своё в двумерной ячейке `[data-scale][data-density]`.
+On a single match the token goes to scale: the `[data-scale]` blocks stand
+after the density blocks in the tokens, and their specificity is the same.
+Density takes its own back in the two-dimensional cell
+`[data-scale][data-density]`.
 
-У ячейки два селектора, и второй обязателен: парный ловит только оба атрибута
-на одном элементе, а плотная панель внутри крупного корня — ровно потомковый
-случай. Без него панель взяла бы геометрию базы, оставив крупный кегль.
+The cell has two selectors, and the second is obligatory: the paired one
+catches only both attributes on one element, while a compact panel inside a
+large root is precisely the descendant case. Without it the panel would take
+the geometry of the base while keeping the large type.
 
-### Доступность
+### Accessibility
 
-Масштаб — ответ на увеличенный системный шрифт, но не замена ему. Высоты
-контролов применяются как `min-block-size`, поэтому текст, выросший от настройки
-браузера, раздвигает контрол, а не обрезается в нём.
+Scale is an answer to an increased system font, but not a replacement for it.
+The control heights are applied as `min-block-size`, so text grown by a browser
+setting pushes a control apart rather than being cut off inside it.
 
-### Цели нажатия
+### Tap targets
 
-Все пятнадцать сочетаний масштаба и плотности проходят WCAG 2.2 AA 2.5.8 —
-проверяет `cmd/targets` по сетке 5 × 3.
+All fifteen combinations of scale and density pass WCAG 2.2 AA 2.5.8 —
+`cmd/targets` checks it over a 5 × 3 grid.
 
-## Шкала
+## Scale
 
-### Кегль
+### Type size
 
-| Токен | 14 | 15 | 16 | 17 | 18 |
+| Token | 14 | 15 | 16 | 17 | 18 |
 |---|---|---|---|---|---|
 | `--text-2xs` | 11 | 11.5 | 12.5 | 13 | 14 |
 | `--text-xs` | 12.5 | 13 | 14 | 15 | 16 |
@@ -102,13 +104,14 @@ group-en: "Foundations"
 | `--text-xl` | 22 | 23.5 | 26 | 28 | 30 |
 | `--text-2xl` | 28 | 30 | 33 | 35.5 | 38 |
 
-Значения объявлены в `rem` и точны при корне 16px. Ось масштаба **умножается**
-на настройку «размер шрифта по умолчанию» в браузере, а не заменяет её: человек,
-поднявший корень до 20px, получит от ступени ещё одну ступень сверху.
+The values are declared in `rem` and are exact at a root of 16px. The scale
+axis **multiplies** the browser's "default font size" setting rather than
+replacing it: somebody who has raised the root to 20px gets one more step on
+top from the step here.
 
-### Радиусы и высоты
+### Radii and heights
 
-| Токен | 14 | 15 | 16 | 17 | 18 |
+| Token | 14 | 15 | 16 | 17 | 18 |
 |---|---|---|---|---|---|
 | `--radius-2xs` | 2 | 2 | 2 | 2 | 2 |
 | `--radius-xs` | 4 | 4 | 6 | 6 | 6 |
@@ -120,82 +123,84 @@ group-en: "Foundations"
 | `--control-h-md` | 32 | 35 | 38 | 40 | 42 |
 | `--control-h-lg` | 38 | 41 | 44 | 47 | 50 |
 
-Лестница радиусов растёт ступенями, а не множителем: радиус обязан остаться
-чётным, иначе на плотности пикселей 1.5 дуга садится мимо устройственной сетки.
-Из-за этого соседние ступени местами делят одно значение — чётного числа между
-8 и 10 не существует.
+The ladder of radii grows in steps rather than by a multiplier: a radius has to
+stay even, otherwise at a pixel density of 1.5 the arc lands off the device
+grid. Because of that neighbouring steps here and there share one value — there
+is no even number between 8 and 10.
 
-Отступы двигаются по шкале `--space-*`, а она разрежена нарочно, поэтому шаг у
-них крупнее, чем у кегля: соседние ступени масштаба часто берут одну и ту же
-ступень отступа.
+The paddings move along the `--space-*` scale, and that one is sparse on
+purpose, so their step is coarser than the type size's: neighbouring steps of
+scale often take one and the same step of padding.
 
-### Что НЕ масштабируется
+### What is NOT scaled
 
-| Что | Почему |
+| What | Why |
 |---|---|
-| `--hairline` | Не по принципу, а физически: браузер снапает рамку к устройственному пикселю, и ×1.07 от единицы возвращается в ту же единицу |
-| `--tap-min` | Это норма, а не размер: 24px — пол WCAG 2.2 AA 2.5.8. Лестница идёт только вверх, поэтому фиксированный пол ничего не жмёт |
-| `--radius-2xs` | Единственное приколоченное число: точка растёт до 8px, и радиус 4 дал бы ровно половину, то есть круг. Круг занят пометкой обратимого пункта |
-| `--space-*` | Шкала — фундамент. Масштаб двигает роли, а не шкалу под ними: отступы переезжают на другую ступень той же лестницы |
-| Цвет и контраст | Пороги не зависят от кегля. `cmd/contrast` масштаб поэтому и не проверяет |
+| `--hairline` | Not on principle but physically: the browser snaps a border to a device pixel, and ×1.07 of one unit comes back to the same unit |
+| `--tap-min` | This is a norm rather than a size: 24px is the floor of WCAG 2.2 AA 2.5.8. The ladder goes only upwards, so a fixed floor squeezes nothing |
+| `--radius-2xs` | The one nailed-down number: a dot grows to 8px, and a radius of 4 would give exactly half of it, that is, a circle. The circle is taken by the mark of a reversible item |
+| `--space-*` | The scale is the foundation. Scale moves the roles, not the scale under them: the paddings move to another step of the same ladder |
+| Colour and contrast | The thresholds do not depend on type size. That is why `cmd/contrast` does not check scale |
 
-## Правила
+## Rules
 
-**Лестница начинается с 14 и не может начинаться ниже.** Это не выбор, а
-арифметика двух правил кита, перемноженных друг на друга: пол кегля — 11px,
-минимальный шаг лестницы — 1.12, а под базой лежат две ступени, `2xs` и `xs`.
-Отсюда
+**The ladder starts at 14 and cannot start lower.** That is not a choice but
+the arithmetic of two rules of the kit multiplied by one another: the floor of
+the type size is 11px, the minimum step of the ladder is 1.12, and under the
+base lie two steps, `2xs` and `xs`. Hence
 
 ```
-минимальная база = 11 × 1.12 × 1.12 = 13.8px
+the minimum base = 11 × 1.12 × 1.12 = 13.8px
 ```
 
-и 14 — первое целое, которое в это влезает. При базе 13 второй ступени вниз
-достаётся 10.36px, при базе 12 — 9.57px; обе ниже пола. Опустить лестницу можно,
-только сдвинув пол, шаг или число ступеней под базой — каждое из трёх отдельное
-решение. «Мельче» остаётся работой плотности.
+and 14 is the first whole number that fits. At a base of 13 the second step
+down gets 10.36px, at a base of 12 it gets 9.57px; both are below the floor.
+The ladder can be lowered only by moving the floor, the step or the number of
+steps under the base — each of the three a separate decision. "Smaller" stays
+the work of density.
 
-**Значения таблицы авторские, а не вычисленные.** Пропорциональный пересчёт
-проваливает правило шага регулярно: при базе 16 честная доля даёт `xs` = 14.5,
-то есть шаг 1.103 при норме 1.12. Умножение ломает и чётность радиуса, и рост
-лестницы, и полосу отношения радиуса контрола к высоте.
+**The values of the table are written by hand rather than computed.** A
+proportional recount fails the rule of the step regularly: at a base of 16 the
+honest share gives `xs` = 14.5, that is a step of 1.103 against a norm of 1.12.
+Multiplication breaks the evenness of a radius, the growth of the ladder and
+the band of the control radius against its height alike.
 
-Компонент, который ломается на ступени 18, содержит зашитый кегль или зашитую
-высоту — то и другое обязано быть ролью.
+A component that breaks at step 18 holds a hard-coded type size or a hard-coded
+height — both of them ought to be roles.
 
-### Что брать, а что нет
+### What to take and what not to
 
-Тремя плотностями «крупнее» не выражалось. На 27″ 4K при системном масштабе
-100% кит рисовался мелко, а единственная ручка, похожая на ответ, — просторная
-плотность — давала воздух, а не размер: строки разъезжались, буквы оставались
-теми же.
+Three densities could not say "larger". On a 27″ 4K at 100% system scaling the
+kit was drawn small, and the one knob that looked like an answer — the
+comfortable density — gave air rather than size: the rows parted and the
+letters stayed as they were.
 
-Проверка, отличающая ось от переименования, та же, что у атрибутных словарей:
-если две ручки дают один результат, это одна ручка с двумя именами. Здесь они
-расходятся, и это видно на числах.
+The test that tells an axis from a renaming is the same as for the attribute
+vocabularies: if two knobs give one result, it is one knob with two names. Here
+they part, and it shows in the numbers.
 
-| | кегль | `--control-h-md` | `--pad-card` |
+| | type size | `--control-h-md` | `--pad-card` |
 |---|---|---|---|
 | `18` + `compact` | 18px | 34px | 24px |
-| база + `comfortable` | 14px | 36px | 24px |
+| base + `comfortable` | 14px | 36px | 24px |
 
-Высота и отступ совпали почти точно, кегль — нет. Это два разных экрана, а не
-один и тот же с двух сторон.
+The height and the padding coincide almost exactly, the type size does not.
+These are two different screens rather than one seen from two sides.
 
-| Используйте | Возьмите другое |
+| Use | Take instead |
 |---|---|
-| Ступени, чтобы сделать экран крупнее целиком | **Масштаб, чтобы разредить список** — воздух добавляет [плотность](./density.md), и она не трогает кегль |
-| Атрибут на корне как настройку человека | **Атрибут на отдельном компоненте** — масштаб не вариант контрола. Размер выбирает `--sm`/`--lg` у [кнопки](../components/actions/button.md) |
-| Сочетание с плотностью: «крупно и плотно» — рабочий режим большого монитора | **Свою ступень числом** в приложении — новое значение заводится ролью, список в [токенах](./tokens.md) |
+| The steps, to make a screen larger as a whole | **Scale, to thin out a list** — air is added by [density](./density.md), and it does not touch type size |
+| The attribute on the root as a person's setting | **The attribute on a single component** — scale is not a variant of a control. The size is chosen by `--sm`/`--lg` on [the button](../components/actions/button.md) |
+| A combination with density: "large and compact" is the working mode of a big monitor | **A step of your own as a number** in an application — a new value gets a role, and the list is in [tokens](./tokens.md) |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
-[Плотность](./density.md)
-[Типографика](./typography.md)
-[Ритм и форма](./spacing.md)
-[Токены](./tokens.md)
+[Density](./density.md)
+[Typography](./typography.md)
+[Rhythm and shape](./spacing.md)
+[Tokens](./tokens.md)

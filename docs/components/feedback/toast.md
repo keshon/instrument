@@ -1,199 +1,204 @@
 ---
-title: Уведомление
-group: Обратная связь
+title: Notification
+group: Feedback
 layout: component
 source: src/overlay.css
-js: "Очередь, таймер и пауза под курсором — на instrument.js. Вид, появление и уход — целиком CSS"
+js: "The queue, the timer and the pause under the cursor are on instrument.js. The look, the appearing and the leaving are entirely CSS"
 api:
-  - { name: "inst-toasts", kind: "класс", doc: "Область. Одна на документ, объявлена `popover=\"manual\"`" }
-  - { name: "inst-toast", kind: "класс", doc: "Одно уведомление" }
-  - { name: "inst-toast-body", kind: "класс", doc: "Текстовая часть" }
-  - { name: "inst-toast-title", kind: "класс", doc: "Что произошло. Одна строка" }
-  - { name: "inst-toast-text", kind: "класс", doc: "Подробность. Необязательна" }
-  - { name: "inst-toast-actions", kind: "класс", doc: "Действие: «Отменить», «Показать»" }
-  - { name: "inst-toasts--start", kind: "модификатор", doc: "Область у верхнего края. Умолчание — нижний" }
-  - { name: "data-tone", kind: "атрибут", value: "neutral · running · ok · warn · error", doc: "Значок и цвет. Без атрибута значка нет" }
-  - { name: "data-state", kind: "атрибут", value: "leaving", doc: "Ставит `instrument.js` перед удалением, чтобы переход доиграл" }
-  - { name: "role", kind: "атрибут", value: "status · alert", doc: "`alert` только у ошибки: она перебивает, остальное сообщает вежливо" }
-  - { name: "popover", kind: "атрибут", value: "manual", doc: "На области. Верхний слой, без лёгкого закрытия" }
-  - { name: "--surface-overlay", kind: "токен", doc: "Поверхность уведомления" }
-  - { name: "--shadow-popover", kind: "токен", doc: "Третий и последний носитель тени в библиотеке" }
-title-en: "Notification"
-group-en: "Feedback"
+  - { name: "inst-toasts", kind: "class", doc: "The region. One per document, declared `popover=\"manual\"`" }
+  - { name: "inst-toast", kind: "class", doc: "One notification" }
+  - { name: "inst-toast-body", kind: "class", doc: "The text part" }
+  - { name: "inst-toast-title", kind: "class", doc: "What happened. One line" }
+  - { name: "inst-toast-text", kind: "class", doc: "The detail. Optional" }
+  - { name: "inst-toast-actions", kind: "class", doc: "The action: \"Undo\", \"Show\"" }
+  - { name: "inst-toasts--start", kind: "modifier", doc: "The region at the top edge. The default is the bottom" }
+  - { name: "data-tone", kind: "attribute", value: "neutral · running · ok · warn · error", doc: "The icon and the colour. With no attribute there is no icon" }
+  - { name: "data-state", kind: "attribute", value: "leaving", doc: "Set by `instrument.js` before a removal, so that the transition plays out" }
+  - { name: "role", kind: "attribute", value: "status · alert", doc: "`alert` on an error alone: it interrupts, the rest reports politely" }
+  - { name: "popover", kind: "attribute", value: "manual", doc: "On the region. The top layer, with no light dismiss" }
+  - { name: "--surface-overlay", kind: "token", doc: "The surface of a notification" }
+  - { name: "--shadow-popover", kind: "token", doc: "The third and last carrier of a shadow in the library" }
 ---
 
-Результат действия, которое запустил человек, — когда результату не место на
-экране, куда он смотрит. «Прогон поставлен в очередь», «настройки сохранены»,
-«не удалось отправить».
+The result of an action a person started, when the result has no place on the
+screen they are looking at. "The run is queued", "the settings are saved",
+"could not send".
 
 ```html preview
 <div class="inst-toasts" style="position:static;inset:auto;pointer-events:auto">
   <div class="inst-toast" data-tone="ok" role="status">
     <div class="inst-toast-body">
-      <div class="inst-toast-title">Прогон поставлен в очередь</div>
-      <div class="inst-toast-text">worldbox-1 · седьмой в очереди</div>
+      <div class="inst-toast-title">The run is queued</div>
+      <div class="inst-toast-text">worldbox-1 · seventh in the queue</div>
     </div>
     <div class="inst-toast-actions">
-      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Показать</button>
+      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Show</button>
     </div>
   </div>
 
   <div class="inst-toast" data-tone="error" role="alert">
     <div class="inst-toast-body">
-      <div class="inst-toast-title">Не удалось отправить</div>
-      <div class="inst-toast-text">Сеть недоступна. Попытка 3 из 5.</div>
+      <div class="inst-toast-title">Could not send</div>
+      <div class="inst-toast-text">The network is unavailable. Attempt 3 of 5.</div>
     </div>
   </div>
 
   <div class="inst-toast">
     <div class="inst-toast-body">
-      <div class="inst-toast-title">Настройки сохранены</div>
+      <div class="inst-toast-title">The settings are saved</div>
     </div>
   </div>
 </div>
 ```
 
 :::note
-Инлайновый стиль в примере — единственный на весь справочник, и он тут
-вынужденный: настоящая область живёт в **верхнем слое** и прижата к углу
-экрана, а показать её надо внутри кадра. В приложении так писать не нужно.
+The inline style in the example is the only one in the whole reference, and it
+is forced here: the real region lives in the **top layer** and is pushed into
+the corner of the screen, while it has to be shown inside a frame. In an
+application there is no need to write it this way.
 :::
 
-## Контракт
+## Contract
 
-Разметку строит `instrument.js`: тост заводится вызовом, а не написанным вручную узлом.
-Если стандартной не хватает, соберите свой и положите в `.inst-toasts` сами.
+The markup is built by `instrument.js`: a toast is started by a call rather
+than by a node written by hand. If the standard one is not enough, assemble
+your own and put it into `.inst-toasts` yourself.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `role="status"`, у ошибки `role="alert"` | да | Ошибка перебивает, остальное сообщает вежливо |
-| `duration: 0` у ошибки | да | Сообщение о том, что действие **не** выполнено, не имеет права уйти незамеченным |
-| Одно действие, не два | да | Тост уходит сам; выбор из двух вариантов требует времени, которого у него нет |
-| Область одна на документ | да | `popover="manual"`, открыта с инициализации |
+| `role="status"`, and `role="alert"` on an error | yes | An error interrupts, the rest reports politely |
+| `duration: 0` on an error | yes | A message that an action was **not** carried out has no right to leave unnoticed |
+| One action rather than two | yes | A toast leaves by itself; a choice between two options takes time it does not have |
+| One region per document | yes | `popover="manual"`, open from initialisation |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Роль | `status` у обычного, `alert` у ошибки. Ошибка перебивает, остальное сообщает вежливо |
-| Живой регион | Область существует и **открыта** до появления первого тоста. Регион, созданный одновременно с содержимым, не озвучивается |
-| Пауза | Таймер замирает под курсором и на фокусе — WCAG 2.2.1 |
-| Ошибка | `duration: 0`: сообщение о невыполненном действии не уходит само |
-| Не только цвет | Тон несёт **значок**, а не одну заливку — тот же набор масок, что у [сноски](./note.md) и [баннера](./banner.md) |
-| Уменьшенное движение | Переход схлопывается; удаление подстраховано таймером, иначе тост остался бы навсегда |
-| Клавиатура | Действие внутри — обычная кнопка и достижимо `Tab`. Область не перехватывает фокус: она сообщает, а не спрашивает |
-| Печать | Уведомления на листе не печатаются: они по определению временные |
-| Модалка | Тост под ней не виден. Сообщайте результат внутри диалога или после закрытия — см. выше |
+| The role | `status` on an ordinary one, `alert` on an error. An error interrupts, the rest reports politely |
+| The live region | The region exists and is **open** before the first toast appears. A region created at the same time as its content is not spoken |
+| The pause | The timer freezes under the cursor and on focus — WCAG 2.2.1 |
+| An error | `duration: 0`: a message about an action not carried out does not leave by itself |
+| Not colour alone | The tone carries an **icon** rather than a fill alone — the same set of masks as [the note](./note.md) and [the banner](./banner.md) |
+| Reduced motion | The transition collapses; the removal is backed by a timer, otherwise the toast would stay for good |
+| The keyboard | The action inside is an ordinary button and is reachable by `Tab`. The region does not trap the focus: it reports rather than asks |
+| Print | Notifications are not printed on paper: they are temporary by definition |
+| A modal | A toast is not visible under one. Report the result inside the dialog or after it closes — see above |
 
-## Поведение
+## Behavior
 
-### Почему popover
+### Why a popover
 
-Область объявлена `popover`, потому что `z-index` не решает задачу целиком.
-Тост обязан быть виден поверх **всего, что нарисовало приложение**: панели с
-`overflow: hidden`, липкой шапки, открытого поповера. Верхний слой даёт это
-по построению, а число в `z-index` — только до первого чужого числа побольше.
+The region is declared a `popover`, because `z-index` does not settle the task
+entire. A toast has to be visible over **everything the application drew**: a
+panel with `overflow: hidden`, a sticky header, an open popover. The top layer
+gives that by construction, and a number in a `z-index` only until the first
+larger number of somebody else's.
 
-Отсюда же в библиотеке **нет отдельного z-индекса для тостов**: применить его было
-бы некуда.
+Hence there is **no separate z-index for toasts** in the library: there would
+be nowhere to apply it.
 
-### Модалка выше тоста
+### A modal is above a toast
 
-**Тост не перекрывает открытую модалку.** Проверено замером: область,
-переоткрытая после `showModal()` — и в той же задаче, и через задачу, —
-остаётся под диалогом. Верхний слой упорядочен по времени входа, но
-модальный диалог держится выше манипуляций с `popover`.
+**A toast does not cover an open modal.** Verified by measurement: a region
+reopened after `showModal()` — in the same task and a task later alike — stays
+under the dialog. The top layer is ordered by the time of entry, but a modal
+dialog holds above manipulations with `popover`.
 
-Что делать вместо:
+What to do instead:
 
-| Ситуация | Как |
+| The situation | How |
 |---|---|
-| Действие запущено **из модалки** и она закрывается | Закройте диалог, потом покажите тост |
-| Модалка остаётся открытой | Результат — **внутри неё**: [сноска](./note.md) или [блок отказа](../../agent/failure.md) в теле диалога |
-| Долгая операция при открытой модалке | [Мера](../charts/meter.md) внутри диалога, а тост — после закрытия |
+| The action was started **from a modal** and it is closing | Close the dialog, then show the toast |
+| The modal stays open | The result goes **inside it**: [a note](./note.md) or [a failure block](../../agent/failure.md) in the body of the dialog |
+| A long operation with a modal open | [A meter](../charts/meter.md) inside the dialog, and a toast after it closes |
 
-Так даже правильнее: сообщение о результате действия, запущенного в диалоге,
-и должно приходить туда, куда смотрит человек.
+That is more correct anyway: a message about the result of an action started in
+a dialog ought to arrive where the person is looking.
 
-### Почему область открыта всегда
+### Why the region is always open
 
-`popover="manual"` открывается один раз при инициализации и не закрывается.
+`popover="manual"` is opened once at initialisation and is not closed.
 
-Закрытый `popover` — это `display: none`, а живой регион в `display: none`
-**не озвучивается**: скринридер не сообщил бы ни одного уведомления. Пустая
-открытая область невидима и ничего не перехватывает — `pointer-events`
-возвращаются только самим тостам.
+A closed `popover` is `display: none`, and a live region in `display: none` is
+**not spoken**: a screen reader would report not one notification. An empty
+open region is invisible and intercepts nothing — `pointer-events` come back
+only to the toasts themselves.
 
-### Пауза и потолок очереди
+### The pause and the ceiling of the queue
 
-Таймер замирает под курсором и на фокусе. Уведомление, исчезнувшее тогда, когда его начали читать, — это потерянное сообщение, и WCAG 2.2.1
-требует этого: у времени должна быть пауза.
+The timer freezes under the cursor and on focus. A notification that vanished
+just as it began to be read is a lost message, and WCAG 2.2.1 requires this:
+time has to have a pause.
 
-Больше четырёх одновременно не показывается — двадцать уведомлений подряд
-читаются как стена. Самые старые уходят, чтобы новое было видно.
+More than four at once are not shown — twenty notifications in a row read as a
+wall. The oldest leave so that a new one is visible.
 
 ## JS
 
-Тост не пишут разметкой — его зовут. Поэтому пример здесь один и он живой:
-нажмите, и уведомление придёт в правый нижний угол экрана.
+A toast is not written as markup — it is called. So there is one example here
+and it is live: press it, and a notification arrives in the bottom right corner
+of the screen.
 
 ```html preview
 <button class="inst-btn inst-btn--primary" type="button"
-        data-demo-toast='{"tone":"ok","title":"Прогон поставлен в очередь","text":"worldbox-1 · седьмой в очереди"}'>Успех</button>
+        data-demo-toast='{"tone":"ok","title":"The run is queued","text":"worldbox-1 · seventh in the queue"}'>Success</button>
 <button class="inst-btn" type="button"
-        data-demo-toast='{"tone":"error","title":"Не удалось отправить","duration":0}'>Ошибка, которая не уходит</button>
+        data-demo-toast='{"tone":"error","title":"Could not send","duration":0}'>An error that does not leave</button>
 <button class="inst-btn" type="button"
-        data-demo-toast='{"tone":"running","title":"Идёт сборка","text":"Осталось два шага"}'>Идёт</button>
+        data-demo-toast='{"tone":"running","title":"The build is going","text":"Two steps left"}'>Running</button>
 ```
 
 :::note
-`data-demo-toast` — атрибут **этого сайта**, а не библиотеки: он нужен, чтобы
-страница осталась разметкой. В приложении вы вызываете `toast()` из кода.
+`data-demo-toast` is an attribute of **this site** rather than of the library:
+it is wanted so that the page stays markup. In an application you call
+`toast()` from code.
 :::
 
 ```js
 import { toast } from '@keshon/instrument/js';
 
-toast({ tone: 'ok', title: 'Прогон поставлен в очередь',
-        text: 'worldbox-1 · седьмой в очереди' });
+toast({ tone: 'ok', title: 'The run is queued',
+        text: 'worldbox-1 · seventh in the queue' });
 ```
 
-Без скрипта тостов нет вовсе: очередь, таймер и пауза под курсором — работа,
-которую CSS не выполняет. Вид, появление и уход при этом целиком на CSS.
+With no script there are no toasts at all: the queue, the timer and the pause
+under the cursor are work CSS does not do. The look, the appearing and the
+leaving are entirely on CSS.
 
-### Методы
+### Methods
 
 | | |
 |---|---|
-| `toast(options)` | Показать уведомление. Возвращает узел — его можно убрать раньше срока |
+| `toast(options)` | Show a notification. It returns the node — it can be taken away early |
 
-### Опции
+### Options
 
-| Поле | Что делает |
+| Field | What it does |
 |---|---|
-| `title` | Что произошло. Одна строка, без точки |
-| `text` | Подробность. Необязательна |
+| `title` | What happened. One line, with no full stop |
+| `text` | The detail. Optional |
 | `tone` | `ok` · `warn` · `error` · `running` · `neutral` |
-| `duration` | Миллисекунды. `0` — не уходит сам |
-| `action` | `{ label, onClick }` — одно действие, не два |
+| `duration` | Milliseconds. `0` — it does not leave by itself |
+| `action` | `{ label, onClick }` — one action rather than two |
 
 ```js
-toast({ tone: 'error', title: 'Не удалось отправить', duration: 0 });
+toast({ tone: 'error', title: 'Could not send', duration: 0 });
 
-toast({ title: 'Задача удалена',
-        action: { label: 'Вернуть', onClick: () => restore() } });
+toast({ title: 'The task is deleted',
+        action: { label: 'Undo', onClick: () => restore() } });
 ```
 
-### События
+### Events
 
-Своих нет. Действие приходит колбэком `action.onClick`.
+There are none of its own. The action arrives as the `action.onClick` callback.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

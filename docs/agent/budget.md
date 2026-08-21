@@ -1,88 +1,86 @@
 ---
-title: Бюджет
-group: Агентный слой
+title: Budget
+group: Agent layer
 layout: component
 source: src/agent.css
 api:
-  - { name: "inst-budget", kind: "класс", doc: "Контейнер" }
-  - { name: "inst-budget-row", kind: "класс", doc: "Строка: имя ресурса и значение" }
-  - { name: "inst-budget-value", kind: "класс", doc: "Израсходовано" }
-  - { name: "inst-budget-of", kind: "класс", doc: "«из N» — мельче и тише" }
-  - { name: "inst-budget-note", kind: "класс", doc: "Прогноз" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--weight-medium", kind: "токен" }
-  - { name: "--weight-normal", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-title-en: "Budget"
-group-en: "Agent layer"
+  - { name: "inst-budget", kind: "class", doc: "The container" }
+  - { name: "inst-budget-row", kind: "class", doc: "A line: the name of the resource and the value" }
+  - { name: "inst-budget-value", kind: "class", doc: "What is spent" }
+  - { name: "inst-budget-of", kind: "class", doc: "\"of N\" — smaller and quieter" }
+  - { name: "inst-budget-note", kind: "class", doc: "The forecast" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--weight-medium", kind: "token" }
+  - { name: "--weight-normal", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
 ---
 
-Расход против лимита: токены, время, деньги. Компонент агентных систем,
-потому что там расход **непрерывен и не нагляден** — пользователь узнаёт о
-превышении постфактум, если не показать заранее.
+Spending against a limit: tokens, time, money. A component of agent systems,
+because there the spending is **continuous and not evident** — a user learns of
+an overrun after the fact unless it is shown in advance.
 
 ```html preview
 <div class="inst-budget">
   <div class="inst-budget-row">
-    <span>Токены</span>
-    <span class="inst-budget-value">184 200<span class="inst-budget-of">из 250 000</span></span>
+    <span>Tokens</span>
+    <span class="inst-budget-value">184 200<span class="inst-budget-of">of 250 000</span></span>
   </div>
-  <div class="inst-meter" role="progressbar" aria-label="Токены"
+  <div class="inst-meter" role="progressbar" aria-label="Tokens"
        aria-valuenow="74" aria-valuemin="0" aria-valuemax="100">
     <div class="inst-meter-fill" style="inline-size:74%"></div>
   </div>
-  <div class="inst-budget-note">При текущем темпе лимит будет достигнут через ~12 минут</div>
+  <div class="inst-budget-note">At the current pace the limit will be reached in about 12 minutes</div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `inst-budget-of` **внутри** значения | да | «из 250 000» — часть числа, а не сосед. Отдельным узлом рядом оно читается вторым показателем |
-| [Мера](../components/charts/meter.md) с ролью и значениями | да | Доля существует только в пикселях ширины, пока у полосы нет `aria-valuenow` |
-| `inst-budget-note` с прогнозом | да | Остаток без темпа не отвечает на вопрос, ради которого сюда смотрят: успею ли |
-| Неразрывный пробел в разрядах | да | `184 200` иначе рвётся по пробелу и читается как два числа |
+| An `inst-budget-of` **inside** the value | yes | "of 250 000" is part of the number rather than its neighbour. As a separate node beside it, it reads as a second measure |
+| [A meter](../components/charts/meter.md) with a role and values | yes | The share exists in pixels of width alone while the bar has no `aria-valuenow` |
+| An `inst-budget-note` with a forecast | yes | What is left, with no pace, does not answer the question people come here for: will it be enough |
+| A non-breaking space in the groups of digits | yes | `184 200` otherwise breaks at the space and reads as two numbers |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Значение | Полоса несёт `role="progressbar"` с `aria-valuenow/min/max`. Без них значение существует только как ширина в пикселях и недоступно ни скринридеру, ни тесту |
-| Имя полосы | `aria-label` с именем ресурса. Три безымянные полосы подряд неразличимы |
-| Прогноз | Обновляется по ходу прогона, поэтому обязан жить в `aria-live="polite"` — но обновляться **не чаще раза в 30 секунд**, иначе озвучивание не смолкает |
-| Приближение к пределу | Меняет тон полосы, и это обязано дублироваться словом в прогнозе: цвет не единственный носитель |
-| Табличные цифры | Включены по умолчанию: число растёт на месте и не дёргает соседей |
+| The value | The bar carries a `role="progressbar"` with `aria-valuenow/min/max`. Without them the value exists only as a width in pixels and is available neither to a screen reader nor to a test |
+| The name of the bar | An `aria-label` with the name of the resource. Three nameless bars in a row are indistinguishable |
+| The forecast | It updates as the run goes on, so it has to live in an `aria-live="polite"` — but update **no more than once in 30 seconds**, otherwise the speaking never falls silent |
+| Approaching the limit | It changes the tone of the bar, and that has to be repeated in words in the forecast: colour is not the only carrier |
+| Tabular figures | On by default: the number grows in place and does not tug at its neighbours |
 
-## Устройство
+## Anatomy
 
-`inst-budget-of` набирается мельче и тише, ровно как единица измерения у
-[метрики](../components/display/metric.md). Одним кеглем «184 200 из 250 000»
-читается как одно длинное число, и глаз не может выхватить главное.
+`inst-budget-of` is set smaller and quieter, exactly as the unit of measure on
+[a metric](../components/display/metric.md). At one size "184 200 of 250 000"
+reads as one long number, and the eye cannot pick out what matters.
 
-### Прогноз важнее остатка
+### The forecast matters more than what is left
 
 ```html
-<div class="inst-budget-note">При текущем темпе лимит будет достигнут через ~12 минут</div>
+<div class="inst-budget-note">At the current pace the limit will be reached in about 12 minutes</div>
 ```
 
-`inst-budget-note` — не примечание, а основная ценность компонента.
-«Осталось 65 800» не говорит, успеет ли прогон; «через ~12 минут» говорит.
-Если прогноза нет, лучше не показывать бюджет вовсе — цифра без интерпретации
-только тревожит.
+`inst-budget-note` is not a footnote but the main value of the component. "65
+800 left" does not say whether the run will make it; "in about 12 minutes"
+does. If there is no forecast, it is better not to show a budget at all — a
+figure with no interpretation only alarms.
 
 ## API
 
 ```api
 ```
 
-Полосу даёт [мера](../components/charts/meter.md), своего примитива у бюджета
-нет.
+The bar is given by [the meter](../components/charts/meter.md); the budget has
+no primitive of its own.
 
-## Связанное
+## Related
 
 ```related
 ```

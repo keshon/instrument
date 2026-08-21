@@ -1,143 +1,146 @@
 ---
-title: Поле файла
-group: Ввод
+title: File field
+group: Inputs
 layout: component
 source: src/forms.css
-js: Перетаскивание файлов и список выбранного — слой приложения. Выбор через диалог работает без скрипта
+js: Dragging files in and the list of what was chosen belong to the application layer. Choosing through the dialog works with no script
 api:
-  - { name: "inst-file", kind: "класс", doc: "`<label>`-зона: пунктир, значок, состояния" }
-  - { name: "inst-file-hint", kind: "класс", doc: "Ограничения формата и размера" }
-  - { name: "--space-7", kind: "токен" }
-  - { name: "--pad-card", kind: "токен" }
-  - { name: "--stroke", kind: "токен" }
-  - { name: "--radius-md", kind: "токен" }
-  - { name: "--surface-field", kind: "токен" }
-  - { name: "--border-control", kind: "токен" }
-  - { name: "--accent-border", kind: "токен" }
-  - { name: "--accent-bg", kind: "токен" }
-  - { name: "--focus-ring", kind: "токен" }
-  - { name: "--size-icon", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-title-en: "File field"
-group-en: "Inputs"
+  - { name: "inst-file", kind: "class", doc: "The `<label>` zone: the dashes, the glyph, the states" }
+  - { name: "inst-file-hint", kind: "class", doc: "The limits of format and size" }
+  - { name: "--space-7", kind: "token" }
+  - { name: "--pad-card", kind: "token" }
+  - { name: "--stroke", kind: "token" }
+  - { name: "--radius-md", kind: "token" }
+  - { name: "--surface-field", kind: "token" }
+  - { name: "--border-control", kind: "token" }
+  - { name: "--accent-border", kind: "token" }
+  - { name: "--accent-bg", kind: "token" }
+  - { name: "--focus-ring", kind: "token" }
+  - { name: "--size-icon", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--space-3", kind: "token" }
 ---
 
-Выбор файла и зона, в которую его кладут, — один компонент, а не два.
-Пунктирная рамка означает «сюда можно положить»; нативная кнопка выбора
-спрятана и заменена всей площадью зоны.
+Choosing a file and the zone it is dropped into are one component rather than
+two. A dashed border means "something can be put here"; the native choose
+button is hidden and replaced by the whole area of the zone.
 
 ```html preview
 <div class="inst-field">
-  <span class="inst-label">Импорт списка получателей</span>
+  <span class="inst-label">Import a list of recipients</span>
   <label class="inst-file">
     <input type="file" multiple>
-    Перетащите файлы или выберите
-    <span class="inst-file-hint">До 20 МБ, форматы .json и .csv</span>
+    Drag files in or choose them
+    <span class="inst-file-hint">Up to 20 MB, the formats .json and .csv</span>
   </label>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `<label>` как контейнер | да | Нажатие в любое место зоны открывает диалог. Обёртка `<div>` оставила бы кликабельной только спрятанную кнопку |
-| `<input type="file">` прямым ребёнком | да | Состояния фокуса и недоступности написаны через `:has(> input…)` |
-| Текст-призыв прямо в `<label>` | да | Это доступное имя поля. Без него скринридер прочитает «файл, кнопка» |
-| Никакого `display: none` на поле | да | Поле уведено в клип и остаётся в порядке обхода |
-| `inst-file-hint` | нет | Ограничения формата и размера. Пишите их **до** выбора, а не в сообщении об ошибке после |
-| `accept` на `<input>` | нет, но обычно да | Системный диалог отфильтрует по типу. Это подсказка, а не валидация: проверять всё равно на сервере |
+| A `<label>` as the container | yes | A press anywhere in the zone opens the dialog. A `<div>` wrapper would leave only the hidden button clickable |
+| An `<input type="file">` as a direct child | yes | The states of focus and unavailability are written through `:has(> input…)` |
+| The call to action as text in the `<label>` | yes | It is the accessible name of the field. Without it a screen reader reads "file, button" |
+| No `display: none` on the field | yes | The field is taken away by a clip and stays in the order of traversal |
+| `inst-file-hint` | no | The limits of format and size. Write them **before** the choice rather than in an error message after |
+| An `accept` on the `<input>` | no, but usually yes | The system dialog will filter by type. It is a hint rather than validation: check on the server anyway |
 
-Само поле не спрятано `display: none`, а **уведено в клип** (`clip-path`) с
-размером 1×1: спрятанное через `display` или `visibility` поле выпадает из
-порядка обхода, и зона перестаёт достигаться клавиатурой.
+The field itself is not hidden by `display: none` but **taken away by a clip**
+(`clip-path`) at a size of 1×1: a field hidden through `display` or
+`visibility` falls out of the order of traversal, and the zone stops being
+reachable from the keyboard.
 
-Пунктир здесь — **единственное место в библиотеке, где линия не сплошная**, и это
-осознанно: другого настолько же понятного знака «сюда можно положить» нет.
+The dashes are the **one place in the library where a line is not solid**, and
+that is deliberate: there is no other sign of "something can be put here" as
+understandable as this.
 
-Внутри зоны нативный `input[type=file]`: системный диалог, фильтр по `accept` и
-участие в форме приходят от платформы. Поле лежит в клипе, а не спрятано —
-`display: none` выбросил бы его из обхода. `Tab` ставит фокус на зону, `Enter` и
-`Space` открывают диалог, а кольцо рисуется вокруг всей зоны, а не вокруг
-невидимого поля 1×1.
+Inside the zone is a native `input[type=file]`: the system dialog, the filter
+by `accept` and the part in a form come from the platform. The field lies in a
+clip rather than being hidden — `display: none` would throw it out of the
+traversal. `Tab` puts the focus on the zone, `Enter` and `Space` open the
+dialog, and the ring is drawn around the whole zone rather than around the
+invisible 1×1 field.
 
-Имя даёт текст-призыв внутри `<label>`; подсказка про формат читается следом,
-потому что тоже внутри.
+The name is given by the call to action inside the `<label>`; the hint about
+the format is read next, because it too is inside.
 
-Перетаскивание не единственный способ, и это главное: мышью, клавиатурой и
-через системный диалог зона достижима одинаково. Загрузка **только**
-перетаскиванием недоступна почти никому, кроме мыши. Сама зона узнаётся по
-пунктиру и значку, а не по цвету рамки, а сообщение о неверном формате даётся
-текстом рядом ([сноской или баннером](../feedback/banner.md)).
+Dragging is not the only way, and that is the point: by mouse, by keyboard and
+through the system dialog the zone is equally reachable. Uploading **only** by
+dragging is unavailable to almost everybody but a mouse. The zone itself is
+recognised by the dashes and the glyph rather than by the colour of the border,
+and a message about a wrong format is given as text beside it ([a note or a
+banner](../feedback/banner.md)).
 
-## Состояния
+## States
 
 ```html preview
 <label class="inst-file">
   <input type="file">
-  Перетащите файл или выберите
-  <span class="inst-file-hint">До 20 МБ</span>
+  Drag a file in or choose one
+  <span class="inst-file-hint">Up to 20 MB</span>
 </label>
 <label class="inst-file">
   <input type="file" disabled>
-  Импорт отключён администратором
-  <span class="inst-file-hint">Обратитесь к владельцу пространства</span>
+  Import is switched off by the administrator
+  <span class="inst-file-hint">Speak to the owner of the space</span>
 </label>
 ```
 
-| Состояние | Как ставится | Что происходит |
+| State | How it is set | What happens |
 |---|---|---|
-| наведение | `:hover` | Рамка `--accent-border`, фон `--accent-bg` — зона отзывается до нажатия |
-| фокус | `:has(> input:focus-visible)` | Кольцо вокруг всей зоны |
-| недоступно | `:has(> input:disabled)` | Прозрачность `0.5`, курсор `not-allowed` |
+| hover | `:hover` | The border `--accent-border`, the background `--accent-bg` — the zone responds before the press |
+| focus | `:has(> input:focus-visible)` | A ring around the whole zone |
+| unavailable | `:has(> input:disabled)` | An opacity of `0.5`, the cursor `not-allowed` |
 
-Состояния «файл над зоной» в библиотеке нет: оно возникает только по событию
-перетаскивания, то есть по JS. Приложение вешает свой класс и красит им те же
-две переменные, что использует `:hover`.
+There is no "a file is over the zone" state in the library: it arises only from
+a drag event, that is, from JS. The application hangs a class of its own and
+paints with it the same two variables `:hover` uses.
 
-## Поведение
+## Behavior
 
 :::warn
-**Перетаскивание — это JS.** Библиотека рисует **статическую** часть: пунктирную
-зону, значок, подсветку на наведении и фокусе. Обработка `dragover` и `drop`,
-подсветка «файл над зоной», список выбранного, прогресс отправки и ошибки —
-код приложения.
+**Dragging is JS.** The library draws the **static** part: the dashed zone, the
+glyph, the highlight on hover and on focus. Handling `dragover` and `drop`, the
+"a file is over the zone" highlight, the list of what was chosen, the progress
+of the upload and the errors are the application's code.
 
-Без единой строки скрипта компонент **остаётся рабочим**: это `<label>` вокруг
-`input[type=file]`, нажатие открывает системный диалог, выбор уходит с формой.
-Зона перетаскивания — улучшение поверх работающего, а не условие.
+With not one line of script the component **stays working**: it is a `<label>`
+around an `input[type=file]`, a press opens the system dialog, and the choice
+goes with the form. A drop zone is an improvement over something that works
+rather than a condition.
 :::
 
-Для прогресса отправки берите [меру](../charts/meter.md), для отчёта об
-ошибке — [баннер или сноску](../feedback/banner.md).
+For the progress of an upload take [a meter](../charts/meter.md), for a report
+of an error [a banner or a note](../feedback/banner.md).
 
 ## JS
 
-Подключите модуль один раз на страницу — инициализировать компоненты по
-отдельности не нужно, `instrument.js` работает делегированием и видит узлы, пришедшие
-позже.
+Include the module once per page — there is no need to initialise the
+components one by one, `instrument.js` works by delegation and sees nodes that
+arrived later.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Ничего. Зона рисует состояние перетаскивания, но не знает, что считать
-допустимым файлом, — а без этого приём файлов был бы обещанием, которое библиотека
-выполнить не может.
+Nothing. The zone draws the state of dragging but does not know what counts as
+an acceptable file — and without that, accepting files would be a promise the
+library cannot keep.
 
-Без скрипта зона **работает**: внутри настоящий `<input type="file">`, и выбор
-через диалог доступен и мышью, и с клавиатуры.
+Without a script the zone **works**: inside it is a real `<input type="file">`,
+and choosing through the dialog is available by mouse and by keyboard alike.
 
-### Что должно сделать приложение
+### What the application has to do
 
 ```js
 for (const type of ['dragenter', 'dragover']) {
   zone.addEventListener(type, (e) => {
-    e.preventDefault();          // без этого браузер откроет файл сам
+    e.preventDefault();          // without this the browser opens the file itself
     zone.dataset.over = '';
   });
 }
@@ -147,47 +150,48 @@ for (const type of ['dragleave', 'drop']) {
 
 zone.addEventListener('drop', (e) => {
   e.preventDefault();
-  input.files = e.dataTransfer.files; // тот же путь, что у диалога
+  input.files = e.dataTransfer.files; // the same path as the dialog's
   input.dispatchEvent(new Event('change', { bubbles: true }));
 });
 ```
 
-Перетащенное кладётся **в тот же `<input>`**. Отдельный список дал бы форме
-два источника файлов, и они разошлись бы на первой же отправке.
+What was dragged in is put **into the same `<input>`**. A separate list would
+give the form two sources of files, and they would part on the very first
+submission.
 
-## Композиции
+## Composition
 
-### В форме с подписью
+### In a form with a label
 
 ```html preview
 <div class="inst-field">
-  <span class="inst-label">Импорт списка получателей</span>
+  <span class="inst-label">Import a list of recipients</span>
   <label class="inst-file">
     <input type="file" multiple accept=".json,.csv">
-    Перетащите файлы или выберите
-    <span class="inst-file-hint">До 20 МБ, форматы .json и .csv</span>
+    Drag files in or choose them
+    <span class="inst-file-hint">Up to 20 MB, the formats .json and .csv</span>
   </label>
 </div>
 ```
 
-Подпись здесь `<span class="inst-label">`, а не `<label for>`: обёртка зоны
-**сама** является `<label>`, и второй ярлык на то же поле дал бы два
-конкурирующих имени.
+The label here is a `<span class="inst-label">` rather than a `<label for>`:
+the wrapper of the zone **is** a `<label>` itself, and a second label on the
+same field would give two competing names.
 
-## Сценарии
+## Patterns
 
-### С отчётом о загрузке
+### With a report of the upload
 
 ```html preview context
 <div class="inst-field">
-  <span class="inst-label">Датасет</span>
+  <span class="inst-label">Dataset</span>
   <label class="inst-file">
     <input type="file" accept=".csv">
-    Перетащите файл или выберите
-    <span class="inst-file-hint">CSV, до 100 МБ</span>
+    Drag a file in or choose one
+    <span class="inst-file-hint">CSV, up to 100 MB</span>
   </label>
   <div class="inst-meter-row"><span>terrain.csv</span><span class="inst-meter-value">62%</span></div>
-  <div class="inst-meter" role="progressbar" aria-label="Загрузка terrain.csv"
+  <div class="inst-meter" role="progressbar" aria-label="Uploading terrain.csv"
        aria-valuenow="62" aria-valuemin="0" aria-valuemax="100">
     <div class="inst-meter-fill" style="inline-size:62%"></div>
   </div>
@@ -199,7 +203,7 @@ zone.addEventListener('drop', (e) => {
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

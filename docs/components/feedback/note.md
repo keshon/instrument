@@ -1,96 +1,95 @@
 ---
-title: Сноска
-group: Обратная связь
+title: Note
+group: Feedback
 layout: component
 source: src/feedback.css
 api:
-  - { name: "inst-note", kind: "класс", doc: "Всё. У сноски нет частей: заголовка и действий у неё не бывает по определению" }
-  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт. Без атрибута значок не рисуется" }
-  - { name: "--size-marker", kind: "токен" }
-  - { name: "--size-icon", kind: "токен" }
-  - { name: "--tone-ink", kind: "токен" }
-  - { name: "--border-strong", kind: "токен" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-  - { name: "--text-secondary", kind: "токен" }
-  - { name: "--leading-ui", kind: "токен" }
-title-en: "Note"
-group-en: "Feedback"
+  - { name: "inst-note", kind: "class", doc: "All of it. A note has no parts: it never has a heading or actions, by definition" }
+  - { name: "data-tone", kind: "attribute", doc: "`neutral` `running` `ok` `warn` `error`. Closed. With no attribute the icon is not drawn" }
+  - { name: "--size-marker", kind: "token" }
+  - { name: "--size-icon", kind: "token" }
+  - { name: "--tone-ink", kind: "token" }
+  - { name: "--border-strong", kind: "token" }
+  - { name: "--pad-panel", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
+  - { name: "--text-secondary", kind: "token" }
+  - { name: "--leading-ui", kind: "token" }
 ---
 
-Врезка в поток: поясняет то, рядом с чем стоит. Только полоса у ближнего края и
-значок — ни заливки, ни рамки, ни места под кнопку.
+An inset in the flow: it explains what it stands beside. A bar at the near edge
+and an icon — no fill, no border, no room for a button.
 
 ```html preview
-<div class="inst-note" data-tone="warn">Необратимо: восстановление из резервной копии занимает до суток.</div>
-<div class="inst-note" data-tone="neutral">Лимит проверяется перед стартом каждого агента, а не по факту.</div>
+<div class="inst-note" data-tone="warn">Irreversible: restoring from a backup takes up to a day.</div>
+<div class="inst-note" data-tone="neutral">The limit is checked before every agent starts rather than after the fact.</div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `aria-live="polite"` на контейнере | да, если сноска появилась в ответ на действие | Роль не ставится автоматически: библиотека не знает, появилась она сейчас или была изначально |
-| Текст, называющий суть | да | Тон несёт значок, но смысл несут слова |
-| `data-tone` | нет | Без атрибута значка нет, полоса нейтральная |
+| An `aria-live="polite"` on the container | yes, if the note appeared in answer to an action | The role is not set automatically: the library does not know whether it appeared just now or was there from the start |
+| Text naming the substance | yes | The tone is carried by the icon, but the meaning is carried by the words |
+| `data-tone` | no | With no attribute there is no icon and the bar is neutral |
 
-У сноски нет частей: заголовка и действий у неё не бывает по определению. Если
-понадобились — это [баннер](./banner.md).
+A note has no parts: it never has a heading or actions, by definition. If they
+are wanted, this is [a banner](./banner.md).
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Появление | Сноска, возникшая в ответ на действие, обязана попасть в `aria-live="polite"`. Роль не ставится автоматически: библиотека не знает, появилась она сейчас или была изначально |
-| Цвет не единственный носитель | Тон несёт значок **и** текст. Ради этого значок и появился |
-| Контраст | Текст берёт `--text-secondary` — 4.5:1 в пяти темах |
-| Полоса не носитель смысла | Смысл несут значок и слова; полоса только группирует |
-| Печать | Печатается: это часть содержимого, а не оформление |
-| Режим принудительных цветов | Значок переводится на системный цвет текста и переживает сброс |
+| Appearing | A note that arose in answer to an action has to reach an `aria-live="polite"`. The role is not set automatically: the library does not know whether it appeared just now or was there from the start |
+| Colour is not the only carrier | The tone is carried by the icon **and** the text. That is what the icon appeared for |
+| Contrast | The text takes `--text-secondary` — 4.5:1 in five themes |
+| The bar is not a carrier of meaning | The meaning is carried by the icon and the words; the bar only groups |
+| Print | It is printed: it is part of the content rather than styling |
+| Forced-colours mode | The icon moves to the system text colour and survives the reset |
 
-## Устройство
+## Anatomy
 
-Углы прямые: у сноски только одна граница — левая, — и скругление на
-одной стороне выглядит как обрезанный блок.
+The corners are square: a note has one boundary only — the left one — and a
+rounding on one side looks like a clipped block.
 
-Значок центрируется по **первой строке** текста: `calc((1lh - var(--size-icon))
-/ 2)`. `1lh` — реальная высота строки, поэтому формула подстраивается под кегль
-и плотность сама. Ручной сдвиг на `-1px`, который тут был раньше, задирал
-значок на 2.1px вверх.
+The icon is centred on the **first line** of the text:
+`calc((1lh - var(--size-icon)) / 2)`. `1lh` is the real height of a line, so
+the formula adjusts to the type size and the density by itself. A manual shift
+of `-1px`, which was here before, lifted the icon 2.1px too high.
 
-## Варианты
+## Variants
 
 ```html preview
-<div class="inst-note">Без тона: значка нет, полоса нейтральная.</div>
-<div class="inst-note" data-tone="neutral">Информация. Синий в библиотеке занят акцентом, поэтому роль info исполняет neutral.</div>
-<div class="inst-note" data-tone="running">Идёт прямо сейчас.</div>
-<div class="inst-note" data-tone="ok">Проверка пройдена.</div>
-<div class="inst-note" data-tone="warn">Прогон завершится, но с замечаниями.</div>
-<div class="inst-note" data-tone="error">Валидация путей не прошла.</div>
+<div class="inst-note">No tone: there is no icon and the bar is neutral.</div>
+<div class="inst-note" data-tone="neutral">Information. Blue in the library is taken by the accent, so the part of info is played by neutral.</div>
+<div class="inst-note" data-tone="running">Happening right now.</div>
+<div class="inst-note" data-tone="ok">The check has passed.</div>
+<div class="inst-note" data-tone="warn">The run will finish, but with remarks.</div>
+<div class="inst-note" data-tone="error">The validation of the paths did not pass.</div>
 ```
 
-Тон несёт **иконку**, а полосы одной мало. Раньше `warn` и `error`
-отличались друг от друга исключительно цветом — прямое нарушение собственного
-закона «цвет не может быть единственным носителем». Набор масок общий с
-[баннером](./banner.md): одна форма значка на два компонента.
+The tone is carried by the **icon**, and the bar alone is not enough.
+Previously `warn` and `error` differed from each other by colour alone — a
+direct breach of the library's own law that colour cannot be the only carrier.
+The set of masks is shared with [the banner](./banner.md): one shape of glyph
+for two components.
 
-| Тон | Значок |
+| Tone | The icon |
 |---|---|
-| без атрибута | Значка нет, полоса `--border-strong` |
-| `data-tone="neutral"` | «i» в круге |
-| `data-tone="running"` | «i» в круге |
-| `data-tone="ok"` | Галка в круге |
-| `data-tone="warn"` | Треугольник |
-| `data-tone="error"` | Крест в круге |
+| no attribute | There is no icon, the bar is `--border-strong` |
+| `data-tone="neutral"` | An "i" in a circle |
+| `data-tone="running"` | An "i" in a circle |
+| `data-tone="ok"` | A tick in a circle |
+| `data-tone="warn"` | A triangle |
+| `data-tone="error"` | A cross in a circle |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

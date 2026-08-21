@@ -4,9 +4,12 @@ package render
 import (
 	"embed"
 	"encoding/json"
+	"fmt"
 	"html/template"
+	"io/fs"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"instrument/site/internal/content"
@@ -63,8 +66,9 @@ type langLink struct {
 
 func Site(byLang map[i18n.Lang][]*content.Page, sections map[i18n.Lang][]nav.Section, o Options) error {
 	tpl, err := template.New("").Funcs(template.FuncMap{
-		"same": func(a, b string) bool { return a == b },
-		"t":    i18n.T,
+		"same":  func(a, b string) bool { return a == b },
+		"t":     i18n.T,
+		"index": searchIndexPath,
 	}).ParseFS(files, "templates/*.html")
 	if err != nil {
 		return err
@@ -129,7 +133,37 @@ func Site(byLang map[i18n.Lang][]*content.Page, sections map[i18n.Lang][]nav.Sec
 			return err
 		}
 	}
-	return nil
+	return verifyIndexRefs(o.Out)
+}
+
+var indexRefRe = regexp.MustCompile(`data-index="([^"]*)"`)
+
+// verifyIndexRefs holds every page to the file it asks the browser for.
+//
+// The search index is the one asset a page names by an address computed at
+// build time, and a wrong address fails NOWHERE the build can see it: the page
+// renders, the gates pass, and the box simply returns nothing when a reader
+// types into it. That is what the base-language flip did — the English page
+// asked for a file nobody writes, and the Russian one searched English bodies.
+func verifyIndexRefs(out string) error {
+	return filepath.WalkDir(out, func(p string, d fs.DirEntry, err error) error {
+		if err != nil || d.IsDir() || d.Name() != "index.html" {
+			return err
+		}
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		for _, m := range indexRefRe.FindAllStringSubmatch(string(b), -1) {
+			ref := filepath.Join(out, filepath.FromSlash(strings.TrimPrefix(m[1], "/")))
+			if _, err := os.Stat(ref); err != nil {
+				rel, _ := filepath.Rel(out, p)
+				return fmt.Errorf("%s asks for %s, which the build never wrote",
+					filepath.ToSlash(rel), m[1])
+			}
+		}
+		return nil
+	})
 }
 
 func write(path string, tpl *template.Template, name string, data any) error {
@@ -188,6 +222,20 @@ func langLinks(p *content.Page) []langLink {
 	return out
 }
 
+// searchIndexPath names the index of a language, and it is ONE function
+// because the page has to fetch exactly the file the build wrote. The rule
+// used to be spelled twice — here in Go and again in docs.js, where the base
+// language was the literal "ru". The day English took the bare name, the
+// English page asked for a file nobody writes and the Russian page searched
+// English bodies; both failed in the browser alone, where no gate was looking.
+// Now the address is printed into the markup and the script reads it.
+func searchIndexPath(lang i18n.Lang) string {
+	if lang.Prefix() == "" {
+		return "/search.json"
+	}
+	return lang.Prefix() + "-search.json"
+}
+
 func searchIndex(out string, lang i18n.Lang, pages []*content.Page) error {
 	docs := make([]doc, 0, len(pages))
 	for _, p := range pages {
@@ -196,11 +244,7 @@ func searchIndex(out string, lang i18n.Lang, pages []*content.Page) error {
 			O: p.Own, N: p.Names, B: p.Text,
 		})
 	}
-	name := "search.json"
-	if lang.Prefix() != "" {
-		name = strings.TrimPrefix(lang.Prefix(), "/") + "-search.json"
-	}
-	f, err := os.Create(filepath.Join(out, name))
+	f, err := os.Create(filepath.Join(out, strings.TrimPrefix(searchIndexPath(lang), "/")))
 	if err != nil {
 		return err
 	}

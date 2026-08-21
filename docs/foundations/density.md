@@ -1,103 +1,102 @@
 ---
-title: Плотность
-group: Основания
+title: Density
+group: Foundations
 layout: foundation
 source: src/tokens.css
 api:
-  - { name: "data-density", kind: "атрибут", doc: "`compact` `comfortable`. Отсутствие атрибута — третье, базовое значение" }
-  - { name: "--control-h-xs/sm/md/lg", kind: "токен" }
-  - { name: "--control-pad-sm/md/lg", kind: "токен" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--pad-card", kind: "токен" }
-  - { name: "--pad-cell-x", kind: "токен" }
-  - { name: "--row-pad-y", kind: "токен" }
-  - { name: "--gap-row", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--size-check", kind: "токен" }
-  - { name: "--size-switch-w", kind: "токен" }
-  - { name: "--size-switch-h", kind: "токен" }
-  - { name: "--size-thumb", kind: "токен" }
-  - { name: "--size-spinner", kind: "токен" }
-  - { name: "--size-gutter", kind: "токен" }
-  - { name: "--size-indent", kind: "токен" }
-  - { name: "--label-col", kind: "токен" }
-title-en: "Density"
-group-en: "Foundations"
+  - { name: "data-density", kind: "attribute", doc: "`compact` `comfortable`. The absence of the attribute is the third, base value" }
+  - { name: "--control-h-xs/sm/md/lg", kind: "token" }
+  - { name: "--control-pad-sm/md/lg", kind: "token" }
+  - { name: "--pad-panel", kind: "token" }
+  - { name: "--pad-card", kind: "token" }
+  - { name: "--pad-cell-x", kind: "token" }
+  - { name: "--row-pad-y", kind: "token" }
+  - { name: "--gap-row", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--size-check", kind: "token" }
+  - { name: "--size-switch-w", kind: "token" }
+  - { name: "--size-switch-h", kind: "token" }
+  - { name: "--size-thumb", kind: "token" }
+  - { name: "--size-spinner", kind: "token" }
+  - { name: "--size-gutter", kind: "token" }
+  - { name: "--size-indent", kind: "token" }
+  - { name: "--label-col", kind: "token" }
 ---
 
-Плотность — **атрибут контейнера**. Один атрибут на панели перенастраивает
-всё внутри неё: меняется ярус ролей, а собственных чисел компоненты не
-содержат.
+Density is an **attribute of a container**. One attribute on a panel retunes
+everything inside it: the tier of roles changes, and the components hold no
+numbers of their own.
 
-Плотность двигает геометрию и **не трогает кегль**: во всех трёх режимах текст
-остаётся 14px, меняется воздух вокруг него. За размер отвечает вторая ось —
-[масштаб](./scale.md), — и оси складываются.
+Density moves geometry and **does not touch type size**: in all three modes the
+text stays 14px, and what changes is the air around it. Size is the business of
+the second axis — [scale](./scale.md) — and the axes add up.
 
 ```html preview
 <div class="inst-cluster" data-density="compact">
   <button class="inst-btn inst-btn--sm" type="button">sm</button>
   <button class="inst-btn" type="button">md</button>
-  <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
+  <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>done</span>
   <input class="inst-input inst-input--sm" type="text" value="compact">
 </div>
 ```
 
-## Контракт
+## Contract
 
 ```html
 <section data-density="compact">
-  <!-- всё внутри перенастроено -->
+  <!-- everything inside is retuned -->
 </section>
 ```
 
-Атрибут наследуется через каскад пользовательских свойств, поэтому работает на
-любой глубине и на любом контейнере. Вложение допустимо: внутренняя область с
-другим значением перекрывает внешнюю.
+The attribute is inherited through the cascade of custom properties, so it
+works at any depth and on any container. Nesting is allowed: an inner region
+with a different value overrides the outer one.
 
-| Значение | Для чего |
+| Value | What for |
 |---|---|
-| атрибута нет | Умолчание. Панельный инструмент, дашборд, большинство экранов |
-| `data-density="compact"` | Плотный табличный вид: очередь агентов, лог, дерево, инспектор свойств |
-| `data-density="comfortable"` | Формы, настройки, мастера — там, где решений мало, а каждое требует внимания |
+| no attribute | The default. A panel tool, a dashboard, most screens |
+| `data-density="compact"` | A dense tabular view: an agent queue, a log, a tree, a property inspector |
+| `data-density="comfortable"` | Forms, settings, wizards — where there are few decisions and each wants attention |
 
-### Доступность
+### Accessibility
 
-### Цели нажатия
+### Tap targets
 
 :::warn
-WCAG 2.5.8 (AA) требует цель нажатия не меньше 24×24 CSS-пикселей. В плотности
-`compact` контрол размера `sm` даёт **22px** — ниже порога. Это осознанный
-размен: плотный табличный вид существует ради плотности.
+WCAG 2.5.8 (AA) asks for a tap target no smaller than 24×24 CSS pixels. At
+density `compact` a control of size `sm` gives **22px** — below the threshold.
+That is a deliberate trade: a dense tabular view exists for the sake of
+density.
 :::
 
-| Плотность | `--control-h-sm` | `--control-h-md` | Порог 24px |
+| Density | `--control-h-sm` | `--control-h-md` | The 24px threshold |
 |---|---|---|---|
-| `compact` | 22px | 26px | `sm` **не проходит** |
-| по умолчанию | 26px | 32px | Проходит |
-| `comfortable` | 30px | 36px | Проходит |
+| `compact` | 22px | 26px | `sm` **does not pass** |
+| default | 26px | 32px | Passes |
+| `comfortable` | 30px | 36px | Passes |
 
-Правило применения: **`compact` — плотным табличным видам, а не основной
-навигации и не главным действиям экрана.** Если пользователь попадает в этот
-контрол мышью каждый день, он не должен быть 22px. Исключение WCAG для целей,
-у которых есть эквивалент нормального размера, действует только когда такой
-эквивалент действительно есть.
+The rule of application: **`compact` is for dense tabular views, not for the
+main navigation and not for the principal actions of a screen.** If a user hits
+this control with a mouse every day, it must not be 22px. The WCAG exception
+for targets that have an equivalent of a normal size applies only when such an
+equivalent really exists.
 
-### Остальное
+### Everything else
 
 | | |
 |---|---|
-| Кегль | Не уменьшается ни в одной плотности: пол в 11px остаётся полом |
-| Контраст | Не зависит от плотности — те же пары проверяются один раз |
-| Масштабирование текста | Высоты применяются как `min-block-size`, поэтому увеличенный шрифт браузера растягивает контрол, а не обрезает его. Верно во всех трёх плотностях |
-| Клавиатура | Плотность не меняет порядок обхода и не прячет цели: это чистая геометрия |
+| Type size | It does not shrink at any density: the floor of 11px stays the floor |
+| Contrast | It does not depend on density — the same pairs are checked once |
+| Text zoom | The heights are applied as `min-block-size`, so an increased browser font stretches a control rather than cutting it off. True at all three densities |
+| Keyboard | Density changes neither the order of traversal nor the targets it hides: it is pure geometry |
 
-## Шкала
+## Scale
 
-Ровно ярус ролей, и этого достаточно.
+Exactly the tier of roles, and that is enough.
 
-### Высоты и отступы контролов
+### Control heights and paddings
 
-| Токен | `compact` | по умолчанию | `comfortable` |
+| Token | `compact` | default | `comfortable` |
 |---|---|---|---|
 | `--control-h-xs` | 18px | 20px | 22px |
 | `--control-h-sm` | 22px | 26px | 30px |
@@ -107,9 +106,9 @@ WCAG 2.5.8 (AA) требует цель нажатия не меньше 24×24 
 | `--control-pad-md` | `--space-4` | `--space-5` | `--space-6` |
 | `--control-pad-lg` | `--space-5` | `--space-6` | `--space-7` |
 
-### Отступы областей
+### Region paddings
 
-| Токен | `compact` | по умолчанию | `comfortable` |
+| Token | `compact` | default | `comfortable` |
 |---|---|---|---|
 | `--pad-panel` | `--space-4` | `--space-5` | `--space-6` |
 | `--pad-card` | `--space-5` | `--space-6` | `--space-7` |
@@ -118,9 +117,9 @@ WCAG 2.5.8 (AA) требует цель нажатия не меньше 24×24 
 | `--gap-row` | `--space-2` | `--space-3` | `--space-4` |
 | `--gap-inline` | `--space-3` | `--space-4` | `--space-5` |
 
-### Глифы и жёлобы
+### Glyphs and gutters
 
-| Токен | `compact` | по умолчанию | `comfortable` |
+| Token | `compact` | default | `comfortable` |
 |---|---|---|---|
 | `--size-check` | 13px | 15px | 17px |
 | `--size-switch-w` | 26px | 30px | 34px |
@@ -130,54 +129,54 @@ WCAG 2.5.8 (AA) требует цель нажатия не меньше 24×24 
 | `--size-gutter` | 12px | 14px | 16px |
 | `--size-indent` | 12px | 14px | 16px |
 
-### Что НЕ перенастраивается
+### What is NOT retuned
 
-| Что | Почему |
+| What | Why |
 |---|---|
-| Кегль | Плотность — про геометрию. Уменьшать текст вместе с отступами значит упираться в пол в 11px через один шаг. Кегль двигает [масштаб](./scale.md) — вторая ось, которая складывается с этой |
-| Цвет и контраст | Пороги не зависят от того, сколько строк влезло на экран |
-| Радиусы | Форма объекта не меняется от того, насколько тесно он стоит |
-| `--size-dot`, `--size-marker`, `--size-icon` | Носители значения. Точка на 4px не читается, метка на 1px не видна |
-| `--space-*` | Шкала — фундамент. Плотность двигает роли, а не шкалу под ними |
+| Type size | Density is about geometry. Shrinking the text along with the paddings means hitting the 11px floor within one step. Type size is moved by [scale](./scale.md) — the second axis, which adds up with this one |
+| Colour and contrast | The thresholds do not depend on how many rows fit on a screen |
+| Radii | The shape of an object does not change with how tightly it stands |
+| `--size-dot`, `--size-marker`, `--size-icon` | Carriers of meaning. A dot at 4px does not read, a mark at 1px is not seen |
+| `--space-*` | The scale is the foundation. Density moves the roles, not the scale under them |
 
-## Поведение
+## Behavior
 
-Ярус ролей объявлен с нулевой специфичностью: дефолт с той же специфичностью,
-что и переопределение, перестаёт быть дефолтом.
+The tier of roles is declared at zero specificity: a default with the same
+specificity as an override stops being a default.
 
-Поэтому приложение переопределяет любую роль без борьбы — в том числе те, что
-плотность не перенастраивает:
+So an application overrides any role without a fight — including those density
+does not retune:
 
 ```css
 .my-inspector { --label-col: 120px; }
 ```
 
-## Правила
+## Rules
 
-Компонент, который ломается в `compact`, содержит зашитую константу, которая
-должна быть ролью. Три плотности — обязательный прогон при добавлении
-компонента, наравне с проверкой контраста.
+A component that breaks at `compact` holds a hard-coded constant that ought to
+be a role. Three densities are an obligatory run when a component is added, on
+a par with the contrast check.
 
-### Что брать, а что нет
+### What to take and what not to
 
-| Используйте | Возьмите другое |
+| Use | Take instead |
 |---|---|
-| `compact` для плотного табличного вида: очередь, лог, инспектор | **`compact` для основной навигации** — цели нажатия уходят ниже порога, см. [предупреждение](#celi-nazhatiya) и [оболочку](../layout/shell.md) |
-| `comfortable` для формы и настроек, которые заполняют вдумчиво | **`comfortable` для длинного списка** — на экран влезает вдвое меньше строк, чем нужно [строке очереди](../agent/task.md) |
-| Атрибут на контейнере — панели, секции, диалоге | **Атрибут на каждом компоненте** — плотность не вариант. Размер контрола выбирает `--sm`/`--lg` у [кнопки](../components/actions/button.md) |
-| Умолчание — ничего не писать | **Своя плотность числом** в приложении — новое значение заводится ролью, список ролей в [токенах](./tokens.md) |
-| Смена плотности целиком у области | **Смешение плотностей в одной таблице** — колонки разъедутся, см. [таблицу](../components/display/table.md) |
+| `compact` for a dense tabular view: a queue, a log, an inspector | **`compact` for the main navigation** — the tap targets go below the threshold, see [the warning](#tap-targets) and [the shell](../layout/shell.md) |
+| `comfortable` for a form and for settings filled in thoughtfully | **`comfortable` for a long list** — half as many rows fit on a screen as [a queue row](../agent/task.md) needs |
+| The attribute on a container — a panel, a section, a dialog | **The attribute on every component** — density is not a variant. The size of a control is chosen by `--sm`/`--lg` on [the button](../components/actions/button.md) |
+| The default — writing nothing | **A density of your own as a number** in an application — a new value gets a role, and the list of roles is in [tokens](./tokens.md) |
+| Changing the density of a whole region | **Mixing densities in one table** — the columns will part, see [the table](../components/display/table.md) |
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
-[Ритм и форма](./spacing.md)
-[Токены](./tokens.md)
-[Таблица](../components/display/table.md)
-[Строка очереди](../agent/task.md)
-[Форма](../components/inputs/form.md)
-[Оболочка](../layout/shell.md)
+[Rhythm and shape](./spacing.md)
+[Tokens](./tokens.md)
+[Table](../components/display/table.md)
+[Queue row](../agent/task.md)
+[Form](../components/inputs/form.md)
+[Shell](../layout/shell.md)

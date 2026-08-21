@@ -1,52 +1,52 @@
 ---
-title: Действия
-group: Действия
+title: Actions
+group: Actions
 layout: index
-title-en: "Actions"
-group-en: "Actions"
 ---
 
-Четыре компонента, и все четыре про нажатие. Отличаются они не видом, а тем,
-что происходит после: кнопка **делает**, сегментированный контрол **выбирает
-одно**, чип **включает несколько**, группа **собирает соседей**.
+Four components, and all four are about pressing. What sets them apart is not
+the look but what happens after: a button **does**, a segmented control
+**picks one**, a chip **switches several on**, a group **gathers neighbours**.
 
-Сравнение стоит здесь, а не на страницах: «возьмите другое» — это утверждение о
-СОСЕДЯХ, и повторённое на каждой из четырёх страниц оно расходится с ними по
-одной строке за правку.
+The comparison stands here rather than on the pages: "take instead" is a
+statement about NEIGHBOURS, and repeated on each of the four pages it parts
+from them by one line per edit.
 
-## Что выбрать
+## What to choose
 
-| Что нужно | Возьмите | Почему не соседа |
+| What is wanted | Take | Why not the neighbour |
 |---|---|---|
-| Действие, меняющее состояние: запустить, сохранить, удалить | [Кнопку](./button.md) | У сегментированного контрола нет действия, у чипа нет действия |
-| Ровно одно значение из 2–4 равноправных: плотность, режим показа | [Сегментированный контрол](./segmented.md) | Три кнопки не показывают, какая выбрана: у кнопки нет состояния «нажата» |
-| Несколько фильтров включены сразу и все на виду | [Чип](./chip.md) | У сегментированного выбранный один по устройству |
-| Разные действия над одним объектом вплотную: копировать · дублировать · удалить | [Группу кнопок](./button-group.md) | У группы нет выбранного элемента, и быть не может |
+| An action that changes state: run, save, delete | [The button](./button.md) | A segmented control has no action, and neither has a chip |
+| Exactly one value out of 2–4 equals: density, view mode | [The segmented control](./segmented.md) | Three buttons do not show which is chosen: a button has no "pressed" state |
+| Several filters switched on at once and all in view | [The chip](./chip.md) | In a segmented control the chosen one is single by construction |
+| Different actions on one object standing flush: copy · duplicate · delete | [The button group](./button-group.md) | A group has no selected element, and cannot have one |
 
-## Когда ни один не подходит
+## When none of them fits
 
-| Что нужно | Возьмите | Почему не отсюда |
+| What is wanted | Take | Why not from here |
 |---|---|---|
-| Переход по адресу | обычную `<a>` | Кнопка, ведущая на другую страницу, ломает средний клик, «открыть в новой вкладке» и копирование ссылки |
-| Переключение вкл/выкл | [свитч или чекбокс](../inputs/toggles.md) | У одного варианта нет пары, а у кнопки нет состояния «нажата» |
-| Больше пяти вариантов | [селект](../inputs/select.md) | Сегментированный расползётся по ширине, чипы перенесутся на три строки |
-| Список действий, который не влезает | [меню](../overlays/menu.md) в поповере | Группа кнопок не сворачивается |
-| Переход между разделами | [вкладки](../navigation/tabs.md) | Это роутинг, а не выбор значения |
-| Показать уже выбранное, без переключения | [тег](../display/tag.md) | Чип нажимается, тег — нет |
-| Состояние объекта из словаря | [бейдж](../display/badge.md) | Чип называет фильтр, а не состояние |
-| Разрозненные действия | [кластер](../../layout/flow.md) с зазором | Вплотную они соврут о родстве |
+| Going to an address | an ordinary `<a>` | A button leading to another page breaks the middle click, "open in a new tab" and copying the link |
+| Toggling on and off | [a switch or a checkbox](../inputs/toggles.md) | A single option has no pair, and a button has no "pressed" state |
+| More than five options | [a select](../inputs/select.md) | A segmented control sprawls across the width, and the chips wrap onto three lines |
+| A list of actions that does not fit | [a menu](../overlays/menu.md) in a popover | A button group does not fold away |
+| Moving between sections | [tabs](../navigation/tabs.md) | That is routing rather than choosing a value |
+| Showing what is already chosen, with no toggling | [a tag](../display/tag.md) | A chip is pressed, a tag is not |
+| The state of an object from the vocabulary | [a badge](../display/badge.md) | A chip names a filter rather than a state |
+| Unrelated actions | [a cluster](../../layout/flow.md) with a gap | Standing flush they would lie about kinship |
 
-## Общее для всех четырёх
+## Common to all four
 
-**Ровно одно `primary` на экран.** Главных действий не бывает два: второе
-отнимает вес у первого, и человек перестаёт понимать, чего от него хотят.
+**Exactly one `primary` per screen.** There is no such thing as two principal
+actions: the second takes weight from the first, and a person stops
+understanding what is wanted of them.
 
-**Тон несёт значение, а не настроение.** `--danger` ставится там, где действие
-необратимо, и нигде больше. Чип тона не имеет вовсе: он называет фильтр, а
-покрашенный в красный фильтр «упало» сказал бы, что аварийный сам фильтр.
+**A tone carries meaning rather than a mood.** `--danger` is put where an action
+is irreversible, and nowhere else. A chip has no tone at all: it names a
+filter, and a filter painted the red of "it failed" would say the filter itself
+is the emergency.
 
-**Клавиатура у всех четырёх разная, и это не разнобой.** Кнопка и группа — по
-`Tab` на каждую: это отдельные действия. Сегментированный контрол и чип — один
-`Tab` на всю полосу и стрелки внутри: это один контрол с несколькими
-значениями. Разметку, которая это объявляет, каждая страница называет в своём
-разделе «Контракт».
+**The keyboard differs across the four, and that is not a muddle.** A button and
+a group take one `Tab` each: they are separate actions. A segmented control and
+a chip take one `Tab` for the whole strip with arrows inside: they are one
+control with several values. The markup that declares this is named by each
+page in its own "Contract" section.

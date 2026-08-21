@@ -1,119 +1,118 @@
 ---
-title: Лог
-group: Агентный слой
+title: Log
+group: Agent layer
 layout: component
 source: src/text.css
-js: Копирование делает `instrument.js`. Прокрутка за хвостом и виртуализация — слой приложения
+js: Copying is done by `instrument.js`. Scrolling with the tail and virtualisation belong to the application layer
 api:
-  - { name: "inst-log", kind: "класс", doc: "Контейнер, прокручивается" }
-  - { name: "inst-log-line", kind: "класс", doc: "Строка: три колонки" }
-  - { name: "inst-log-time", kind: "класс", doc: "Отметка времени" }
-  - { name: "inst-log-level", kind: "класс", doc: "Уровень, ширина `5ch`" }
-  - { name: "data-tone", kind: "атрибут", doc: "`warn` · `error`" }
-  - { name: "--level-ink", kind: "переменная", value: "--text-muted" }
-  - { name: "--font-mono", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--surface-sunken", kind: "токен" }
-  - { name: "--radius-md", kind: "токен" }
-  - { name: "--space-4", kind: "токен" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--warn-text", kind: "токен" }
-  - { name: "--err-text", kind: "токен" }
-title-en: "Log"
-group-en: "Agent layer"
+  - { name: "inst-log", kind: "class", doc: "The container; it scrolls" }
+  - { name: "inst-log-line", kind: "class", doc: "A line: three columns" }
+  - { name: "inst-log-time", kind: "class", doc: "The timestamp" }
+  - { name: "inst-log-level", kind: "class", doc: "The level, a width of `5ch`" }
+  - { name: "data-tone", kind: "attribute", doc: "`warn` · `error`" }
+  - { name: "--level-ink", kind: "variable", value: "--text-muted" }
+  - { name: "--font-mono", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--radius-md", kind: "token" }
+  - { name: "--space-4", kind: "token" }
+  - { name: "--pad-panel", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--warn-text", kind: "token" }
+  - { name: "--err-text", kind: "token" }
 ---
 
-Поток строк от машины: время, уровень, сообщение. Моноширинный набор и
-колонки фиксированной ширины, поэтому лог читается столбцами, а не сплошным
-текстом.
+A stream of lines from a machine: a time, a level, a message. Monospaced
+setting and columns of fixed width, so a log is read in columns rather than as
+continuous text.
 
 ```html preview
-<div class="inst-log" role="log" aria-label="Лог прогона">
-  <div class="inst-log-line"><span class="inst-log-time">14:32:07</span><span class="inst-log-level">info</span><span>Запуск worldgen-01</span></div>
-  <div class="inst-log-line"><span class="inst-log-time">14:32:09</span><span class="inst-log-level">info</span><span>Прочитано 4 файла</span></div>
-  <div class="inst-log-line" data-tone="warn"><span class="inst-log-time">14:32:11</span><span class="inst-log-level">warn</span><span>chunks.bin занят, повтор через 1 с</span></div>
-  <div class="inst-log-line" data-tone="error"><span class="inst-log-time">14:32:16</span><span class="inst-log-level">error</span><span>EBUSY: не удалось прочитать chunks.bin</span></div>
+<div class="inst-log" role="log" aria-label="The log of the run">
+  <div class="inst-log-line"><span class="inst-log-time">14:32:07</span><span class="inst-log-level">info</span><span>Starting worldgen-01</span></div>
+  <div class="inst-log-line"><span class="inst-log-time">14:32:09</span><span class="inst-log-level">info</span><span>4 files read</span></div>
+  <div class="inst-log-line" data-tone="warn"><span class="inst-log-time">14:32:11</span><span class="inst-log-level">warn</span><span>chunks.bin is busy, retrying in 1 s</span></div>
+  <div class="inst-log-line" data-tone="error"><span class="inst-log-time">14:32:16</span><span class="inst-log-level">error</span><span>EBUSY: could not read chunks.bin</span></div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `role="log"` и `aria-label` | да | Строки, прибывающие во время работы, иначе не объявляются вовсе |
-| Три узла в строке: время, уровень, сообщение | да | Колонки заданы шириной в `ch`; узел не на своём месте ломает выравнивание всех строк |
-| `data-tone` только у `warn` и `error` | да | Обычная строка тона не несёт: в потоке из тысячи строк подсвечено то, что требует внимания |
-| Моноширинный набор | да | Приходит от `inst-log`. Пропорциональный шрифт рассыпает колонку времени |
+| A `role="log"` and an `aria-label` | yes | Lines arriving while the work goes on are otherwise not announced at all |
+| Three nodes in a line: time, level, message | yes | The columns are set by a width in `ch`; a node out of place breaks the alignment of every line |
+| A `data-tone` on `warn` and `error` alone | yes | An ordinary line carries no tone: in a stream of a thousand lines what is highlighted is what calls for attention |
+| Monospaced setting | yes | It comes from `inst-log`. A proportional font scatters the column of times |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| `role="log"` | Область, в которую добавляются записи. Скринридер объявит новые строки, не перечитывая весь лог |
-| Живость | `role="log"` подразумевает `aria-live="polite"`. Для потока в сотни строк в секунду это надо **отключить** явно: непрерывное озвучивание делает интерфейс неработоспособным |
-| Имя области | `aria-label` обязателен: двa лога на экране без имён неразличимы на слух |
-| Время — данные | `inst-log-time` берёт `--text-muted` (4.5:1), а не `--text-faint`: таймстемп читают, а не разглядывают |
-| Не только цвет | Уровень написан словом (`warn`, `error`) рядом с цветом |
-| Прокрутка | Область достижима с клавиатуры. Автопрокрутка вниз обязана останавливаться, когда пользователь прокрутил вверх |
-| Перенос | `white-space: pre-wrap` и `overflow-wrap: anywhere` только на ячейке сообщения: на контейнере это схлопнуло бы колонки |
+| `role="log"` | A region records are added to. A screen reader announces the new lines without rereading the whole log |
+| Liveness | A `role="log"` implies an `aria-live="polite"`. For a stream of hundreds of lines a second that has to be **switched off** explicitly: continuous speaking makes the interface unusable |
+| The name of the region | An `aria-label` is required: two logs on a screen with no names are indistinguishable by ear |
+| Time is data | `inst-log-time` takes `--text-muted` (4.5:1) rather than `--text-faint`: a timestamp is read rather than looked at |
+| Not colour alone | The level is written as a word (`warn`, `error`) beside the colour |
+| Scrolling | The region is reachable from the keyboard. Auto-scrolling to the bottom has to stop when the user has scrolled up |
+| Wrapping | `white-space: pre-wrap` and `overflow-wrap: anywhere` on the message cell alone: on the container that would collapse the columns |
 
-## Устройство
+## Anatomy
 
-Сетка объявлена **на строке**, то есть у каждой строки она своя. Если задать
-колонку уровня по содержимому, её ширина будет меняться от слова к слову:
-`info` уже, чем `error`, и сообщения поедут лесенкой. Поэтому
-`inst-log-level` получает фиксированную ширину в `5ch`.
+The grid is declared **on the line**, that is, every line has one of its own.
+If the level column is set by its content, its width changes from word to word:
+`info` is narrower than `error`, and the messages go off in a staircase. So
+`inst-log-level` gets a fixed width of `5ch`.
 
-## Варианты
+## Variants
 
 ```html
 <div class="inst-log-line" data-tone="error">…</div>
 ```
 
-| Тон | Что красится |
+| Tone | What is painted |
 |---|---|
-| нет атрибута | Только уровень, приглушённо |
-| `warn` | Уровень |
-| `error` | Уровень **и всё сообщение** |
+| no attribute | The level alone, muted |
+| `warn` | The level |
+| `error` | The level **and the whole message** |
 
-Ошибка красится целиком: её ищут в тысяче строк, пролистывая глазом, а не
-читая.
+An error is painted entire: it is looked for in a thousand lines by scanning
+rather than by reading.
 
 ## JS
 
-Подключите модуль один раз на страницу — инициализировать компоненты по
-отдельности не нужно, `instrument.js` работает делегированием и видит узлы, пришедшие
-позже.
+Include the module once per page — there is no need to initialise the
+components one by one, `instrument.js` works by delegation and sees nodes that
+arrived later.
 
 ```html
 <script type="module" src="instrument.js"></script>
 ```
 
-### Что делает `instrument.js`
+### What `instrument.js` does
 
-Пример в шапке живой: наведите на лог и нажмите кнопку копирования.
+The example in the header is live: hover over the log and press the copy
+button.
 
-Копирование: кнопка `.inst-copy` внутри `.inst-copyable` кладёт текст в буфер
-и отвечает цветом. Подробности — на странице [блока
-кода](../components/display/code.md#js).
+Copying: a `.inst-copy` button inside an `.inst-copyable` puts the text in the
+clipboard and answers with colour. The details are on the page of
+[the block of code](../components/display/code.md#js).
 
 ```html
 <div class="inst-log inst-copyable">
-  <button class="inst-copy" type="button" aria-label="Скопировать лог"></button>
+  <button class="inst-copy" type="button" aria-label="Copy the log"></button>
   …
 </div>
 ```
 
-### Что остаётся приложению
+### What is left to the application
 
-| Что | Почему не `instrument.js` |
+| What | Why not `instrument.js` |
 |---|---|
-| Прокрутка за хвостом | «Держаться низа, пока человек не отлистал вверх» — политика, а не оформление |
-| Виртуализация | Лог агента идёт десятками тысяч строк; способ зависит от источника |
-| Фильтр по уровню | Данные |
+| Scrolling with the tail | "Hold the bottom until a person scrolls up" is a policy rather than styling |
+| Virtualisation | An agent's log runs to tens of thousands of lines; the way depends on the source |
+| Filtering by level | Data |
 
-Прокрутку к хвосту приложение делает само, и это одна строка:
+Scrolling to the tail is done by the application, and it is one line:
 
 ```js
 if (atBottom) log.scrollTop = log.scrollHeight;
@@ -124,7 +123,7 @@ if (atBottom) log.scrollTop = log.scrollHeight;
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

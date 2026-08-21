@@ -1,101 +1,101 @@
 ---
-title: Панель
-group: Отображение данных
+title: Panel
+group: Data display
 layout: component
 source: src/surfaces.css
 api:
-  - { name: "inst-panel", kind: "класс", doc: "Область. Контейнер по инлайновой оси" }
-  - { name: "inst-panel-header", kind: "класс", doc: "Шапка: имя и действия" }
-  - { name: "inst-panel-title", kind: "класс", doc: "Имя области" }
-  - { name: "inst-panel-actions", kind: "класс", doc: "Действия в шапке, прижаты к концу" }
-  - { name: "inst-panel-body", kind: "класс", doc: "Тело с прокруткой" }
-  - { name: "inst-panel-body--flush", kind: "модификатор", doc: "Без внутреннего отступа" }
-  - { name: "inst-panel-body--list", kind: "модификатор", doc: "Отступ только по вертикали" }
-  - { name: "--surface-raised", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--radius-lg", kind: "токен" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--text-sm", kind: "токен" }
-title-en: "Panel"
-group-en: "Data display"
+  - { name: "inst-panel", kind: "class", doc: "The region. A container on the inline axis" }
+  - { name: "inst-panel-header", kind: "class", doc: "The header: a name and actions" }
+  - { name: "inst-panel-title", kind: "class", doc: "The name of the region" }
+  - { name: "inst-panel-actions", kind: "class", doc: "The actions in the header, pushed to the end" }
+  - { name: "inst-panel-body", kind: "class", doc: "The body, with scrolling" }
+  - { name: "inst-panel-body--flush", kind: "modifier", doc: "With no inner padding" }
+  - { name: "inst-panel-body--list", kind: "modifier", doc: "Padding on the vertical only" }
+  - { name: "--surface-raised", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--radius-lg", kind: "token" }
+  - { name: "--pad-panel", kind: "token" }
+  - { name: "--text-sm", kind: "token" }
 ---
 
-Область приложения: она стоит на экране постоянно и имеет своё имя. Панель —
-не карточка: её нельзя перетащить, потому что она и есть место.
+A region of an application: it stands on the screen permanently and has a name
+of its own. A panel is not a card: it cannot be dragged, because it IS the
+place.
 
 ```html preview
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Прогоны</span>
+    <span class="inst-panel-title">Runs</span>
     <div class="inst-panel-actions">
-      <button class="inst-btn inst-btn--sm" type="button">Обновить</button>
+      <button class="inst-btn inst-btn--sm" type="button">Refresh</button>
     </div>
   </div>
   <div class="inst-panel-body">
-    Содержимое области.
+    The content of the region.
   </div>
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `role="region"` и `aria-labelledby` | да, если панель — ориентир | Иначе она не попадёт в список областей у скринридера |
-| `tabindex="0"` на теле | да, если внутри нет фокусируемого | Область прокрутки обязана получать фокус с клавиатуры |
-| Ширина приходит снаружи | да | Панель объявлена контейнером; `container-type` отключает интринсик и схлопнет элемент, получающий ширину от содержимого |
+| `role="region"` and `aria-labelledby` | yes, if the panel is a landmark | Otherwise it will not appear in a screen reader's list of regions |
+| `tabindex="0"` on the body | yes, if there is nothing focusable inside | A scrolling region has to be able to take focus from the keyboard |
+| The width comes from outside | yes | A panel is declared a container; `container-type` switches off the intrinsic size and will collapse an element that takes its width from its content |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Заголовок | `inst-panel-title` — визуальный. Если панель является ориентиром, дайте ей `role="region"` и `aria-labelledby` на заголовок, иначе она не попадёт в список областей |
-| Прокрутка | Тело прокручивается само. Область прокрутки должна получать фокус с клавиатуры — браузеры дают это `tabindex="0"`, если внутри нет фокусируемого |
-| Глубина | Передаётся поверхностью, а не тенью: `--surface-raised` над `--surface-page`. В `forced-colors` поверхности схлопываются, поэтому панель получает явную рамку `CanvasText` |
+| The heading | `inst-panel-title` is visual. If the panel is a landmark, give it `role="region"` and an `aria-labelledby` pointing at the heading, otherwise it will not appear in the list of regions |
+| Scrolling | The body scrolls by itself. A scrolling region has to be able to take focus from the keyboard — browsers give that to a `tabindex="0"` when there is nothing focusable inside |
+| Depth | Carried by the surface rather than by a shadow: `--surface-raised` over `--surface-page`. In `forced-colors` the surfaces collapse, so a panel gets an explicit `CanvasText` border |
 
-## Устройство
+## Anatomy
 
-### Тело панели
+### The body of a panel
 
 ```html
 <div class="inst-panel-body inst-panel-body--list">…</div>
 ```
 
-| Класс | Когда |
+| Class | When |
 |---|---|
-| `inst-panel-body` | Умолчание: внутренний отступ, своя прокрутка |
-| `inst-panel-body--flush` | Отступ снят — содержимое само знает про края (таблица, диф) |
-| `inst-panel-body--list` | Для списка строк: отступ по вертикали, но не по горизонтали |
+| `inst-panel-body` | The default: inner padding, scrolling of its own |
+| `inst-panel-body--flush` | The padding is removed — the content knows about the edges itself (a table, a diff) |
+| `inst-panel-body--list` | For a list of rows: padding on the vertical but not on the horizontal |
 
-## Поведение
+## Behavior
 
-### Панель — контейнер
+### A panel is a container
 
-Панель объявлена контейнером (`container: panel / inline-size`), поэтому
-компоненты внутри отвечают на **её** ширину. Одна и та же панель стоит и в
-узкой колонке инспектора, и во всю ширину дашборда.
+A panel is declared a container (`container: panel / inline-size`), so the
+components inside answer to **its** width. One and the same panel stands both
+in the narrow column of an inspector and across the whole width of a
+dashboard.
 
 ```css
-/* Своё правило под узкую панель */
+/* A rule of your own for a narrow panel */
 @container panel (inline-size < 20rem) {
   .my-thing { grid-template-columns: 1fr; }
 }
 ```
 
-Ширина к панели всегда приходит снаружи, поэтому объявлять её контейнером
-безопасно. Объявлять контейнером то, что получает ширину от содержимого,
-нельзя: `container-type` отключает интринсик по инлайновой оси и схлопнет
-элемент.
+The width always comes to a panel from outside, so declaring it a container is
+safe. Declaring something a container when it takes its width from its content
+is not allowed: `container-type` switches off the intrinsic size on the inline
+axis and will collapse the element.
 
-### Всплывающее внутри панели
+### Something popping up inside a panel
 
 :::warn
-**Поповер внутри панели обрежется.** У панели `overflow: hidden` ради радиуса.
-Контракт библиотеки: всплывающее рисуется в верхнем слое — `[popover]` или портал, —
-а не внутри потока панели. Это же касается
-[тултипа](../overlays/tooltip.md): в панели вместо него нужен
-[поповер](../overlays/popover.md).
+**A popover inside a panel will be clipped.** A panel has `overflow: hidden`
+for the sake of its radius. The library's contract: what pops up is drawn in
+the top layer — `[popover]` or a portal — rather than inside the flow of the
+panel. The same goes for [the tooltip](../overlays/tooltip.md): inside a panel
+[a popover](../overlays/popover.md) is wanted in its place.
 :::
 
 ## API
@@ -103,7 +103,7 @@ group-en: "Data display"
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

@@ -1,56 +1,56 @@
 ---
-title: Оверлеи
-group: Оверлеи
+title: Overlays
+group: Overlays
 layout: index
-title-en: "Overlays"
-group-en: "Overlays"
 ---
 
-Пять компонентов, и путают их постоянно. Различаются они по двум вопросам:
-**забирает ли фокус** и **держат ли открытым**.
+Five components, and they are confused constantly. What tells them apart are
+two questions: **does it take the focus** and **do people hold it open**.
 
-| | забирает фокус | держат открытым | ширина |
+| | takes the focus | held open | width |
 |---|---|---|---|
-| [Модалка](./dialog.md) | да, фон погашен | нет, отвечают и закрывают | по содержимому |
-| [Шторка](./sheet.md) | да, фон погашен | да, пока смотрят | колонка сбоку |
-| [Поповер](./popover.md) | нет | нет | по содержимому |
-| [Меню](./menu.md) | нет | нет | по пунктам |
-| [Тултип](./tooltip.md) | нет, и курсор в него не увести | нет | одна фраза |
+| [The modal](./dialog.md) | yes, the background is dimmed | no, people answer and close it | by its content |
+| [The drawer](./sheet.md) | yes, the background is dimmed | yes, while they look | a column at the side |
+| [The popover](./popover.md) | no | no | by its content |
+| [The menu](./menu.md) | no | no | by its items |
+| [The tooltip](./tooltip.md) | no, and the cursor cannot be moved into it | no | one phrase |
 
-Сравнение стоит здесь, а не на страницах: «возьмите другое» — это утверждение о
-СОСЕДЯХ, и повторённое пять раз оно расходится с ними по одной строке за
-правку.
+The comparison stands here rather than on the pages: "take instead" is a
+statement about NEIGHBOURS, and repeated five times it parts from them by one
+line per edit.
 
-## Что выбрать
+## What to choose
 
-| Что нужно | Возьмите | Почему не соседа |
+| What is wanted | Take | Why not the neighbour |
 |---|---|---|
-| Ответ, без которого дальше нельзя: подтвердить разрушительное действие | [Модалку](./dialog.md) | Поповер не забирает фокус, и вопрос можно не заметить |
-| Подробности объекта, которые смотрят, не теряя список из виду | [Шторку](./sheet.md) | Модалка центрируется и отрывает от контекста |
-| Список действий над объектом, вызванный кнопкой | [Меню](./menu.md) в [поповере](./popover.md) | У селекта есть значение и он отправляется с формой, у меню — нет |
-| Подробности или форму сбоку, не блокируя работу | [Поповер](./popover.md) | Модалка гасит фон там, где хватило бы соседства |
-| Пояснение к иконочной кнопке или сокращению | [Тултип](./tooltip.md) | Всё остальное требует нажатия |
+| An answer without which nothing goes on: confirming a destructive action | [The modal](./dialog.md) | A popover does not take the focus, and the question can be missed |
+| Details of an object looked at without losing sight of the list | [The drawer](./sheet.md) | A modal centres itself and tears one away from the context |
+| A list of actions on an object, called by a button | [The menu](./menu.md) in [a popover](./popover.md) | A select has a value and is sent with the form, a menu has neither |
+| Details or a form at the side, without blocking the work | [The popover](./popover.md) | A modal dims the background where standing beside would have done |
+| An explanation of an icon button or an abbreviation | [The tooltip](./tooltip.md) | Everything else calls for a press |
 
-## Когда ни один не подходит
+## When none of them fits
 
-| Что нужно | Возьмите | Почему не отсюда |
+| What is wanted | Take | Why not from here |
 |---|---|---|
-| Сообщение без вопроса | [баннер](../feedback/banner.md) уровня страницы | Модалка требует нажатия там, где хватило бы прочтения |
-| Постоянная панель, которую не закрывают | колонка [оболочки](../../layout/shell.md) | У шторки есть подложка, и фон под ней выключен |
-| Два-три частых действия | [группа кнопок](../actions/button-group.md) на виду | Меню прячет то, что нажимают каждый раз |
-| Выбор значения формы | [селект](../inputs/select.md) | У меню нет значения и оно не отправляется |
-| Текст, без которого нельзя обойтись | подпись в потоке или [сноска](../feedback/note.md) | Тултип не открывается на сенсорном экране |
-| Согласование в очереди агентов | [блок согласования](../../agent/approval.md) | Модалка вырывает из потока, где решение — часть ленты |
+| A message with no question | [a banner](../feedback/banner.md) at page level | A modal demands a press where reading would have done |
+| A permanent panel nobody closes | a column of [the shell](../../layout/shell.md) | A drawer has a ground under it, and the background is switched off |
+| Two or three frequent actions | [a button group](../actions/button-group.md) in plain view | A menu hides what gets pressed every time |
+| Choosing a value in a form | [a select](../inputs/select.md) | A menu has no value and is not sent |
+| Text that cannot be done without | a label in the flow or [a note](../feedback/note.md) | A tooltip does not open on a touchscreen |
+| An approval in an agent queue | [an approval block](../../agent/approval.md) | A modal tears one out of the flow, where the decision is part of the feed |
 
-## Общее для всех пяти
+## Common to all five
 
-**Обрезающий контейнер решает за вас.** Внутри [панели](../display/panel.md) с
-`overflow: hidden` тултип обрежется — там берут поповер: он живёт в верхнем
-слое. Это единственный случай, когда выбор диктует не смысл, а раскладка.
+**A clipping container decides for you.** Inside [a panel](../display/panel.md)
+with `overflow: hidden` a tooltip is clipped — there people take a popover: it
+lives in the top layer. That is the one case where the choice is dictated by
+the layout rather than by the meaning.
 
-**Тултип не открывается пальцем.** На сенсорном экране его нет вовсе, поэтому
-всё, что в нём написано, обязано быть необязательным.
+**A tooltip does not open to a finger.** On a touchscreen it is not there at
+all, so everything written in it has to be optional.
 
-**Модалка выше тостов.** Тост живёт в верхнем слое, но `showModal()` поднимает
-диалог ещё выше: уведомление, пришедшее при открытой модалке, человек увидит
-после её закрытия. Ограничение платформы, а не недосмотр.
+**A modal is above the toasts.** A toast lives in the top layer, but
+`showModal()` raises a dialog higher still: a notification that arrives while a
+modal is open will be seen after it closes. A limit of the platform rather than
+an oversight.

@@ -1,0 +1,100 @@
+---
+title: Постраничная навигация
+group: Навигация
+layout: component
+source: src/layout.css
+api:
+  - { name: "inst-pager", kind: "класс", doc: "Список страниц. Ставится на `<ol>`, переносится по ширине" }
+  - { name: "inst-pager-item", kind: "класс", doc: "Страница или стрелка. Квадрат не ниже `--control-h-sm`" }
+  - { name: "inst-pager-gap", kind: "класс", doc: "Многоточие на месте пропущенного диапазона. Не ссылка" }
+  - { name: "--control-h-sm", kind: "токен" }
+  - { name: "--radius-sm", kind: "токен" }
+  - { name: "--space-2", kind: "токен" }
+  - { name: "--space-3", kind: "токен" }
+  - { name: "--text-xs", kind: "токен" }
+  - { name: "--weight-medium", kind: "токен" }
+  - { name: "--hairline", kind: "токен" }
+  - { name: "--surface-hover", kind: "токен" }
+  - { name: "--surface-selected", kind: "токен" }
+  - { name: "--accent-text", kind: "токен" }
+  - { name: "--accent-border", kind: "токен" }
+  - { name: "--text-secondary", kind: "токен" }
+  - { name: "--text-faint", kind: "токен" }
+---
+
+Переход по страницам длинного списка. Каждая страница — свой адрес, поэтому это
+ссылки, а не кнопки.
+
+```html preview
+<nav aria-label="Страницы">
+  <ol class="inst-pager">
+    <li><a class="inst-pager-item" href="#" aria-disabled="true">Назад</a></li>
+    <li><a class="inst-pager-item" href="#" aria-current="page">1</a></li>
+    <li><a class="inst-pager-item" href="#">2</a></li>
+    <li><a class="inst-pager-item" href="#">3</a></li>
+    <li><span class="inst-pager-gap">…</span></li>
+    <li><a class="inst-pager-item" href="#">24</a></li>
+    <li><a class="inst-pager-item" href="#">Вперёд</a></li>
+  </ol>
+</nav>
+```
+
+## Контракт
+
+Пейджер — `<ol>` внутри `<nav aria-label>`: страницы упорядочены, и порядок
+часть смысла. Библиотека снимает у списка маркеры и отступ сам, поэтому обёртки не
+нужны.
+
+| Что | Обязательно | Почему |
+|---|---|---|
+| `<nav>` + `aria-label` | да | Отдельный ориентир: на экране уже есть боковая навигация и крошки |
+| `<ol>` с `<li>` | да | Страницы упорядочены |
+| `aria-current="page"` | да | Единственный источник текущей страницы. Класса для неё нет |
+| `aria-disabled="true"` | да, на краю диапазона | У ссылки нет `disabled` — атрибут ARIA здесь единственный правдивый |
+
+`inst-pager-gap` — это `<span>`, а не ссылка: многоточие обозначает пропуск, а
+не страницу. Оно остаётся внутри `<li>`, чтобы список не терял структуру.
+
+### Доступность
+
+| | |
+|---|---|
+| Клавиатура | Нативные ссылки: `Tab` — обход, `Enter` — переход. Ничего не перехватывается |
+| Цель нажатия | Минимум `--control-h-sm` по обеим осям — квадрат, а не узкий прямоугольник. В плотности `compact` он опускается до 22px, ниже порога 24px по WCAG 2.5.8: держите пейджер вне `compact` |
+| Текущая страница | Несёт `aria-current`, заливку **и** рамку: цвет не единственный носитель |
+| Недоступность | `aria-disabled` озвучивается и сохраняет фокус, в отличие от удаления ссылки |
+| Контраст | Подпись `--text-secondary`, многоточие `--text-faint` — оно декорация, а не данные |
+| Печать | Пейджер не печатается: на бумаге страницы уже нет |
+
+## Состояния
+
+```html preview
+<nav aria-label="Пример состояний">
+  <ol class="inst-pager">
+    <li><a class="inst-pager-item" href="#" aria-disabled="true">Назад</a></li>
+    <li><a class="inst-pager-item" href="#">7</a></li>
+    <li><a class="inst-pager-item" href="#" aria-current="page">8</a></li>
+    <li><a class="inst-pager-item" href="#">9</a></li>
+  </ol>
+</nav>
+```
+
+| Состояние | Как ставится | Что происходит |
+|---|---|---|
+| текущая | `aria-current="page"` | `--surface-selected`, `--accent-text`, рамка `--accent-border` внутренней тенью, `--weight-medium` |
+| недоступна | `aria-disabled="true"` | Прозрачность `0.5` и снятая мышь. У ссылки нет `disabled` — атрибут ARIA здесь единственный правдивый |
+| наведение | `:hover` | `--surface-hover` и полный цвет подписи |
+
+`aria-disabled` **не убирает ссылку из порядка обхода** — она остаётся
+достижимой с клавиатуры и озвучивается как недоступная. Перехват нажатия — на
+слое приложения: снимается только мышь.
+
+## API
+
+```api
+```
+
+## Связанное
+
+```related
+```

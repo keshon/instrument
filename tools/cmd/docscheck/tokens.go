@@ -258,7 +258,7 @@ func sameValue(want, got string) bool {
 	return err1 == nil && err2 == nil && a == b
 }
 
-// langVariants — the page and all its translations: tokens.md and tokens.en.md.
+// langVariants — the page and all its translations: tokens.md and tokens.ru.md.
 //
 // Checking only the base name would mean releasing the tables on exactly those
 // pages that are rewritten and therefore make mistakes more often than the

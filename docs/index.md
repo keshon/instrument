@@ -1,66 +1,84 @@
 ---
 title: instrument
 template: splash
-title-en: "instrument"
 ---
 
-CSS-библиотека для интерфейсов, которые показывают человеку работу машины:
-очереди задач, прогоны, логи, инспекторы, состояния и неопределённость.
+A CSS library for interfaces that show a human what a machine is doing: task
+queues, runs, logs, inspectors, states and uncertainty.
 
-Без сборки и без зависимостей, подключается одной строкой.
+No build step, no dependencies, one link tag.
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.7.0/dist/instrument.min.css">
 ```
 
-**[Установка](/start/install/)** — npm, CDN или файл, плюс целая страница для
-копирования. **[Консоль прогонов](/blocks/console/)** — собранный экран, из
-которого видно, как компоненты стыкуются.
+Or from npm: `npm i @keshon/instrument`.
 
-## Для кого
+## Who it is for
 
-Для дашбордов, админок и агентских инструментов — интерфейсов, где главное на
-экране это **данные**, где сидят часами и где машина работает, а человек за ней
-наблюдает.
+Dashboards, admin panels and agent tooling — screens where **data** is the
+point, where people sit for hours, and where the machine works while the human
+watches.
 
-**Для чего не подходит.** Лендинги, магазины, контентные сайты. Визуальные
-эффекты ограничены: нет градиентов, свечений, теней на карточках и жирных
-начертаний; заголовки капсом запрещены
-[правилом](/about/design-principles/).
+It covers what general-purpose kits usually leave out: a task queue, a step
+with a body, an approval request, a failure block, a diff, parallel run lanes,
+a log with columns, a budget and a tree.
 
-## Возможности
+**What it is not for.** Landing pages, shops, content sites. Visual effects are
+limited: no gradients, no glows, no shadows on cards, no bold weights. All-caps
+headings are forbidden by a rule.
 
-**Шесть тем, четыре акцента, пять масштабов, три плотности** — четыре независимые оси, все
-атрибутами разметки. Плотность объявляется на контейнере, а не выбирается
-вариантом компонента: один атрибут на панели перенастраивает
-[всё внутри неё](/foundations/density/).
+## Features
 
-**Контраст проверяется машиной.** 2208 пар токенов против порогов WCAG во всех
-темах и акцентах. Инструмент читает настоящий `tokens.css` и резолвит `var()`,
-`light-dark()` и `color-mix()` так же, как браузер. То, что сложилось из
-токенов на экране после вложенности и полупрозрачных слоёв, меряет
-[отдельная проверка по пикселям](/about/audit/) — её запускают на своём
-приложении.
+**Six themes, four accents, three densities** — three independent axes, all set
+through markup attributes. Density is declared on a container, not picked as a
+component variant: one attribute on a panel retunes everything inside it.
 
-**Уменьшенное движение не выключает индикаторы.** Переходы схлопываются,
-бесконечные индикаторы активности замедляются: анимация, сжатая до 0.01ms, —
-это остановка, а остановленный индикатор сообщает, что работа встала.
+**Contrast is checked by machine.** 2208 token pairs against WCAG thresholds
+across every theme and accent. The tool reads the real `tokens.css` and
+resolves `var()`, `light-dark()` and `color-mix()` the way a browser does. What
+those tokens add up to on screen — after nesting and translucent layers — is
+measured by a separate pixel audit you run on your own application.
 
-## Скрипт по желанию
+**Tap targets are checked too.** 54 checks across all three densities,
+including the WCAG 2.2 spacing exception.
 
-CSS работает сам по себе. Отдельный модуль выполняет то, что объявлено
-разметкой: стрелки в списках и вкладках, копирование, снятие тега,
-перетаскивание оси. [Что именно он делает](/foundations/behavior/).
+**Reduced motion does not switch indicators off.** Transitions collapse, but
+infinite activity indicators slow down instead of stopping: an animation
+squeezed to 0.01ms is a stopped animation, and a stopped indicator reports that
+work has halted.
 
-## Требования
+## Install
 
-Chrome 123+ · Safari 17.5+ · Firefox 120+ — по `light-dark()`, `oklch()`,
-каскадным слоям, вложенности, `:has()` и единице `lh`. Полифилов нет.
+```html
+<link rel="stylesheet" href="dist/instrument.min.css">
+```
 
-## Лицензия
+106 KB, one request, 17 KB gzipped. Keyboard behaviour is a separate file and
+optional:
 
-MIT © Innokentiy Sokolov. Исходники, документация и все проверки — в одном
-репозитории: [github.com/keshon/instrument](https://github.com/keshon/instrument).
+```html
+<script type="module" src="dist/instrument.js"></script>
+```
 
-Собранный `dist/instrument.min.css` лежит в репозитории и сверяется с
-исходником на каждый push.
+Icons need the sprite inlined in the document: `<use href="#i-close">` is
+subject to the same-origin rule, so a link to an external sprite file renders
+nothing and reports no error. Inline `assets/sprite.svg` (99 symbols) as the
+first element of `<body>`.
+
+The kit lives entirely in cascade layers and your styles do not, so any rule of
+yours wins without `!important`.
+
+## Requirements
+
+Chrome 123+ · Safari 17.5+ · Firefox 120+ — for `light-dark()`, `oklch()`,
+cascade layers, nesting, `:has()` and the `lh` unit. There are no polyfills.
+
+## Translation
+
+The documentation is written in Russian. This page is currently the only
+translated one; a page without its own translation shows the Russian text with
+a notice rather than a 404.
+
+**The API reference is the same in both languages**: class, token and attribute
+names were English from the start.

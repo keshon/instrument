@@ -275,6 +275,12 @@ func declared(src map[string]string) map[string]set {
 // without a word. The Russian alternative goes when the pages do.
 var apiClassRe = regexp.MustCompile(`name:\s*"(inst-[a-z0-9-]+)"\s*,\s*kind:\s*"(?:класс|class)"`)
 
+// suffixed reports whether a page is the language-suffixed half of a pair:
+// `split.ru.md` beside `split.md`. A base page has exactly one dot.
+func suffixed(p string) bool {
+	return strings.Count(filepath.Base(p), ".") > 1
+}
+
 func ownership(docs string) (map[string]string, map[string][]string, error) {
 	owner := map[string]string{}
 	classes := map[string][]string{}
@@ -284,7 +290,12 @@ func ownership(docs string) (map[string]string, map[string][]string, error) {
 			if err != nil || d.IsDir() {
 				return err
 			}
-			if strings.HasSuffix(p, ".md") && !strings.HasSuffix(p, ".en.md") {
+			// One page per component, whatever its language: ownership of a
+			// class is a fact about the kit rather than about a spelling.
+			// The test is the SUFFIX rather than a language code — which
+			// language holds the bare name changed once already, at step
+			// five, and naming `.en.md` here made the map depend on that.
+			if strings.HasSuffix(p, ".md") && !suffixed(p) {
 				pages = append(pages, p)
 			}
 			return nil
@@ -873,9 +884,12 @@ func pagesOf(docs string) []string {
 			}
 			// Translation is the same kind of page, and its markup is just as
 			// live: the reader copies it from the reference and gets either a
-			// working or broken component. Excluding `.en.md` would release the
-			// ARIA contract exactly on pages that are written from scratch and
-			// therefore make mistakes more often than the original.
+			// working or broken component. Excluding the suffixed half would
+			// release the ARIA contract exactly on the pages that are written
+			// from scratch and therefore make mistakes more often than the
+			// original. Both halves are walked here, and that is the
+			// difference from ownership() above, which wants one page per
+			// component.
 			if strings.HasSuffix(p, ".md") {
 				pageCache = append(pageCache, p)
 			}

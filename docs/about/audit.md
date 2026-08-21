@@ -1,97 +1,103 @@
 ---
-title: Проверка по пикселям
-group: О проекте
+title: Pixel audit
+group: About
 source: tools/audit.js
-title-en: "Pixel audit"
-group-en: "About"
 ---
 
-`tools/audit.js` меряет контраст и цели нажатия по тому, что нарисовано в
-браузере. Это дополнение к текстовым проверкам: они разбирают `tokens.css`,
-страницы документации и собранные файлы, но между объявлением токена и пикселем
-стоят вложенность, полупрозрачные слои, каскад приложения и выбранная тема.
+`tools/audit.js` measures contrast and tap targets by what is drawn in the
+browser. It is an addition to the textual checks: those parse `tokens.css`, the
+pages of the documentation and the built files, but between the declaration of
+a token and a pixel stand nesting, translucent layers, the application's
+cascade and the chosen theme.
 
-Проверка обходит каждый узел с текстом, берёт его настоящий цвет и настоящий
-фон, собирая альфу по всем предкам, и считает контраст. Цвет в любой записи —
-`oklch`, `color-mix`, `light-dark` — приводит к sRGB сам браузер: значение
-рисуется на канве размером в пиксель и читается обратно.
+The check walks every node that carries text, takes its real colour and its
+real background, gathering the alpha up the ancestors, and computes the
+contrast. A colour in any notation — `oklch`, `color-mix`, `light-dark` — is
+resolved to sRGB by the browser itself: the value is painted on a canvas one
+pixel in size and read back.
 
-Запускать её нужно **на своём экране**: список пар для текстовой проверки
-составить заранее нельзя, потому что число сочетаний зависит от того, как
-вложены слои в конкретном приложении.
+It has to be run **on your own screen**: a list of pairs for a textual check
+cannot be drawn up in advance, because the number of combinations depends on
+how the layers are nested in a particular application.
 
-## Как запустить
+## How to run it
 
-Откройте свой экран, вставьте [`tools/audit.js`](https://github.com/keshon/instrument/blob/master/tools/audit.js)
-в консоль браузера и вызовите:
+Open your own screen, paste
+[`tools/audit.js`](https://github.com/keshon/instrument/blob/master/tools/audit.js)
+into the browser console and call:
 
 ```js
-kitAudit.run()            // вся страница: все оси разом
-kitAudit.run('#main')     // только часть
-kitAudit.contrast()       // один прогон в текущих теме и акценте
-kitAudit.targets()        // один прогон в текущих масштабе и плотности
-kitAudit.proportion()     // там же: влезает ли текст в свою коробку
+kitAudit.run()            // the whole page: every axis at once
+kitAudit.run('#main')     // a part of it
+kitAudit.contrast()       // one pass at the current theme and accent
+kitAudit.targets()        // one pass at the current scale and density
+kitAudit.proportion()     // the same pass: does the text fit its box
 ```
 
-`run()` печатает сводку таблицей и раскрывает нарушения по ячейкам. Их же
-возвращает объектом, если результат нужно разобрать программой.
+`run()` prints a summary as a table and unfolds the violations by cell. It
+returns the same as an object, if the result has to be parsed by a program.
 
-Оси перемножаются не все со всеми, и это осознанно. Контраст идёт по **теме ×
-акценту**: акцент переопределяет рампу `--a-*`, а подпись на акцентной заливке
-в каждой теме своя. Цели и пропорции — по **масштабу × плотности**: обе оси
-двигают геометрию и обе округляют до целых пикселей независимо друг от друга.
-Умножать одно на другое значило бы удлинить прогон двадцатикратно ради
-повторения тех же чисел.
+The axes are not multiplied all by all, and that is deliberate. Contrast goes
+by **theme × accent**: an accent redefines the `--a-*` ramp, and a label on an
+accent fill is different in every theme. Targets and proportions go by **scale
+× density**: both axes move geometry and both round to whole pixels
+independently of each other. Multiplying one by the other would stretch the run
+twentyfold to repeat the same numbers.
 
-## Что она меряет
-
-| | |
-|---|---|
-| Контраст текста | 4.5:1, а для крупного (24px или 18.66px полужирным) — 3:1. Фон собирается по предкам, полупрозрачные слои складываются в порядке рисования |
-| Цели нажатия | 24×24 по WCAG 2.2 AA (2.5.8) с двумя исключениями критерия: по расстоянию — цель меньше нормы засчитывается при `S + G ≥ 24`; инлайновая — ссылка внутри строки текста освобождена совсем |
-| Пропорции | Влезает ли подпись в свою колонку и не перенеслась ли она на вторую строку; чернила значка против высоты прописной соседней подписи. Это единственное, что нельзя вывести из токенов: ширина строки зависит от гарнитуры, начертания и языка |
-| Темы и акценты | 5 × 4 для контраста. Тема, поставленная на поддереве, при этом остаётся своей: корневая её не перекрывает |
-| Масштабы и плотности | 5 × 3 для целей и пропорций |
-
-## Чего она не видит
+## What it measures
 
 | | |
 |---|---|
-| Скрытое | Закрытый поповер, свёрнутая панель, вторая вкладка — их нет в раскладке. Откройте и прогоните ещё раз |
-| Фон картинкой | Считается только цвет. Текст поверх изображения проверка пропустит |
-| Порядок и смысл | Она измеряет пиксели. Клавиатура, имена ролей и порядок чтения остаются за человеком |
-| Состояния | Наведение, фокус и нажатие живут в момент взаимодействия. Меряется то, что видно сейчас |
+| The contrast of text | 4.5:1, and 3:1 for large text (24px, or 18.66px in semibold). The background is gathered up the ancestors, and translucent layers are composited in the order of drawing |
+| Tap targets | 24×24 under WCAG 2.2 AA (2.5.8) with two exceptions of the criterion: by spacing — a target smaller than the norm counts when `S + G ≥ 24`; inline — a link inside a line of text is exempt entirely |
+| Proportions | Whether a label fits its column and whether it has wrapped onto a second line; the ink of a glyph against the cap height of the label beside it. This is the one thing that cannot be derived from the tokens: the width of a line depends on the family, the weight and the language |
+| Themes and accents | 5 × 4 for contrast. A theme set on a subtree stays its own: the root one does not override it |
+| Scales and densities | 5 × 3 for targets and proportions |
 
-## Когда результату не стоит верить
+## What it does not see
 
-Результат зависит от момента замера. Пять случаев дают ложные нарушения.
+| | |
+|---|---|
+| The hidden | A closed popover, a folded panel, a second tab — they are not in the layout. Open them and run it again |
+| A background as an image | Only colour is counted. Text over an image is skipped by the check |
+| Order and meaning | It measures pixels. The keyboard, the names of roles and the order of reading stay with a human |
+| States | Hover, focus and press live at the moment of an interaction. What is measured is what is visible now |
 
-**Замер во время анимации.** Смена темы анимирована, и цвет, прочитанный в том
-же кадре, — это интерполяция. Признак: браузер возвращает цвет как `oklab(…)`
-вместо `oklch(…)`. `run()` глушит переходы сам, `contrast()` — нет.
+## When the result is not to be trusted
 
-**Дробные ширины.** Кнопка сегментированного контрола в плотном режиме — это
-22px высоты и 2px зазора, ровно 24. При дробной ширине браузер отдаёт зазор
-1,9999, и норма формально падает. Допуск в 0,1px это гасит; запаса там нет, и
-приложение, которое чуть сожмёт зазор, сломает WCAG молча.
+The result depends on the moment of the measurement. Five cases give false
+violations.
 
-**Область нажатия, выращенная псевдоэлементом.** Мелкие контролы остаются
-мелкими (глиф флажка 13px), а до нормы их растит невидимый `::before`. Проверка
-берёт наибольшее из элемента и его абсолютно позиционированных
-псевдоэлементов; инлайновый псевдоэлемент украшает, а не расширяет цель.
+**A measurement during an animation.** A change of theme is animated, and a
+colour read in the same frame is an interpolation. The mark: the browser
+returns the colour as `oklab(…)` rather than `oklch(…)`. `run()` suppresses the
+transitions itself, `contrast()` does not.
 
-**Липкая шапка над прокруткой.** Расстояние меряется в координатах окна, и
-элемент, проезжающий над другим, читается как стоящий вплотную. Пересекающиеся
-коробки — это слои, а не соседи, и проверка их не сравнивает.
+**Fractional widths.** A button of a segmented control in the compact mode is
+22px of height and 2px of gap, exactly 24. At a fractional width the browser
+gives back a gap of 1.9999, and the norm formally fails. A tolerance of 0.1px
+suppresses that; there is no margin there, and an application that squeezes the
+gap slightly will break WCAG in silence.
 
-**Видимо скрытые контролы.** Ссылка «Перейти к содержимому» и подписи для
-скринридеров живут коробкой в пиксель с `clip-path`, а настоящей целью
-становятся только в фокусе. Признак — обрезка `clip-path: inset(50%)`, а не
-размер: элемент с `border-box` не может стать тоньше своих рамок, поэтому
-объявленный 1px рисуется как 2px.
+**A tap area grown by a pseudo-element.** Small controls stay small (the glyph
+of a checkbox is 13px), and what grows them to the norm is an invisible
+`::before`. The check takes the largest of the element and its
+absolutely-positioned pseudo-elements; an inline pseudo-element decorates
+rather than widening the target.
 
-## Связанное
+**A sticky header over a scroll.** The spacing is measured in the coordinates
+of the window, and an element travelling over another reads as standing flush
+against it. Intersecting boxes are layers rather than neighbours, and the check
+does not compare them.
 
-[Цвет](../foundations/colors.md)
-[Плотность](../foundations/density.md)
-[Принципы дизайна](./design-principles.md)
+**Visibly hidden controls.** A "skip to content" link and labels for screen
+readers live as a box one pixel in size with a `clip-path`, and become a real
+target on focus alone. The mark is the `clip-path: inset(50%)` clipping rather
+than the size: an element with `border-box` cannot become thinner than its
+borders, so a declared 1px is drawn as 2px.
+
+## Related
+
+[Colour](../foundations/colors.md)
+[Density](../foundations/density.md)
+[Design principles](./design-principles.md)

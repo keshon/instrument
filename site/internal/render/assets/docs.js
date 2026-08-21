@@ -123,12 +123,11 @@
       if (index) return index;
       /* The index is its own per language: searching Russian bodies from the
          English version would mean handing the reader pages they will not
-         read. The language is taken from the document rather than from the
-         address — it is declared there already, and a second source would
-         drift from the first. */
-      const lang = document.documentElement.lang || 'ru';
-      const file = lang === 'ru' ? '/search.json' : '/' + lang + '-search.json';
-      index = await (await fetch(file)).json();
+         read. WHICH file that is comes from the markup rather than from a rule
+         spelled out again here: the build names the file, and a second rule
+         would drift from the first — it did, the day the base language moved
+         from Russian to English. */
+      index = await (await fetch(input.dataset.index)).json();
       return index;
     };
 

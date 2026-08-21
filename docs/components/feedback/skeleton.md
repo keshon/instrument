@@ -1,22 +1,20 @@
 ---
-title: Скелетон
-group: Обратная связь
+title: Skeleton
+group: Feedback
 layout: component
 source: src/agent.css
 api:
-  - { name: "inst-skeleton", kind: "класс", doc: "Базовый. Обязателен всегда" }
-  - { name: "inst-skeleton--title", kind: "модификатор", doc: "Ширина `40%`" }
-  - { name: "inst-skeleton--line", kind: "модификатор", doc: "Ширина `100%`" }
-  - { name: "inst-skeleton--short", kind: "модификатор", doc: "Ширина `62%`" }
-  - { name: "--surface-sunken", kind: "токен" }
-  - { name: "--radius-xs", kind: "токен" }
-  - { name: "--ease-in-out", kind: "токен" }
-title-en: "Skeleton"
-group-en: "Feedback"
+  - { name: "inst-skeleton", kind: "class", doc: "The base one. Always required" }
+  - { name: "inst-skeleton--title", kind: "modifier", doc: "A width of `40%`" }
+  - { name: "inst-skeleton--line", kind: "modifier", doc: "A width of `100%`" }
+  - { name: "inst-skeleton--short", kind: "modifier", doc: "A width of `62%`" }
+  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--radius-xs", kind: "token" }
+  - { name: "--ease-in-out", kind: "token" }
 ---
 
-Место, где содержимое ещё не пришло. Библиотеке про ожидание нужен примитив
-ожидания содержимого.
+The place where content has not arrived yet. A library that is about waiting
+needs a primitive for waiting for content.
 
 ```html preview
 <div class="inst-stack inst-stack--tight">
@@ -26,29 +24,29 @@ group-en: "Feedback"
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `aria-busy="true"` на контейнере | да | Скелетон — оформление, а не роль. Без атрибута для скринридера страница просто пуста |
-| `inst-skeleton` на каждой полосе | да | База: поверхность, радиус, пульсация, высота `1lh` |
-| Форма повторяет будущее содержимое | да | Скелетон не той формы врёт дважды |
+| `aria-busy="true"` on the container | yes | A skeleton is styling rather than a role. Without the attribute the page is simply empty to a screen reader |
+| `inst-skeleton` on every bar | yes | The base: the surface, the radius, the pulse, a height of `1lh` |
+| The shape repeats the content to come | yes | A skeleton of the wrong shape lies twice |
 
-Высота `1lh` — реальная высота строки текущего кегля. Поэтому скелетон занимает
-ровно столько же, сколько займёт пришедший текст, и при подмене ничего не
-прыгает.
+The height `1lh` is the real height of a line at the current type size. So a
+skeleton takes exactly as much room as the text that arrives will, and nothing
+jumps at the substitution.
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Область должна объявить занятость | Скелетон — оформление, а не роль. Контейнер, который грузится, несёт `aria-busy="true"`, иначе для скринридера страница просто пуста |
-| Не читается | Полосы пусты и не содержат текста: скринридеру их читать нечем и не нужно |
-| Уменьшенное движение | Пульсация **замедляется до 3с, а не гаснет**: индикатор занятости должен оставаться видимым |
-| Амплитуда | `opacity` не опускается ниже `0.45`: мигание с большей амплитудой раздражает периферийное зрение |
-| Печать | На листе не печатается: печать статична, а ожидание на бумаге бессмысленно |
+| The region has to declare it is busy | A skeleton is styling rather than a role. A container that is loading carries `aria-busy="true"`, otherwise for a screen reader the page is simply empty |
+| It is not read | The bars are empty and hold no text: a screen reader has nothing to read in them and no need |
+| Reduced motion | The pulse **slows to 3s rather than going out**: an indicator of busyness has to stay visible |
+| Amplitude | The `opacity` does not go below `0.45`: a flicker of greater amplitude irritates peripheral vision |
+| Print | It is not printed on paper: print is static, and waiting on paper is meaningless |
 
-## Варианты
+## Variants
 
 ```html preview
 <div class="inst-stack inst-stack--tight">
@@ -59,37 +57,39 @@ group-en: "Feedback"
 </div>
 ```
 
-| Класс | Ширина | Работа |
+| Class | Width | The work |
 |---|---|---|
-| `inst-skeleton` | наследует | База: поверхность, радиус, пульсация. Высота — `1lh` |
-| `inst-skeleton--title` | `40%` | Заголовок абзаца |
-| `inst-skeleton--line` | `100%` | Полная строка текста |
-| `inst-skeleton--short` | `62%` | Последняя строка абзаца |
+| `inst-skeleton` | inherited | The base: the surface, the radius, the pulse. The height is `1lh` |
+| `inst-skeleton--title` | `40%` | The heading of a paragraph |
+| `inst-skeleton--line` | `100%` | A full line of text |
+| `inst-skeleton--short` | `62%` | The last line of a paragraph |
 
-`--short` в конце: настоящий абзац редко заканчивается ровно по правому краю, и полоса той же длины читается как таблица, а не как текст.
+`--short` at the end: a real paragraph rarely ends exactly at the right edge,
+and a bar of the same length reads as a table rather than as text.
 
-Ширину можно задать и своим правилом — модификаторы лишь три частых значения.
+The width can be set by a rule of your own too — the modifiers are only three
+frequent values.
 
-## Поведение
+## Behavior
 
-### Пульсация
+### The pulse
 
-Скелетон пульсирует **прозрачностью**: `opacity` от `1` до `0.45` и обратно за
-1.6с. Ключевые кадры — собственные, бесконечно.
+A skeleton pulses by **opacity**: from `1` to `0.45` and back over 1.6s. The
+keyframes are its own, running infinitely.
 
-Бегущий блик — это градиент, а градиенты в библиотеке запрещены. Но дело не только в
-запрете: блик изображает движение слева направо, то есть **заполнение**, а
-скелетон ничего не заполняет. Пульсация спокойнее и честнее — блок не
-притворяется наливающимся.
+A travelling sheen is a gradient, and gradients are forbidden in the library.
+But the ban is not the whole of it: a sheen depicts motion from left to right,
+that is, **filling**, and a skeleton fills nothing. A pulse is calmer and more
+honest — the block does not pretend to be filling up.
 
-## Композиции
+## Composition
 
-### В теле панели
+### In the body of a panel
 
 ```html preview context
 <div class="inst-panel">
   <div class="inst-panel-header">
-    <span class="inst-panel-title">Вывод</span>
+    <span class="inst-panel-title">Output</span>
   </div>
   <div class="inst-panel-body">
     <div class="inst-stack inst-stack--tight" aria-busy="true">
@@ -101,15 +101,16 @@ group-en: "Feedback"
 </div>
 ```
 
-Скелетон повторяет **форму того, что придёт**. Три полосы на месте трёх строк
-— это подсказка; двадцать полос на месте карточки с кнопкой — шум.
+A skeleton repeats **the shape of what will come**. Three bars in the place of
+three lines are a hint; twenty bars in the place of a card with a button are
+noise.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

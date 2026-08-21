@@ -1,117 +1,120 @@
 ---
-title: Поиск
-group: Ввод
+title: Search
+group: Inputs
 layout: component
 source: src/forms.css
-js-optional: Живая фильтрация. Поле и очистка работают без скрипта
+js-optional: Live filtering. The field and the clearing work with no script
 api:
-  - { name: "inst-search", kind: "класс", doc: "Обёртка. Рисует лупу и отводит под неё место" }
-  - { name: "inst-input", kind: "класс", doc: "Само поле. Все размеры и состояния — оттуда" }
-  - { name: "--control-pad-sm", kind: "токен" }
-  - { name: "--size-icon", kind: "токен" }
-  - { name: "--size-chevron", kind: "токен" }
-  - { name: "--space-3", kind: "токен" }
-  - { name: "--text-muted", kind: "токен" }
-  - { name: "--text-primary", kind: "токен" }
-title-en: "Search"
-group-en: "Inputs"
+  - { name: "inst-search", kind: "class", doc: "The wrapper. It draws the magnifier and leaves room for it" }
+  - { name: "inst-input", kind: "class", doc: "The field itself. Every size and state comes from there" }
+  - { name: "--control-pad-sm", kind: "token" }
+  - { name: "--size-icon", kind: "token" }
+  - { name: "--size-chevron", kind: "token" }
+  - { name: "--space-3", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
+  - { name: "--text-primary", kind: "token" }
 ---
 
-Текстовое поле с лупой и нативной кнопкой очистки. Обёртка вокруг
-`input[type=search]`, а не отдельный контрол: своя кнопка потребовала бы JS.
+A text field with a magnifier and a native clear button. A wrapper around an
+`input[type=search]` rather than a control of its own: a button of our own
+would call for JS.
 
 ```html preview
 <div class="inst-field">
-  <label class="inst-label" for="q">Поиск по прогонам</label>
+  <label class="inst-label" for="q">Search the runs</label>
   <span class="inst-search">
     <input class="inst-input" id="q" type="search" placeholder="worldgen">
   </span>
 </div>
 ```
 
-## Контракт
+## Contract
 
-Три части, и порядок между ними обязателен.
+Three parts, and the order among them is obligatory.
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `inst-search` на обёртке | да | Лупа рисуется псевдоэлементом обёртки: на самом `<input>` псевдоэлементов нет |
-| `inst-input` на поле | да | Оформление поля целиком приходит оттуда. `inst-search` добавляет только отступ под лупу и очистку. Отступ задан селектором `& > .inst-input` — поле без класса встанет под значок |
-| `type="search"` | да | Крестик очистки — **нативный**. Без этого типа его не существует, и это обычное текстовое поле с лупой |
-| `<label for>` или `aria-label` | да | `placeholder` подписью не является: он исчезает при вводе |
+| `inst-search` on the wrapper | yes | The magnifier is drawn by a pseudo-element of the wrapper: an `<input>` itself has no pseudo-elements |
+| `inst-input` on the field | yes | The whole styling of the field comes from there. `inst-search` adds only the padding for the magnifier and the clearing. The padding is set by the selector `& > .inst-input` — a field with no class will stand under the glyph |
+| `type="search"` | yes | The clear cross is **native**. Without that type it does not exist, and this is an ordinary text field with a magnifier |
+| A `<label for>` or an `aria-label` | yes | A `placeholder` is not a label: it disappears on input |
 
-Лупа несёт `pointer-events: none`: клик по значку попадает в поле, а не в
-пустоту перед ним.
+The magnifier carries `pointer-events: none`: a click on the glyph lands in the
+field rather than in the emptiness in front of it.
 
-Видимая `<label for>` предпочтительна; `aria-label` — когда поле стоит в панели
-инструментов и подпись съела бы строку. Тип `search` объявляет поле как поле
-поиска сам, и `role="search"` руками ставить не нужно.
+A visible `<label for>` is preferable; an `aria-label` is for when the field
+stands in a toolbar and a label would eat a line. The type `search` declares
+the field as a search field by itself, and `role="search"` need not be set by
+hand.
 
-Лупа — псевдоэлемент, и для скринридера её нет вовсе. Это правильно: значок
-украшение, а работу называет подпись. Значок берёт `--text-muted` по той же
-причине, крестик темнеет на наведении до `--text-primary`.
+The magnifier is a pseudo-element, and for a screen reader it is not there at
+all. That is right: the glyph is decoration, and the work is named by the
+label. The glyph takes `--text-muted` for the same reason, and the cross
+darkens to `--text-primary` on hover.
 
-Очистка — нативная кнопка браузера, клавиатурный эквивалент `Esc` тоже
-нативный. Крестик размером `--size-chevron`, 10px, но единственным способом
-стереть значение он не является: есть выделение и `Backspace`.
+The clearing is the browser's own button, and the keyboard equivalent `Esc` is
+native too. The cross is `--size-chevron`, 10px, but it is not the only way to
+erase a value: there is selecting and `Backspace`.
 
-## Размеры
+## Sizes
 
-Все — от [текстового поля](./input.md), потому что `inst-search` не заводит
-своих.
-
-```html preview
-<span class="inst-search">
-  <input class="inst-input inst-input--sm" type="search" value="sm" aria-label="Поиск sm">
-</span>
-<span class="inst-search">
-  <input class="inst-input" type="search" value="md" aria-label="Поиск md">
-</span>
-<span class="inst-search">
-  <input class="inst-input inst-input--lg" type="search" value="lg" aria-label="Поиск lg">
-</span>
-```
-
-Отступ под лупу считается от `--control-pad-sm` и ширины значка, поэтому у
-всех трёх размеров текст начинается на одинаковом расстоянии от значка, а не
-наезжает на него в `sm`.
-
-## Состояния
+All of them come from [the text field](./input.md), because `inst-search`
+starts none of its own.
 
 ```html preview
 <span class="inst-search">
-  <input class="inst-input" type="search" value="Обычное" aria-label="Поиск обычный">
+  <input class="inst-input inst-input--sm" type="search" value="sm" aria-label="Search sm">
 </span>
 <span class="inst-search">
-  <input class="inst-input" type="search" value="Недоступно" disabled aria-label="Поиск недоступен">
+  <input class="inst-input" type="search" value="md" aria-label="Search md">
+</span>
+<span class="inst-search">
+  <input class="inst-input inst-input--lg" type="search" value="lg" aria-label="Search lg">
 </span>
 ```
 
-Наведение, фокус, ошибка, `readonly` и `disabled` — те же, что у [текстового
-поля](./input.md).
+The padding for the magnifier is counted from `--control-pad-sm` and the width
+of the glyph, so at all three sizes the text starts at the same distance from
+the glyph rather than running into it at `sm`.
 
-## Поведение
+## States
 
-### Очистка
+```html preview
+<span class="inst-search">
+  <input class="inst-input" type="search" value="Ordinary" aria-label="Search ordinary">
+</span>
+<span class="inst-search">
+  <input class="inst-input" type="search" value="Unavailable" disabled aria-label="Search unavailable">
+</span>
+```
 
-Крестик очистки — собственная кнопка браузера
-(`::-webkit-search-cancel-button`), приведённая к тону библиотеки: тот же глиф и тот
-же приглушённый цвет, что у снятия [тега](../display/tag.md). **Её не прячут и
-не подменяют** — поведение «очистить и сообщить об этом форме» уже написано
-платформой, и своя кнопка означала бы JS ради того, что уже работает.
+Hover, focus, error, `readonly` and `disabled` are the same as on [the text
+field](./input.md).
+
+## Behavior
+
+### Clearing
+
+The clear cross is the browser's own button
+(`::-webkit-search-cancel-button`), brought to the tone of the library: the
+same glyph and the same muted colour as the removal of [a tag](../display/tag.md).
+**It is neither hidden nor replaced** — the behaviour "clear and tell the form
+about it" is already written by the platform, and a button of our own would
+mean JS for the sake of what already works.
 
 :::warn
-Плата названа честно: в Firefox нативного крестика нет, и поле там просто без
-очистки. Крестик — улучшение, а не единственный способ стереть значение.
+The cost is named honestly: Firefox has no native cross, and the field there is
+simply without clearing. The cross is an improvement rather than the only way
+to erase a value.
 :::
 
 ## JS
 
-Поле работает без единой строки: `type="search"` даёт нативную кнопку очистки,
-`Escape` очищает, форма отправляется по `Enter`. Скрипт нужен, только если
-результаты обновляются на лету.
+The field works with not one line: `type="search"` gives the native clear
+button, `Escape` clears it, the form is submitted on `Enter`. A script is
+wanted only if the results update on the fly.
 
-### Фильтрация на лету
+### Filtering on the fly
 
 ```js
 input.addEventListener('input', () => {
@@ -123,42 +126,43 @@ input.addEventListener('input', () => {
 });
 ```
 
-Читается `input`, а не `keyup`: очистка крестиком, вставка мышью и
-автозаполнение `keyup` не порождают, и список молча оставался бы старым.
+`input` is read rather than `keyup`: clearing by the cross, pasting with the
+mouse and autofill produce no `keyup`, and the list would silently stay as it
+was.
 
-### Что сказать вслух
+### What to say aloud
 
-Число найденного обязано попадать в живую область — иначе для скринридера
-список меняется беззвучно.
+The number found has to reach a live region — otherwise for a screen reader the
+list changes in silence.
 
 ```html
 <p class="inst-u-visually-hidden" aria-live="polite">
-  <span id="count">12</span> совпадений
+  <span id="count">12</span> matches
 </p>
 ```
 
-## Композиции
+## Composition
 
-### В панели инструментов
+### In a toolbar
 
 ```html preview context
 <div class="inst-toolbar">
   <span class="inst-search">
-    <input class="inst-input inst-input--sm" type="search" placeholder="Фильтр" aria-label="Фильтр по задачам">
+    <input class="inst-input inst-input--sm" type="search" placeholder="Filter" aria-label="Filter the tasks">
   </span>
-  <button class="inst-btn inst-btn--sm" type="button">Сбросить</button>
+  <button class="inst-btn inst-btn--sm" type="button">Reset</button>
 </div>
 ```
 
-### С подсказкой о синтаксисе
+### With a hint about the syntax
 
 ```html preview
 <div class="inst-field">
-  <label class="inst-label" for="q2">Поиск по логу</label>
+  <label class="inst-label" for="q2">Search the log</label>
   <span class="inst-search">
     <input class="inst-input" id="q2" type="search" aria-describedby="q2-hint">
   </span>
-  <span class="inst-field-hint" id="q2-hint">Поддерживаются кавычки и минус для исключения</span>
+  <span class="inst-field-hint" id="q2-hint">Quotes and a minus for exclusion are supported</span>
 </div>
 ```
 
@@ -167,7 +171,7 @@ input.addEventListener('input', () => {
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```

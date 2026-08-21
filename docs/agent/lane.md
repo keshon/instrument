@@ -1,31 +1,29 @@
 ---
-title: Дорожки прогонов
-group: Агентный слой
+title: Run lanes
+group: Agent layer
 layout: component
 source: src/agent.css
 api:
-  - { name: "inst-lanes", kind: "класс", doc: "Набор дорожек" }
-  - { name: "inst-lane", kind: "класс", doc: "Одна дорожка: подпись и ось" }
-  - { name: "inst-lane-label", kind: "класс", doc: "Имя исполнителя, обрезается" }
-  - { name: "inst-lane-track", kind: "класс", doc: "Ось времени" }
-  - { name: "inst-lane-span", kind: "класс", doc: "Отрезок работы" }
-  - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`" }
-  - { name: "--label-col", kind: "токен" }
-  - { name: "--gap-inline", kind: "токен" }
-  - { name: "--size-meter", kind: "токен" }
-  - { name: "--radius-xs", kind: "токен" }
-  - { name: "--track", kind: "токен" }
-  - { name: "--border", kind: "токен" }
-  - { name: "--hairline", kind: "токен" }
-  - { name: "--text-xs", kind: "токен" }
-  - { name: "--tone-mark", kind: "токен" }
-title-en: "Run lanes"
-group-en: "Agent layer"
+  - { name: "inst-lanes", kind: "class", doc: "The set of lanes" }
+  - { name: "inst-lane", kind: "class", doc: "One lane: a label and an axis" }
+  - { name: "inst-lane-label", kind: "class", doc: "The name of the worker; it is truncated" }
+  - { name: "inst-lane-track", kind: "class", doc: "The axis of time" }
+  - { name: "inst-lane-span", kind: "class", doc: "A segment of work" }
+  - { name: "data-tone", kind: "attribute", doc: "`neutral` `running` `ok` `warn` `error`" }
+  - { name: "--label-col", kind: "token" }
+  - { name: "--gap-inline", kind: "token" }
+  - { name: "--size-meter", kind: "token" }
+  - { name: "--radius-xs", kind: "token" }
+  - { name: "--track", kind: "token" }
+  - { name: "--border", kind: "token" }
+  - { name: "--hairline", kind: "token" }
+  - { name: "--text-xs", kind: "token" }
+  - { name: "--tone-mark", kind: "token" }
 ---
 
-Несколько агентов, работающих параллельно, на общей оси времени. Отвечает на
-вопрос, на который не отвечает ни очередь, ни лог: **что шло одновременно и
-что кого ждало**.
+Several agents working in parallel on a shared axis of time. It answers the
+question neither the queue nor the log answers: **what ran at the same time and
+what waited for what**.
 
 ```html preview
 <div class="inst-lanes">
@@ -44,46 +42,46 @@ group-en: "Agent layer"
 </div>
 ```
 
-## Контракт
+## Contract
 
-| Что | Обязательно | Почему |
+| What | Required | Why |
 |---|---|---|
-| `inset-inline-start` и `inline-size` инлайном | да | Границы отрезка — **данные**, а не оформление: начало и длительность приходят с сервера |
-| Логические свойства, а не `left` и `width` | да | В RTL ось времени зеркалится сама |
-| Подпись или `title` у отрезка | да | Прямоугольник без имени и времени не сообщает ничего |
-| `data-tone` | нет | Без атрибута отрезок нейтрален |
+| `inset-inline-start` and `inline-size` inline | yes | The bounds of a segment are **data** rather than styling: the start and the duration come from the server |
+| Logical properties rather than `left` and `width` | yes | In RTL the axis of time mirrors itself |
+| A label or a `title` on a segment | yes | A rectangle with no name and no time says nothing |
+| `data-tone` | no | With no attribute a segment is neutral |
 
-### Доступность
+### Accessibility
 
 | | |
 |---|---|
-| Отрезок — не текст | Сам по себе он не озвучивается ничем. Дорожка обязана нести `aria-label` с длительностью: «worldgen-01, с 0 до 34 процентов, 12 секунд» |
-| Подпись обрезается | Полное имя — в `title`, иначе исполнитель безымянен |
-| Не только цвет | Тон отрезка дублируется в доступном имени словом |
-| Режим принудительных цветов | Отрезок несёт значение, поэтому переживает сброс: `forced-color-adjust: none` и `Highlight` |
-| Альтернатива | На узком экране дорожки нечитаемы. Резервный вид — [таблица](../components/display/table.md) с началом, концом и длительностью |
-| Уменьшенное движение | Отрезок `running` не анимируется — длительность и так меняется скачками данных |
+| A segment is not text | By itself it is spoken by nothing. A lane has to carry an `aria-label` with the duration: "worldgen-01, from 0 to 34 per cent, 12 seconds" |
+| The label is truncated | The full name goes in a `title`, otherwise the worker has no name |
+| Not colour alone | The tone of a segment is repeated in the accessible name in words |
+| Forced-colours mode | A segment carries meaning, so it survives the reset: `forced-color-adjust: none` and `Highlight` |
+| The alternative | On a narrow screen lanes are unreadable. The fallback view is [a table](../components/display/table.md) with the start, the end and the duration |
+| Reduced motion | A `running` segment is not animated — the duration changes in jumps of data anyway |
 
-## Устройство
+## Anatomy
 
-`inset-inline-start` и `inline-size` задаются **инлайном**, и это единственный
-разрешённый случай инлайнового стиля в библиотеке: положение отрезка на оси —
-значение, а не оформление. Тем же каналом идут ширина заполнения меры и глубина
-узла дерева.
+`inset-inline-start` and `inline-size` are set **inline**, and that is the one
+case of an inline style allowed in the library: the position of a segment on
+the axis is a value rather than styling. The same channel carries the width of
+a meter's fill and the depth of a tree node.
 
 ```html
 <span class="inst-lane-span" style="inset-inline-start:30%;inline-size:52%"></span>
 ```
 
-Проценты считаются от общей длительности прогона, поэтому все дорожки делят
-одну шкалу — иначе сравнивать их бессмысленно.
+The percentages are counted from the total duration of the run, so every lane
+shares one scale — otherwise comparing them is meaningless.
 
 ## API
 
 ```api
 ```
 
-## Связанное
+## Related
 
 ```related
 ```
