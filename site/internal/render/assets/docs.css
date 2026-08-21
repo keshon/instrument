@@ -141,7 +141,7 @@
    `.inst-prose` sets it for its direct children, and between it and a
    paragraph stands a <section>: without this rule the paragraphs run flush,
    with not a single gap. */
-.site-body :is(.doc-hero, .doc-s) > * + * { margin-block-start: var(--space-8); }
+.site-body :is(.doc-hero, .doc-s) > * + * { margin-block-start: var(--space-4); }
 /* 68ch is the measure of readability, and only text needs it. A live example
    and a table of the reference are measured by their content and take the
    whole column. It is counted from the direct parent section rather than from
