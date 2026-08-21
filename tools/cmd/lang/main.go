@@ -99,6 +99,14 @@ var zones = []zone{
 					"pattern; the Russian one goes when the pages do, on step 4.",
 			},
 			{
+				path: "tools/cmd/docscheck/contract.go",
+				why: "the Russian words heading the contract table on a page, and the Russian " +
+					"for yes and for if, are the PATTERN a row is parsed by rather than a phrase. " +
+					"The English spellings stand beside them because a Russian page and its " +
+					"translation live side by side through step 4; the Russian half leaves with " +
+					"the last Russian page, not before it.",
+			},
+			{
 				path: "tools/cmd/docscheck/tokens.go",
 				why: "the Russian words for black and white are how an alpha cell is " +
 					"written in docs/foundations/tokens.md. They are the pattern a cell is " +

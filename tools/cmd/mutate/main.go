@@ -202,6 +202,15 @@ var mutations = []mutation{
 		"the rest of the file leaves the layer and starts winning against the application"},
 
 	// ── docscheck ──────────────────────────────────────────────────────────
+	// The page promises and the page shows, and until now nothing compared the
+	// two. The promise stays in the table; the example quietly loses the
+	// attribute. A reader copying that markup gets a listbox whose arrows do not
+	// work and whose role is invalid — and the page says, three lines below,
+	// that both are required.
+	{"an example dropped what the contract promises", "docscheck", "docs/components/actions/chip.md",
+		`<div class="inst-chips" role="listbox" aria-multiselectable="true"`,
+		`<div class="inst-chips" aria-multiselectable="true"`,
+		"the contract table would keep promising a role no example carries"},
 	{"a class in an example that does not exist", "docscheck", "docs/components/actions/button.md",
 		"<button class=\"inst-btn\"", "<button class=\"inst-btn inst-btn--mut\"",
 		"a reader copies the markup and it silently does not work"},

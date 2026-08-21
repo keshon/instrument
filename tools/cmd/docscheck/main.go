@@ -55,7 +55,12 @@ var (
 		"legend": true, "details": true, "summary": true, "dialog": true,
 	}
 
-	instRe  = regexp.MustCompile(`\binst-[a-z0-9-]+`)
+	// A class name, and NOT the tail of a longer hyphenated word. \b would
+	// match inside data-inst-live — the hyphen counts as a boundary — and the
+	// gate then reported .inst-live as a class the kit does not have, on a page
+	// that was correctly naming an ATTRIBUTE the kit sets. RE2 has no lookbehind,
+	// so the character before is captured and thrown away by the caller.
+	instRe  = regexp.MustCompile(`(^|[^\w-])(inst-[a-z0-9-]+)`)
 	linkRe  = regexp.MustCompile(`\]\((\.[^)#]+\.md)(#[^)]*)?\)`)
 	tokRe   = regexp.MustCompile(`--[a-z][\w-]*(?:/[a-z0-9-]+)*`)
 	dataAtt = regexp.MustCompile(`data-([a-z-]+)="([^"]*)"`)
@@ -333,19 +338,28 @@ func main() {
 
 	skipAttr := map[string]bool{"theme": true, "density": true, "dir": true}
 
+	promises := 0
+
 	for _, p := range pages {
 		b, err := os.ReadFile(p)
 		if err != nil {
 			continue
 		}
 		rel := rootRel(p)
+
+		// What the page PROMISES about markup, against what it SHOWS.
+		kept, n := promisesKept(func(ln int) string { return fmt.Sprintf("%s:%d", rel, ln) }, string(b))
+		problems = append(problems, kept...)
+		promises += n
+
 		for i, line := range strings.Split(string(b), "\n") {
 			at := fmt.Sprintf("%s:%d", rel, i+1)
 
-			for _, m := range instRe.FindAllString(line, -1) {
-				documented[m] = true
-				if !kit[m] {
-					problems = append(problems, at+"  class not in kit: ."+m)
+			for _, m := range instRe.FindAllStringSubmatch(line, -1) {
+				name := m[2]
+				documented[name] = true
+				if !kit[name] {
+					problems = append(problems, at+"  class not in kit: ."+name)
 				}
 			}
 
@@ -435,6 +449,9 @@ func main() {
 	}
 	fmt.Printf("pages: %d  ·  classes in kit: %d  ·  covered: %d (%d%%)\n\n",
 		len(pages), len(kit), covered, pct)
+	if promises > 0 {
+		fmt.Printf("markup promises held to the examples: %d\n\n", promises)
+	}
 
 	// Token tables: compare VALUES, not existence. Kept as a separate list,
 	// because this is a different kind of error: class is present, token is present,
