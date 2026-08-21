@@ -1,6 +1,6 @@
 {
   "name": "@keshon/instrument",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "CSS kit for interfaces that show a human what a machine is doing: task queues, runs, logs, inspectors, states and uncertainty",
   "keywords": [
     "css",

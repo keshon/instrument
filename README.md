@@ -25,7 +25,7 @@ npm i @keshon/instrument
 ```
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.7.0/dist/instrument.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.8.0/dist/instrument.min.css">
 ```
 
 Name the version exactly: `@latest` is cached for a week and can change at an
