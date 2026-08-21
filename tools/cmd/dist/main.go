@@ -63,6 +63,10 @@ func main() {
 	// while npm publishes package.json, and a package containing a different
 	// version is sent to the registry. After that it cannot be traced: the CDN
 	// file carries one number, while the comment inside it names another.
+	if err := checkPkgShipped(filepath.Dir(*src)); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 	if err := checkPkgVersion(filepath.Dir(*src), ver); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -399,6 +403,78 @@ func checkBraces(name string, css []byte) error {
 // registry, and a repository consumed by link does not have to contain
 // package.json. But DIVERGENCE is an error, and a silent one: it is visible
 // only after publication.
+// checkPkgShipped verifies that the manifest ships what it names.
+//
+// The kit is consumed as a package, and what is not in `files` does not reach
+// the consumer at all — silently, because npm packs without a word about the
+// paths it left out. The registry spent the whole project outside that list:
+// a consumer had the CSS and not a single place saying that role="listbox" is
+// required of a chip strip.
+//
+// Both directions are checked. A name in `files` or `exports` that points at
+// nothing means the manifest promises a file that will not be there; a file
+// that exists but is named nowhere is not an error here — the kit is entitled
+// to keep sources out of the package.
+func checkPkgShipped(root string) error {
+	b, err := os.ReadFile(filepath.Join(root, "package.json"))
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("cannot read package.json: %w", err)
+	}
+
+	var pkg struct {
+		Files   []string          `json:"files"`
+		Exports map[string]string `json:"exports"`
+	}
+	if err := json.Unmarshal(b, &pkg); err != nil {
+		return fmt.Errorf("package.json does not parse: %w", err)
+	}
+
+	var missing []string
+	check := func(field, name string) {
+		// A wildcard export ("./src/*") names a directory, and the directory is
+		// what has to exist: expanding the pattern would check the files npm
+		// will pack, and npm packs by `files`, not by `exports`.
+		clean := strings.TrimSuffix(strings.TrimPrefix(name, "./"), "/*")
+		if clean == "" || strings.Contains(clean, "*") {
+			return
+		}
+		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(clean))); err != nil {
+			missing = append(missing, fmt.Sprintf("  %s: %s", field, name))
+		}
+	}
+	for _, f := range pkg.Files {
+		check("files", f)
+	}
+	for _, t := range pkg.Exports {
+		check("exports", t)
+	}
+
+	// The registry is named separately because it is the only machine-readable
+	// surface of the kit: the ARIA contract, the cross-cutting axes and the
+	// neighbours of every component live in it. Without it in the package a
+	// consumer — and any agent writing markup for the kit — has the styles and
+	// no statement of what the markup owes.
+	inFiles := false
+	for _, f := range pkg.Files {
+		if f == "components.json" {
+			inFiles = true
+		}
+	}
+	if !inFiles {
+		missing = append(missing, "  files: components.json is not shipped, "+
+			"and it is the only place where the markup contract is written down")
+	}
+
+	if len(missing) > 0 {
+		return fmt.Errorf("the manifest names what will not reach the consumer:\n%s",
+			strings.Join(missing, "\n"))
+	}
+	return nil
+}
+
 func checkPkgVersion(root, ver string) error {
 	b, err := os.ReadFile(filepath.Join(root, "package.json"))
 	if errors.Is(err, os.ErrNotExist) {

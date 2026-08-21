@@ -272,16 +272,35 @@ const EXPR = (auditSrc) => `(async () => {
 })()`;
 
 /* Every mutation breaks exactly one thing and names the section that has to
-   fail. `from` has to exist in the tokens: a replacement that replaced nothing
-   would hand out a free "caught" on an untouched file. */
+   fail. `from` has to exist in the file it names: a replacement that replaced
+   nothing would hand out a free "caught" on an untouched file.
+
+   `file` used to be missing, and the harness only ever served a mutated
+   tokens.css. That was enough while every check here judged a RATIO between
+   tokens — mutate the token and the ratio moves. The icon check no longer
+   judges a ratio: it asks whether the painted box equals the size the element
+   carries, and whether that size has a name. Neither question can be answered
+   NO by editing tokens.css, because a token moves both sides of the comparison
+   at once. A check the harness cannot turn red is the thing this harness
+   exists to forbid, so the harness learned to serve any file of the kit. */
 const MUTATIONS = [
   {
-    name: 'icon lagging behind the type size at scale 15',
+    name: 'an icon size typed as a number',
     section: 'proportion',
-    page: '/layout/statusbar/',
-    from: 'steps coincide after rounding. */\n  --size-icon-sm:  16px;',
-    to: 'steps coincide after rounding. */\n  --size-icon-sm:  14px;',
-    why: 'exactly the defect the band was recomputed for; caught ONLY by the scale sweep',
+    file: 'layout.css',
+    page: '/layout/rail/',
+    from: '  --icon-size: var(--size-icon-lg);',
+    to: '  --icon-size: 32px;',
+    why: 'the rail glyph stops following the scale, and no token file records it',
+  },
+  {
+    name: 'something overrode the size the token carries',
+    section: 'proportion',
+    file: 'tone.css',
+    page: '/components/actions/button/',
+    from: '  inline-size: var(--icon-size, var(--size-icon));',
+    to: '  inline-size: 16px;',
+    why: 'the element still carries the right size and is painted at another',
   },
   {
     name: 'label pushed below the threshold',
@@ -313,13 +332,19 @@ const proc = await launch();
 try {
   const src = await readFile(new URL('./audit.js', import.meta.url), 'utf8');
   if (MUTATE) {
-    const tokens = await readFile(new URL('../src/tokens.css', import.meta.url), 'utf8');
+    const bodies = new Map();
+    for (const m of MUTATIONS) {
+      const f = m.file || 'tokens.css';
+      if (!bodies.has(f)) bodies.set(f, await readFile(new URL('../src/' + f, import.meta.url), 'utf8'));
+    }
     console.log('checking the check\n');
     let missed = 0;
     const width = Math.max(...MUTATIONS.map((m) => [...m.name].length));
     for (const m of MUTATIONS) {
       const pad = ' '.repeat(width - [...m.name].length);
-      if (!tokens.includes(m.from)) {
+      const f = m.file || 'tokens.css';
+      const body = bodies.get(f);
+      if (!body.includes(m.from)) {
         console.log(`  ${m.name}${pad}  ✗ MUTATION DID NOT APPLY — the harness has drifted from the kit`);
         missed++;
         continue;
@@ -327,7 +352,7 @@ try {
       let r;
       try {
         r = await evalInPage(BASE + m.page, EXPR(src),
-          { path: '/kit/tokens.css', body: tokens.replace(m.from, m.to) });
+          { path: '/kit/' + f, body: body.replace(m.from, m.to) });
       } catch (e) {
         console.log(`  ${m.name}${pad}  ✗ DID NOT RUN — ${e.message}`);
         missed++;

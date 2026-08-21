@@ -36,13 +36,15 @@
     "./js": "./dist/instrument.js",
     "./sprite.svg": "./assets/sprite.svg",
     "./src/*": "./src/*",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./components.json": "./components.json"
   },
   "style": "dist/instrument.css",
   "files": [
     "dist",
     "src",
     "assets",
+    "components.json",
     "VERSION",
     "CHANGELOG.md"
   ],

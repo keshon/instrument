@@ -173,6 +173,17 @@ var mutations = []mutation{
 	{"gap bypassing the role tier", "dist", "src/layout.css",
 		".inst-cluster {", ".mut-probe { gap: var(--space-8); }\n.inst-cluster {",
 		"a large step of the scale taken directly"},
+	// The manifest is the only thing standing between the kit and a consumer who
+	// has the styles and no statement of what the markup owes. Both directions
+	// of that promise are broken here: a name pointing at nothing, and the
+	// registry quietly dropped from the packing list.
+	{"the manifest names a file that is not there", "dist", "package.json",
+		"\"./sprite.svg\": \"./assets/sprite.svg\"",
+		"\"./sprite.svg\": \"./assets/nowhere.svg\"",
+		"npm packs without a word about the paths it left out"},
+	{"the registry dropped out of the package", "dist", "package.json",
+		"    \"components.json\",\n", "",
+		"a consumer would get the CSS and not one place saying role=\"listbox\" is required"},
 	{"stray closing brace", "dist", "src/motion.css",
 		".inst-caret { animation: none; opacity: 1; }",
 		".inst-caret { animation: none; opacity: 1; } }",
@@ -547,6 +558,11 @@ func seed(repo, tree string) error {
 		// that never reached dist/ is none of a consumer's business.
 		"dist/instrument.js",
 		"assets/logo.svg", "assets/mark.svg", "assets/sprite.svg",
+		// Everything the manifest names has to be here too: cmd/dist checks
+		// that `files` and `exports` point at things that exist, and a snapshot
+		// missing one of them would report the snapshot's own incompleteness as
+		// a defect of the kit.
+		"dist/instrument.css", "CHANGELOG.md",
 	} {
 		if err := copyFile(filepath.Join(repo, f), filepath.Join(tree, filepath.FromSlash(f))); err != nil {
 			return err

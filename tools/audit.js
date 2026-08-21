@@ -394,65 +394,97 @@ window.kitAudit = (function () {
       }
     }
 
-    /* An icon against the cap height of the label it stands next to. The icon
-       is measured by its ink rather than by its box: across the kit's sprite
-       the ink takes 9.02 of 16, that is 0.564 of the box.
+    /* An icon renders at the size its token says.
+       ------------------------------------------------------------------
+       This used to measure the icon against the CAP HEIGHT of the label
+       beside it, and it was wrong twice over.
 
-       The band 0.95…1.07 is not taste but a measurement: 106 035 ratios over
-       all 85 pages in all fifteen cells of scale and density lie within
-       0.974…1.041. The earlier 0.88…1.16 admitted 1.16 against an observed
-       maximum of 1.041 and sat three thousandths below the single outlier —
-       that is, it was fitted to a defect rather than derived from the corpus.
+       Wrong in the instrument. Cap height came from
+       canvas measureText().actualBoundingBoxAscent, which reports the
+       RASTERISED ascent rounded to a whole pixel. At 16px the true cap of
+       the family is 11.198 and the canvas says 12 — an error of 0.8px, or
+       7%, against a band 2.5% wide either side. The check was red for a
+       month on .inst-nav-item at scale 16 (ratio 0.94) and the kit was
+       never at fault: measured by the CSS `cap` unit, which asks the font
+       rather than the raster, that same cell is 1.007. An hour went into
+       hunting a defect that lived in the ruler.
 
-       The margin on each side is about 0.025, and it is SMALLER than the step
-       this quantity can move by: the box and the cap height are integers, and
-       one device pixel of cap height shifts the ratio by roughly 0.1. That is
-       not fragility of the band but its point: an icon that failed to step up
-       with the type size is exactly the defect the check exists for, and the
-       band must not stay quiet about it. */
+       Wrong in the design, and this is the part worth remembering. Once
+       the ruler stops lying, cap height is exactly 0.700 of the type size
+       for this family — so ink/cap is 0.8057 * box/type, a CONSTANT times
+       a ratio cmd/proportion already judges from the tokens alone
+       ("icon to base type size", 1.20…1.34). A rendered check that
+       restates a token check earns nothing. Worse, it cannot even be
+       tightened: across 131 325 measurements the corpus honestly spans
+       1.007…1.121, while one device pixel of icon box moves the value by
+       0.05 — so ANY band wide enough to admit the corpus is wide enough to
+       hide a one-pixel defect. There was no band to find.
+
+       What is left is the thing tokens genuinely cannot see: whether the
+       box the browser actually painted is the box the token asked for. A
+       hardcoded 16px in a component, a custom property that failed to
+       reach through a shadow of a cascade, an app override landing on
+       .inst-icon — none of those show up in tokens.css, and all of them
+       show up here. It needs no band at all: the two numbers come out of
+       the same engine and must be equal.
+
+       The kit hands an icon its size through one indirection —
+       `inline-size: var(--icon-size, var(--size-icon))` in tone.css — and
+       every deviation from the ordinary size is written by pointing
+       --icon-size at ANOTHER NAMED TOKEN: --size-icon-lg for the rail
+       glyph that replaces a word rather than accompanying one,
+       --size-chevron for a pointer at disclosure. So there are two
+       questions, and both are asked below. Did the painted box come out
+       equal to what the property carries? And is what the property carries
+       one of the kit's named sizes, rather than a number wearing the
+       costume of a custom property? The first catches an override; the
+       second catches a 32px typed straight into a component, which is the
+       more common way a design system quietly stops having sizes. */
     var icons = root0.querySelectorAll('.inst-icon');
     for (var j = 0; j < icons.length; j++) {
       var ic = icons[j];
-      /* A utility glyph is out of scope for this measure. .inst-icon--sm is
-         the size of the CHEVRON (--size-chevron), and it has to be smaller
-         than the cap height: it is not content of the line but a pointer at
-         disclosure. It already has a band of its own in the textual gate
-         (cmd/proportion, "chevron against the base type size"), and measuring
-         it here by a second, foreign measure means reporting correct work as a
-         violation. */
-      if (ic.classList.contains('inst-icon--sm')) continue;
-      var host = ic.parentElement;
-      if (!host) continue;
-      var hostText = '';
-      for (var n = host.firstChild; n; n = n.nextSibling) {
-        if (n.nodeType === 3) hostText += n.textContent.trim();
-      }
-      if (!hostText) continue;           /* a lone icon — nothing to compare */
-      var ics = getComputedStyle(ic), hcs = getComputedStyle(host);
-      var box = parseFloat(ics.width);
-      if (!box) continue;
-      ctx.font = hcs.fontWeight + ' ' + hcs.fontSize + ' ' + hcs.fontFamily;
-      var m = ctx.measureText('H');
-      var cap = m.actualBoundingBoxAscent;
-      if (!cap) continue;
+      var ics = getComputedStyle(ic);
+      /* .inst-icon--sm is the chevron and has a token of its own. Under the
+         old measure it had to be skipped — the cap height of the line was a
+         foreign ruler for a glyph that is deliberately smaller than the text.
+         Against its OWN token there is nothing foreign about it, so the
+         exception goes. */
+      var carried = ics.getPropertyValue('--icon-size').trim();
+      if (!carried) carried = ics.getPropertyValue('--size-icon').trim();
+      var want = parseFloat(carried);
+      if (!want) continue;                 /* no token reaches here at all */
+      var w = parseFloat(ics.inlineSize), h = parseFloat(ics.blockSize);
+      if (!w) continue;
       checked++;
-      var ink = box * 0.564;
-      var d = ink / cap;
-      if (d < 0.95 || d > 1.07) {
+
+      /* The named sizes, read off THIS element so that scale and density are
+         already applied: comparing against tokens read at the root would
+         report every cell but the base one. */
+      var named = {};
+      var names = ['--size-icon', '--size-icon-lg', '--size-icon-sm', '--size-chevron'];
+      for (var t = 0; t < names.length; t++) {
+        var v = parseFloat(ics.getPropertyValue(names[t]));
+        if (v) named[names[t]] = v;
+      }
+      var by = null;
+      for (var nm in named) if (Math.abs(named[nm] - want) < 0.02) { by = nm; break; }
+
+      var host = ic.parentElement;
+      var where = (host && host.className) || ic.className;
+      if (!by) {
         bad.push({
-          where: host.className || host.tagName,
-          text: hostText.slice(0, 24),
-          box: box,
-          // The type size and weight of the HOST, not just the cap height it
-          // produced. Without them a report saying "cap 11" cannot be told
-          // apart from a report saying "cap 12" for the same class: one is a
-          // second type size on the page, the other is a different font, and
-          // the two are fixed in opposite directions. An hour went into
-          // guessing which of them it was.
-          font: hcs.fontSize + '/' + hcs.fontWeight,
-          ink: Math.round(ink * 10) / 10,
-          cap: Math.round(cap * 10) / 10,
-          ratio: Math.round(d * 100) / 100
+          where: where,
+          carried: want + 'px',
+          named: JSON.stringify(named),
+          why: 'the size is a number, not one of the named sizes'
+        });
+      } else if (Math.abs(w - want) > 0.02 || Math.abs(h - want) > 0.02) {
+        bad.push({
+          where: where,
+          token: by + ' = ' + want + 'px',
+          rendered: w + '×' + h,
+          why: w === h ? 'something overrode the size the token carries'
+                       : 'the icon is not square'
         });
       }
     }
