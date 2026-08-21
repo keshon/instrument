@@ -82,8 +82,6 @@ var strings = map[string]map[Lang]string{
 	"demo.markup":      {RU: "Разметка", EN: "Markup"},
 	"demo.code":        {RU: "Код", EN: "Code"},
 	"demo.hero":        {RU: "Компонент", EN: "The component"},
-	"rule.do":          {RU: "Так", EN: "Do"},
-	"rule.dont":        {RU: "Не так", EN: "Don't"},
 	"contents":         {RU: "Разделы страницы", EN: "Page sections"},
 	"copy":             {RU: "копировать", EN: "copy"},
 	"copy.done":        {RU: "скопировано", EN: "copied"},
