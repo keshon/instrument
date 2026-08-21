@@ -66,7 +66,10 @@ type APIRow struct {
 // both languages, and a page prints what the map gives. They turn English when
 // the base language flips, together with the dictionary — not before, because
 // until then the key is what a Russian page writes in its frontmatter.
-var apiKinds = []string{"класс", "модификатор", "атрибут", "событие", "переменная", "токен"}
+var apiKinds = []string{
+	"класс", "модификатор", "атрибут", "событие", "переменная", "токен",
+	"class", "modifier", "attribute", "event", "variable", "token",
+}
 
 // One declaration, matched against text that has already been cut at the
 // semicolons and stripped of comments — hence no need to guess at delimiters.

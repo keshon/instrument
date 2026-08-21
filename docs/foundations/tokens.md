@@ -98,7 +98,7 @@ group-en: "Foundations"
 | `--surface-page` | `--n-1` | `--n-13` |
 | `--surface-raised` | `--n-0` | `--n-12` |
 | `--surface-overlay` | `--n-0` | `--n-11` |
-| `--surface-field` | `--n-0` | `--n-12` |
+| `--surface-field` | `--surface-recessed`, в обеих темах | |
 | `--surface-hover` | чёрный 3.5% | белый 4.5% |
 | `--surface-active` | чёрный 6.5% | белый 8% |
 | `--surface-selected` | `--a-4` 14%, в обеих темах | |
@@ -164,7 +164,7 @@ group-en: "Foundations"
 | `--accent-on` | `--n-0`, в обеих темах | | Подпись на заливке |
 | `--accent-hover` | `--a-5`, в обеих темах | | Уходит **от** цвета подписи, а не к нему |
 | `--accent-border` | `--a-4` | `--a-3` | Рамка акцентированного контрола |
-| `--focus-ring` | `--a-4` | `--a-3` | Кольцо фокуса |
+| `--focus-ring` | `--a-6` | `--a-2` | Кольцо фокуса. Единственный шаг рампы, который никогда не бывает заливкой, поэтому обводит её не сливаясь |
 
 ### Статусы
 
@@ -198,7 +198,7 @@ group-en: "Foundations"
 
 | Токен | Тон | Светлая | Тёмная |
 |---|---|---|---|
-| `--chart-1` | 280° | L 0.520 | L 0.700 |
+| `--chart-1` | 292° | L 0.520 | L 0.700 |
 | `--chart-2` | 320° | L 0.600 | L 0.760 |
 | `--chart-3` | 355° | L 0.550 | L 0.720 |
 | `--chart-4` | 55° | L 0.650 | L 0.800 |
@@ -279,7 +279,7 @@ group-en: "Foundations"
 | `--size-track` | 4px |
 | `--size-meter` | 6px |
 | `--size-spinner` | 14px |
-| `--size-icon` | 16px |
+| `--size-icon` | 18px |
 | `--size-chevron` | 10px |
 | `--size-marker` | 2px |
 | `--size-gutter` | 14px |

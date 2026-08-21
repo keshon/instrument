@@ -39,8 +39,45 @@ import (
 )
 
 var (
-	// a table row: | `--name` | cell | cell |
-	rowRe = regexp.MustCompile("^\\|\\s*`(--[a-z][\\w-]*)`\\s*\\|([^|]*)\\|([^|]*)\\|\\s*$")
+	// a table row whose first cell names a token: | `--name` | … |
+	//
+	// WHICH cells hold the two themes is decided by the HEAD of the table, not
+	// by their position. While the row had to be exactly three cells wide and
+	// the values had to be the second and the third, two shapes fell out of the
+	// check without a word:
+	//
+	//	| Token | Light | Dark | Threshold |   ← a fourth column of prose
+	//	| Token | Hue | Light | Dark |         ← the values shifted right
+	//
+	// Everything in those two shapes was skipped, and --focus-ring stood in the
+	// reference as `--a-4` / `--a-3` long after the code had moved it to
+	// `--a-6` / `--a-2`. The check was green because it never looked.
+	rowRe     = regexp.MustCompile("^\\|\\s*`(--[a-z][\\w-]*)`\\s*\\|")
+	headSep   = regexp.MustCompile(`^\|(?:\s*:?-{3,}:?\s*\|)+\s*$`)
+	lightHead = regexp.MustCompile(`(?i)^(светлая|light)$`)
+	darkHead  = regexp.MustCompile(`(?i)^(тёмная|темная|dark)$`)
+	// A hue column belongs to neither theme: both ends of a light-dark carry
+	// the same hue, and the reader is promised exactly that one number. The
+	// chart table stood at 280° after --chart-1 had moved to 292 — the row was
+	// read, the two lightnesses matched, and the number the palette is chosen
+	// by was the one nobody compared.
+	hueHead = regexp.MustCompile(`(?i)^(тон|hue)$`)
+	// A LIGHTNESS column belongs to the ramp tables, where a token is a plain
+	// oklch rather than a light-dark. Those tables are the most factual thing
+	// on the page — a step, its lightness, the role that took it — and they
+	// were the ones nothing looked at: the accent ramp said 250° and 0.560
+	// after the default had moved to petrol at 215° and 0.545.
+	lumHead = regexp.MustCompile(`(?i)^(светлота|lightness)$`)
+	// the first number of an oklch: its lightness. The chroma of the neutral is
+	// a calc(), so the three-number form does not match there.
+	oklchLum = regexp.MustCompile(`oklch\(\s*([0-9.]+)`)
+	// a plain declaration: --name: oklch(…)
+	plainRe = regexp.MustCompile(`(--[a-z][\w-]*):\s*(oklch\([^;]*)`)
+	// a cell naming one component of an oklch: "L 0.520" or "280°". The chart
+	// table is written that way, and both are checkable — the lightness and the
+	// hue stand in the declaration next to each other.
+	lumRe = regexp.MustCompile(`^L\s+([0-9.]+)$`)
+	hueRe = regexp.MustCompile(`^([0-9.]+)°$`)
 	// the head of a light-dark declaration; the tail is parsed by counting
 	// parentheses, because oklch(...) sits inside with parentheses of its own
 	ldHead = regexp.MustCompile(`(--[a-z][\w-]*):\s*light-dark\(`)
@@ -58,6 +95,8 @@ var (
 	// The Russian spellings are what docs/foundations/tokens.md still says.
 	// They leave together with the page on step 4 of the move.
 	alphaRe = regexp.MustCompile(`^(чёрный|белый|black|white)\s+([0-9.]+)%$`)
+	// the three numbers of an oklch(), in order: lightness, chroma, hue
+	oklchNums = regexp.MustCompile(`oklch\(\s*([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)`)
 	// numeric alpha, so that 0.05 and 0.050 count as one value
 	alphaNum = regexp.MustCompile(`oklch\(([\d ]+)\s*/\s*([\d.]+)\)`)
 )
@@ -147,6 +186,61 @@ func expect(cell string) (string, bool) {
 	return "", false
 }
 
+// cells splits a markdown row into cells, dropping the empty edges the leading
+// and trailing pipes produce.
+func cells(line string) []string {
+	line = strings.TrimSpace(line)
+	line = strings.TrimPrefix(line, "|")
+	line = strings.TrimSuffix(line, "|")
+	return strings.Split(line, "|")
+}
+
+// component compares a cell that names ONE component of an oklch — the
+// lightness or the hue — against the declaration. The chart table is written
+// that way: a colour whose saturation nobody quotes still has a lightness and a
+// hue, and both of those are what the row promises the reader.
+func component(cell, got string) (ok, machine bool) {
+	nums := oklchNums.FindStringSubmatch(got)
+	if nums == nil {
+		return false, false
+	}
+	if m := lumRe.FindStringSubmatch(cell); m != nil {
+		return sameNum(m[1], nums[1]), true
+	}
+	if m := hueRe.FindStringSubmatch(cell); m != nil {
+		return sameNum(m[1], nums[3]), true
+	}
+	return false, false
+}
+
+// checkLum holds a lightness cell of a ramp table to the declaration. A step
+// the reference names but the code does not declare is an error too: the table
+// is a list of the ramp, and a row about a step that is gone is worse than a
+// missing row.
+func checkLum(out *[]string, name string, line int, token, cell, got string) {
+	if got == "" {
+		*out = append(*out, fmt.Sprintf(
+			"%s:%d: %s — the table names a step the code does not declare",
+			name, line, token))
+		return
+	}
+	nums := oklchLum.FindStringSubmatch(got)
+	if nums == nil {
+		return
+	}
+	if !sameNum(cell, nums[1]) {
+		*out = append(*out, fmt.Sprintf(
+			"%s:%d: %s, lightness — %q in the table, %q in the code",
+			name, line, token, cell, nums[1]))
+	}
+}
+
+func sameNum(a, b string) bool {
+	x, err1 := strconv.ParseFloat(a, 64)
+	y, err2 := strconv.ParseFloat(b, 64)
+	return err1 == nil && err2 == nil && x == y
+}
+
 func sameValue(want, got string) bool {
 	if strings.Join(strings.Fields(want), " ") == strings.Join(strings.Fields(got), " ") {
 		return true
@@ -184,16 +278,32 @@ func checkTokenTables(srcDir, docsDir string) []string {
 		return nil
 	}
 	decl := lightDarkPairs(string(css))
+	// The FIRST declaration only: --a-* is redeclared by every accent, and the
+	// base ramp is what the reference tabulates.
+	plain := map[string]string{}
+	for _, m := range plainRe.FindAllStringSubmatch(string(css), -1) {
+		if _, seen := plain[m[1]]; !seen {
+			plain[m[1]] = m[2]
+		}
+	}
 
 	var out []string
-	for _, page := range langVariants(filepath.Join(docsDir, "foundations"), "tokens") {
-		out = append(out, tokenTableOf(page, decl)...)
+	// BOTH pages, not just the reference. The tables of the ramps live on the
+	// colour page, and while only tokens.md was read they were the most factual
+	// thing in the documentation with nothing checking it: the accent ramp
+	// stood at 250° and 0.560 after the default had moved to petrol.
+	var pages []string
+	for _, stem := range []string{"tokens", "colors"} {
+		pages = append(pages, langVariants(filepath.Join(docsDir, "foundations"), stem)...)
+	}
+	for _, page := range pages {
+		out = append(out, tokenTableOf(page, decl, plain)...)
 	}
 	return out
 
 }
 
-func tokenTableOf(page string, decl map[string][2]string) []string {
+func tokenTableOf(page string, decl map[string][2]string, plain map[string]string) []string {
 	md, err := os.ReadFile(page)
 	if err != nil {
 		return nil
@@ -201,19 +311,75 @@ func tokenTableOf(page string, decl map[string][2]string) []string {
 	name := filepath.Base(page)
 
 	var out []string
-	for i, line := range strings.Split(string(md), "\n") {
-		m := rowRe.FindStringSubmatch(strings.TrimRight(line, "\r"))
+	lines := strings.Split(string(md), "\n")
+	lightCol, darkCol, hueCol, lumCol := -1, -1, -1, -1
+	for i, line := range lines {
+		line = strings.TrimRight(line, "\r")
+
+		// A separator row means the line above it was the head: read from it
+		// which columns hold the two themes, and keep that until the next
+		// table. A table with no such head leaves the pair at -1, and its rows
+		// are skipped — a heading nobody recognised is not a licence to guess
+		// at positions.
+		if headSep.MatchString(line) && i > 0 {
+			lightCol, darkCol, hueCol, lumCol = -1, -1, -1, -1
+			for k, h := range cells(strings.TrimRight(lines[i-1], "\r")) {
+				switch {
+				case lightHead.MatchString(strings.TrimSpace(h)):
+					lightCol = k
+				case darkHead.MatchString(strings.TrimSpace(h)):
+					darkCol = k
+				case hueHead.MatchString(strings.TrimSpace(h)):
+					hueCol = k
+				case lumHead.MatchString(strings.TrimSpace(h)):
+					lumCol = k
+				}
+			}
+			continue
+		}
+
+		m := rowRe.FindStringSubmatch(line)
 		if m == nil {
 			continue
 		}
+		if lumCol >= 0 {
+			row := cells(line)
+			if lumCol < len(row) {
+				checkLum(&out, name, i+1, m[1], strings.TrimSpace(row[lumCol]), plain[m[1]])
+			}
+		}
+
 		got, ok := decl[m[1]]
 		if !ok {
 			continue // the token is not declared through light-dark — not our case
 		}
-		for k, cell := range []string{m[2], m[3]} {
+		if lightCol < 0 || darkCol < 0 {
+			continue
+		}
+		row := cells(line)
+		if lightCol >= len(row) || darkCol >= len(row) {
+			continue
+		}
+		if hueCol >= 0 && hueCol < len(row) {
+			cell := strings.TrimSpace(row[hueCol])
+			if ok, machine := component(cell, got[0]); machine && !ok {
+				out = append(out, fmt.Sprintf(
+					"%s:%d: %s, hue — %q in the table, %q in the code",
+					name, i+1, m[1], cell, got[0]))
+			}
+		}
+		for k, cell := range []string{row[lightCol], row[darkCol]} {
 			end := "light"
 			if k == 1 {
 				end = "dark"
+			}
+			if ok, machine := component(strings.TrimSpace(cell), got[k]); machine {
+				if !ok {
+					out = append(out, fmt.Sprintf(
+						"%s:%d: %s, %s — %q in the table, %q in the code",
+						name, i+1, m[1], end, strings.TrimSpace(cell), got[k]))
+				}
+				continue
 			}
 			want, machine := expect(cell)
 			if !machine {
