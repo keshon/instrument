@@ -58,6 +58,7 @@ The uptime of a monitor, the runs of a nightly build, the attempts of a retry.
 | The fresh ones at the **right** | yes | The strip is read as time, and time in this script runs to the right |
 | A tone from the vocabulary | yes | `ok` · `warn` · `error` · `running` · `neutral`. There is no sixth outcome |
 | A tick with no tone | no | The check happened and the result is unknown: the tick stays the colour of the track |
+| A `tabindex` on a group | no | It makes the group a target, and twenty-four hours in a column give it 15px against the 24 WCAG 2.2 AA asks. The reading reaches a screen reader through the strip's own `aria-label` |
 
 ### Accessibility
 
@@ -138,13 +139,6 @@ goes first" is not wanted here, and it is what makes it possible to hang
 [a tooltip](../components/overlays/tooltip.md) on a group — under an
 `overflow: hidden` it would be cut off.
 
-Nothing runs past the edge, and that is a property of the construction rather
-than of the numbers. The gap between ticks is capped at a share of the group
-instead of a constant, so the separators are what give way when an hour gets
-crowded. With a constant they could not: a gap does not shrink and a flex item
-does, so at seven checks an hour the six gaps took their twelve pixels first
-and the strip came out wider than the box it was given.
-
 | With no groups | With groups |
 |---|---|
 | The width of a tick is fixed — the length of the strip says how many checks there were | The width of the strip is fixed — the length of a group says how many checks are in that hour |
@@ -153,14 +147,9 @@ and the strip came out wider than the box it was given.
 
 ### The aggregate form
 
-Above roughly four checks an hour a tick stops being something a person can
-see, let alone point at: on a 520px day an hour's share is 17.8px, and seven
-ticks with their gaps divide it into slivers under two pixels. Drawing them
-individually at that point is a promise the picture cannot keep.
-
-The answer is not a thinner tick. Give the group **one** tick and leave `--n`
-alone: the hour keeps its exact share of the strip and comes back as a single
-brick, tinted by the outcome that matters — the worst one.
+Above roughly four checks an hour a tick is too thin to see, let alone point
+at. Give the group **one** tick and leave `--n` alone: the hour keeps its exact
+share and comes back as a single brick, tinted by its worst outcome.
 
 ```html preview
 <div class="inst-history" style="inline-size:26rem" role="img" aria-label="Twelve hours, 7 checks each: two hours with errors">
@@ -179,16 +168,8 @@ brick, tinted by the outcome that matters — the worst one.
 </div>
 ```
 
-The strip still reports how much stands behind each hour — the sixth hour had
-one check and is narrow, the ninth had twelve and is wide — and it has stopped
-claiming that the individual checks are distinguishable. Which of the two
-drawings to use is the caller's call, because only the caller knows how many
-checks there are.
-
-Nothing breaks if that call is not made: the gap between ticks is capped at a
-share of the group rather than a constant, so at any density the separators
-thin out and the marks keep their width. What is lost is only the ability to
-count them.
+`--n` is what keeps the hour's weight: the sixth had one check and is narrow,
+the ninth had twelve and is wide.
 
 ## Sizes
 
@@ -295,12 +276,9 @@ since 07:14". One statement, one place.
 
 ### With an axis
 
-The strip says what happened; the axis says when. It is not a second layout but
-the same one: an axis cell takes the **same `--n`** as the group above it, and
-the two rows are laid out by one rule. An application that builds the ruler
-itself has to reproduce the gap exactly, and one pixel of disagreement compounds
-— over twenty-four hours the last label ends up two dozen pixels from the column
-it names.
+The strip says what happened, the axis says when. An axis cell takes the **same
+`--n`** as the group above it, so the two rows are laid out by one rule and
+cannot drift apart.
 
 ```html preview
 <div style="inline-size:30rem">
@@ -336,44 +314,14 @@ it names.
 </div>
 ```
 
-Which labels survive a narrow strip is the caller's decision: `data-minor` marks
-the ones that may go, and under 36rem of ruler they do. The cell **keeps its
-place** — `visibility`, not `display` — because a dropped cell that also gave up
-its share would let the surviving labels slide, and an hour that moves when the
-window is resized is worse than an hour with no label.
+`data-minor` marks the labels that may go when the ruler is under 36rem. The
+cell keeps its place — `visibility`, not `display` — or the surviving labels
+would slide.
 
-The hint on a group is an ordinary [tooltip](../components/overlays/tooltip.md):
-an `inst-tooltip-text` placed straight inside the group, with no wrapper.
-
-Pointing is answered by **the hour itself rising** — the batch grows `--space-1`
-above and below and stands proud of the line. A frame around the marks and a
-plate behind them were both built first and neither could be seen: everything
-drawn around a group shows only in the 2px gaps between its ticks and the 2px
-margin around them, and at one check an hour those ticks are 17.8px wide. The
-failure was area, not strength, so the carrier had to be the one surface that is
-there at any density.
-
-It costs nothing horizontally, which is what makes it allowed: a group is a flex
-item with a basis of 0, so a pixel of padding or inline margin comes out of the
-share it grows into and every hour shifts as the cursor travels. Block margin is
-the other axis and takes no part in inline sizing.
-
-**A `tabindex` on a group is the caller's decision, and a day of hours is the
-case where the answer is no.** The hint also shows on keyboard focus, so making
-a group focusable is one attribute — but a focusable element is a target, and
-WCAG 2.2 AA asks a target for 24 pixels or for spacing an hourly strip cannot
-give by construction: twenty-four groups in a column are about 15px wide with
-4px between them. The pixel gate measures exactly that and goes red.
-
-The number is therefore not reachable by keyboard through the group, and it does
-not need to be: the strip's own `aria-label` carries the reading in words, which
-is what a screen reader gets in any case — the ticks are empty and are never
-announced. Twenty-four tab stops leading to what one label already says is a
-worse answer than no tab stops at all.
-
-Where a group really is a target — six runs across a panel rather than a day of
-hours, so each is wider than `--tap-min` — a `tabindex` is right, and the hint
-comes with it.
+The hint is an ordinary [tooltip](../components/overlays/tooltip.md) placed
+straight inside the group. Pointing is answered by the hour itself rising, which
+costs nothing horizontally: block margin takes no part in inline sizing, so the
+hours cannot shift as the cursor travels.
 
 ### In a monitor card
 
@@ -398,17 +346,9 @@ comes with it.
 ```
 
 The strip spans the card because it was given enough checks to, not because it
-stretches: a tick is `--size-tick` wide and never a fraction, so the LENGTH of a
-plain strip is how many checks there were. Ninety-six is a day at four an hour,
-which over-fills the card at every scale — so the oldest checks run past the
-leading edge and are clipped there, and the freshest one is always against the
-trailing edge. That is the rule from [Anatomy](#anatomy) with something to look
-at.
-
-Fewer checks would sit in the trailing corner and leave the card empty, which is
-the honest drawing of a monitor that has only run ten times. If the strip has to
-fill a width the caller cannot predict, that is the [grouped
-form](#groups) — there the shares are counted from the width there is.
+stretches: ninety-six is a day at four an hour, and the oldest are clipped at the
+leading edge. To fill a width the caller cannot predict, use the
+[grouped form](#groups).
 
 ## API
 

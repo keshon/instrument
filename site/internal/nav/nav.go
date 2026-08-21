@@ -60,7 +60,7 @@ var sections = []struct {
 		"log", "lane", "history", "budget", "tree",
 	}},
 
-	{"blocks", []string{"console"}},
+	{"blocks", []string{"console", "monitor"}},
 
 	{"about", nil},
 }

@@ -89,7 +89,7 @@
   <symbol id="i-p-tree" viewBox="0 0 16 16"><circle cx="3.6" cy="3.8" r="1.4"/><circle cx="3.6" cy="12.2" r="1.4"/><circle cx="11.8" cy="8" r="1.4"/><path d="M5 4.6 10.4 7.2M5 11.4l5.4-2.6"/></symbol>
   <symbol id="i-p-audit" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.2"/><path d="M10.2 10.2 13.6 13.6"/><path d="M5.2 7.1 6.6 8.5 8.9 5.6"/></symbol>
   <symbol id="i-p-design-principles" viewBox="0 0 16 16"><path d="M2.5 3.5h4A2 2 0 0 1 8.5 5.5v8a1.6 1.6 0 0 0-1.6-1.6H2.5z"/><path d="M13.5 3.5h-4A2 2 0 0 0 7.5 5.5v8a1.6 1.6 0 0 1 1.6-1.6h4.4z"/></symbol>
-  <symbol id="i-p-console" viewBox="0 0 16 16"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M6.5 2.5v11"/><path d="M3.6 6h1.4"/><path d="M3.6 9h1.4"/></symbol>
+  <symbol id="i-p-monitor" viewBox="0 0 16 16"><path d="M2.5 3.5v5M5 3.5v5M7.5 3.5v5M10 3.5v5M12.5 3.5v5"/><path d="M2 12.5h12"/></symbol><symbol id="i-p-console" viewBox="0 0 16 16"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M6.5 2.5v11"/><path d="M3.6 6h1.4"/><path d="M3.6 9h1.4"/></symbol>
   <symbol id="i-p-rail" viewBox="0 0 16 16"><rect x="2" y="2.5" width="4.2" height="11" rx="1.2"/><circle cx="4.1" cy="5.4" r=".9" fill="currentColor" stroke="none"/><circle cx="4.1" cy="8.5" r=".9" fill="currentColor" stroke="none"/><path d="M9 2.5h5"/><path d="M9 13.5h5"/></symbol>
   <symbol id="i-p-statusbar" viewBox="0 0 16 16"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M2 10.5h12"/><circle cx="4.6" cy="12" r=".8" fill="currentColor" stroke="none"/><path d="M9 12h2.6"/></symbol>
   <symbol id="i-p-change" viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M8 5.4v5.2M5.4 8h5.2"/></symbol>

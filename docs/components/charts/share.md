@@ -108,14 +108,9 @@ subject rather than an annotation to a number.
 
 The swatch reads `--tone-mark` when no `--series` is set, so **one legend keys
 both** a chart of series and a bar of states. An hour nobody checked is neither:
-it takes `data-empty`, the same word `inst-history-tick` uses for it.
-
-The same statement, drawn differently on purpose. On a strip an absence is drawn
-**by** absence — no mark at all — and that works because a tick has neighbours: a
-hole between two coloured bricks reads as a hole. A swatch has none, and one that
-paints nothing is a missing swatch beside a stray word rather than an entry about
-absence. So in the legend it takes the colour the strip's ground has at that
-hour: the track.
+it takes `data-empty`, the same word `inst-history-tick` uses for it — drawn as
+the track, because a swatch that paints nothing is a missing swatch rather than
+an entry about absence.
 
 ### Above a history strip
 
@@ -142,11 +137,8 @@ hour: the track.
 </div>
 ```
 
-The two answer different questions and an uptime screen wants both. A strip
-answers **when** — the failure was at 03:00, there were four of them, they were
-next to each other. A share answers **how much** — the day was 8% down. A strip
-cannot total, and a share cannot order: the same 8% is one long outage or ninety
-scattered ones, and this bar draws them identically.
+A strip answers **when**, a share answers **how much**, and an uptime screen
+wants both. The comparison stands in the [section index](./index.md).
 
 ## API
 
