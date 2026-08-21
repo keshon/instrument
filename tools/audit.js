@@ -18,10 +18,13 @@
  *
  * USE. Open your own screen and paste the file into the console:
  *
- *     kitAudit.run()          the whole page, 5 themes and 3 densities
+ *     kitAudit.run()          the whole page: contrast over 5 themes x 4
+ *                             accents, targets and proportion over 5 scales
+ *                             x 3 densities
  *     kitAudit.run('#main')   a part of it
- *     kitAudit.contrast()     one pass in the current theme
- *     kitAudit.targets()      one pass in the current density
+ *     kitAudit.contrast()     one pass at the current theme and accent
+ *     kitAudit.targets()      one pass at the current scale and density
+ *     kitAudit.proportion()   the same pass: does the text fit its box
  *
  * It checks YOUR screens rather than the examples in the documentation — that
  * is the entire point.

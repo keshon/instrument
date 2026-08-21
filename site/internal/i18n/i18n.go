@@ -9,7 +9,7 @@ const (
 	EN Lang = "en"
 )
 
-var All = []Lang{RU}
+var All = []Lang{RU, EN}
 
 var Known = []Lang{RU, EN}
 

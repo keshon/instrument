@@ -357,8 +357,8 @@ var mutations = []mutation{
 		"a zone with exceptions has to be checked outside them, or the exceptions become the zone"},
 
 	{"two roving tabindexes on a translated page", "registry", "docs/components/actions/segmented.en.md",
-		"",
-		"---\ntitle: Segmented\nsource: src/actions.css\n---\n\n```html preview\n<div class=\"inst-segmented\" role=\"radiogroup\" aria-label=\"View\">\n  <button type=\"button\" role=\"radio\" aria-checked=\"true\" tabindex=\"0\">List</button>\n  <button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Grid</button>\n</div>\n```\n",
+		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"-1\">Grid</button>",
+		"<button type=\"button\" role=\"radio\" aria-checked=\"false\" tabindex=\"0\">Grid</button>",
 		"a translation is written from scratch and errs more often than the original, and only the original was checked"},
 
 	// ── the site build ─────────────────────────────────────────────────────
@@ -368,6 +368,19 @@ var mutations = []mutation{
 	// the whole repository. Not a single mutation stood against it, which means
 	// exactly as much was known about its green colour as about any unchecked
 	// one.
+	// The body of an English page is assembled from three sources: its own
+	// markdown, the registry of neighbours and the generated rows of tokens.
+	// Two of the three handed out Russian, and no gate saw it — a page in
+	// another language is unreadable to the Cyrillic check of cmd/lang, which
+	// guards SOURCES rather than the built page.
+	{"a neighbour resolved without a language", "site", "site/internal/content/markdown.go",
+		"t, ok := pageBySlug[relKey{p.Lang, n}]",
+		"t, ok := pageBySlug[relKey{i18n.RU, n}]",
+		"the Related row of an English page came out as Russian names pointing at Russian addresses"},
+	{"the kind of a generated token row is a literal", "site", "site/internal/content/content.go",
+		"Name: name, Kind: tokenKind(p.Lang),",
+		"Name: name, Kind: \"токен\",",
+		"a Russian word in the markup of an English page is the same lie as a Russian heading"},
 	{"a site token the kit does not have", "site", "site/internal/render/assets/docs.css",
 		".site-logo:hover { background: var(--surface-hover); }",
 		".site-logo:hover { background: var(--surface-nonesuch); }",

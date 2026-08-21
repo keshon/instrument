@@ -586,7 +586,7 @@ func writeRelated(w util.BufWriter, p *Page) {
 	}
 	w.WriteString(`<p class="related">`)
 	for _, n := range names {
-		t, ok := pageBySlug[n]
+		t, ok := pageBySlug[relKey{p.Lang, n}]
 		if !ok {
 			continue
 		}

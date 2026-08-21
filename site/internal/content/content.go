@@ -218,6 +218,13 @@ func TokenValues(kitDir string) (map[string]Token, error) {
 	return out, nil
 }
 
+func tokenKind(l i18n.Lang) string {
+	if l == i18n.RU {
+		return "токен"
+	}
+	return "token"
+}
+
 func ResolveTokens(pages []*Page, tokens map[string]Token) {
 	for _, p := range pages {
 		// A reference page lists everything declared in its own file.
@@ -231,7 +238,11 @@ func ResolveTokens(pages []*Page, tokens map[string]Token) {
 			sort.Strings(names)
 			for _, name := range names {
 				p.API = append(p.API, APIRow{
-					Name: name, Kind: "токен", // a key of the dictionary, see apiKinds
+					// A key of the dictionary, see apiKinds. It is spelled in
+					// the language of the page: the kind ends up in data-kind
+					// on the row, and a Russian word in the markup of an
+					// English page is the same lie as a Russian heading.
+					Name: name, Kind: tokenKind(p.Lang),
 					Value: tokens[name].Value, Cells: tokens[name].Cells,
 				})
 			}
@@ -279,13 +290,21 @@ func SetRelations(m map[string][]string) { relations = m }
 // into addresses. It is filled once before rendering: neighbours come from
 // other directories, and finding them by a walk per link would mean walking
 // the tree two hundred times.
-var pageBySlug = map[string]*Page{}
+//
+// The key carries the LANGUAGE, and it is not decoration. A slug is one for
+// both spellings of a page, so a single map hands out whichever of the two was
+// indexed last — and the Related row of an English page came out as Russian
+// names pointing at Russian addresses.
+var pageBySlug = map[relKey]*Page{}
+
+type relKey struct {
+	lang i18n.Lang
+	slug string
+}
 
 func indexPages(pages []*Page) {
 	for _, p := range pages {
-		if p.Lang == i18n.RU {
-			pageBySlug[p.Slug] = p
-		}
+		pageBySlug[relKey{p.Lang, p.Slug}] = p
 	}
 }
 

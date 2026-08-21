@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"instrument/site/internal/content"
+	"instrument/site/internal/i18n"
 )
 
 var (
@@ -18,6 +19,8 @@ var (
 	nodeRe = regexp.MustCompile(`(?m)^<([a-z][\w-]*)([^>]*)>`)
 
 	hiddenAttrRe = regexp.MustCompile(`\s(popover|hidden)(\s|=|>|$)`)
+
+	cyrillicRe = regexp.MustCompile(`[\p{Cyrillic}]+`)
 )
 
 var hidden = map[string]bool{
@@ -51,6 +54,20 @@ func Verify(pages []*content.Page, sprite string) []string {
 		}
 		if strings.Contains(p.HTML, "```html preview") {
 			problems = append(problems, p.Route+"  a preview fence did not unfold")
+		}
+
+		// A page of the other language must carry no Cyrillic AT ALL, and
+		// the check earns its place: the body of a page is assembled from
+		// three sources, and two of them handed out Russian without a word.
+		// The Related row resolved a neighbour through an index that had no
+		// language in the key, and the kind of a generated token row was a
+		// literal. Both came out as Russian inside an English page, and
+		// neither was visible to any other gate.
+		if p.Lang != i18n.RU {
+			for _, m := range cyrillicRe.FindAllString(p.HTML, -1) {
+				problems = append(problems,
+					fmt.Sprintf("%s  Russian in a page of another language: %s", p.Route, m))
+			}
 		}
 
 		problems = append(problems, dupIDs(p)...)

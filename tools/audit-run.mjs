@@ -73,10 +73,21 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
    directory: that way exactly what a reader can open is what gets checked, and
    a new page falls under the check by itself, without editing this file. */
 async function pages() {
-  const html = await (await fetch(BASE + '/')).text();
-  const hrefs = [...html.matchAll(/href="(\/[^"#]*?)"/g)].map((m) => m[1]);
-  const uniq = [...new Set(hrefs)].filter(
-    (h) => h.endsWith('/') && !h.startsWith('/en/') && h.startsWith(FILTER || '/'),
+  /* BOTH LANGUAGES, and the second one is not a formality. What this gate
+     measures is the rendered pixel: whether a label fits its column, whether
+     a glyph outweighs the type beside it. An English label is a different
+     length from the Russian one, so a page that passed in one spelling says
+     nothing about the other. */
+  const roots = ['/', '/en/'];
+  const seen = new Set();
+  for (const root of roots) {
+    const r = await fetch(BASE + root);
+    if (!r.ok) continue;
+    const html = await r.text();
+    for (const m of html.matchAll(/href="(\/[^"#]*?)"/g)) seen.add(m[1]);
+  }
+  const uniq = [...seen].filter(
+    (h) => h.endsWith('/') && h.startsWith(FILTER || '/'),
   );
   return uniq.length ? uniq : ['/'];
 }

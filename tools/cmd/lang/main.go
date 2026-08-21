@@ -177,7 +177,7 @@ var zones = []zone{
 	},
 	{
 		name:  "root",
-		paths: []string{"README.md", "CONTRIBUTING.md", "ROADMAP.md"},
+		paths: []string{"README.md", "CONTRIBUTING.md", "ROADMAP.md", "docs/README.md"},
 		step:  "6",
 		why:   "CHANGELOG.md is not translated: a translated chronicle is a rewritten one",
 	},
