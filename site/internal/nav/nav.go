@@ -40,7 +40,7 @@ var sections = []struct {
 	}},
 	{"components/charts", []string{
 		"index",
-		"meter", "ring", "sparkline", "legend", "palette",
+		"meter", "share", "ring", "sparkline", "legend", "palette",
 	}},
 	{"components/navigation", []string{
 		"index",

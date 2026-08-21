@@ -33,8 +33,9 @@ api:
   - { name: "--control-pad-sm", kind: "token", doc: "The padding of a small control" }
   - { name: "--control-pad-md", kind: "token", doc: "The padding of a base control" }
   - { name: "--control-pad-lg", kind: "token", doc: "The padding of a large control" }
-  - { name: "--radius-2xs", kind: "token", value: "2px", doc: "The state dot and everything of its size" }
-  - { name: "--radius-xs", kind: "token", value: "4px", doc: "Inline: badges, swatches, the ends of bars" }
+  - { name: "--radius-2xs", kind: "token", value: "2px", doc: "The bottom step of the ladder. Marks take it through --radius-mark" }
+  - { name: "--radius-mark", kind: "token", doc: "The rounding of a mark: anything the kit draws below 8px — the dot, a tick, the meter and the lane" }
+  - { name: "--radius-xs", kind: "token", value: "4px", doc: "Inline: badges, chips, a key" }
   - { name: "--radius-control-sm", kind: "token", doc: "The rounding of a small control. It travels with density along with the height" }
   - { name: "--radius-control-md", kind: "token", doc: "The rounding of a control" }
   - { name: "--radius-control-lg", kind: "token", doc: "The rounding of a large control" }
@@ -169,8 +170,8 @@ at a density of 1.5 an odd radius rasterises off the device grid.
 
 | Token | Value | What for |
 |---|---|---|
-| `--radius-2xs` | 2px | The state dot and everything of its size |
-| `--radius-xs` | 4px | Inline: badges, swatches, the ends of bars |
+| `--radius-2xs` | 2px | The bottom step. Marks reach it through `--radius-mark` rather than by name |
+| `--radius-xs` | 4px | Inline: badges, chips, a key |
 | `--radius-sm` | 6px | Controls **inside** a card or a panel |
 | `--radius-md` | 8px | Free-standing controls: a button, a field, a popover |
 | `--radius-lg` | 12px | Cards, panels, the modal |
@@ -179,6 +180,15 @@ at a density of 1.5 an odd radius rasterises off the device grid.
 The rounding of a CONTROL is taken not from here directly but from
 `--radius-control-sm/md/lg`: it travels with density along with the height,
 otherwise a small button reads as a pill. See [density](./density.md).
+
+The rounding of a MARK is taken from `--radius-mark` for a reason of the
+opposite kind. Below 8px the ladder stops offering a choice: when two radii on
+one edge add up to more than the edge is long, the browser scales every radius
+on the box until they fit, silently. `--radius-xs` on a 6px dot arrives as 3 —
+half the box, which is a circle; on a 6px meter it arrives as 3 as well, which
+is a pill. And where the other side of the box is data — the width of a lane
+span, the width of a tick — the shape then changes with the data. The mark tier
+is the one step that survives every mark in every scale.
 
 ### The rule of nested radii
 

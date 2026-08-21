@@ -1091,6 +1091,39 @@
   --radius-control-md: var(--radius-md);
   --radius-control-lg: var(--radius-md);
 
+  /* THE ROUNDING of a MARK — the tier the control tier had and the marks did
+     not, which is how seven of them ended up declaring a corner the browser
+     never painted.
+
+     A mark is anything the kit draws below 8px: the state dot (6), the meter
+     and the lane track (6), a tick in a history bar (3), the legend swatch
+     (6). On boxes that small the ladder stops being a set of choices. When
+     two radii on one edge add up to more than the edge is long, the browser
+     scales EVERY radius on the box by the same factor until they fit, and it
+     does that in silence. So --radius-xs, 4, on a 6px dot arrives as 3 —
+     which is half the box, which is a circle; and on a 6px meter it arrives
+     as 3 as well, which is a pill. Neither was declared and neither was
+     wanted: the circle belongs to the list of consequences and the pill to a
+     badge and a tag.
+
+     Worse for a bar than for a dot, because a bar's other side is DATA. A
+     lane span 3px wide and one 39px wide take the same class and come out
+     1.5 and 3; a history tick is 17.8px in a monitor checked once an hour and
+     1px in one checked seven times, so the shape of the component was being
+     chosen by the traffic through it.
+
+     2 is the largest step that survives every mark in every scale: the
+     smallest mark is a 3px tick (4 > 3, so even this one clamps there, to
+     1.5 — but 1.5 on a 3px column is below what a corner can show, and the
+     range it clamps ACROSS has collapsed from eightfold to fourfold), and
+     the largest is an 8px dot in scale 17, where 2 is 0.25 — the same
+     proportion the control tier holds.
+
+     It does not ride scale, for the reason --radius-2xs does not: a mark is
+     read as a shape rather than measured against a type size, and at these
+     sizes one step is the whole difference between a square and a circle. */
+  --radius-mark: var(--radius-2xs);
+
   /* THE PROPORTION of a control rather than its padding. This is the one
      place in the kit where a RATIO is declared, and the reason is that the
      ratio is the shape of the button.
@@ -4401,14 +4434,25 @@ hr {
   inline-size: var(--size-dot);
   block-size: var(--size-dot);
   /* A rounded square, not a circle. The circle is already LOADED in this
-     kit: in a list of consequences it marks a reversible item and a square
-     marks an irreversible one, and that is a carrier on equal footing with
-     tone. A state dot has nothing to do with that axis and must not borrow
-     somebody else's shape.
+     kit: in a list of consequences it marks a reversible item and a rotated
+     square marks an irreversible one, and that is a carrier on equal footing
+     with tone. A state dot has nothing to do with that axis and must not
+     borrow somebody else's shape.
 
-     .inst-dots keeps its circle/square pair: there the shape does work, here
-     it is free. Two components, two jobs. */
-  border-radius: var(--radius-2xs);
+     THE PAIR LIVES IN .inst-approval-effects, where the li::before is a
+     circle and takes a 45° rotation and a square corner on the warn and
+     error tones. Not in .inst-dots, which this comment used to name: the
+     counted meter has no pair of its own — its unit is this very dot, which
+     is exactly why it could not have one.
+
+     Two other circles at this size are deliberate and are NOT this axis:
+     .inst-timeline-dot is a bead on a thread, and the modified mark on a tab
+     is the editor's own idiom for "unsaved". Both are structural; neither
+     enumerates an outcome.
+
+     --radius-mark rather than the raw step: at 6px the ladder stops being a
+     set of choices, and the tier is what says so once. See tokens.css. */
+  border-radius: var(--radius-mark);
   background: var(--tone-mark, var(--text-faint));
 }
 
@@ -4523,9 +4567,13 @@ hr {
    to a screen reader nor to a test.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* A BAR, not a capsule. --size-meter is 6 and the corner used to be declared
+   at 4, which on a 6px edge clamps to 3 — exactly half, that is a full pill,
+   that is the shape reserved for a badge and a tag. Nobody wrote "pill" and
+   nobody could see where it came from. --radius-mark is 2 and lands. */
 .inst-meter {
   block-size: var(--size-meter);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   background: var(--track);
   /* The extent of the track is shown by a hairline rather than by the
      track's own colour: that way the track can stay light enough for the
@@ -4534,9 +4582,15 @@ hr {
   overflow: hidden;
 }
 
+/* The fill takes the track's corner, and that is now true at every value.
+   At 4 it was not: the fill clamps on its OWN width, so a meter at 6% came
+   out at 1.8 and the same meter at 92% at 3 — the end of the bar changed
+   shape as the number moved, which is the one thing a progress bar must not
+   do. At 2 the fill is wider than 4px from about 3% on, and below that there
+   is no corner left to argue about. */
 .inst-meter-fill {
   block-size: 100%;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   background: var(--tone-mark, var(--accent-mark));
   transition: inline-size var(--dur-3) var(--ease-out);
 }
@@ -6590,15 +6644,115 @@ hr {
    on every series, the first included.
 
    The rule is shared with the chart itself, see .inst-sparkline below.    */
+/* THE SHAPE OF THE SWATCH IS THE SHAPE OF THE DOT, and it used to be a
+   circle by accident. The box is --size-dot, 6, and the corner was declared
+   at 4: on a 6px edge that clamps to 3, which is half, which is the circle
+   the list of consequences owns. So a legend and a state dot standing in one
+   panel drew two different marks for one job, and the reason was invisible in
+   the source — the declaration said 4 and the screen said 3. */
 .inst-legend-swatch {
   flex: none;
   inline-size: var(--size-dot);
   block-size: var(--size-dot);
-  border-radius: var(--radius-xs);
-  background: var(--series, var(--accent-mark));
+  border-radius: var(--radius-mark);
+  /* TWO VOCABULARIES, ONE SWATCH, and the order between them is the rule.
+
+     --series is the categorical palette and it wins, because a caller who
+     names a series has said which of six colours this is and there is nothing
+     to infer. With no series the swatch falls through to the tone, so a
+     legend can key a STATE bar as well as a chart: an uptime strip and a
+     share bar are drawn in ok/warn/error, and their key has to be drawn in
+     the same values rather than in a categorical colour that merely looks
+     similar. Two ways to arrive at one colour diverge on the first theme
+     nobody checked.
+
+     Neither vocabulary covers "nothing was there", so the swatch borrows the
+     word the strip already uses for it — see data-empty below. */
+  background: var(--series, var(--tone-mark, var(--accent-mark)));
 }
 
+/* NOTHING WAS THERE: an hour nobody checked, a share nobody accounted for.
+
+   The same attribute and the same value as `.inst-history-tick[data-empty]`,
+   because it is the same statement — and the key has to be drawn in the value
+   the bar is drawn in, or the legend is describing a colour twenty pixels
+   away that is not the colour on the bar. That exact bug is what an
+   application hit when it had to reach into the kit and set --tone-mark to
+   the track by hand.
+
+   A tone would be wrong here for the reason it is wrong on the tick: an
+   absence is not an outcome, and on real data a gap is the norm. */
+.inst-legend-swatch[data-empty] { background: var(--track); }
+
 .inst-legend-value { color: var(--text-primary); font-weight: var(--weight-medium); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Share — what a period was MADE OF
+
+   One bar, divided by the share of each outcome in it: twenty-two hours up,
+   an hour and a half down, half an hour nobody looked. The question is "how
+   much of the whole", and the answer is the width of each part.
+
+   IT IS NOT A METER. A meter compares one quantity against a ceiling and has
+   a track behind it for the part not yet reached; here every part is reached
+   and they are compared against EACH OTHER. A meter with three fills would be
+   three answers to a question that admits one.
+
+   IT IS NOT A HISTORY STRIP either, and the pair is worth stating because an
+   uptime screen wants both. A strip answers WHEN — the failure was at 03:00,
+   there were two of them, they were next to each other. A share answers HOW
+   MUCH — the day was 3% down. A strip cannot total, and a share cannot order:
+   the same 3% is one long outage or ninety scattered ones and this bar draws
+   them identically. Neither replaces the other; on a monitor they stand one
+   above the other, and the legend belongs to both.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-share {
+  display: flex;
+  block-size: var(--size-meter);
+  border-radius: var(--radius-mark);
+  /* Track under the parts rather than a fourth part over it: what the caller
+     did not account for is not an outcome and must not get a tone. A day with
+     eight hours of data and sixteen of silence shows as a bar a third full,
+     and the emptiness is read as emptiness. */
+  background: var(--track);
+  /* The extent is drawn by a hairline rather than by the track's own colour,
+     the same device the meter uses: the track then stays light enough for a
+     tone on it to hold 3:1. */
+  box-shadow: inset 0 0 0 var(--hairline) var(--border);
+  /* THE STRIP OWNS THE CORNER AND THE PARTS ARE SQUARE. Rounding each part
+     would put an arc at every internal boundary — four corners where the data
+     has one edge — and at --size-meter those arcs meet and leave a notch of
+     track showing between two neighbouring outcomes. One clip, one shape. */
+  overflow: hidden;
+}
+
+.inst-share-part {
+  /* The share is the grow factor and the basis is 0, so the parts divide the
+     bar in exactly the ratio they were given, whatever they sum to. A caller
+     who hands over 0.92 / 0.06 / 0.02 gets a full bar; one who hands over
+     0.4 / 0.1 gets half a bar and half a track, which is the honest drawing
+     of half a day of data. */
+  flex: var(--share, 0) 1 0;
+  /* NO FLOOR, and this is the whole design position of the component.
+
+     A floor would make a 0.02% slice as wide as a 2% one, and then the bar
+     no longer reports proportion — it reports "this happened", in the units
+     of a bar that claims to report proportion. That is the same lie as a
+     determinate meter parked at 90%.
+
+     "Did it ever happen at all" is a real question and it has a real answer
+     in this kit: the history strip, where one check is one tick and a single
+     failure is a mark you can point at. A share bar is for how much. */
+  min-inline-size: 0;
+  background: var(--tone-mark, var(--accent-mark));
+}
+
+/* Two heights, for the two places a share bar stands. The base is the meter's,
+   because in a row of data this IS the meter's job with more than one answer.
+   The large one is a glyph's height: on the screen of a single object the bar
+   is the subject rather than an annotation to a number. */
+.inst-share--lg { block-size: var(--size-icon); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Sparkline and ring
@@ -7980,10 +8134,21 @@ html:has(dialog:modal) { overflow: hidden; }
   overflow: hidden;
 }
 
+/* THE CORNER IS NOT ALLOWED TO DEPEND ON THE DATA, and at --radius-xs it did.
+   A tick is --size-tick wide on a plain strip but a share of its group on a
+   grouped one, and the corner clamps to half the width: measured over a 520px
+   day, 17.8px at one check an hour and 1px at seven. The same class drew fat
+   lozenges for a sparse monitor and hairlines for a busy one — a shape chosen
+   by the traffic through the component rather than by the component.
+
+   --radius-mark does not abolish the clamp at the narrow end, because nothing
+   can: 2 still halves on a 3px tick. It collapses the RANGE the shape moves
+   across from eightfold to fourfold, and it takes away the lozenge, which was
+   the only end of that range anyone could see. */
 .inst-history-tick {
   flex: none;
   inline-size: var(--size-tick);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   /* With no tone a tick is track: the check happened, the outcome is not
      known. */
   background: var(--tone-mark, var(--track));
@@ -8039,10 +8204,40 @@ html:has(dialog:modal) { overflow: hidden; }
 
 .inst-history-group {
   display: flex;
+  /* The anchor of the group's own tooltip. A batch is the unit a person can
+     point at — an individual check inside a 1.5px tick is not — so the hint
+     hangs on the GROUP, and `.inst-tooltip-text` is placed straight inside it
+     with no wrapper of its own. Absolutely positioned, so it takes no part in
+     the flex line it sits in and --n keeps counting ticks only.
+
+     The rule that reveals it is below rather than in overlay.css, because
+     `.inst-history-group` is declared here: kit.agent comes after kit.overlay
+     and a selector from there would lose to nothing but itself.           */
+  position: relative;
   /* A fraction of the bar, by the number of checks inside. The basis is 0, so
      the growth is counted from zero and the fractions come out even.      */
   flex: var(--n, 1) 1 0;
-  gap: var(--space-1);
+  /* THE SEPARATOR YIELDS BEFORE THE DATA DOES, and until this line it was the
+     other way round.
+
+     A gap does not shrink. A flex item does. So in a group of seven the six
+     gaps took their twelve pixels first and left five for seven ticks, which
+     the 1px floor below then rounded UP — and the group came out wider than
+     its share. Measured on a 520px day: at seven checks an hour the strip
+     overflowed by 1px, at twelve by 16px, and because a grouped strip does not
+     clip (see above — the tooltips need the room), the oldest hours were
+     painted outside the bar rather than cut off by it. Seven checks an hour is
+     a check every eight and a half minutes; this was not an edge.
+
+     So the gap is capped at a share of the group instead of a constant: 40%
+     of the group across all of the gaps, however many there are. In a sparse
+     hour the cap is far above --space-1 and nothing changes. In a dense one
+     the separators thin out and the marks keep their width, which is the
+     right way round — the tick is the reading, the gap is only the comb.
+
+     max(1, …) guards the single-tick group: --n of 1 leaves no gaps at all,
+     and a division by zero would void the declaration.                    */
+  column-gap: min(var(--space-1), calc(40% / max(1, var(--n, 1) - 1)));
   /* An hour does not vanish even with one check in it against a hundred next
      door. */
   min-inline-size: var(--size-tick);
@@ -8052,7 +8247,139 @@ html:has(dialog:modal) { overflow: hidden; }
   /* Inside a group the ticks divide it evenly: the width of a tick carries
      no meaning here, their NUMBER does.                                    */
   flex: 1 1 0;
-  min-inline-size: 1px;
+  /* NO FLOOR. A floor on something that has to divide a fixed width is a way
+     of asking for overflow, and that is exactly what the 1px here produced.
+
+     A tick thinner than a device pixel is drawn anti-aliased rather than
+     dropped, so the bar keeps its shape and simply stops resolving individual
+     checks — which is the honest thing for it to do, because at that width
+     the individual check is no longer being shown to anybody. The answer at
+     that density is not a thinner tick but a different drawing: give the
+     group ONE tick and leave --n alone, and the hour keeps its share of the
+     bar as a single brick. See the aggregate form on the history page.    */
+  min-inline-size: 0;
+}
+
+/* ── Pointing at a batch ───────────────────────────────────────────────────
+   THE HOUR ITSELF RISES. Not a frame around the marks, not a plate behind
+   them — the marks.
+
+   Two treatments were built and both failed on the same measurement, which is
+   worth recording because it is not obvious: a hairline outline first, then a
+   filled plate carried outward by a shadow spread. Neither could be seen. The
+   reason is AREA rather than strength. Everything drawn around or behind a
+   group shows only in the 2px gaps between its ticks and the 2px margin
+   around them, and where the ticks are wide — one check an hour gives a 17.8px
+   brick — that is a few slivers of a 6.5% film. Raising the opacity darkens
+   the slivers; it does not make the hour read.
+
+   So the carrier has to be the one surface that is always there whatever the
+   density, and that is the ticks. On hover the batch grows --space-1 above and
+   below and stands proud of the line.
+
+   IT COSTS NOTHING HORIZONTALLY, which is the whole reason this is allowed at
+   all. A group is a flex item with a basis of 0, so a pixel of padding or of
+   inline margin comes out of the share it grows into and every hour on the bar
+   shifts as the cursor travels. Block margin is the other axis: on a row-
+   direction flex line it takes no part in inline sizing, and against
+   align-items: stretch a NEGATIVE one enlarges the item — used cross size is
+   the line's cross size minus the cross margins. The ticks stretch into the
+   new height by themselves.
+
+   There is no transition. A size that animates makes the whole strip wobble as
+   the cursor runs along twenty-four hours, and the kit's rule for motion is
+   that it read as a cause rather than as an animation. Instant is the cause.
+
+   The strip does not clip it: a grouped bar is overflow: visible already, for
+   the tooltips.
+
+   Keyboard focus is NOT declared here: `:focus-visible` in base.css already
+   rings anything focusable, and a group that wants to be reachable says so
+   with tabindex in the markup. Two rings for one state is one too many.
+
+   AND MOST GROUPS MUST NOT SAY SO. A focusable element is a tap target, and
+   WCAG 2.2 AA asks a target for 24px or for spacing that a day of hours
+   cannot give: twenty-four groups in a column come out about 15px wide with 4
+   between them, and the pixel gate counts that thirty times over the scale and
+   density grid. The hint stays a pointer affordance there, and the reading
+   reaches a screen reader the way it always did — through the strip's own
+   aria-label, in words. The rule below still exists for the strip of six runs
+   where a group IS wide enough to be a target.                            */
+.inst-history-group:hover {
+  margin-block: calc(var(--space-1) * -1);
+}
+
+.inst-history-group:hover > .inst-tooltip-text,
+.inst-history-group:focus-visible > .inst-tooltip-text { opacity: 1; }
+
+/* ── The height of the strip ───────────────────────────────────────────────
+   Three, because a history bar does three different jobs and the base one
+   answers only the middle: as tall as a glyph, to stand in a row beside a
+   name and a badge.
+
+   The other two are not decoration. In a table of monitors the strip is a
+   COLUMN, and at glyph height it out-shouts the names it belongs to — there
+   it wants the height of a meter, which is what the rest of the kit uses for
+   "a bar in a row of data". On the screen OF one monitor the strip is the
+   subject rather than an annotation, and it takes the small control height:
+   the same box a button beside it occupies, because at that point it is the
+   thing being examined.
+
+   Both numbers come from the ladder rather than from --space-*: a strip is
+   measured against controls and marks, not against gaps.                  */
+.inst-history--sm { block-size: var(--size-meter); }
+.inst-history--lg { block-size: var(--control-h-sm); }
+
+/* ── The axis ──────────────────────────────────────────────────────────────
+   Hours, days, runs — the strip says what happened and the axis says when.
+
+   IT REPEATS THE GEOMETRY OF THE GROUPS RATHER THAN COMPUTING POSITIONS: the
+   same --n, the same flex basis, the same gap. That is the whole design. An
+   application that builds the ruler itself has to reproduce the gap exactly,
+   and one pixel of disagreement compounds — over twenty-four hours the last
+   label ends up two dozen pixels from the column it names. Here the two rows
+   are laid out by one rule, so they cannot drift apart.
+
+   The axis is its own container, so the pair needs no wrapper: the query
+   below asks the width of the ruler, which is the width of the strip.     */
+.inst-history-axis {
+  display: flex;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+  container-type: inline-size;
+  font-size: var(--text-2xs);
+  /* Equal cells under a live update: the digits have to stay under their own
+     columns while the numbers change. */
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.inst-history-axis-cell {
+  /* The same share as the group above it. */
+  flex: var(--n, 1) 1 0;
+  /* A label is allowed to be WIDER than the hour it names, and then it has to
+     hang over its neighbours rather than push them aside. Without this the
+     first wide label takes width from the cells after it and the ruler stops
+     agreeing with the strip — the one thing it exists to do.              */
+  min-inline-size: 0;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+/* Not every label survives a narrow strip, and which ones may go is the
+   caller's decision: it marks them.
+
+   THE CELL KEEPS ITS PLACE. `visibility`, not `display` — a dropped cell that
+   also gave up its share would let the surviving labels slide, and an hour
+   that moves when the window is resized is worse than an hour with no label
+   at all.
+
+   The threshold is the ruler's own width rather than the screen's: the same
+   strip stands in a wide column and in a narrow one, and how many labels fit
+   is a property of the strip. 36rem is a full day of hourly labels at
+   --text-2xs with room to breathe; under it they run together.            */
+@container (max-width: 36rem) {
+  .inst-history-axis-cell[data-minor] { visibility: hidden; }
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -8156,17 +8483,21 @@ html:has(dialog:modal) { overflow: hidden; }
 .inst-lane-track {
   position: relative;
   block-size: var(--size-meter);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   background: var(--track);
   box-shadow: inset 0 0 0 var(--hairline) var(--border);
 }
 
+/* A SHORT RUN AND A LONG RUN ARE THE SAME SHAPE, which at 4 they were not:
+   the span clamps on its own width, so a 3px sliver came out at 1.5 and a
+   39px bar at 3 — the component's corner was being chosen by the duration it
+   was drawing. The track's corner has the same story and the same answer. */
 .inst-lane-span {
   position: absolute;
   inset-block: 0;
   inset-inline-start: calc(var(--from) * 100%);
   inline-size: calc((var(--to) - var(--from)) * 100%);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   background: var(--tone-mark, var(--accent-mark));
 }
 
@@ -8199,7 +8530,25 @@ html:has(dialog:modal) { overflow: hidden; }
    row at its previous height.                                             */
 .inst-copy {
   position: relative;
-  border-radius: var(--radius-xs);
+  /* THE CORNER BELONGS TO THE BOX, AND THE BOX IS NOT ALWAYS THIS ONE'S.
+
+     Bare, the button IS the glyph: 14px, and the hover fill is that square.
+     4 is the largest corner it takes before crossing the kit's own floor for
+     a control shape — radius over height between 0.16 and 0.30, the band
+     cmd/proportion guards: 4/14 = 0.29.
+
+     But the reference composes this class onto `.inst-btn--sm.inst-btn--icon`
+     — in the corner of a listing and in a row of the API — and there the box
+     is `--control-h-sm`, 26px. 4 on 26 is 0.15: under the same floor, and
+     visibly squarer than the small buttons standing next to it in the same
+     toolbar. Worse, it was squarer IN SILENCE: kit.agent comes after
+     kit.components, so this line beat `--radius-control-sm` without any
+     specificity to show for it, and the raw step does not ride the scale
+     ramp the way the control tier does.
+
+     So the corner is declared only where this component owns the box. When
+     the chrome comes from the button, so does the shape.                   */
+  &:not(.inst-btn) { border-radius: var(--radius-xs); }
   /* THE SIZE OF THE GLYPH IS A PROPERTY OF THE CONTROL rather than of the
      place it is written in, and this line is what made it one. Every call
      site used to choose for itself, and they chose differently — 18px beside a
@@ -8318,7 +8667,8 @@ html:has(dialog:modal) { overflow: hidden; }
 
 @media (forced-colors: active) {
   .inst-panel, .inst-card, .inst-input, .inst-textarea, .inst-select, .inst-num-field, .inst-btn,
-  .inst-badge, .inst-approval, .inst-failure, .inst-diff, .inst-meter, .inst-lane-track {
+  .inst-badge, .inst-approval, .inst-failure, .inst-diff, .inst-meter, .inst-lane-track,
+  .inst-share {
     border: var(--stroke) solid CanvasText;
   }
 
@@ -8327,9 +8677,22 @@ html:has(dialog:modal) { overflow: hidden; }
   }
 
   /* A fill that carries meaning has to survive the reset. */
-  .inst-meter-fill, .inst-lane-span, .inst-switch > input:checked, .inst-dot {
+  .inst-meter-fill, .inst-lane-span, .inst-switch > input:checked, .inst-dot,
+  .inst-share-part {
     forced-color-adjust: none;
     background: Highlight;
+  }
+
+  /* A share bar loses its outcomes here — forced-colors has one fill and the
+     parts differ by tone alone — so what survives has to be the DIVISION. A
+     line on the trailing edge of each part keeps "three things, in these
+     proportions" readable; which three is the job of the aria-label, as it is
+     for every bar in this kit.
+
+     The last part takes no line: it ends where the strip ends, and the strip
+     already has a border. */
+  .inst-share-part:not(:last-child) {
+    border-inline-end: var(--stroke) solid CanvasText;
   }
 
   .inst-task[aria-selected="true"], .inst-tree-item[aria-selected="true"],

@@ -575,8 +575,14 @@
 .demo-root > .inst-calendar { flex: 0 1 24rem; }
 
 /* A meter, a slider and a sparkline measure the horizontal: without an
-   explicit basis flex squeezes them to nothing, and the stage looks empty. */
-.demo-root > :is(.inst-meter, .inst-slider, .inst-sparkline, .inst-meter-row) {
+   explicit basis flex squeezes them to nothing, and the stage looks empty.
+
+   A share bar squeezes harder than the rest, and the reason is worth the line:
+   every part inside it has a flex basis of 0, so the bar's max-content width is
+   not merely small but exactly zero. Left out of this list it does not look
+   cramped — it disappears. */
+.demo-root > :is(.inst-meter, .inst-slider, .inst-sparkline, .inst-meter-row,
+                 .inst-share) {
   flex: 1 1 100%;
 }
 

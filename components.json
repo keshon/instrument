@@ -386,7 +386,8 @@
       "sparkline",
       "lane",
       "meter",
-      "run"
+      "run",
+      "share"
     ]
   },
   "input": {
@@ -461,7 +462,8 @@
       "calendar",
       "task",
       "timeline",
-      "history"
+      "history",
+      "share"
     ]
   },
   "legend": {
@@ -473,7 +475,8 @@
     },
     "related": [
       "meter",
-      "sparkline"
+      "sparkline",
+      "share"
     ]
   },
   "log": {
@@ -557,7 +560,8 @@
       "skeleton",
       "spinner",
       "history",
-      "run"
+      "run",
+      "share"
     ]
   },
   "metric": {
@@ -704,7 +708,8 @@
     "related": [
       "meter",
       "metric",
-      "budget"
+      "budget",
+      "share"
     ]
   },
   "run": {
@@ -798,6 +803,26 @@
       "search"
     ]
   },
+  "share": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "border"
+    },
+    "aria": {
+      "role": "img"
+    },
+    "parts": {
+      "inst-share-part": {
+        "forced": "fill"
+      }
+    },
+    "related": [
+      "meter", "history", "legend",
+      "ring", "sparkline", "lane"
+    ]
+  },
   "sheet": {
     "axes": {
       "flow": "block",
@@ -872,7 +897,8 @@
       "meter",
       "metric",
       "legend",
-      "history"
+      "history",
+      "share"
     ]
   },
   "spinner": {

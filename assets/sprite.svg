@@ -53,7 +53,7 @@
   <symbol id="i-p-timeline" viewBox="0 0 16 16"><path d="M4.5 3v10"/><circle cx="4.5" cy="4.6" r="1.5"/><circle cx="4.5" cy="11.4" r="1.5"/><path d="M8 4.6h5.5M8 11.4h4"/></symbol>
   <symbol id="i-p-calendar" viewBox="0 0 16 16"><rect x="2" y="3.5" width="12" height="10" rx="1.5"/><path d="M2 6.6h12"/><path d="M5.4 2.2v2.4M10.6 2.2v2.4"/></symbol>
   <symbol id="i-p-code" viewBox="0 0 16 16"><path d="M5.4 5.4 2.8 8l2.6 2.6M10.6 5.4 13.2 8l-2.6 2.6"/></symbol>
-  <symbol id="i-p-meter" viewBox="0 0 16 16"><rect x="2" y="6.4" width="12" height="3.2" rx="1.6"/><path d="M3.6 8h4.2" stroke-width="3.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-p-meter" viewBox="0 0 16 16"><rect x="2" y="6.4" width="12" height="3.2" rx="1.6"/><path d="M3.6 8h4.2" stroke-width="3.2" stroke-linecap="round"/></symbol><symbol id="i-p-share" viewBox="0 0 16 16"><rect x="2" y="6.4" width="12" height="3.2" rx="1.6"/><path d="M9.4 6.4v3.2M11.9 6.4v3.2"/></symbol>
   <symbol id="i-p-ring" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.2"/><path d="M8 2.8a5.2 5.2 0 0 1 4.6 7.6" stroke-width="2.6"/></symbol>
   <symbol id="i-p-sparkline" viewBox="0 0 16 16"><path d="M2.5 11 5.5 7.4 8.2 9.4 13.5 4.5"/><circle cx="13.5" cy="4.5" r="1.2" fill="currentColor" stroke="none"/></symbol>
   <symbol id="i-p-legend" viewBox="0 0 16 16"><circle cx="3.6" cy="5" r="1.4" fill="currentColor" stroke="none"/><path d="M7 5h6.5"/><circle cx="3.6" cy="11" r="1.4" fill="currentColor" stroke="none"/><path d="M7 11h4.5"/></symbol>

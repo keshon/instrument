@@ -11,7 +11,7 @@ api:
   - { name: "data-state", kind: "атрибут", doc: "`indeterminate` — единственное значение у меры. Без атрибута полоса определённая" }
   - { name: "data-tone", kind: "атрибут", doc: "`neutral` `running` `ok` `warn` `error`. Закрыт. Без атрибута — акцент" }
   - { name: "--size-meter", kind: "токен" }
-  - { name: "--radius-xs", kind: "токен" }
+  - { name: "--radius-mark", kind: "токен" }
   - { name: "--track", kind: "токен" }
   - { name: "--hairline", kind: "токен" }
   - { name: "--border", kind: "токен" }

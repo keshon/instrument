@@ -52,14 +52,25 @@
   inline-size: var(--size-dot);
   block-size: var(--size-dot);
   /* A rounded square, not a circle. The circle is already LOADED in this
-     kit: in a list of consequences it marks a reversible item and a square
-     marks an irreversible one, and that is a carrier on equal footing with
-     tone. A state dot has nothing to do with that axis and must not borrow
-     somebody else's shape.
+     kit: in a list of consequences it marks a reversible item and a rotated
+     square marks an irreversible one, and that is a carrier on equal footing
+     with tone. A state dot has nothing to do with that axis and must not
+     borrow somebody else's shape.
 
-     .inst-dots keeps its circle/square pair: there the shape does work, here
-     it is free. Two components, two jobs. */
-  border-radius: var(--radius-2xs);
+     THE PAIR LIVES IN .inst-approval-effects, where the li::before is a
+     circle and takes a 45° rotation and a square corner on the warn and
+     error tones. Not in .inst-dots, which this comment used to name: the
+     counted meter has no pair of its own — its unit is this very dot, which
+     is exactly why it could not have one.
+
+     Two other circles at this size are deliberate and are NOT this axis:
+     .inst-timeline-dot is a bead on a thread, and the modified mark on a tab
+     is the editor's own idiom for "unsaved". Both are structural; neither
+     enumerates an outcome.
+
+     --radius-mark rather than the raw step: at 6px the ladder stops being a
+     set of choices, and the tier is what says so once. See tokens.css. */
+  border-radius: var(--radius-mark);
   background: var(--tone-mark, var(--text-faint));
 }
 
@@ -174,9 +185,13 @@
    to a screen reader nor to a test.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* A BAR, not a capsule. --size-meter is 6 and the corner used to be declared
+   at 4, which on a 6px edge clamps to 3 — exactly half, that is a full pill,
+   that is the shape reserved for a badge and a tag. Nobody wrote "pill" and
+   nobody could see where it came from. --radius-mark is 2 and lands. */
 .inst-meter {
   block-size: var(--size-meter);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   background: var(--track);
   /* The extent of the track is shown by a hairline rather than by the
      track's own colour: that way the track can stay light enough for the
@@ -185,9 +200,15 @@
   overflow: hidden;
 }
 
+/* The fill takes the track's corner, and that is now true at every value.
+   At 4 it was not: the fill clamps on its OWN width, so a meter at 6% came
+   out at 1.8 and the same meter at 92% at 3 — the end of the bar changed
+   shape as the number moved, which is the one thing a progress bar must not
+   do. At 2 the fill is wider than 4px from about 3% on, and below that there
+   is no corner left to argue about. */
 .inst-meter-fill {
   block-size: 100%;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   background: var(--tone-mark, var(--accent-mark));
   transition: inline-size var(--dur-3) var(--ease-out);
 }

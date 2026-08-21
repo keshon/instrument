@@ -176,6 +176,32 @@ var rules = []rule{
 	{label: "lg control rounding", a: "--radius-control-lg", b: "--control-h-lg", min: 0.16, max: 0.30, perDens: true,
 		why: "large control reads as a pill or loses its rounding entirely"},
 
+	// ── Mark shape ─────────────────────────────────────────────────────────
+	// The same guard as above, pointing the other way. A control is big enough
+	// that its declared radius is the one that gets painted; a mark is not.
+	// Below 8px the browser scales every radius on the box until two of them
+	// fit the edge, so a radius at or above half the box does not read as "very
+	// rounded" — it reads as the shape at half, and the shapes at half are
+	// SPOKEN FOR. Half a dot is a circle, which marks a reversible consequence.
+	// Half a bar is a pill, which is a badge and a tag.
+	//
+	// That is what the upper bound buys: not taste, but keeping --radius-mark
+	// out of the two shapes the kit assigns meaning to. The lower one keeps it
+	// from vanishing — at 1px on a 6px dot the corner is a rasterising artefact
+	// rather than a rounding.
+	{label: "mark rounding to dot", a: "--radius-mark", b: "--size-dot", min: 0.20, max: 0.40,
+		why: "the state dot clamps into a circle, and the circle marks a reversible consequence"},
+	{label: "mark rounding to meter", a: "--radius-mark", b: "--size-meter", min: 0.20, max: 0.40,
+		why: "the meter and the lane track clamp into a pill, and a pill in the kit is a badge and a tag"},
+
+	// The tick is the one mark the tier cannot save from clamping: it is 3px
+	// wide and any corner worth drawing is more than half of that. The band is
+	// therefore looser and guards a different failure — a corner that outgrows
+	// its own tick, at which point the painted shape is set by the tick's WIDTH,
+	// and on a grouped strip the width is set by the data.
+	{label: "mark rounding to tick", a: "--radius-mark", b: "--size-tick", min: 0.30, max: 0.70,
+		why: "the corner outgrows the tick, and the strip's shape starts following the traffic through it"},
+
 	// ── Label column ────────────────────────────────────────────────────────
 	// It holds TEXT, so it must grow with type size. This is exactly what
 	// overflowed when the base grew: "Token limit" required 99.9px at a width

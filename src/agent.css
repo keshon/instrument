@@ -423,10 +423,21 @@
   overflow: hidden;
 }
 
+/* THE CORNER IS NOT ALLOWED TO DEPEND ON THE DATA, and at --radius-xs it did.
+   A tick is --size-tick wide on a plain strip but a share of its group on a
+   grouped one, and the corner clamps to half the width: measured over a 520px
+   day, 17.8px at one check an hour and 1px at seven. The same class drew fat
+   lozenges for a sparse monitor and hairlines for a busy one — a shape chosen
+   by the traffic through the component rather than by the component.
+
+   --radius-mark does not abolish the clamp at the narrow end, because nothing
+   can: 2 still halves on a 3px tick. It collapses the RANGE the shape moves
+   across from eightfold to fourfold, and it takes away the lozenge, which was
+   the only end of that range anyone could see. */
 .inst-history-tick {
   flex: none;
   inline-size: var(--size-tick);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   /* With no tone a tick is track: the check happened, the outcome is not
      known. */
   background: var(--tone-mark, var(--track));
@@ -482,10 +493,40 @@
 
 .inst-history-group {
   display: flex;
+  /* The anchor of the group's own tooltip. A batch is the unit a person can
+     point at — an individual check inside a 1.5px tick is not — so the hint
+     hangs on the GROUP, and `.inst-tooltip-text` is placed straight inside it
+     with no wrapper of its own. Absolutely positioned, so it takes no part in
+     the flex line it sits in and --n keeps counting ticks only.
+
+     The rule that reveals it is below rather than in overlay.css, because
+     `.inst-history-group` is declared here: kit.agent comes after kit.overlay
+     and a selector from there would lose to nothing but itself.           */
+  position: relative;
   /* A fraction of the bar, by the number of checks inside. The basis is 0, so
      the growth is counted from zero and the fractions come out even.      */
   flex: var(--n, 1) 1 0;
-  gap: var(--space-1);
+  /* THE SEPARATOR YIELDS BEFORE THE DATA DOES, and until this line it was the
+     other way round.
+
+     A gap does not shrink. A flex item does. So in a group of seven the six
+     gaps took their twelve pixels first and left five for seven ticks, which
+     the 1px floor below then rounded UP — and the group came out wider than
+     its share. Measured on a 520px day: at seven checks an hour the strip
+     overflowed by 1px, at twelve by 16px, and because a grouped strip does not
+     clip (see above — the tooltips need the room), the oldest hours were
+     painted outside the bar rather than cut off by it. Seven checks an hour is
+     a check every eight and a half minutes; this was not an edge.
+
+     So the gap is capped at a share of the group instead of a constant: 40%
+     of the group across all of the gaps, however many there are. In a sparse
+     hour the cap is far above --space-1 and nothing changes. In a dense one
+     the separators thin out and the marks keep their width, which is the
+     right way round — the tick is the reading, the gap is only the comb.
+
+     max(1, …) guards the single-tick group: --n of 1 leaves no gaps at all,
+     and a division by zero would void the declaration.                    */
+  column-gap: min(var(--space-1), calc(40% / max(1, var(--n, 1) - 1)));
   /* An hour does not vanish even with one check in it against a hundred next
      door. */
   min-inline-size: var(--size-tick);
@@ -495,7 +536,139 @@
   /* Inside a group the ticks divide it evenly: the width of a tick carries
      no meaning here, their NUMBER does.                                    */
   flex: 1 1 0;
-  min-inline-size: 1px;
+  /* NO FLOOR. A floor on something that has to divide a fixed width is a way
+     of asking for overflow, and that is exactly what the 1px here produced.
+
+     A tick thinner than a device pixel is drawn anti-aliased rather than
+     dropped, so the bar keeps its shape and simply stops resolving individual
+     checks — which is the honest thing for it to do, because at that width
+     the individual check is no longer being shown to anybody. The answer at
+     that density is not a thinner tick but a different drawing: give the
+     group ONE tick and leave --n alone, and the hour keeps its share of the
+     bar as a single brick. See the aggregate form on the history page.    */
+  min-inline-size: 0;
+}
+
+/* ── Pointing at a batch ───────────────────────────────────────────────────
+   THE HOUR ITSELF RISES. Not a frame around the marks, not a plate behind
+   them — the marks.
+
+   Two treatments were built and both failed on the same measurement, which is
+   worth recording because it is not obvious: a hairline outline first, then a
+   filled plate carried outward by a shadow spread. Neither could be seen. The
+   reason is AREA rather than strength. Everything drawn around or behind a
+   group shows only in the 2px gaps between its ticks and the 2px margin
+   around them, and where the ticks are wide — one check an hour gives a 17.8px
+   brick — that is a few slivers of a 6.5% film. Raising the opacity darkens
+   the slivers; it does not make the hour read.
+
+   So the carrier has to be the one surface that is always there whatever the
+   density, and that is the ticks. On hover the batch grows --space-1 above and
+   below and stands proud of the line.
+
+   IT COSTS NOTHING HORIZONTALLY, which is the whole reason this is allowed at
+   all. A group is a flex item with a basis of 0, so a pixel of padding or of
+   inline margin comes out of the share it grows into and every hour on the bar
+   shifts as the cursor travels. Block margin is the other axis: on a row-
+   direction flex line it takes no part in inline sizing, and against
+   align-items: stretch a NEGATIVE one enlarges the item — used cross size is
+   the line's cross size minus the cross margins. The ticks stretch into the
+   new height by themselves.
+
+   There is no transition. A size that animates makes the whole strip wobble as
+   the cursor runs along twenty-four hours, and the kit's rule for motion is
+   that it read as a cause rather than as an animation. Instant is the cause.
+
+   The strip does not clip it: a grouped bar is overflow: visible already, for
+   the tooltips.
+
+   Keyboard focus is NOT declared here: `:focus-visible` in base.css already
+   rings anything focusable, and a group that wants to be reachable says so
+   with tabindex in the markup. Two rings for one state is one too many.
+
+   AND MOST GROUPS MUST NOT SAY SO. A focusable element is a tap target, and
+   WCAG 2.2 AA asks a target for 24px or for spacing that a day of hours
+   cannot give: twenty-four groups in a column come out about 15px wide with 4
+   between them, and the pixel gate counts that thirty times over the scale and
+   density grid. The hint stays a pointer affordance there, and the reading
+   reaches a screen reader the way it always did — through the strip's own
+   aria-label, in words. The rule below still exists for the strip of six runs
+   where a group IS wide enough to be a target.                            */
+.inst-history-group:hover {
+  margin-block: calc(var(--space-1) * -1);
+}
+
+.inst-history-group:hover > .inst-tooltip-text,
+.inst-history-group:focus-visible > .inst-tooltip-text { opacity: 1; }
+
+/* ── The height of the strip ───────────────────────────────────────────────
+   Three, because a history bar does three different jobs and the base one
+   answers only the middle: as tall as a glyph, to stand in a row beside a
+   name and a badge.
+
+   The other two are not decoration. In a table of monitors the strip is a
+   COLUMN, and at glyph height it out-shouts the names it belongs to — there
+   it wants the height of a meter, which is what the rest of the kit uses for
+   "a bar in a row of data". On the screen OF one monitor the strip is the
+   subject rather than an annotation, and it takes the small control height:
+   the same box a button beside it occupies, because at that point it is the
+   thing being examined.
+
+   Both numbers come from the ladder rather than from --space-*: a strip is
+   measured against controls and marks, not against gaps.                  */
+.inst-history--sm { block-size: var(--size-meter); }
+.inst-history--lg { block-size: var(--control-h-sm); }
+
+/* ── The axis ──────────────────────────────────────────────────────────────
+   Hours, days, runs — the strip says what happened and the axis says when.
+
+   IT REPEATS THE GEOMETRY OF THE GROUPS RATHER THAN COMPUTING POSITIONS: the
+   same --n, the same flex basis, the same gap. That is the whole design. An
+   application that builds the ruler itself has to reproduce the gap exactly,
+   and one pixel of disagreement compounds — over twenty-four hours the last
+   label ends up two dozen pixels from the column it names. Here the two rows
+   are laid out by one rule, so they cannot drift apart.
+
+   The axis is its own container, so the pair needs no wrapper: the query
+   below asks the width of the ruler, which is the width of the strip.     */
+.inst-history-axis {
+  display: flex;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+  container-type: inline-size;
+  font-size: var(--text-2xs);
+  /* Equal cells under a live update: the digits have to stay under their own
+     columns while the numbers change. */
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.inst-history-axis-cell {
+  /* The same share as the group above it. */
+  flex: var(--n, 1) 1 0;
+  /* A label is allowed to be WIDER than the hour it names, and then it has to
+     hang over its neighbours rather than push them aside. Without this the
+     first wide label takes width from the cells after it and the ruler stops
+     agreeing with the strip — the one thing it exists to do.              */
+  min-inline-size: 0;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+/* Not every label survives a narrow strip, and which ones may go is the
+   caller's decision: it marks them.
+
+   THE CELL KEEPS ITS PLACE. `visibility`, not `display` — a dropped cell that
+   also gave up its share would let the surviving labels slide, and an hour
+   that moves when the window is resized is worse than an hour with no label
+   at all.
+
+   The threshold is the ruler's own width rather than the screen's: the same
+   strip stands in a wide column and in a narrow one, and how many labels fit
+   is a property of the strip. 36rem is a full day of hourly labels at
+   --text-2xs with room to breathe; under it they run together.            */
+@container (max-width: 36rem) {
+  .inst-history-axis-cell[data-minor] { visibility: hidden; }
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -599,17 +772,21 @@
 .inst-lane-track {
   position: relative;
   block-size: var(--size-meter);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   background: var(--track);
   box-shadow: inset 0 0 0 var(--hairline) var(--border);
 }
 
+/* A SHORT RUN AND A LONG RUN ARE THE SAME SHAPE, which at 4 they were not:
+   the span clamps on its own width, so a 3px sliver came out at 1.5 and a
+   39px bar at 3 — the component's corner was being chosen by the duration it
+   was drawing. The track's corner has the same story and the same answer. */
 .inst-lane-span {
   position: absolute;
   inset-block: 0;
   inset-inline-start: calc(var(--from) * 100%);
   inline-size: calc((var(--to) - var(--from)) * 100%);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-mark);
   background: var(--tone-mark, var(--accent-mark));
 }
 
@@ -642,7 +819,25 @@
    row at its previous height.                                             */
 .inst-copy {
   position: relative;
-  border-radius: var(--radius-xs);
+  /* THE CORNER BELONGS TO THE BOX, AND THE BOX IS NOT ALWAYS THIS ONE'S.
+
+     Bare, the button IS the glyph: 14px, and the hover fill is that square.
+     4 is the largest corner it takes before crossing the kit's own floor for
+     a control shape — radius over height between 0.16 and 0.30, the band
+     cmd/proportion guards: 4/14 = 0.29.
+
+     But the reference composes this class onto `.inst-btn--sm.inst-btn--icon`
+     — in the corner of a listing and in a row of the API — and there the box
+     is `--control-h-sm`, 26px. 4 on 26 is 0.15: under the same floor, and
+     visibly squarer than the small buttons standing next to it in the same
+     toolbar. Worse, it was squarer IN SILENCE: kit.agent comes after
+     kit.components, so this line beat `--radius-control-sm` without any
+     specificity to show for it, and the raw step does not ride the scale
+     ramp the way the control tier does.
+
+     So the corner is declared only where this component owns the box. When
+     the chrome comes from the button, so does the shape.                   */
+  &:not(.inst-btn) { border-radius: var(--radius-xs); }
   /* THE SIZE OF THE GLYPH IS A PROPERTY OF THE CONTROL rather than of the
      place it is written in, and this line is what made it one. Every call
      site used to choose for itself, and they chose differently — 18px beside a

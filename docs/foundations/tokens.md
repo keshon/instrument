@@ -333,7 +333,7 @@ width, the text on it does not.
 | Group | Tokens |
 |---|---|
 | The scale | `--space-1` … `--space-10` (2 · 4 · 6 · 8 · 12 · 16 · 24 · 32 · 48 · 64) |
-| Radii | `--radius-2xs` 2 · `--radius-xs` 4 · `--radius-sm` 6 · `--radius-md` 8 · `--radius-lg` 12 · `--radius-full`. Controls take `--radius-control-sm/md/lg`, which travel with density |
+| Radii | `--radius-2xs` 2 · `--radius-xs` 4 · `--radius-sm` 6 · `--radius-md` 8 · `--radius-lg` 12 · `--radius-full`. Controls take `--radius-control-sm/md/lg`, which travel with density; marks — anything below 8px — take `--radius-mark`, which does not |
 | Lines | `--hairline` (0.5px from 1.5dppx, otherwise 1px) · `--stroke` 1px |
 
 ### Motion

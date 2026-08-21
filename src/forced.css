@@ -25,7 +25,8 @@
 
 @media (forced-colors: active) {
   .inst-panel, .inst-card, .inst-input, .inst-textarea, .inst-select, .inst-num-field, .inst-btn,
-  .inst-badge, .inst-approval, .inst-failure, .inst-diff, .inst-meter, .inst-lane-track {
+  .inst-badge, .inst-approval, .inst-failure, .inst-diff, .inst-meter, .inst-lane-track,
+  .inst-share {
     border: var(--stroke) solid CanvasText;
   }
 
@@ -34,9 +35,22 @@
   }
 
   /* A fill that carries meaning has to survive the reset. */
-  .inst-meter-fill, .inst-lane-span, .inst-switch > input:checked, .inst-dot {
+  .inst-meter-fill, .inst-lane-span, .inst-switch > input:checked, .inst-dot,
+  .inst-share-part {
     forced-color-adjust: none;
     background: Highlight;
+  }
+
+  /* A share bar loses its outcomes here — forced-colors has one fill and the
+     parts differ by tone alone — so what survives has to be the DIVISION. A
+     line on the trailing edge of each part keeps "three things, in these
+     proportions" readable; which three is the job of the aria-label, as it is
+     for every bar in this kit.
+
+     The last part takes no line: it ends where the strip ends, and the strip
+     already has a border. */
+  .inst-share-part:not(:last-child) {
+    border-inline-end: var(--stroke) solid CanvasText;
   }
 
   .inst-task[aria-selected="true"], .inst-tree-item[aria-selected="true"],

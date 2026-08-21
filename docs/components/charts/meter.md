@@ -11,7 +11,7 @@ api:
   - { name: "data-state", kind: "attribute", doc: "`indeterminate` — the only value a meter has. With no attribute the bar is determinate" }
   - { name: "data-tone", kind: "attribute", doc: "`neutral` `running` `ok` `warn` `error`. Closed. With no attribute, the accent" }
   - { name: "--size-meter", kind: "token" }
-  - { name: "--radius-xs", kind: "token" }
+  - { name: "--radius-mark", kind: "token" }
   - { name: "--track", kind: "token" }
   - { name: "--hairline", kind: "token" }
   - { name: "--border", kind: "token" }

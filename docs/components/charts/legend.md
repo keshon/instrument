@@ -16,7 +16,7 @@ api:
   - { name: "--chart-6", kind: "token", doc: "The hue of series no. 6. The order is part of the contract" }
   - { name: "--series", kind: "variable", value: "--accent-mark", doc: "The receiver of the hue: the swatch of a legend reads it" }
   - { name: "--size-dot", kind: "token", doc: "The side of the swatch" }
-  - { name: "--radius-xs", kind: "token", doc: "The rounding of the swatch" }
+  - { name: "--radius-mark", kind: "token", doc: "The rounding of the swatch" }
   - { name: "--text-xs", kind: "token", doc: "The size of the label" }
   - { name: "--space-3", kind: "token", doc: "The gap between the swatch and the label" }
   - { name: "--gap-inline", kind: "token", doc: "The gap between the items" }

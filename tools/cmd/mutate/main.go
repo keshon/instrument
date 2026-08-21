@@ -162,6 +162,14 @@ var mutations = []mutation{
 		"--row-pad-y:   var(--space-3);",
 		"--row-pad-y:   var(--space-6);",
 		"part of the vertical air was already delivered by the leading"},
+	// The mutation that would have caught the whole mark story before it was a
+	// story: --radius-xs on a mark is the state the kit shipped in, and it is
+	// exactly one step up from the tier. On a 6px dot it clamps to 3, which is
+	// half, which is the circle the consequence list owns.
+	{"the mark tier reaches one step up the ladder", "proportion", "src/tokens.css",
+		"--radius-mark: var(--radius-2xs);",
+		"--radius-mark: var(--radius-xs);",
+		"at half the box a mark stops being rounded and becomes a circle or a pill"},
 
 	// ── dist: the "Forbidden" section ──────────────────────────────────────
 	{"!important in a component", "dist", "src/actions.css",

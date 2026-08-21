@@ -13,7 +13,7 @@ api:
   - { name: "--label-col", kind: "токен" }
   - { name: "--gap-inline", kind: "токен" }
   - { name: "--size-meter", kind: "токен" }
-  - { name: "--radius-xs", kind: "токен" }
+  - { name: "--radius-mark", kind: "токен" }
   - { name: "--track", kind: "токен" }
   - { name: "--border", kind: "токен" }
   - { name: "--hairline", kind: "токен" }

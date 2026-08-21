@@ -219,15 +219,115 @@
    on every series, the first included.
 
    The rule is shared with the chart itself, see .inst-sparkline below.    */
+/* THE SHAPE OF THE SWATCH IS THE SHAPE OF THE DOT, and it used to be a
+   circle by accident. The box is --size-dot, 6, and the corner was declared
+   at 4: on a 6px edge that clamps to 3, which is half, which is the circle
+   the list of consequences owns. So a legend and a state dot standing in one
+   panel drew two different marks for one job, and the reason was invisible in
+   the source — the declaration said 4 and the screen said 3. */
 .inst-legend-swatch {
   flex: none;
   inline-size: var(--size-dot);
   block-size: var(--size-dot);
-  border-radius: var(--radius-xs);
-  background: var(--series, var(--accent-mark));
+  border-radius: var(--radius-mark);
+  /* TWO VOCABULARIES, ONE SWATCH, and the order between them is the rule.
+
+     --series is the categorical palette and it wins, because a caller who
+     names a series has said which of six colours this is and there is nothing
+     to infer. With no series the swatch falls through to the tone, so a
+     legend can key a STATE bar as well as a chart: an uptime strip and a
+     share bar are drawn in ok/warn/error, and their key has to be drawn in
+     the same values rather than in a categorical colour that merely looks
+     similar. Two ways to arrive at one colour diverge on the first theme
+     nobody checked.
+
+     Neither vocabulary covers "nothing was there", so the swatch borrows the
+     word the strip already uses for it — see data-empty below. */
+  background: var(--series, var(--tone-mark, var(--accent-mark)));
 }
 
+/* NOTHING WAS THERE: an hour nobody checked, a share nobody accounted for.
+
+   The same attribute and the same value as `.inst-history-tick[data-empty]`,
+   because it is the same statement — and the key has to be drawn in the value
+   the bar is drawn in, or the legend is describing a colour twenty pixels
+   away that is not the colour on the bar. That exact bug is what an
+   application hit when it had to reach into the kit and set --tone-mark to
+   the track by hand.
+
+   A tone would be wrong here for the reason it is wrong on the tick: an
+   absence is not an outcome, and on real data a gap is the norm. */
+.inst-legend-swatch[data-empty] { background: var(--track); }
+
 .inst-legend-value { color: var(--text-primary); font-weight: var(--weight-medium); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Share — what a period was MADE OF
+
+   One bar, divided by the share of each outcome in it: twenty-two hours up,
+   an hour and a half down, half an hour nobody looked. The question is "how
+   much of the whole", and the answer is the width of each part.
+
+   IT IS NOT A METER. A meter compares one quantity against a ceiling and has
+   a track behind it for the part not yet reached; here every part is reached
+   and they are compared against EACH OTHER. A meter with three fills would be
+   three answers to a question that admits one.
+
+   IT IS NOT A HISTORY STRIP either, and the pair is worth stating because an
+   uptime screen wants both. A strip answers WHEN — the failure was at 03:00,
+   there were two of them, they were next to each other. A share answers HOW
+   MUCH — the day was 3% down. A strip cannot total, and a share cannot order:
+   the same 3% is one long outage or ninety scattered ones and this bar draws
+   them identically. Neither replaces the other; on a monitor they stand one
+   above the other, and the legend belongs to both.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-share {
+  display: flex;
+  block-size: var(--size-meter);
+  border-radius: var(--radius-mark);
+  /* Track under the parts rather than a fourth part over it: what the caller
+     did not account for is not an outcome and must not get a tone. A day with
+     eight hours of data and sixteen of silence shows as a bar a third full,
+     and the emptiness is read as emptiness. */
+  background: var(--track);
+  /* The extent is drawn by a hairline rather than by the track's own colour,
+     the same device the meter uses: the track then stays light enough for a
+     tone on it to hold 3:1. */
+  box-shadow: inset 0 0 0 var(--hairline) var(--border);
+  /* THE STRIP OWNS THE CORNER AND THE PARTS ARE SQUARE. Rounding each part
+     would put an arc at every internal boundary — four corners where the data
+     has one edge — and at --size-meter those arcs meet and leave a notch of
+     track showing between two neighbouring outcomes. One clip, one shape. */
+  overflow: hidden;
+}
+
+.inst-share-part {
+  /* The share is the grow factor and the basis is 0, so the parts divide the
+     bar in exactly the ratio they were given, whatever they sum to. A caller
+     who hands over 0.92 / 0.06 / 0.02 gets a full bar; one who hands over
+     0.4 / 0.1 gets half a bar and half a track, which is the honest drawing
+     of half a day of data. */
+  flex: var(--share, 0) 1 0;
+  /* NO FLOOR, and this is the whole design position of the component.
+
+     A floor would make a 0.02% slice as wide as a 2% one, and then the bar
+     no longer reports proportion — it reports "this happened", in the units
+     of a bar that claims to report proportion. That is the same lie as a
+     determinate meter parked at 90%.
+
+     "Did it ever happen at all" is a real question and it has a real answer
+     in this kit: the history strip, where one check is one tick and a single
+     failure is a mark you can point at. A share bar is for how much. */
+  min-inline-size: 0;
+  background: var(--tone-mark, var(--accent-mark));
+}
+
+/* Two heights, for the two places a share bar stands. The base is the meter's,
+   because in a row of data this IS the meter's job with more than one answer.
+   The large one is a glyph's height: on the screen of a single object the bar
+   is the subject rather than an annotation to a number. */
+.inst-share--lg { block-size: var(--size-icon); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Sparkline and ring

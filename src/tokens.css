@@ -1085,6 +1085,39 @@
   --radius-control-md: var(--radius-md);
   --radius-control-lg: var(--radius-md);
 
+  /* THE ROUNDING of a MARK — the tier the control tier had and the marks did
+     not, which is how seven of them ended up declaring a corner the browser
+     never painted.
+
+     A mark is anything the kit draws below 8px: the state dot (6), the meter
+     and the lane track (6), a tick in a history bar (3), the legend swatch
+     (6). On boxes that small the ladder stops being a set of choices. When
+     two radii on one edge add up to more than the edge is long, the browser
+     scales EVERY radius on the box by the same factor until they fit, and it
+     does that in silence. So --radius-xs, 4, on a 6px dot arrives as 3 —
+     which is half the box, which is a circle; and on a 6px meter it arrives
+     as 3 as well, which is a pill. Neither was declared and neither was
+     wanted: the circle belongs to the list of consequences and the pill to a
+     badge and a tag.
+
+     Worse for a bar than for a dot, because a bar's other side is DATA. A
+     lane span 3px wide and one 39px wide take the same class and come out
+     1.5 and 3; a history tick is 17.8px in a monitor checked once an hour and
+     1px in one checked seven times, so the shape of the component was being
+     chosen by the traffic through it.
+
+     2 is the largest step that survives every mark in every scale: the
+     smallest mark is a 3px tick (4 > 3, so even this one clamps there, to
+     1.5 — but 1.5 on a 3px column is below what a corner can show, and the
+     range it clamps ACROSS has collapsed from eightfold to fourfold), and
+     the largest is an 8px dot in scale 17, where 2 is 0.25 — the same
+     proportion the control tier holds.
+
+     It does not ride scale, for the reason --radius-2xs does not: a mark is
+     read as a shape rather than measured against a type size, and at these
+     sizes one step is the whole difference between a square and a circle. */
+  --radius-mark: var(--radius-2xs);
+
   /* THE PROPORTION of a control rather than its padding. This is the one
      place in the kit where a RATIO is declared, and the reason is that the
      ratio is the shape of the button.
