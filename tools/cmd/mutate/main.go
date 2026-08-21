@@ -377,6 +377,15 @@ var mutations = []mutation{
 	// What remains is the contract itself, and its two halves are checked apart.
 	// A rule whose halves are never seen separately is a rule nobody has
 	// checked: the first mutation would fire on either of them.
+	// The premise under the reference's "Where from" column: the FIRST
+	// declaration of a token is the base one. Take the base away and the page
+	// starts calling a cell the base — a true number standing next to a false
+	// statement about where it came from, which is the exact defect the column
+	// was added to remove.
+	{"a token declared in a cell but not at the base", "site", "src/tokens.css",
+		"  --radius-sm: 6px;   /* controls inside a card */",
+		"  /* controls inside a card */",
+		"the reference would name a cell as the base and say nothing about it"},
 	{"a page lost its markup contract", "site", "docs/components/actions/chip.md",
 		"## Контракт", "### Контракт",
 		"the contract is the section the whole shape exists for; without it the page promises a role and explains nothing"},

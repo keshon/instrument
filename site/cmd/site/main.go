@@ -77,6 +77,7 @@ func main() {
 		log.Fatalf("не прочитать стили сайта: %v", err)
 	}
 	assetErrs := check.Assets(styles, tokens)
+	assetErrs = append(assetErrs, check.Base(tokens)...)
 
 	sources := map[string]string{}
 	for n, s := range styles {

@@ -579,33 +579,138 @@ func writeRelated(w util.BufWriter, p *Page) {
 	w.WriteString(`</p>`)
 }
 
+// The API used to be ONE table of three columns for three kinds of row, and
+// two thirds of its cells were empty by construction: a class has no value, a
+// token has no prose. Filler reads as filler because that is what it was.
+//
+// Three blocks instead, each with the columns its own rows actually fill.
+// The split is not cosmetic — it made room for the column that was missing.
 func writeAPI(w util.BufWriter, p *Page) {
 	if len(p.API) == 0 {
 		return
 	}
-	fmt.Fprintf(w, `<div class="api"><table class="api-table"><thead><tr>`+
-		`<th>%s</th><th>%s</th><th>%s</th>`+
-		`</tr></thead><tbody>`,
-		i18n.T(p.Lang, "api.name"), i18n.T(p.Lang, "api.value"), i18n.T(p.Lang, "api.doc"))
-	kind := ""
+	var classes, attrs, tokens []APIRow
 	for _, r := range p.API {
+		switch r.Kind {
+		case "класс", "модификатор", "class", "modifier":
+			classes = append(classes, r)
+		case "атрибут", "событие", "attribute", "event":
+			attrs = append(attrs, r)
+		default:
+			tokens = append(tokens, r)
+		}
+	}
+	w.WriteString(`<div class="api">`)
+	writeAPIBlock(w, p, "api.classes", classes, 2)
+	writeAPIBlock(w, p, "api.attrs", attrs, 3)
+	writeAPIBlock(w, p, "api.tokens", tokens, 4)
+	w.WriteString(`</div>`)
+}
+
+// writeAPIBlock renders one block. `cols` picks the shape rather than a count:
+// 2 is name and prose, 3 is name, value and prose, 4 is name, value and the
+// cell the value came from.
+func writeAPIBlock(w util.BufWriter, p *Page, title string, rows []APIRow, cols int) {
+	if len(rows) == 0 {
+		return
+	}
+	span := 2
+	if cols > 2 {
+		span = 3
+	}
+	fmt.Fprintf(w, `<div class="api-scroll"><table class="api-table api-table--%d"><caption>%s</caption><thead><tr>`,
+		cols, escape(i18n.T(p.Lang, title)))
+	switch cols {
+	case 2:
+		fmt.Fprintf(w, `<th>%s</th><th>%s</th>`,
+			i18n.T(p.Lang, "api.name"), i18n.T(p.Lang, "api.doc"))
+	case 3:
+		fmt.Fprintf(w, `<th>%s</th><th>%s</th><th>%s</th>`,
+			i18n.T(p.Lang, "api.name"), i18n.T(p.Lang, "api.value"), i18n.T(p.Lang, "api.doc"))
+	default:
+		fmt.Fprintf(w, `<th>%s</th><th>%s</th><th>%s</th>`,
+			i18n.T(p.Lang, "api.name"), i18n.T(p.Lang, "api.value"), i18n.T(p.Lang, "api.where"))
+	}
+	w.WriteString(`</tr></thead><tbody>`)
+
+	kind := ""
+	for _, r := range rows {
 		if r.Kind != kind {
 			kind = r.Kind
-			fmt.Fprintf(w, `<tr class="api-group"><th colspan="3" scope="colgroup">%s</th></tr>`,
-				escape(i18n.Kind(p.Lang, kind)))
+			fmt.Fprintf(w, `<tr class="api-group"><th colspan="%d" scope="colgroup">%s</th></tr>`,
+				span, escape(i18n.Kind(p.Lang, kind)))
 		}
-		val := escape(r.Value)
-		if val == "" {
-			val = `<span class="api-none">—</span>`
+		name := copyValue(r.Name, p.Lang) + `<code class="api-name">` + escape(r.Name) + `</code>`
+		if cols == 4 && r.Doc != "" {
+			// The prose about a token is the exception — a hundred and twenty of
+			// seven hundred and fifty seven — so it goes UNDER the name rather
+			// than into a column that would stand empty five rows out of six.
+			name += `<small class="api-note">` + inlineCode(r.Doc) + `</small>`
+		}
+		fmt.Fprintf(w, `<tr data-kind="%s"><td class="api-cell">%s</td>`, escape(r.Kind), name)
+		if cols > 2 {
+			val := escape(r.Value)
+			if val == "" {
+				val = `<span class="api-none">—</span>`
+			} else {
+				val = copyValue(r.Value, p.Lang) + `<code>` + val + `</code>`
+			}
+			fmt.Fprintf(w, `<td class="api-cell">%s</td>`, val)
+		}
+		if cols == 4 {
+			fmt.Fprintf(w, `<td class="api-where">%s</td>`, whereFrom(p, r))
 		} else {
-			val = copyValue(r.Value, p.Lang) + `<code>` + val + `</code>`
+			fmt.Fprintf(w, `<td>%s</td>`, inlineCode(r.Doc))
 		}
-		fmt.Fprintf(w,
-			`<tr data-kind="%s"><td class="api-cell">%s<code class="api-name">%s</code></td>`+
-				`<td class="api-cell">%s</td><td>%s</td></tr>`,
-			escape(r.Kind), copyValue(r.Name, p.Lang), escape(r.Name), val, inlineCode(r.Doc))
+		w.WriteString(`</tr>`)
 	}
 	w.WriteString(`</tbody></table></div>`)
+}
+
+// whereFrom says which cell the printed value was taken from.
+//
+// This column is the point of the whole split. --control-h-sm printed as 26px
+// is TRUE and means less than it looks: the kit declares it fifteen times, and
+// at compact density it is 22. Fifty-six of the hundred and forty-three tokens
+// the pages name are like that. A number without its cell is the same defect as
+// "coverage 100%" counted over the wrong set.
+func whereFrom(p *Page, r APIRow) string {
+	if r.Kind == "переменная" || r.Kind == "variable" {
+		return escape(i18n.T(p.Lang, "api.set"))
+	}
+	if len(r.Cells) <= 1 {
+		return escape(i18n.T(p.Lang, "api.one"))
+	}
+	seen := map[string]bool{}
+	var axes []string
+	for _, c := range r.Cells[1:] {
+		for _, ax := range axesOf(c) {
+			if !seen[ax] {
+				seen[ax] = true
+				axes = append(axes, escape(i18n.T(p.Lang, "api.axis."+ax)))
+			}
+		}
+	}
+	return fmt.Sprintf(`%s <span class="api-note">+%d: %s</span>`,
+		escape(i18n.T(p.Lang, "api.base")), len(r.Cells)-1, strings.Join(axes, " · "))
+}
+
+// axesOf names the axes a selector moves along. A cell can name two at once —
+// the ten scale-and-density combinations do — so this returns a list.
+func axesOf(sel string) []string {
+	var out []string
+	for _, a := range []struct{ mark, name string }{
+		{"data-scale", "scale"},
+		{"data-density", "density"},
+		{"data-theme", "theme"},
+		{"data-accent", "accent"},
+		{"@media", "screen"},
+	} {
+		if strings.Contains(sel, a.mark) {
+			out = append(out, a.name)
+		}
+	}
+	return out
 }
 
 var (

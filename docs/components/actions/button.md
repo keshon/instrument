@@ -16,8 +16,8 @@ api:
   - { name: "inst-btn-value",    kind: "класс",       doc: "Значение внутри `.inst-btn-stack`. Длинное обрезается: это идентификатор, переносить его нельзя" }
   - { name: "inst-btn--ghost",   kind: "модификатор", doc: "Без рамки и без заливки. Для второстепенных действий в плотном ряду" }
   - { name: "inst-btn--danger",  kind: "модификатор", doc: "Разрушительное действие: тон ошибки в подписи. Это ТОН поверх веса, а не пятый вес — сочетается с любым" }
-  - { name: "inst-btn--sm",      kind: "модификатор", value: "26px", doc: "Высота из `--control-h-sm`, кегль `--text-xs`" }
-  - { name: "inst-btn--lg",      kind: "модификатор", value: "38px", doc: "Высота из `--control-h-lg`, кегль `--text-md`" }
+  - { name: "inst-btn--sm",      kind: "модификатор", doc: "Высота из `--control-h-sm`, кегль `--text-xs`" }
+  - { name: "inst-btn--lg",      kind: "модификатор", doc: "Высота из `--control-h-lg`, кегль `--text-md`" }
   - { name: "inst-btn--icon",    kind: "модификатор", doc: "Квадратная, только иконка. Требует `aria-label`" }
 
   - { name: "type",       kind: "атрибут", value: "button · submit", doc: "Обязателен. Без него кнопка внутри формы её отправит" }

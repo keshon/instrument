@@ -29,6 +29,55 @@ var (
 		`здесь сто(ял|яла|яли|яло)|было объявлено`)
 )
 
+// Base проверяет, что у токена, объявленного в ЯЧЕЙКЕ, есть объявление и в
+// базе.
+//
+// На этом стоит колонка «Откуда» в справочнике. Она печатает первое
+// объявление и называет его базой, а остальные считает отклонениями: «база
+// +14: плотность · масштаб». Если токен объявлен только в
+// `[data-density="compact"]`, первым окажется оно — и страница назовёт базой
+// то, что базой не является, ни разу об этом не сказав. Число будет верным и
+// будет означать не то, что написано рядом, — ровно та болезнь, ради которой
+// колонка и заводилась.
+//
+// Сегодня инвариант держится на всех ста восьмидесяти двух токенах
+// `tokens.css`, и проверка нужна не чтобы его установить, а чтобы он не
+// разошёлся молча.
+func Base(tokens map[string]content.Token) []string {
+	var problems []string
+	var names []string
+	for n := range tokens {
+		names = append(names, n)
+	}
+	sort.Strings(names)
+	for _, n := range names {
+		t := tokens[n]
+		// Только tokens.css. У остальных файлов ячеек нет: там переменная
+		// компонента объявляется на самом компоненте — `--btn-bg` на
+		// `.inst-btn`, — и это её дом, а не отклонение от базы. Требовать ей
+		// `:root` значило бы требовать глобального имени тому, что нарочно
+		// local: первая версия этой проверки так и делала и выдала двадцать
+		// три ложных.
+		if t.File != "src/tokens.css" || len(t.Cells) == 0 {
+			continue
+		}
+		base := false
+		for _, c := range t.Cells {
+			if !strings.Contains(c, "@media") &&
+				(strings.Contains(c, ":root") || strings.HasPrefix(c, ".inst-theme")) {
+				base = true
+				break
+			}
+		}
+		if !base {
+			problems = append(problems, fmt.Sprintf(
+				"%s  токен %s объявлен только в ячейке (%s): справочник назовёт базой не базу",
+				t.File, n, t.Cells[0]))
+		}
+	}
+	return problems
+}
+
 func Assets(files map[string]string, tokens map[string]content.Token) []string {
 	var problems []string
 

@@ -52,13 +52,129 @@ type APIRow struct {
 	Kind  string `yaml:"kind"`
 	Value string `yaml:"value"`
 	Doc   string `yaml:"doc"`
+
+	// The cells the value was taken from — filled by ResolveTokens, never
+	// written by hand. A row that shows a number without saying which of
+	// the fifteen scale-and-density cells it came from is true and means
+	// less than it looks: 56 of the 143 tokens the pages name are like
+	// that, and the worst of them are declared fifteen times.
+	Cells []string
 }
 
 var apiKinds = []string{"класс", "модификатор", "атрибут", "событие", "переменная", "токен"}
 
-var declRe = regexp.MustCompile(`(?m)(?:^|[\s{;])(--[a-z][\w-]*)\s*:\s*([^;{}]+)[;}]`)
+// One declaration, matched against text that has already been cut at the
+// semicolons and stripped of comments — hence no need to guess at delimiters.
+var oneDecl = regexp.MustCompile(`(--[a-z][\w-]*)\s*:\s*(.+)$`)
 
-type Token struct{ Value, File string }
+// stripCSSNoise removes comments and the insides of quoted strings, replacing
+// them with spaces so every byte offset stays where it was.
+//
+// It is not decoration. tokens.css is more comment than code in places, and
+// the comments contain braces, semicolons and colons — the block scanner below
+// would read "0.95…1.07 */" as a declaration and lose its place in the nesting
+// for the rest of the file. Quoted strings matter for the same reason: a data
+// URI carries both.
+func stripCSSNoise(css string) string {
+	b := []byte(css)
+	for i := 0; i < len(b); i++ {
+		switch {
+		case b[i] == 47 && i+1 < len(b) && b[i+1] == 42: // an opening comment
+			for j := i; j < len(b); j++ {
+				close := b[j] == 42 && j+1 < len(b) && b[j+1] == 47
+				if b[j] != 10 {
+					b[j] = 32
+				}
+				if close {
+					b[j+1] = 32
+					i = j + 1
+					break
+				}
+				i = j
+			}
+		case b[i] == 34 || b[i] == 39: // a quoted string
+			q := b[i]
+			for j := i + 1; j < len(b); j++ {
+				done := b[j] == q
+				if b[j] != 10 {
+					b[j] = 32
+				}
+				i = j
+				if done {
+					break
+				}
+			}
+		}
+	}
+	return string(b)
+}
+
+// scanDecls walks a stylesheet keeping a stack of the selectors it is inside,
+// and reports for every custom property its FIRST value and every selector it
+// is declared under.
+//
+// The first value is the base — tokens.css opens with :root, which is scale 14
+// at ordinary density — and the rest of the list is what the reference used to
+// leave unsaid.
+func scanDecls(css string) (map[string]string, map[string][]string) {
+	values, cells := map[string]string{}, map[string][]string{}
+	clean := stripCSSNoise(css)
+	var stack []string
+	start := 0
+	for i := 0; i < len(clean); i++ {
+		switch clean[i] {
+		case 123: // {
+			stack = append(stack, strings.Join(strings.Fields(clean[start:i]), " "))
+			start = i + 1
+		case 125: // }
+			if len(stack) > 0 {
+				stack = stack[:len(stack)-1]
+			}
+			start = i + 1
+		case 59: // ;
+			text := strings.Join(strings.Fields(clean[start:i]), " ")
+			start = i + 1
+			m := oneDecl.FindStringSubmatch(text)
+			if m == nil || len(stack) == 0 {
+				continue
+			}
+			if _, seen := values[m[1]]; !seen {
+				values[m[1]] = strings.TrimSpace(m[2])
+			}
+			cells[m[1]] = append(cells[m[1]], cellOf(stack))
+		}
+	}
+	return values, cells
+}
+
+// cellOf names the cell a declaration sits in: the innermost real selector,
+// and the @media around it when there is one — a token declared inside
+// (min-resolution: 1.5dppx) is a different cell from the same selector outside
+// it, and calling both ":root" would hide exactly the distinction that matters.
+func cellOf(stack []string) string {
+	sel, media := "", ""
+	for _, s := range stack {
+		if strings.HasPrefix(s, "@") {
+			media = s
+			continue
+		}
+		sel = s
+	}
+	if media != "" {
+		return media + " " + sel
+	}
+	return sel
+}
+
+type Token struct {
+	Value, File string
+
+	// Every selector the token is declared under, in file order. One entry
+	// means one value across all 300 combinations of theme, accent, scale
+	// and density; more means the first entry is the base and the value
+	// moves along the axes the rest name.
+	Cells []string
+}
 
 func TokenValues(kitDir string) (map[string]Token, error) {
 	out := map[string]Token{}
@@ -83,13 +199,12 @@ func TokenValues(kitDir string) (map[string]Token, error) {
 		if err != nil {
 			return nil, err
 		}
-		for _, m := range declRe.FindAllStringSubmatch(string(b), -1) {
-			if _, ok := out[m[1]]; !ok {
-				out[m[1]] = Token{
-					Value: strings.Join(strings.Fields(m[2]), " "),
-					File:  "src/" + name,
-				}
+		values, cells := scanDecls(string(b))
+		for tok, v := range values {
+			if _, ok := out[tok]; ok {
+				continue
 			}
+			out[tok] = Token{Value: v, File: "src/" + name, Cells: cells[tok]}
 		}
 	}
 	return out, nil
@@ -108,7 +223,8 @@ func ResolveTokens(pages []*Page, tokens map[string]Token) {
 			sort.Strings(names)
 			for _, name := range names {
 				p.API = append(p.API, APIRow{
-					Name: name, Kind: "токен", Value: tokens[name].Value,
+					Name: name, Kind: "токен",
+					Value: tokens[name].Value, Cells: tokens[name].Cells,
 				})
 			}
 		}
@@ -119,6 +235,9 @@ func ResolveTokens(pages []*Page, tokens map[string]Token) {
 			t, known := tokens[r.Name]
 			if isToken && known && r.Value == "" {
 				p.API[i].Value = t.Value
+			}
+			if isToken && known {
+				p.API[i].Cells = t.Cells
 			}
 			if isToken && known && t.File != p.Source {
 				continue // используется, но объявлено не здесь
