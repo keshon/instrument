@@ -4,13 +4,13 @@ group: Inputs
 layout: index
 ---
 
-Ten components, and the first question to any of them is one: **is the value
-typed or chosen?** Typed means a field; chosen depends on how many options
+Eleven components, and the first question to any of them is one: **is the
+value typed or chosen?** Typed means a field; chosen depends on how many options
 there are and whether they are all visible at once.
 
 The comparison stands here rather than on the pages: "take instead" is a
-statement about NEIGHBOURS, and repeated ten times it parts from them by one
-line per edit.
+statement about NEIGHBOURS, and repeated eleven times it parts from them by
+one line per edit.
 
 ## The value is typed
 
@@ -32,6 +32,7 @@ line per edit.
 | 2–4, and each has something to explain | [The choice card](./choice-card.md) | A card around the word "Yes" is a superfluous frame |
 | More than five mutually exclusive | [The select](./select.md) | Twelve cards are not a choice but a page |
 | Several switched on at once and all in view | [a chip](../actions/chip.md) | In a select exactly one is chosen unless it is `multiple` |
+| One leaf of a hierarchy 2–4 levels deep | [The cascader](./cascader.md) | A hierarchy in a select becomes indented options, and the indent is a lie: the list is still flat and a parent is still selectable |
 
 ## When none of them fits
 
@@ -39,11 +40,13 @@ line per edit.
 |---|---|---|
 | A setting applied at once, with no submitting | [switches](./toggles.md) in [a property list](../display/kv.md) | A form with a button would lie there: it promises "it will apply on the press" |
 | A list that has to be searched or added to | there is no combobox in the kit yet | A select takes a ready list and is not added to |
+| Looking through a hierarchy, several branches open at once | [a tree](../../agent/tree.md) | A cascader shows one path and is a field; a tree is a navigator and carries no value |
+| A hierarchy deeper than four levels | search over the leaves | Four columns of a cascader is 44rem of horizontal room, which a narrow screen does not have |
 | Actions rather than values | [a menu](../overlays/menu.md) in a popover | A select holds what is chosen, a menu does not |
 | Showing a quantity with no input | [a meter](../charts/meter.md) | A slider looks like a control and invites dragging |
 | A read-only value | `readonly` rather than `disabled` | `disabled` throws a field out of the traversal and out of the submission |
 
-## Common to all ten
+## Common to all eleven
 
 **A form is wanted when there are more than two fields and they apply on
 submission.** One field by itself calls for no form — [a form](./form.md)

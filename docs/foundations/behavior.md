@@ -179,6 +179,7 @@ module.
 | An `<output for>` beside [a slider](../components/inputs/slider.md) | Keeps the current value in it |
 | The checkbox in the head of a selection column of [a table](../components/display/table.md) | Selects every row, shows a partial selection |
 | A selected tab, option, list row | Carries `aria-selected` and `aria-checked` over — on an arrow and on a click alike |
+| A `role="listbox"` inside `.inst-cascader` | `←` and `→` move to the column beside. Scoped by CLASS rather than by role: a listbox anywhere else answers those keys as it always did |
 
 Sorting, uploading files, picking a date and closing a banner are **not** here:
 those actions work with data, that is, they stay on the application's side.

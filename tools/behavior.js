@@ -20,6 +20,7 @@
  *   roots     two roots keep two live observers
  *   disabled  an aria-disabled item is walked to and cannot be acted on
  *   expand    clicking a tree twist opens the node it is drawn on
+ *   cascade   the arrows walk between the columns of a cascader
  *
  * Paste it into the console on any page of the reference and call
  * `kitBehavior.run()`. tools/behavior-run.mjs does the same over every page.
@@ -425,6 +426,77 @@
     return s;
   }
 
+  /* ── cascade ─────────────────────────────────────────────────────────────
+     The columns of a cascader are ordinary listboxes, and everything a listbox
+     promises they get from the role. The one thing added on top is the column
+     BESIDE: `←` and `→` are free in a vertical group, and there they move.
+
+     It is checked from the page rather than from the source because that is
+     the only place the answer lives. The behaviour is scoped by CLASS — a
+     listbox inside `.inst-cascader` — so nothing in the role dictionary
+     records it, and a grep over kit.js would find a function without ever
+     establishing that a key press reaches it.
+
+     A cascader lives in a popover, and a closed popover renders nothing. The
+     section opens it, walks, and puts it back — including the selection, which
+     follows focus in a listbox and would otherwise leave the page changed. */
+  async function checkCascade() {
+    const s = section();
+    for (const set of document.querySelectorAll('.inst-cascader')) {
+      const cols = [...set.querySelectorAll('.inst-cascader-col')];
+      if (cols.length < 2) continue;
+
+      const pop = set.closest('[popover]');
+      let opened = false;
+      if (pop && !pop.matches(':popover-open')) {
+        try { pop.showPopover(); opened = true; } catch {}
+        await frames(2);
+      }
+      if (!rendered(cols[0])) {
+        if (opened) { try { pop.hidePopover(); } catch {} }
+        skip(s, 'a cascader in ' + ((pop && pop.id) || 'the page'),
+          'the columns never got a box');
+        continue;
+      }
+
+      // What was selected before, so the page can be put back exactly.
+      const was = cols.map((c) => c.querySelector('[aria-selected="true"]'));
+
+      for (let i = 0; i < cols.length - 1; i++) {
+        const from = cols[i].querySelector('[aria-selected="true"]')
+          || cols[i].querySelector('[role="option"]');
+        if (!from) continue;
+        s.checked++;
+        from.focus();
+        from.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+        const landed = document.activeElement;
+        if (!cols[i + 1].contains(landed)) {
+          fail(s, 'cascader column ' + (i + 1), 'ArrowRight lands in the next column',
+            landed === from ? 'stayed put' : 'left the cascader');
+          continue;
+        }
+        s.checked++;
+        landed.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+        if (!cols[i].contains(document.activeElement)) {
+          fail(s, 'cascader column ' + (i + 2), 'ArrowLeft comes back',
+            'focus stayed in the next column');
+        }
+      }
+
+      // Selection follows focus in a listbox, so walking changed it. Put it
+      // back: a check that leaves the page altered is measuring the run before
+      // it from then on.
+      cols.forEach((c, i) => {
+        for (const opt of c.querySelectorAll('[role="option"]')) {
+          opt.setAttribute('aria-selected', String(opt === was[i]));
+          opt.tabIndex = opt === was[i] ? 0 : -1;
+        }
+      });
+      if (opened) { try { pop.hidePopover(); } catch {} await frames(1); }
+    }
+    return s;
+  }
+
   /* The page names its own module, so the same file works against a served
      site, a local build and an intercepted one. Guessing the path here would
      make the check pass against a kit that is not the one under test. */
@@ -452,6 +524,7 @@
         popover: await checkPopover(disabled),
         disabled,
         expand: await checkExpand(),
+        cascade: await checkCascade(),
         // Last on purpose: it calls start() on roots of its own, and until the
         // observer is per-root that call takes the document's observer with it.
         //

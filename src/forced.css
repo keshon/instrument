@@ -40,6 +40,7 @@
   }
 
   .inst-task[aria-selected="true"], .inst-tree-item[aria-selected="true"],
+  .inst-cascader-item[aria-selected="true"],
   .inst-table tbody tr[aria-selected="true"] td {
     background: Highlight;
     color: HighlightText;
@@ -58,7 +59,14 @@
   /* Masked glyphs lose their background colour under forced-colors, so they
      move to the system text colour.                                       */
   .inst-tree-twist, .inst-step-twist, .inst-select-wrap::after,
+  .inst-cascader-item[aria-expanded]::after, .inst-cascader-path > * + *::before,
   .inst-note::before, .inst-approval-head::before, .inst-failure-head::before {
     background: CanvasText;
   }
+
+  /* The chevron of a branch ON THE PATH stands on Highlight rather than on
+     Canvas, so it takes the text colour of the highlight — otherwise it is
+     CanvasText on Highlight, which is the one pair forced-colors does not
+     promise to keep readable. */
+  .inst-cascader-item[aria-selected="true"]::after { background: HighlightText; }
 }

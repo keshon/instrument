@@ -333,6 +333,14 @@ const MUTATIONS = [
     to: "  const twist = null && e.target.closest?.('.inst-tree-twist');",
     why: 'cursor: pointer and a ninety-degree turn promise a control the mouse cannot use',
   },
+  {
+    name: 'the columns of a cascader stop answering the arrows',
+    section: 'cascade',
+    page: '/components/inputs/cascader/',
+    from: "  const set = group.closest('.inst-cascader');",
+    to: "  const set = null && group.closest('.inst-cascader');",
+    why: 'a column set that only Tab can walk turns a three-level choice into three separate lists',
+  },
 ];
 
 function pack(r) {

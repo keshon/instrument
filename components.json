@@ -165,6 +165,38 @@
       "metric"
     ]
   },
+  "cascader": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "parts": {
+      "inst-cascader-item": {
+        "forced": "glyph"
+      },
+      "inst-cascader-path": {
+        "forced": "glyph"
+      }
+    },
+    "aria": {
+      "role": "listbox",
+      "roving": "author",
+      "item": {
+        "role": "option",
+        "state": "aria-selected"
+      }
+    },
+    "related": [
+      "select",
+      "menu",
+      "popover",
+      "tree",
+      "input",
+      "form"
+    ]
+  },
   "change": {
     "axes": {
       "flow": "block",
@@ -338,6 +370,7 @@
     "related": [
       "input",
       "select",
+      "cascader",
       "toggles",
       "file"
     ]
@@ -372,6 +405,7 @@
       "search",
       "num-field",
       "select",
+      "cascader",
       "form",
       "file",
       "inserts",
@@ -479,6 +513,7 @@
       "button",
       "button-group",
       "select",
+      "cascader",
       "popover",
       "nav",
       "toolbar"
@@ -641,6 +676,7 @@
     },
     "related": [
       "menu",
+      "cascader",
       "tooltip",
       "dialog",
       "sheet"
@@ -754,6 +790,7 @@
       "toggles",
       "choice-card",
       "menu",
+      "cascader",
       "segmented",
       "chip",
       "form",
@@ -1132,6 +1169,7 @@
     "related": [
       "nav",
       "task",
+      "cascader",
       "kv",
       "table"
     ]

@@ -402,6 +402,38 @@ function treeArrow(group, spec, item, forward) {
   return false;
 }
 
+/* Moving between the columns of a cascader.
+ *
+ * A column is an ordinary listbox: one Tab stop, the arrows along it,
+ * selection following focus. What a listbox has no notion of is the column
+ * BESIDE it, and the cross-axis arrows are free there — a vertical group
+ * gives ArrowLeft and ArrowRight no meaning at all.
+ *
+ * Scoped by CLASS rather than by role, and that distinction matters. Teaching
+ * every listbox in the kit to walk sideways would be changing a role's
+ * promise for the sake of one component; a listbox that happens to stand
+ * inside `.inst-cascader` gains a behaviour of the cascader instead. The role
+ * dictionary is untouched, and a listbox anywhere else answers the arrows
+ * exactly as it did.
+ *
+ * Forward lands on what the next column already has selected, or on its first
+ * item; back does the same. Nothing is opened and nothing is rendered here:
+ * the column beside is the application's, and if it is empty there is nowhere
+ * to go and the key falls through to the platform. */
+function cascadeArrow(group, forward) {
+  const set = group.closest('.inst-cascader');
+  if (!set) return false;
+  const cols = [...set.querySelectorAll('.inst-cascader-col')];
+  const next = cols[cols.indexOf(group) + (forward ? 1 : -1)];
+  if (!next) return false;
+  const spec = specOf(next);
+  if (!spec) return false;
+  const items = itemsOf(next, spec);
+  if (!items.length) return false;
+  move(next, spec, items.find((n) => n.getAttribute('aria-selected') === 'true') || items[0]);
+  return true;
+}
+
 const NEXT = { vertical: 'ArrowDown', horizontal: 'ArrowRight' };
 const PREV = { vertical: 'ArrowUp', horizontal: 'ArrowLeft' };
 
@@ -427,6 +459,15 @@ function onKeydown(e) {
     const forward = e.key === 'ArrowRight';
     if (forward || e.key === 'ArrowLeft') {
       if (treeArrow(group, spec, item, forward)) e.preventDefault();
+      return;
+    }
+  }
+
+
+  // A column of a cascader takes them for the column beside it.
+  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+    if (cascadeArrow(group, e.key === 'ArrowRight')) {
+      e.preventDefault();
       return;
     }
   }

@@ -228,6 +228,144 @@
    is a hint, not a second name for the item.                             */
 .inst-menu-shortcut { margin-inline-start: auto; padding-inline-start: var(--space-6); color: var(--text-muted); }
 
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Cascader — choosing one leaf of a hierarchy, level by level
+
+   Why it exists when three ways to choose already stand nearby. A select is
+   FLAT: a hierarchy in it becomes indented options, and the indent is a lie —
+   the list is still flat and the parent is still selectable. A tree shows the
+   hierarchy honestly, but it grows downwards: three levels of forty items
+   opened at once is a hundred and twenty rows, and it is a navigator rather
+   than a field — nothing carries the chosen value afterwards. A menu with
+   submenus the kit does not have, and would not want: a submenu opens on
+   hover, closes on the way to it, and cannot be reached from a touchscreen.
+
+   One empty cell is left: a SHALLOW AND WIDE hierarchy — two to four levels,
+   tens of items on each — out of which exactly one leaf is wanted, and the
+   room for it is a field's worth. Region → country → city, division →
+   department → team, catalogue → section → article. The columns turn the
+   depth into width: three columns of forty scroll separately and cost the
+   screen one popover instead of a hundred and twenty rows.
+
+   THE RULES STAND IN overlay.css RATHER THAN IN forms.css, and by theme they
+   belong to the field: the trigger is a select, the path is a value. But an
+   item of a column is worn together with `.inst-menu-item`, which is declared
+   in kit.overlay — a LATER layer than kit.components — and layer order beats
+   specificity. From forms.css the rule marking the path would lose its colour
+   to the menu item's, with no selector able to help: the same reason the
+   shell's side-column toggle is declared in actions.css rather than beside
+   the shell.
+
+   THE KIT DRAWS THE COLUMNS, THE APPLICATION FILLS THEM. What stands in the
+   next column is the children of the chosen node, that is DATA — no selector
+   computes it, and pretending otherwise would mean the kit holding a copy of
+   somebody's tree. The application listens for `inst:select` on a column and
+   renders the one after it; everything below is what that costs it: nothing
+   but the markup it was going to write anyway.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* The trigger needs NO CLASS OF ITS OWN: `.inst-select` is already worn by a
+   button "when the native list is not enough", and this is that case exactly —
+   the field look, the chevron of the wrapper, the states of a field. */
+
+/* The path inside the trigger. Separated by the same chevron as breadcrumbs
+   and for the same reason: the two say the same thing — "this lies inside
+   that" — and one shape for one meaning is the whole of the kit's icon rule.
+   The last segment is the value and stands in the primary colour; the ones
+   before it are the road to it and are quieter. */
+.inst-cascader-path {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  color: var(--text-muted);
+
+  & > * + *::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    margin-inline-end: var(--space-2);
+    inline-size: var(--size-chevron);
+    block-size: var(--size-chevron);
+    background: var(--text-faint);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  & > :last-child { color: var(--text-primary); }
+}
+
+/* The columns. THE SCROLLING IS PER COLUMN rather than on the popover: the
+   levels are of different lengths — six regions, forty countries, two hundred
+   cities — and one scrollbar over all three would move the six along with the
+   two hundred. */
+.inst-cascader {
+  display: flex;
+  align-items: stretch;
+  /* Ten rows of `--control-h-sm` plus the padding. A ceiling in rows rather
+     than in pixels: it rides density and scale with the rows it counts. */
+  max-block-size: calc(var(--control-h-sm) * 10);
+}
+
+.inst-cascader-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  /* Wide enough for a name of about twenty characters at the base scale.
+     Below that the column turns into a strip of ellipses, and choosing from
+     ellipses is not choosing. */
+  inline-size: 11rem;
+  overflow-y: auto;
+  /* The scrollbar is reserved rather than appearing: a column that gains one
+     on the fortieth item shifts the two beside it at the moment of a click. */
+  scrollbar-gutter: stable;
+}
+
+/* A seam between columns — the same hairline the shell puts between its
+   regions, and for the same reason: these are regions with scrolling of their
+   own, and without a line three columns read as one list that has wrapped.
+   This is not the dividing line the kit refuses inside a menu: that one
+   separates ITEMS OF ONE LIST, this one separates lists. */
+.inst-cascader-col + .inst-cascader-col {
+  border-inline-start: var(--hairline) solid var(--border-subtle);
+  padding-inline-start: var(--space-1);
+}
+
+/* An item is `.inst-menu-item`: the same height, the same radius, the same
+   hover. What the cascader adds is the two things a menu item has no notion
+   of — whether the item has children, and whether it lies on the path.       */
+
+/* A BRANCH CARRIES A CHEVRON, and the chevron follows `aria-expanded` rather
+   than a class: the attribute is what a screen reader reads, and a class
+   beside it would be the same fact written twice. An item with no attribute is
+   a leaf and gets nothing — the absence of a chevron is what tells the end of
+   the road. */
+.inst-cascader-item[aria-expanded]::after {
+  content: "";
+  flex: none;
+  margin-inline-start: auto;
+  inline-size: var(--size-chevron);
+  block-size: var(--size-chevron);
+  background: var(--text-faint);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* WHAT LIES ON THE PATH IS MARKED BY A SURFACE, not by colour: the same
+   carrier as a selected row of a queue, and the same law — colour alone
+   carries nothing. In the last column the same mark means the chosen VALUE:
+   the path and the value are one thing here, and the last step of the road is
+   the answer.
+
+   The chevron of a branch on the path goes up to the ordinary text colour: it
+   is no longer a hint about where one could go but the road already
+   taken.                                                                   */
+.inst-cascader-item[aria-selected="true"] {
+  background: var(--surface-selected);
+  color: var(--accent-text);
+}
+
+.inst-cascader-item[aria-selected="true"]::after { background: var(--accent-mark); }
+
 .inst-menu-sep {
   block-size: var(--hairline);
   margin-block: var(--space-2);

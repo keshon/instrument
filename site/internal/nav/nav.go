@@ -28,7 +28,7 @@ var sections = []struct {
 	{"components/actions", []string{"index", "button", "button-group", "segmented", "chip"}},
 	{"components/inputs", []string{
 		"index",
-		"input", "select", "toggles", "slider", "num-field", "search",
+		"input", "select", "cascader", "toggles", "slider", "num-field", "search",
 		"choice-card", "file", "inserts", "form",
 	}},
 	{"components/display", []string{

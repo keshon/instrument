@@ -104,4 +104,5 @@
   <symbol id="i-p-overlays" viewBox="0 0 16 16"><path d="M8 2.2 14 5.4 8 8.6 2 5.4z"/><path d="M2 8.8 8 12l6-3.2"/></symbol>
   <symbol id="i-p-feedback" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.6"/><path d="M8 7.4v3.8"/><circle cx="8" cy="5" r=".95" fill="currentColor" stroke="none"/></symbol>
   <symbol id="i-p-agent" viewBox="0 0 16 16"><rect x="4.6" y="4.6" width="6.8" height="6.8" rx="1.4"/><path d="M6.7 4.6V2.5M9.3 4.6V2.5M6.7 13.5v-2.1M9.3 13.5v-2.1M4.6 6.7H2.5M4.6 9.3H2.5M13.5 6.7h-2.1M13.5 9.3h-2.1"/></symbol>
+  <symbol id="i-p-cascader" viewBox="0 0 16 16"><rect x="1.8" y="2.6" width="4" height="10.8" rx="1.2"/><rect x="7" y="2.6" width="4" height="10.8" rx="1.2"/><path d="M12.2 5.4h2M12.2 8h2M12.2 10.6h2" opacity=".45"/><path d="M3 5.6h1.6M8.2 8.2h1.6"/></symbol>
 </svg>
