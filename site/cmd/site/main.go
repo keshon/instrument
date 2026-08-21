@@ -110,6 +110,7 @@ func main() {
 	problems = append(problems, missing...)
 	problems = append(problems, contractErrs...)
 	problems = append(problems, assetErrs...)
+	problems = append(problems, nav.Check(byLang[i18n.Base])...)
 	if len(problems) > 0 {
 		for _, p := range problems {
 			fmt.Fprintln(os.Stderr, "  "+p)

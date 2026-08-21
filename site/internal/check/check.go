@@ -11,7 +11,13 @@ import (
 )
 
 var (
-	hrefRe   = regexp.MustCompile(`href="(/[^"#?]*)"`)
+	hrefRe = regexp.MustCompile(`href="(/[^"#?]*)"`)
+	// The same link WITH its fragment. Two expressions rather than one with an
+	// optional group: the first is asked "does the page exist", the second
+	// "does the heading exist", and a link with no fragment has nothing to
+	// answer to the second.
+	fragRe   = regexp.MustCompile(`href="(/[^"#?]*)#([^"]+)"`)
+	idRe2    = regexp.MustCompile(`\sid="([^"]+)"`)
 	leftMdRe = regexp.MustCompile(`href="([^"]*\.md(?:#[^"]*)?)"`)
 
 	useRe = regexp.MustCompile(`<use\s[^>]*href="#([^"]*)"`)
@@ -27,10 +33,24 @@ var hidden = map[string]bool{
 	"dialog": true, "template": true, "script": true, "style": true,
 }
 
+// A LINK INTO A HEADING IS CHECKED TOO, and it is the half that was missing.
+// A `#fragment` that names nothing lands the reader at the top of the page
+// instead of at the paragraph they were sent to — no error, no empty page, and
+// nothing that looks wrong to whoever wrote the link.
+//
+// The move to English broke exactly this: a fragment naming a Russian heading
+// on a page whose headings had been English for four commits. The rule now
+// stands where every anchor in the corpus is visible at once.
 func Verify(pages []*content.Page, sprite string) []string {
 	routes := map[string]bool{}
+	anchors := map[string]map[string]bool{}
 	for _, p := range pages {
 		routes[p.Route] = true
+		ids := map[string]bool{}
+		for _, m := range idRe2.FindAllStringSubmatch(p.HTML, -1) {
+			ids[m[1]] = true
+		}
+		anchors[p.Route] = ids
 	}
 
 	var problems []string
@@ -50,6 +70,22 @@ func Verify(pages []*content.Page, sprite string) []string {
 			if !routes[t] {
 				problems = append(problems,
 					fmt.Sprintf("%s  a link to nowhere: %s", p.Route, m[1]))
+			}
+		}
+		for _, m := range fragRe.FindAllStringSubmatch(p.HTML, -1) {
+			t := m[1]
+			if !strings.HasSuffix(t, "/") {
+				t += "/"
+			}
+			// A link to nowhere has already been reported by the loop above;
+			// naming it twice would say the same thing about one line.
+			if !routes[t] {
+				continue
+			}
+			if !anchors[t][m[2]] {
+				problems = append(problems,
+					fmt.Sprintf("%s  a link into a heading that is not there: %s#%s",
+						p.Route, m[1], m[2]))
 			}
 		}
 		if strings.Contains(p.HTML, "```html preview") {

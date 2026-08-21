@@ -64,7 +64,9 @@ Paste the contents of `assets/sprite.svg` as the first element inside `<body>`
 ```
 
 Without the sprite everything else works, the icons simply are not drawn. The
-full list of 101 symbols is on the [icons](../foundations/icons.md) page.
+full list is on the [icons](../foundations/icons.md) page, and the count stands
+there alone: a number repeated in a second place drifts from the sprite on the
+first symbol added.
 
 ## Keyboard behaviour
 

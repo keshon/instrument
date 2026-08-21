@@ -2,6 +2,7 @@ package nav
 
 import (
 	"sort"
+	"strings"
 
 	"instrument/site/internal/content"
 	"instrument/site/internal/i18n"
@@ -23,7 +24,8 @@ var sections = []struct {
 	}},
 	{"layout", []string{
 		"index",
-		"shell", "container", "flow", "split", "page-header", "section",
+		"shell", "rail", "statusbar",
+		"container", "split", "flow", "page-header", "section",
 	}},
 	{"components/actions", []string{"index", "button", "button-group", "segmented", "chip"}},
 	{"components/inputs", []string{
@@ -34,7 +36,7 @@ var sections = []struct {
 	{"components/display", []string{
 		"index",
 		"panel", "card", "table", "kv", "metric", "badge", "tag",
-		"avatar", "timeline", "calendar", "code",
+		"avatar", "change", "timeline", "calendar", "code",
 	}},
 	{"components/charts", []string{
 		"index",
@@ -54,13 +56,43 @@ var sections = []struct {
 	}},
 	{"agent", []string{
 		"index",
-		"run", "task", "step", "approval", "failure", "diff", "output",
+		"run", "task", "step", "approval", "failure", "diff",
 		"log", "lane", "history", "budget", "tree",
 	}},
 
-	{"blocks", []string{"dashboard", "inspector", "settings-screen"}},
+	{"blocks", []string{"console"}},
 
 	{"about", nil},
+}
+
+// Check reports an order that names a page which does not exist.
+//
+// All four kinds of drift the list collected were silent. `agent/output` was a
+// page that left; `blocks` named three assemblies that were never written; and
+// `rail`, `statusbar` and `change` existed while going unnamed, so they fell
+// through to the alphabetical tail — the side column put the status bar
+// between the page header and the section, and nobody could say why.
+//
+// A name with no page is an ERROR and a page with no name is not: the second
+// is how a page is added, and demanding both at once would mean a new page
+// could not be written without editing this file first. What is guarded is the
+// direction that cannot be right.
+func Check(pages []*content.Page) []string {
+	have := map[string]bool{}
+	for _, p := range pages {
+		have[strings.TrimPrefix(p.Dir+"/"+p.Slug, "/")] = true
+	}
+	var out []string
+	for _, s := range sections {
+		for _, slug := range s.order {
+			if key := s.dir + "/" + slug; !have[key] {
+				out = append(out, "the order of the side column names "+key+
+					", and there is no such page")
+			}
+		}
+	}
+	sort.Strings(out)
+	return out
 }
 
 func Build(lang i18n.Lang, pages []*content.Page) []Section {

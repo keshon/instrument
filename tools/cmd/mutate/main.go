@@ -382,6 +382,22 @@ var mutations = []mutation{
 		"\tfor _, lang := range i18n.All {\n\t\tif err := searchIndex(o.Out, lang, byLang[lang]); err != nil {",
 		"\tfor _, lang := range i18n.All[:1] {\n\t\tif err := searchIndex(o.Out, lang, byLang[lang]); err != nil {",
 		"a page that asks for an index nobody wrote renders, passes every gate and finds nothing when a reader types"},
+	{"the side column names a page that is not there", "site", "site/internal/nav/nav.go",
+		"{\"blocks\", []string{\"console\"}},",
+		"{\"blocks\", []string{\"console\", \"dashboard\"}},",
+		"a name with no page is silent, and a page with no name falls to the alphabetical tail — the list collected four of both"},
+	{"a link into a heading that is not there", "site", "docs/start/install.md",
+		"../foundations/tokens.md#the-order-of-layers",
+		"../foundations/tokens.md#the-order-of-the-layers",
+		"a dead fragment lands the reader at the top of the page: no error, no empty page, nothing that looks wrong"},
+	{"a root file points at a page that moved", "docscheck", "ROADMAP.md",
+		"docs/start/install.md#requirements",
+		"docs/start/install-guide.md#requirements",
+		"the files a reader meets first are not rendered by the site, so its gate never saw them"},
+	{"a root file points at a heading that is not there", "docscheck", "CONTRIBUTING.md",
+		"README.md#what-is-inside",
+		"README.md#whats-inside",
+		"GitHub slugs a heading by its own rule, and nothing in the build reads these four files"},
 	{"a glyph that the sprite has no symbol for", "site", "site/internal/content/content.go",
 		"p.Icon = \"i-p-\" + name",
 		"p.Icon = \"i-p-\" + name + \"-x\"",
@@ -646,6 +662,11 @@ func seed(repo, tree string) error {
 		// missing one of them would report the snapshot's own incompleteness as
 		// a defect of the kit.
 		"dist/instrument.css", "CHANGELOG.md",
+		// The four files a reader meets first. docscheck now holds their links
+		// too — nothing else does, because the site never renders them — and a
+		// snapshot without them fails the control pass on links that lead
+		// nowhere only because the thing they lead to was not copied.
+		"README.md", "README.ru.md", "CONTRIBUTING.md", "ROADMAP.md", "LICENSE",
 	} {
 		if err := copyFile(filepath.Join(repo, f), filepath.Join(tree, filepath.FromSlash(f))); err != nil {
 			return err

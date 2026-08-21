@@ -103,9 +103,16 @@ func (l *linkRewriter) Transform(doc *ast.Document, r text.Reader, pc parser.Con
 		if strings.Contains(dest, "://") || strings.HasPrefix(dest, "/") || strings.HasPrefix(dest, "#") {
 			return ast.WalkContinue, nil
 		}
+		// THE FRAGMENT IS SLUGGED BY THE SAME FUNCTION THAT MAKES THE ANCHOR.
+		// A heading becomes an id through `slug`, which transliterates — so a
+		// Russian heading answers to `poryadok-sloev` while the author of the
+		// link writes what is printed on the page. Both existing links of this
+		// kind in the corpus were broken from the day they were written, and
+		// nothing said so: a fragment that names nothing lands the reader at
+		// the top of the page.
 		hash := ""
 		if i := strings.IndexByte(dest, '#'); i >= 0 {
-			dest, hash = dest[:i], dest[i:]
+			hash, dest = "#"+slug(dest[i+1:]), dest[:i]
 		}
 		if !strings.HasSuffix(dest, ".md") {
 			return ast.WalkContinue, nil

@@ -23,7 +23,7 @@ tools/      проверки
 ```
 
 Файлы исходника и их содержимое перечислены в
-[README](README.md#что-внутри), порядок слоёв — в
+[README](README.md#what-is-inside), порядок слоёв — в
 [токенах](docs/foundations/tokens.md).
 
 ## Сборка сайта
@@ -117,7 +117,7 @@ tools/      проверки
 ```
 
 Файлы исходника и их содержимое перечислены в
-[README](README.md#что-внутри), порядок слоёв — в
+[README](README.md#what-is-inside), порядок слоёв — в
 [токенах](docs/foundations/tokens.md).
 
 ## Сборка сайта

@@ -457,6 +457,11 @@ func main() {
 	// because this is a different kind of error: class is present, token is present,
 	// only the number lies.
 	staleTable := false
+	// The root of the repository rather than `docs`: the files a reader meets
+	// first are not in it, and they were the ones with no gate at all.
+	if reportLinks(filepath.Dir(*docsDir)) {
+		staleTable = true
+	}
 	if miss := checkSourceFields(*docsDir); len(miss) > 0 {
 		fmt.Printf("── source leads nowhere (%d) ──\n", len(miss))
 		for _, s := range miss {
