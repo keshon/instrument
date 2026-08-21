@@ -74,14 +74,10 @@ where everything is `primary` has no `primary` at all.
 the mouse. In a group the focused button rises by `z-index` so that its
 neighbour does not cut the ring off.
 
-The label of every variant is checked at 4.5:1 in five themes, and the
-`primary` fill is bounded from above in lightness: the bound depends on hue and
-is 0.545 for the default petrol. The tap target is 32px at `md` and 26px at
-`sm`; at density `compact` `sm` gives 22px, which is **below the 24px of WCAG
-2.5.8**, and so `compact` is applied to dense tabular views rather than to the
-main navigation. At `prefers-reduced-motion` the ring of busyness slows down
-but does not stop: a stopped indicator says "nothing is happening" while
-something is.
+Every variant's label holds 4.5:1 in five themes, and the `primary` fill is
+capped in lightness (0.545 for the default petrol). The target is 32px at `md`
+and 26px at `sm`; `compact` takes `sm` to 22px, **below the 24px of WCAG
+2.5.8** — hence `compact` is for dense tabular views, not the main navigation.
 
 ## Variants
 
@@ -109,12 +105,9 @@ rewriting the rule.
 
 ### The ladder of weights
 
-Weight answers the question "how loudly does the button ask to be pressed", and
-the answer is measurable. The measure is **presence**: area weighted by the
-step in lightness against the ground. A fill works with the whole box, a border
-only with the perimeter, which on a 100×32 button is 8% of the area — so a
-border, at a higher contrast of line, comes out six times quieter than a fill
-in total.
+Weight answers "how loudly does the button ask to be pressed", and the answer is
+measurable: **presence** is area weighted by the step in lightness against the
+ground.
 
 | Weight | light | dark |
 |---|---|---|
@@ -124,15 +117,9 @@ in total.
 | default | 0.046 | 0.048 |
 | `--primary` | 0.47 | 0.17 |
 
-The ladder is monotone in all five themes, and neighbouring steps part by no
-less than 0.022 — the same threshold the kit measures its stack of surfaces by.
-That is not a wish: the pair "ladder: soft against default" is checked by
-`cmd/contrast`.
-
-The border of the outline is **decorative**. The kit already had an outlined
-weight and removed it precisely because it rested on a load-bearing line at
-3.46:1: the outline of a button turned out to be the loudest line on the
-screen. On a quiet border that does not happen.
+Monotone in all five themes, neighbouring steps no closer than 0.022 — checked
+by `cmd/contrast` as "ladder: soft against default". The outline's border is
+**decorative**, not load-bearing.
 
 ### Tone
 
@@ -147,14 +134,12 @@ meter and the banner use. A button reads `--tone-ink` from it for the label and
 <button class="inst-btn inst-btn--danger" type="button">Delete</button>
 ```
 
-The last two lines give one and the same thing: `inst-btn--danger` is the tone
-`error` written as a class. The class stayed because a destructive action
-occurs often and deserves a short spelling.
+`inst-btn--danger` is the tone `error` written as a class — a destructive action
+occurs often enough to deserve the short spelling.
 
-A ghost with the tone `running` is that action-as-a-link: the label in the
-accent, with neither border nor fill. It is what "add context", "add a row",
-"create the first object" are set in — things that invite a press without
-arguing with the principal button of the screen.
+A ghost with the tone `running` is the action-as-a-link: "add context", "add a
+row", "create the first object" — a press invited without arguing with the
+principal button.
 
 | What | Why |
 |---|---|
@@ -179,15 +164,10 @@ what the value is of: the current repository, branch, environment, account.
 </button>
 ```
 
-What becomes a column is the **text** rather than the button. The whole button
-was the column at first, and on the very first real screen that fell apart:
-such a control almost always has a leading icon and a chevron at the end, and a
-column would lay the icon above the label and the chevron below the value.
-Hence `.inst-btn-stack` is required.
-
-The single line of the base button still holds: a command has a short label,
-and a wrap in one is almost always a sign of a poor label. Two lines are a
-property of this variant rather than permission to wrap any button.
+What becomes a column is the **text**, so `.inst-btn-stack` is required: a
+control like this carries a leading icon and a chevron, and stacking the whole
+button would put them above and below instead. Two lines are a property of this
+variant rather than permission to wrap any button.
 
 ### A button in the clothes of a field
 
@@ -198,9 +178,8 @@ property of this variant rather than permission to wrap any button.
 </button>
 ```
 
-It opens a palette or a list but stays a button. The look is taken from a
-recess and the behaviour is a button's: the border here is load-bearing,
-because it **is** the control, with one hint inside it.
+It opens a palette or a list but stays a button. The border is load-bearing
+here: it **is** the control.
 
 ### As a link
 
@@ -220,9 +199,9 @@ The class on an `<a>` gives exactly the same button, with no underline.
 <button class="inst-btn inst-btn--lg" type="button">lg</button>
 ```
 
-The height comes from the tier of roles (`--control-h-*`), so a button and a
-[field](../inputs/input.md) of the same size standing beside it physically
-cannot part. The density of a container retunes all three sizes at once.
+The height comes from the role tier (`--control-h-*`), so a button and a
+[field](../inputs/input.md) of the same size cannot part. Density retunes all
+three at once.
 
 | Size | Height | Padding | Type size |
 |---|---|---|---|
@@ -256,18 +235,10 @@ cannot part. The density of a container retunes all three sizes at once.
 </button>
 ```
 
-Four decisions, each of which is easy to make the other way round and get a
-defect:
-
-- **The label is not removed from the flow but dimmed by colour.** The width of
-  the button stays as it was. Otherwise the action bar twitches at the moment
-  the user is looking at the cursor.
-- **The label stays in the markup** — a screen reader reads it, and a fallback
-  `aria-label` is not needed.
-- **The button keeps its focus.** `disabled` would throw it out of the order of
-  traversal right under the hands of somebody who came by keyboard.
-- **Only the mouse is removed** (`pointer-events`). Protection from a second
-  press belongs in the handler: that is behaviour rather than styling.
+The label is dimmed rather than removed, so the width holds and a screen reader
+still reads it. The button keeps its focus — `disabled` would throw it out of
+the tab order under the hands of whoever came by keyboard — and only the mouse
+is taken away; guarding against a second press belongs to the handler.
 
 ## With icon
 
@@ -281,9 +252,8 @@ defect:
 </button>
 ```
 
-An icon button is **square**: a rectangle of 32×28 gives away inconsistent
-sizes. The width is taken from the same control height, so the square holds at
-all three sizes and at all densities.
+An icon button is **square**: the width comes from the same control height, so
+it holds at all three sizes and every density.
 
 :::warn
 A button with no text has to carry an `aria-label`. The icon is then
@@ -303,13 +273,10 @@ read it at all.
 </div>
 ```
 
-Several **different actions** standing flush. Not to be confused with
-[the segmented control](./segmented.md): there is one choice among equals
-there, and it always has exactly one chosen value.
+Several **different actions** standing flush — see
+[the section index](./index.md) for how a group differs from a segmented
+control and a chip.
 
-The seam of a group is the neighbour's border removed rather than a negative
-margin of `-0.5px`: a browser never draws a border thinner than a physical
-pixel, so a shift of half a pixel left a visible thickening at every joint.
 
 ## Patterns
 

@@ -94,11 +94,8 @@ worse than none.
 <div id="p-phys" role="tabpanel" aria-labelledby="t-phys" tabindex="0" hidden>A convex hull, a mass of 4.2 kg.</div>
 ```
 
-The example is live: enter with `Tab` and press `←` or `→`. The mark is carried
-along with the focus, `Home` and `End` work, and the traversal wraps around.
-
-The arrows, `Home`, `End` and the roving `tabindex` are done by
-[`instrument.js`](../../foundations/behavior.md). Showing the right panel is
+The arrows, `Home`, `End` and the roving `tabindex` are
+[`instrument.js`](../../foundations/behavior.md)'s. Showing the right panel is
 the application's: the library does not know which panel is behind which tab.
 
 ## States
@@ -116,15 +113,11 @@ the application's: the library does not know which panel is behind which tab.
 | An underline | A `border-block-end` of width `--size-marker` in the colour `--accent-solid`. A carrier on a par with colour |
 | The colour of the label | `--text-primary` instead of `--text-secondary` |
 
-The weight **does not change** on selection, and that is not an omission. A
-change of weight changes the width of the label, and tabs stand in a row: a
-measurement on this reference gave a shift of the neighbours to the right by 2
-and 3 pixels — a choice by mouse would move what is being aimed at under the
-cursor. The kit has already applied the same rule to a menu item and to a chip.
-
-Two carriers are left, and one of them is not colour: an active tab differs
-from an ordinary one by the **presence** of the bar and from a hovered one by
-its tone.
+The weight **does not change** on selection: it would change the width of the
+label, and a measurement on this reference gave neighbours shifting 2–3px — a
+choice by mouse would move what is being aimed at. Two carriers are left and
+neither is colour alone: an active tab differs from an ordinary one by the
+**presence** of the bar, and from a hovered one by tone.
 
 The bar of a tab covers the line of the container by a negative margin of
 `--hairline` rather than by a shift of half a pixel: a browser does not draw a
@@ -141,13 +134,9 @@ Include the module once per page.
 
 ### What `instrument.js` does
 
-The example in the "Real tabs" section is live: `←`, `→`, `Home`, `End`, with
-the traversal wrapping around.
-
-The strip is declared by a `role="tablist"`, and `instrument.js` carries out
-the contract of that role: `←` and `→` between the tabs, `Home`, `End`, a
-traversal that wraps, one `Tab` for the whole strip. `aria-selected` is carried
-over on an arrow and on a click alike.
+Carries out the contract of `role="tablist"`: `←` and `→` between the tabs,
+`Home`, `End`, a traversal that wraps, one `Tab` for the whole strip.
+`aria-selected` moves on an arrow and on a click alike.
 
 ### Events
 
@@ -164,9 +153,7 @@ tabs.addEventListener('inst:select', (e) => {
 
 ### What is left to the application
 
-Showing the right panel and hiding the rest. Which panel is behind which tab is
-known to the application alone: what the library has is the markup rather than
-the meaning.
+Showing the right panel and hiding the rest.
 
 ## Composition
 
@@ -212,33 +199,18 @@ at twenty tabs the chosen one has to be searched for. A fill reads at once and
 at any length of row.
 
 A chosen chip takes a **soft inverted surface** — dark in a light theme, light
-in a dark one. The raised one does not work here: the row lies on the same
-raised surface as everything around, and the chosen one would differ by one
-step of lightness, that is, by almost nothing. A full inversion does not work
-from the other side: it is for a hint that flashed by, while a tab stands there
-all the time, and an almost-black plate pulls more attention than what it was
-chosen for.
+in a dark one. Raised is too close: the row already lies on a raised surface. A
+full inversion is too loud for something that stands there all the time. The
+height comes from the control ladder (`--control-h-sm`) rather than from
+padding.
 
-The height of a chip comes from the ladder of controls (`--control-h-sm`)
-rather than from padding: setting it by padding gave a row taller than the
-button standing beside it, and the chip read as a brick.
+**The cross is an overlay at the far edge rather than a place in the line** — a
+name is read all the time and a tab is closed once. It appears from the
+keyboard too: an invisible button that `Tab` has reached is a trap. Room for
+the "unsaved" dot is **reserved**, because that state stands there permanently.
 
-**The cross is an overlay at the far edge rather than a place in the line.**
-The name of a file is read all the time and a tab is closed once, so the cross
-comes up under the cursor over the label; the label does not break off
-mid-word — a gradient to the background of the chip lies under the cross. It
-appears from the keyboard too: an invisible button that `Tab` has reached is a
-trap.
-
-Room for the "unsaved" dot **is reserved**, and that is not the same thing. The
-state stands there permanently, and a permanent overlay would eat the end of
-the name for good.
-
-A chip is rounded **on all four sides** and lies on the strip rather than
-growing into the content below. Rounding only the top corners plus a bar as a
-mark would be a tab-as-a-bar dressed in a fill, differing from a chip in
-exactly what it should not. A chosen one has two carriers, and neither of them
-is colour: the fill and the weight.
+A chip is rounded on all four sides and lies on the strip rather than growing
+into the content below.
 
 **A closable tab is a `<div role="tab">` rather than a `<button>`.** The cross
 has to be a real button: tabs are closed from the keyboard, and the cross has a
