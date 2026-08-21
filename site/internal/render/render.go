@@ -133,10 +133,12 @@ func Site(byLang map[i18n.Lang][]*content.Page, sections map[i18n.Lang][]nav.Sec
 			return err
 		}
 	}
-	return verifyIndexRefs(o.Out)
+	return verifyRefs(o.Out, string(sprite))
 }
 
 var indexRefRe = regexp.MustCompile(`data-index="([^"]*)"`)
+var useRefRe = regexp.MustCompile(`<use href="#([^"]*)"`)
+var symbolIDRe = regexp.MustCompile(`<symbol id="([^"]+)"`)
 
 // verifyIndexRefs holds every page to the file it asks the browser for.
 //
@@ -145,7 +147,18 @@ var indexRefRe = regexp.MustCompile(`data-index="([^"]*)"`)
 // renders, the gates pass, and the box simply returns nothing when a reader
 // types into it. That is what the base-language flip did — the English page
 // asked for a file nobody writes, and the Russian one searched English bodies.
-func verifyIndexRefs(out string) error {
+//
+// A GLYPH IS CHECKED THE SAME WAY, and it was the second half of one hole. A
+// `<use>` whose href names no symbol draws NOTHING — no error, no box, no
+// broken-image mark — and an empty `href="#"` draws nothing just as quietly.
+// Nine items of the side column stood that way, their labels shifted against
+// the rest of the list, and the only thing that ever reported it was somebody
+// looking at the page.
+func verifyRefs(out, sprite string) error {
+	symbols := map[string]bool{}
+	for _, m := range symbolIDRe.FindAllStringSubmatch(sprite, -1) {
+		symbols[m[1]] = true
+	}
 	return filepath.WalkDir(out, func(p string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() || d.Name() != "index.html" {
 			return err
@@ -154,12 +167,21 @@ func verifyIndexRefs(out string) error {
 		if err != nil {
 			return err
 		}
-		for _, m := range indexRefRe.FindAllStringSubmatch(string(b), -1) {
+		rel, _ := filepath.Rel(out, p)
+		rel = filepath.ToSlash(rel)
+		text := string(b)
+		for _, m := range indexRefRe.FindAllStringSubmatch(text, -1) {
 			ref := filepath.Join(out, filepath.FromSlash(strings.TrimPrefix(m[1], "/")))
 			if _, err := os.Stat(ref); err != nil {
-				rel, _ := filepath.Rel(out, p)
-				return fmt.Errorf("%s asks for %s, which the build never wrote",
-					filepath.ToSlash(rel), m[1])
+				return fmt.Errorf("%s asks for %s, which the build never wrote", rel, m[1])
+			}
+		}
+		for _, m := range useRefRe.FindAllStringSubmatch(text, -1) {
+			if m[1] == "" {
+				return fmt.Errorf("%s draws a glyph with an empty href", rel)
+			}
+			if !symbols[m[1]] {
+				return fmt.Errorf("%s draws #%s, which the sprite has no symbol for", rel, m[1])
 			}
 		}
 		return nil

@@ -1,5 +1,7 @@
 package i18n
 
+import gostrings "strings"
+
 // Lang is the code of a language. An empty string is impossible: the language
 // is always explicit.
 type Lang string
@@ -39,6 +41,14 @@ func (l Lang) Suffix() string {
 		return ""
 	}
 	return "." + string(l)
+}
+
+// Short is the two letters of the switch in the header. It is the CODE
+// upper-cased rather than a dictionary entry: a language names itself the same
+// way in every language, and a second spelling would be a second thing to keep
+// in agreement for no gain.
+func (l Lang) Short() string {
+	return gostrings.ToUpper(string(l))
 }
 
 func (l Lang) Label() string {

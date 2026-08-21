@@ -643,6 +643,24 @@
 .inst-copy {
   position: relative;
   border-radius: var(--radius-xs);
+  /* THE SIZE OF THE GLYPH IS A PROPERTY OF THE CONTROL rather than of the
+     place it is written in, and this line is what made it one. Every call
+     site used to choose for itself, and they chose differently — 18px beside a
+     hash on one line of a page and 10px beside the same hash twelve lines
+     lower, both in this kit's own reference. Neither number was reasoned; the
+     first was the default and the second was the chevron's size borrowed
+     because 18 looked heavy.
+
+     14 is the size the kit uses for a glyph standing NEXT TO TEXT rather than
+     owning a field: the same --size-icon-sm as in the status bar, by the same
+     rule — a glyph beside a value serves the value and must not outweigh it.
+
+     A LISTING IS NOT AN EXCEPTION, though it was written as one first. The
+     argument for going back to 18 in the corner of a code block is that
+     nothing stands beside the button there. But the text of a listing is
+     --text-xs, and 18 against it is the very proportion the status bar names
+     as outweighing the reading. One size, and no place has to choose. */
+  --icon-size: var(--size-icon-sm);
   /* A browser draws <button> with an arrow cursor, and the copy button lives
      outside .inst-btn, which sets pointer itself — so it would have no
      pointer at all. Hover answers with a surface, by the same rule as
@@ -684,7 +702,7 @@
   /* Exactly enough for a line not to run under the glyph: the frame padding,
      the glyph itself and the gap between it and the text. The number is not
      stated but added up from three roles, so it rides density. */
-  padding-inline-end: calc(var(--pad-panel) + var(--size-icon) + var(--gap-inline));
+  padding-inline-end: calc(var(--pad-panel) + var(--size-icon-sm) + var(--gap-inline));
   /* The scrollbar gutter comes off here. It reserves a strip INSIDE the
      padding, and a glyph measured from the padding edge ends up 19px from the
      frame against the frame's own 12 — that is, hanging somewhere other than

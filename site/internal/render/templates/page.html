@@ -93,6 +93,43 @@
       </svg>
     </a>
 
+    {{/* THE LANGUAGE STANDS IN THE HEADER rather than inside "View", and the
+         difference is what kind of thing it is. Everything under "View" is a
+         setting OF THE SHOWING — the scale, the density, the theme, the accent
+         — and every one of them is reversible in place, on the page one is
+         already reading. A language is a TRANSITION: it has an address, it
+         goes into a bookmark, it is handed to another person as a link. Two
+         clicks and a popover for a transition is the same mistake as hiding
+         the link to the repository behind a menu.
+
+         ONE BUTTON RATHER THAN A TRACK OF TWO, and the reason is measurable.
+         A segmented control was the obvious shape — it shows both languages
+         and marks the current one — but a segment is the track's height less
+         its padding on both sides, that is four pixels, and every neighbour in
+         this header is `--sm`. A segmented control at that step gives a target
+         of 20 pixels in the compact density against the 24 of WCAG 2.5.8, and
+         the pixel gate refuses it: 1 788 measurements went red. At the default
+         step it passes and stands four pixels taller than everything beside
+         it, which is the very unevenness this header was being tidied of.
+
+         With two languages a switch is a TOGGLE, and a toggle is one control:
+         the label is the language being switched TO, the glyph says that it is
+         a language, and the title names it in full. A third language turns
+         this into a menu — the shape the theme and the accent already use. */}}
+    {{ range .Langs }}{{ if not .Current }}
+    <a class="inst-btn inst-btn--sm" href="{{ .Route }}" hreflang="{{ .Lang }}"
+       title="{{ .Label }}" aria-label="{{ t $.Lang "lang" }}: {{ .Label }}">
+      {{/* The globe is the site's own trim and is drawn here rather than in
+           the sprite, by the same rule as the GitHub mark: the sprite is the
+           vocabulary OF THE KIT and travels to the consumer with it, and a kit
+           of interface parts has no language switch in it. */}}
+      <svg class="inst-icon" viewBox="0 0 16 16" aria-hidden="true">
+        <circle cx="8" cy="8" r="5.6"/>
+        <path d="M8 2.4c1.6 1.5 2.4 3.4 2.4 5.6S9.6 12.1 8 13.6C6.4 12.1 5.6 10.2 5.6 8s.8-4.1 2.4-5.6z"/>
+        <path d="M2.6 6.2h10.8M2.6 9.8h10.8"/>
+      </svg>{{ .Lang.Short }}</a>
+    {{ end }}{{ end }}
+
     <button class="inst-btn inst-btn--sm" type="button" popovertarget="site-view">{{ t .Lang "view" }}</button>
 
     <div class="inst-popover inst-popover--anchored" id="site-view" popover>
@@ -110,7 +147,7 @@
              This is the very case the kit keeps .inst-menu-item-sub for. */}}
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "scale" }}</span>
-          <button class="inst-btn inst-btn--sm site-pick" type="button" popovertarget="site-scale"
+          <button class="inst-btn site-pick" type="button" popovertarget="site-scale"
                   aria-label="{{ t .Lang "scale.aria" }}" data-pick-label>14px</button>
           <div class="inst-popover inst-popover--anchored" id="site-scale" popover>
             {{/* The explanation under the type size is the height of a
@@ -147,18 +184,6 @@
           </div>
         </div>
 
-        {{ if gt (len .Langs) 1 }}
-        <div class="site-view-row">
-          <span class="inst-nav-label">{{ t .Lang "lang" }}</span>
-          <div class="inst-segmented" role="radiogroup" aria-label="{{ t .Lang "lang" }}">
-            {{ range .Langs }}
-            <a class="site-lang" role="radio" aria-checked="{{ if .Current }}true{{ else }}false{{ end }}"
-               href="{{ .Route }}"{{ if .Current }} tabindex="0"{{ else }} tabindex="-1"{{ end }}>{{ .Label }}</a>
-            {{ end }}
-          </div>
-        </div>
-        {{ end }}
-
         {{/* Theme and accent are menus of the kit rather than a native
              <select>.
 
@@ -169,7 +194,7 @@
              combinations of tokens has to display its own dropdown too. */}}
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "theme" }}</span>
-          <button class="inst-btn inst-btn--sm site-pick" type="button" popovertarget="site-theme"
+          <button class="inst-btn site-pick" type="button" popovertarget="site-theme"
                   aria-label="{{ t .Lang "theme.aria" }}" data-pick-label>{{ t .Lang "theme.system" }}</button>
           <div class="inst-popover inst-popover--anchored" id="site-theme" popover>
             <div class="inst-menu" role="menu" data-theme-picker>
@@ -187,7 +212,7 @@
 
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "accent" }}</span>
-          <button class="inst-btn inst-btn--sm site-pick" type="button" popovertarget="site-accent"
+          <button class="inst-btn site-pick" type="button" popovertarget="site-accent"
                   aria-label="{{ t .Lang "accent.aria" }}" data-pick-label>{{ t .Lang "accent.pe" }}</button>
           <div class="inst-popover inst-popover--anchored" id="site-accent" popover>
             <div class="inst-menu" role="menu" data-accent-picker>

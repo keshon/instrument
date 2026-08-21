@@ -94,4 +94,14 @@
   <symbol id="i-p-statusbar" viewBox="0 0 16 16"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M2 10.5h12"/><circle cx="4.6" cy="12" r=".8" fill="currentColor" stroke="none"/><path d="M9 12h2.6"/></symbol>
   <symbol id="i-p-change" viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M8 5.4v5.2M5.4 8h5.2"/></symbol>
   <symbol id="i-p-chip" viewBox="0 0 16 16"><rect x="1.7" y="3.3" width="6.4" height="4.4" rx="2.2"/><rect x="1.7" y="3.3" width="6.4" height="4.4" rx="2.2" fill="currentColor" stroke="none" opacity=".25"/><rect x="9.3" y="3.3" width="5" height="4.4" rx="2.2"/><rect x="1.7" y="9.6" width="8" height="4.4" rx="2.2"/></symbol>
+
+  <symbol id="i-p-layout" viewBox="0 0 16 16"><rect x="2" y="2.5" width="12" height="11" rx="1.5"/><path d="M2 6.2h12"/><path d="M9.4 6.2v7.3"/></symbol>
+  <symbol id="i-p-actions" viewBox="0 0 16 16"><path d="M4.2 2.8 12.4 7.6l-3.7.9-1.5 3.6z"/></symbol>
+  <symbol id="i-p-inputs" viewBox="0 0 16 16"><path d="M5.8 3h4.4M5.8 13h4.4M8 3v10"/></symbol>
+  <symbol id="i-p-display" viewBox="0 0 16 16"><path d="M1.6 8s2.5-4.4 6.4-4.4S14.4 8 14.4 8s-2.5 4.4-6.4 4.4S1.6 8 1.6 8z"/><circle cx="8" cy="8" r="1.9"/></symbol>
+  <symbol id="i-p-charts" viewBox="0 0 16 16"><path d="M2.6 2.6v10.8h10.8"/><path d="M5 10.6 7.6 7.3 10 9.1l3.2-4.4"/></symbol>
+  <symbol id="i-p-navigation" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M10.5 5.5 6.8 6.8 5.5 10.5l3.7-1.3z"/></symbol>
+  <symbol id="i-p-overlays" viewBox="0 0 16 16"><path d="M8 2.2 14 5.4 8 8.6 2 5.4z"/><path d="M2 8.8 8 12l6-3.2"/></symbol>
+  <symbol id="i-p-feedback" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.6"/><path d="M8 7.4v3.8"/><circle cx="8" cy="5" r=".95" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-p-agent" viewBox="0 0 16 16"><rect x="4.6" y="4.6" width="6.8" height="6.8" rx="1.4"/><path d="M6.7 4.6V2.5M9.3 4.6V2.5M6.7 13.5v-2.1M9.3 13.5v-2.1M4.6 6.7H2.5M4.6 9.3H2.5M13.5 6.7h-2.1M13.5 9.3h-2.1"/></symbol>
 </svg>

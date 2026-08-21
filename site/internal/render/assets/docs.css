@@ -95,21 +95,18 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* The language switch is links inside a segmented control: changing language
-   is a transition rather than a state, and a middle click has to work. */
-.site-lang {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-block-size: calc(var(--control-h-md) - var(--space-2));
-  padding-inline: var(--control-pad-md);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary); font-size: var(--text-sm); text-decoration: none;
-}
-.site-lang:hover { color: var(--text-primary); }
-.site-lang[aria-checked="true"] {
-  background: var(--surface-raised); color: var(--text-primary);
-  font-weight: var(--weight-medium);
-  box-shadow: 0 0 0 var(--hairline) var(--border);
-}
+/* THE SWITCH IS A BUTTON OF THE KIT AND NOTHING ELSE. It used to redraw a
+   segment by hand — its own height, its own radius, its own selected state —
+   and two of those three were wrong rather than merely different: the radius
+   was `--radius-sm` instead of the track's radius less its padding, so the
+   segment was not concentric with its track, and the selected item carried
+   `font-weight: medium`, which the kit had already dropped from a segmented
+   control because the weight moves the width of the whole track and shifts
+   what stands after it in the row.
+
+   What is left is nothing at all: a button of the kit with a glyph and a label
+   is exactly what this is, and the rule that used to stand here is gone rather
+   than emptied. */
 
 /* ── The layout of a page ───────────────────────────────────────────────── */
 
@@ -222,7 +219,7 @@
    ONLY: the horizontal edge of the frame is one across all three of its
    floors, and touching it is not allowed. The amount comes from the roles
    rather than as a number. */
-.demo--hero .demo-stage { padding-block: var(--space-8); }
+.demo--hero .demo-stage { padding-block: var(--space-9); }
 
 /* ── Sections ───────────────────────────────────────────────────────────── */
 
@@ -416,8 +413,17 @@
    pressed to the edges by twelve reads as cramped, and an example exists
    precisely so that the component can be seen. That gives two edges, and it is
    honest: the chrome of the frame and the field of the canvas inside it are
-   different things.                                                        */
-.demo-stage { padding-inline: var(--space-7); }
+   different things.
+
+   THE FIELD IS 32 AND NOT 24, and the reason is measurable rather than a
+   matter of taste. A row of controls is 32 pixels tall, and at a field of 24
+   the content took 39% of the height of the stage: the dashed rule ran closer
+   to the button than the button is tall, and the frame read as a collar. At 32
+   it is 33%, which is the proportion the frame was drawn for. 48 was tried and
+   is the next step of the scale — it turns an 81-pixel stage into 129 and
+   makes the example taller than the paragraph explaining it. 48 belongs to the
+   lead example alone, where there is exactly one per page.                 */
+.demo-stage { padding-inline: var(--space-8); }
 
 /* The stage carries `.inst-theme`, and that declares the base of an
    application — the background of the page included. For a COMPONENT example
@@ -454,7 +460,7 @@
    of the screen.                                                           */
 .demo-stage {
   background: var(--surface-raised);
-  padding-block: var(--space-7);
+  padding-block: var(--space-8);
 }
 
 .demo-stage:has(> .demo-root > :is(.inst-panel, .inst-card, .inst-split, .inst-container, .inst-grid, .inst-shell)) {
@@ -748,31 +754,22 @@
    inside a value is harmless — unlike a break between the icon and the
    value. */
 .api-cell > code { white-space: normal; overflow-wrap: anywhere; }
-.api-copy {
-  margin-inline-end: var(--space-2);
-  vertical-align: baseline;
-  color: var(--text-faint);
-  opacity: 0; transition: opacity var(--dur-1) var(--ease-out);
-}
-.api-table tbody tr:hover .api-copy,
-.api-copy:focus-visible { opacity: 1; }
-.api-copy:hover { color: var(--text-primary); }
-/* The response to a press. The attribute is set by the kit; the colour is
-   declared HERE because the resting colour is declared here too: the site's
-   styles lie outside the layers and beat the kit by its own rule. The kit
-   paints `[data-copied]` for an application that does not touch `.inst-copy` —
-   that case is not ours.
+/* THE SITE DECLARES ONLY WHERE THE BUTTON STANDS. Colour, hover, the tap area
+   and the answer to a press are `.inst-copy` in the kit, and the site used to
+   restate all four — differently in each of its two places.
 
-   The visibility is held by the same attribute: the button appears on hover
-   over the row, and by the time of the response the cursor has often already
-   left. */
-.api-copy[data-copied] { opacity: 1; }
-.api-copy[data-copied="true"] { color: var(--ok-text); }
-.api-copy[data-copied="false"] { color: var(--err-text); }
+   What that cost, measured on the page: the button in the table was
+   `--text-faint`, which the kit reserves for lines and dividers at a threshold
+   of 3:1, while the one in a code block was `--text-muted` at 4.5:1. The first
+   was invisible until the row was hovered, the second stood at 0.6 opacity
+   always. Two controls that do the same thing looked like two different
+   controls, and one of them was below the contrast floor for a control.
 
-@media (width < 60rem) {
-  .api-copy { opacity: 1; }
-}
+   Now both are the kit's button and differ in one thing only — the size of the
+   glyph, which follows the TYPE SIZE BESIDE IT, as everywhere else in the kit:
+   `--text-xs` in a row of the reference, `--text-xs` in a listing but with a
+   whole corner to itself. */
+.api-copy { margin-inline-end: var(--space-2); vertical-align: baseline; }
 
 /* The heading row of a kind. A sunken surface rather than a bold weight: it
    divides the list without arguing with the names, which are what matters
@@ -808,19 +805,18 @@
    not bring one into being.
 
    An icon rather than a word: a "copy" label on a narrow screen ran into the
-   first line of the code. */
+   first line of the code.
+
+   THE INSETS ARE THE PADDING OF THE LISTING rather than numbers of their own,
+   and that is the rule `.inst-code` in the kit already follows: the glyph
+   stands on the edge the text stands on, neither nearer nor further. They used
+   to be `--space-3` on both axes against a listing padded 12 and 12, so the
+   button hung six pixels inside its own corner — visible as a button that does
+   not line up with anything, and invisible as a cause. */
 .code-copy {
   position: absolute;
-  inset-block-start: var(--space-3); inset-inline-end: var(--space-3);
-  color: var(--text-muted);
-  opacity: 0.6; transition: opacity var(--dur-1) var(--ease-out);
+  inset-block-start: var(--space-5); inset-inline-end: var(--pad-panel);
 }
-.code-block:hover .code-copy,
-.code-copy:hover,
-.code-copy:focus-visible { opacity: 1; }
-.code-copy[data-copied] { opacity: 1; }
-.code-copy[data-copied="true"] { color: var(--ok-text); }
-.code-copy[data-copied="false"] { color: var(--err-text); }
 
 /* Two icons in the markup, the switching here. The href of a <use> cannot be
    substituted by styles, and changing it by script would mean handing the site
@@ -833,11 +829,12 @@
    under it. The <pre> has a scrollbar of its own, so the padding is put on the
    content.
 
-   What is reserved is exactly the width of the button plus its own gap from
-   the edge — counting from --space-5 gave 38px of right field against 12px of
-   left, that is, the column of code did not stand in the middle of its block,
-   and it showed. */
-.code-block pre { padding-inline-end: calc(var(--control-h-sm) + var(--space-3) * 2); }
+   The sum is the same one `.inst-code` adds up in the kit — the padding of the
+   frame, the button and the gap between it and the text — so a listing on the
+   site and a listing handed out by the kit reserve the same strip. */
+.code-block pre {
+  padding-inline-end: calc(var(--pad-panel) + var(--control-h-sm) + var(--gap-inline));
+}
 
 /* Highlighting in three colours. Sixty colours on a layout of hairlines would
    shout louder than the code they highlight — that part of the intent stands.

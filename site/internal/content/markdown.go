@@ -282,11 +282,13 @@ func slug(s string) string {
 	return strings.Trim(b.String(), "-")
 }
 
-func copyIcons(mod string) string {
-	return fmt.Sprintf(
-		`<svg class="inst-icon%s copy-i" aria-hidden="true"><use href="#i-copy"/></svg>`+
-			`<svg class="inst-icon%s copy-i-done" aria-hidden="true"><use href="#i-check"/></svg>`,
-		mod, mod)
+// The glyphs of the button, and NEITHER OF THEM NAMES A SIZE: `.inst-copy` in
+// the kit decides that, and it decides it by where the button stands — beside
+// a value or alone in the corner of a listing. This used to take an argument,
+// and the two call sites below passed different values.
+func copyIcons() string {
+	return `<svg class="inst-icon copy-i" aria-hidden="true"><use href="#i-copy"/></svg>` +
+		`<svg class="inst-icon copy-i-done" aria-hidden="true"><use href="#i-check"/></svg>`
 }
 
 func copyButton(text string, lg i18n.Lang) string {
@@ -295,7 +297,7 @@ func copyButton(text string, lg i18n.Lang) string {
 			`data-copy="%s" data-copied-label="%s" data-failed-label="%s" `+
 			`aria-label="%s" title="%s">%s</button>`,
 		escape(text), escape(i18n.T(lg, "copy.done")), escape(i18n.T(lg, "copy.fail")),
-		escape(i18n.T(lg, "copy")), escape(i18n.T(lg, "copy")), copyIcons(""))
+		escape(i18n.T(lg, "copy")), escape(i18n.T(lg, "copy")), copyIcons())
 }
 
 func copyValue(v string, lg i18n.Lang) string {
@@ -307,7 +309,7 @@ func copyValue(v string, lg i18n.Lang) string {
 			`data-copy="%s" data-copied-label="%s" data-failed-label="%s" `+
 			`aria-label="%s %s" title="%s">%s</button>`,
 		escape(v), escape(i18n.T(lg, "copy.done")), escape(i18n.T(lg, "copy.fail")),
-		escape(i18n.T(lg, "copy")), escape(v), escape(v), copyIcons(" inst-icon--sm"))
+		escape(i18n.T(lg, "copy")), escape(v), escape(v), copyIcons())
 }
 
 func ctxClass(ctx bool) string {

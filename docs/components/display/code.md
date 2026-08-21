@@ -77,7 +77,7 @@ A single-line value with a button — a hash, an identifier, a path.
 ```html preview
 <span class="inst-copyable">a4f7c2e
   <button class="inst-copy" type="button" aria-label="Copy a4f7c2e">
-    <svg class="inst-icon inst-icon--sm" aria-hidden="true"><use href="#i-copy"/></svg>
+    <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
   </button>
 </span>
 ```
@@ -91,6 +91,46 @@ there at all, because on touch there is no hover.
 The tap area of the button grows to the norm by an invisible `::before` — the
 same trick as on a checkbox: the area grows rather than the glyph, and the line
 stays the same height.
+
+### A copyable value in a row
+
+The commonest place for one, and the one that looks least like a block of code:
+a column of identifiers in a table, a machine value in a list of properties. The
+markup is the same `inst-copyable` — a table changes nothing about it.
+
+```html preview
+<table class="inst-table">
+  <thead><tr><th>Run</th><th>Identifier</th><th>State</th></tr></thead>
+  <tbody>
+    <tr><td>nightly-4127</td>
+      <td><span class="inst-copyable"><code>2f8a1c04-9b7e-4d31-a5f0-c6e2</code>
+        <button class="inst-copy" type="button" aria-label="Copy 2f8a1c04-9b7e-4d31-a5f0-c6e2">
+          <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
+        </button></span></td>
+      <td><span class="inst-badge" data-tone="running"><span class="inst-dot"></span>running</span></td></tr>
+    <tr><td>audio-pass</td>
+      <td><span class="inst-copyable"><code>7c31b9de-2a44-4e08-8f1b-30d7</code>
+        <button class="inst-copy" type="button" aria-label="Copy 7c31b9de-2a44-4e08-8f1b-30d7">
+          <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
+        </button></span></td>
+      <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>fell</span></td></tr>
+  </tbody>
+</table>
+```
+
+Three things about a row that are easy to get wrong, and the reference got two
+of them wrong itself before this section was written:
+
+| What | Why |
+|---|---|
+| The button is **always visible** rather than shown on hover over the row | A row of identifiers on a touchscreen has no hover, so a button revealed by one does not exist there. The reference used to hide it that way in its own API tables |
+| The colour is `--text-muted` rather than `--text-faint` | Faint is drawn at a threshold of 3:1 and is meant for lines and dividers. A control is read, so it is due the 4.5:1 of muted |
+| The `aria-label` carries **the value** | A column of ten "Copy" buttons is one word repeated ten times by ear. "Copy 2f8a1c04" says which row it is |
+
+The size of the glyph is not written here and must not be: `.inst-copy` is
+`--size-icon-sm` wherever it stands, because a glyph beside a value serves the
+value. Call sites that chose for themselves chose differently — that is exactly
+how one kit came to have an 18px copy button and a 10px one on the same page.
 
 ### A listing with line numbers
 

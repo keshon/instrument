@@ -219,7 +219,7 @@
       }
     },
     "related": [
-      "log",
+      "log", "table", "kv",
       "diff"
     ]
   },
@@ -403,7 +403,7 @@
       }
     },
     "related": [
-      "table",
+      "table", "code",
       "metric",
       "tree"
     ]
@@ -941,7 +941,7 @@
     },
     "related": [
       "pagination",
-      "kv",
+      "kv", "code",
       "card",
       "task",
       "timeline",

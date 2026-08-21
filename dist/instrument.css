@@ -3953,6 +3953,38 @@ hr {
   }
 }
 
+/* THE SIZE STEPS, and the segmented control was the last control in the kit
+   without them. The button, the input, the select and the chip all take --sm
+   and --lg; a segmented control put beside an --sm button stood four pixels
+   taller and made the row of a toolbar step.
+
+   The arithmetic is the SAME as at the default step rather than a second set
+   of numbers: the track is one control tall, so a segment is the height of
+   the control less the track's padding on both sides, and its radius is the
+   track's radius less the padding on one. Concentricity is computed here too,
+   which is why it survives all three densities without a token of its own. */
+.inst-segmented--sm {
+  border-radius: var(--radius-control-sm);
+
+  & > :is(button, a) {
+    min-block-size: calc(var(--control-h-sm) - var(--space-2));
+    padding-inline: var(--control-pad-sm);
+    border-radius: calc(var(--radius-control-sm) - var(--space-1));
+    font-size: var(--text-xs);
+  }
+}
+
+.inst-segmented--lg {
+  border-radius: var(--radius-control-lg);
+
+  & > :is(button, a) {
+    min-block-size: calc(var(--control-h-lg) - var(--space-2));
+    padding-inline: var(--control-pad-lg);
+    border-radius: calc(var(--radius-control-lg) - var(--space-1));
+    font-size: var(--text-md);
+  }
+}
+
 
 /* ──────────────────────────────────────────────────────────────────────────
    Chip — a visible filter that gets switched on
@@ -8062,6 +8094,24 @@ html:has(dialog:modal) { overflow: hidden; }
 .inst-copy {
   position: relative;
   border-radius: var(--radius-xs);
+  /* THE SIZE OF THE GLYPH IS A PROPERTY OF THE CONTROL rather than of the
+     place it is written in, and this line is what made it one. Every call
+     site used to choose for itself, and they chose differently — 18px beside a
+     hash on one line of a page and 10px beside the same hash twelve lines
+     lower, both in this kit's own reference. Neither number was reasoned; the
+     first was the default and the second was the chevron's size borrowed
+     because 18 looked heavy.
+
+     14 is the size the kit uses for a glyph standing NEXT TO TEXT rather than
+     owning a field: the same --size-icon-sm as in the status bar, by the same
+     rule — a glyph beside a value serves the value and must not outweigh it.
+
+     A LISTING IS NOT AN EXCEPTION, though it was written as one first. The
+     argument for going back to 18 in the corner of a code block is that
+     nothing stands beside the button there. But the text of a listing is
+     --text-xs, and 18 against it is the very proportion the status bar names
+     as outweighing the reading. One size, and no place has to choose. */
+  --icon-size: var(--size-icon-sm);
   /* A browser draws <button> with an arrow cursor, and the copy button lives
      outside .inst-btn, which sets pointer itself — so it would have no
      pointer at all. Hover answers with a surface, by the same rule as
@@ -8103,7 +8153,7 @@ html:has(dialog:modal) { overflow: hidden; }
   /* Exactly enough for a line not to run under the glyph: the frame padding,
      the glyph itself and the gap between it and the text. The number is not
      stated but added up from three roles, so it rides density. */
-  padding-inline-end: calc(var(--pad-panel) + var(--size-icon) + var(--gap-inline));
+  padding-inline-end: calc(var(--pad-panel) + var(--size-icon-sm) + var(--gap-inline));
   /* The scrollbar gutter comes off here. It reserves a strip INSIDE the
      padding, and a glyph measured from the padding edge ends up 19px from the
      frame against the frame's own 12 — that is, hanging somewhere other than

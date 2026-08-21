@@ -505,8 +505,17 @@ func parse(fsPath, rel string, lang i18n.Lang, translated bool) (*Page, error) {
 	if p.Title == "" {
 		p.Title = slug
 	}
-	if slug != "index" {
-		p.Icon = "i-p-" + slug
+	// The index of a section is named by its DIRECTORY rather than by its
+	// slug: every one of them is called "index", and a mark shared by nine
+	// pages is no mark. It used to have none at all, and the hole was silent
+	// — `<use href="#">` draws nothing and reports nothing, so nine items of
+	// the side column stood with their labels shifted against the rest.
+	name := slug
+	if name == "index" {
+		name = path.Base(dir)
+	}
+	if name != "" && name != "." {
+		p.Icon = "i-p-" + name
 	}
 
 	p.body = body

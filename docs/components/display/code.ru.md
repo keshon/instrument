@@ -76,7 +76,7 @@ api:
 ```html preview
 <span class="inst-copyable">a4f7c2e
   <button class="inst-copy" type="button" aria-label="Скопировать a4f7c2e">
-    <svg class="inst-icon inst-icon--sm" aria-hidden="true"><use href="#i-copy"/></svg>
+    <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
   </button>
 </span>
 ```
@@ -88,6 +88,47 @@ api:
 
 Область нажатия у кнопки растёт до нормы невидимым `::before` — тем же приёмом,
 что у флажка: растёт область, а не значок, и строка остаётся прежней высоты.
+
+### Копируемое значение в строке
+
+Самое частое его место и меньше всего похожее на блок кода: колонка
+идентификаторов в таблице, машинное значение в списке свойств. Разметка — тот
+же `inst-copyable`, таблица в ней ничего не меняет.
+
+```html preview
+<table class="inst-table">
+  <thead><tr><th>Прогон</th><th>Идентификатор</th><th>Состояние</th></tr></thead>
+  <tbody>
+    <tr><td>nightly-4127</td>
+      <td><span class="inst-copyable"><code>2f8a1c04-9b7e-4d31-a5f0-c6e2</code>
+        <button class="inst-copy" type="button" aria-label="Скопировать 2f8a1c04-9b7e-4d31-a5f0-c6e2">
+          <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
+        </button></span></td>
+      <td><span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span></td></tr>
+    <tr><td>audio-pass</td>
+      <td><span class="inst-copyable"><code>7c31b9de-2a44-4e08-8f1b-30d7</code>
+        <button class="inst-copy" type="button" aria-label="Скопировать 7c31b9de-2a44-4e08-8f1b-30d7">
+          <svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg>
+        </button></span></td>
+      <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>упало</span></td></tr>
+  </tbody>
+</table>
+```
+
+Три вещи про строку, в которых легко ошибиться, — и в двух из них справочник
+ошибался сам, пока этот раздел не был написан:
+
+| Что | Почему |
+|---|---|
+| Кнопка **видна всегда**, а не по наведению на строку | У колонки идентификаторов на тачскрине наведения нет, и кнопки, которая им вызывается, там просто не существует. Справочник прятал её так в собственных таблицах API |
+| Цвет — `--text-muted`, а не `--text-faint` | Faint рисуется по порогу 3:1 и предназначен линиям и разделителям. Контрол читают, значит ему причитаются 4.5:1 у muted |
+| В `aria-label` стоит **значение** | Колонка из десяти кнопок «Скопировать» на слух — одно слово десять раз. «Скопировать 2f8a1c04» говорит, какая это строка |
+
+Размер значка здесь не написан и написан быть не должен: `.inst-copy` — это
+`--size-icon-sm` везде, где он стоит, потому что значок рядом со значением
+обслуживает значение. Места, которые выбирали сами, выбирали по-разному —
+именно так в одном ките оказались кнопка копирования на 18 пикселей и на 10 на
+одной странице.
 
 ### Листинг с номерами строк
 
