@@ -416,13 +416,40 @@
   font-size: var(--text-xs);
   line-height: var(--leading-ui);
   white-space: nowrap;
-  opacity: 0;
   pointer-events: none;
-  transition: opacity var(--dur-1) var(--ease-out);
+  /* A HIDDEN HINT IS NOT LAID OUT, and opacity alone did not achieve that.
+
+     Transparent still occupies its box, and the box is `nowrap` and can be far
+     wider than the thing it annotates. On a check history that is the
+     difference between a working screen and a broken one: a hint reading
+     "12:00 — 7 checks, all up" is 148px against an hour 20px wide, so the
+     hours at either end of a day-long strip put some 60px outside it — and any
+     ancestor that scrolls answers with a horizontal scrollbar that NEVER GOES
+     AWAY, because nothing has to be hovered for the box to be there. Measured
+     on a monitor screen: 51px of overflow on a shell whose main region is
+     `overflow-x: auto`, with the pointer nowhere near the strip.
+
+     Overhanging while SHOWN is fine and often unavoidable — an annotation is
+     wider than what it annotates. Overhanging while invisible is not.
+
+     display is transitioned rather than just flipped, so the fade survives:
+     `allow-discrete` holds the box present until the opacity has finished on
+     the way out, and @starting-style gives it somewhere to fade in FROM on the
+     way in. Where that is unsupported the hint still appears and disappears —
+     it simply does so at once, which is the correct thing to lose. */
+  display: none;
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease-out),
+              display var(--dur-1) allow-discrete;
 }
 
 .inst-tooltip:hover > .inst-tooltip-text,
-.inst-tooltip:focus-within > .inst-tooltip-text { opacity: 1; }
+.inst-tooltip:focus-within > .inst-tooltip-text {
+  display: block;
+  opacity: 1;
+
+  @starting-style { opacity: 0; }
+}
 
 /* A one-line tooltip suits a short label. As soon as there is a sentence
    inside, nowrap stretches it past the edge of the screen — so long text

@@ -598,8 +598,16 @@
   margin-block: calc(var(--space-1) * -1);
 }
 
+/* The group reveals its own hint, and it has to say `display` as well as
+   opacity: a hidden hint is out of the layout entirely — see overlay.css, and
+   see the scrollbar that got it there. */
 .inst-history-group:hover > .inst-tooltip-text,
-.inst-history-group:focus-visible > .inst-tooltip-text { opacity: 1; }
+.inst-history-group:focus-visible > .inst-tooltip-text {
+  display: block;
+  opacity: 1;
+
+  @starting-style { opacity: 0; }
+}
 
 /* ── The height of the strip ───────────────────────────────────────────────
    Three, because a history bar does three different jobs and the base one
