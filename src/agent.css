@@ -646,11 +646,23 @@
 .inst-history-axis-cell {
   /* The same share as the group above it. */
   flex: var(--n, 1) 1 0;
-  /* A label is allowed to be WIDER than the hour it names, and then it has to
-     hang over its neighbours rather than push them aside. Without this the
-     first wide label takes width from the cells after it and the ruler stops
-     agreeing with the strip — the one thing it exists to do.              */
-  min-inline-size: 0;
+  /* THE SAME FLOOR AS THE GROUP, and it is doing two jobs at once.
+
+     The first is the obvious one: a label may be WIDER than the hour it names,
+     and then it has to hang over its neighbours rather than push them aside. A
+     flex item's min-inline-size is `auto`, which resolves to its content — so
+     without a number here the first wide label takes width from the cells after
+     it and the ruler stops agreeing with the strip, the one thing it exists to
+     do. Any small number fixes that.
+
+     The second is why the number is --size-tick rather than 0. The GROUP has a
+     floor: an hour does not vanish with one check in it against a hundred next
+     door. A cell with no floor shrinks past where its group stopped, and the
+     two rows part company at exactly the hour that needed the floor. Measured
+     on a real monitor — twenty-four hours in a 420px column, one hour with a
+     single check beside one with twelve — the ruler was 0.875px out. Small, and
+     it grows with every hour that hits the floor.                          */
+  min-inline-size: var(--size-tick);
   overflow: visible;
   white-space: nowrap;
 }

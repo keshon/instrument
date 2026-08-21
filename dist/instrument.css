@@ -6673,15 +6673,23 @@ hr {
 
 /* NOTHING WAS THERE: an hour nobody checked, a share nobody accounted for.
 
-   The same attribute and the same value as `.inst-history-tick[data-empty]`,
-   because it is the same statement — and the key has to be drawn in the value
-   the bar is drawn in, or the legend is describing a colour twenty pixels
-   away that is not the colour on the bar. That exact bug is what an
-   application hit when it had to reach into the kit and set --tone-mark to
-   the track by hand.
+   THE SAME STATEMENT AS `.inst-history-tick[data-empty]`, DRAWN DIFFERENTLY,
+   and the difference is not a slip — a monitor's own test caught it being
+   described as one. On the strip an absence is drawn BY absence, no mark at
+   all, and that works because a tick has neighbours: a hole between two
+   coloured bricks reads as a hole. A swatch has none. A legend entry that
+   paints nothing is not an entry about absence, it is a missing swatch beside
+   a stray word. So here the absence takes the colour the strip's ground has at
+   that hour: the track.
 
-   A tone would be wrong here for the reason it is wrong on the tick: an
-   absence is not an outcome, and on real data a gap is the norm. */
+   A tone would be wrong for the reason it is wrong on the tick: an absence is
+   not an outcome, and on real data a gap is the norm rather than the
+   exception.
+
+   The value matters more than it looks. An application that had to reach into
+   the kit and set --tone-mark to the track by hand ended up with a key drawn
+   in a colour its own bar was not drawn in — twenty pixels apart, and only one
+   of the two true. */
 .inst-legend-swatch[data-empty] { background: var(--track); }
 
 .inst-legend-value { color: var(--text-primary); font-weight: var(--weight-medium); }
@@ -8357,11 +8365,23 @@ html:has(dialog:modal) { overflow: hidden; }
 .inst-history-axis-cell {
   /* The same share as the group above it. */
   flex: var(--n, 1) 1 0;
-  /* A label is allowed to be WIDER than the hour it names, and then it has to
-     hang over its neighbours rather than push them aside. Without this the
-     first wide label takes width from the cells after it and the ruler stops
-     agreeing with the strip — the one thing it exists to do.              */
-  min-inline-size: 0;
+  /* THE SAME FLOOR AS THE GROUP, and it is doing two jobs at once.
+
+     The first is the obvious one: a label may be WIDER than the hour it names,
+     and then it has to hang over its neighbours rather than push them aside. A
+     flex item's min-inline-size is `auto`, which resolves to its content — so
+     without a number here the first wide label takes width from the cells after
+     it and the ruler stops agreeing with the strip, the one thing it exists to
+     do. Any small number fixes that.
+
+     The second is why the number is --size-tick rather than 0. The GROUP has a
+     floor: an hour does not vanish with one check in it against a hundred next
+     door. A cell with no floor shrinks past where its group stopped, and the
+     two rows part company at exactly the hour that needed the floor. Measured
+     on a real monitor — twenty-four hours in a 420px column, one hour with a
+     single check beside one with twelve — the ruler was 0.875px out. Small, and
+     it grows with every hour that hits the floor.                          */
+  min-inline-size: var(--size-tick);
   overflow: visible;
   white-space: nowrap;
 }

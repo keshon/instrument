@@ -108,9 +108,14 @@ subject rather than an annotation to a number.
 
 The swatch reads `--tone-mark` when no `--series` is set, so **one legend keys
 both** a chart of series and a bar of states. An hour nobody checked is neither:
-it takes `data-empty`, the same word `inst-history-tick` uses for it, and is
-drawn in the track — because the key has to be drawn in the value the bar is
-drawn in.
+it takes `data-empty`, the same word `inst-history-tick` uses for it.
+
+The same statement, drawn differently on purpose. On a strip an absence is drawn
+**by** absence — no mark at all — and that works because a tick has neighbours: a
+hole between two coloured bricks reads as a hole. A swatch has none, and one that
+paints nothing is a missing swatch beside a stray word rather than an entry about
+absence. So in the legend it takes the colour the strip's ground has at that
+hour: the track.
 
 ### Above a history strip
 

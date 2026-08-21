@@ -248,15 +248,23 @@
 
 /* NOTHING WAS THERE: an hour nobody checked, a share nobody accounted for.
 
-   The same attribute and the same value as `.inst-history-tick[data-empty]`,
-   because it is the same statement — and the key has to be drawn in the value
-   the bar is drawn in, or the legend is describing a colour twenty pixels
-   away that is not the colour on the bar. That exact bug is what an
-   application hit when it had to reach into the kit and set --tone-mark to
-   the track by hand.
+   THE SAME STATEMENT AS `.inst-history-tick[data-empty]`, DRAWN DIFFERENTLY,
+   and the difference is not a slip — a monitor's own test caught it being
+   described as one. On the strip an absence is drawn BY absence, no mark at
+   all, and that works because a tick has neighbours: a hole between two
+   coloured bricks reads as a hole. A swatch has none. A legend entry that
+   paints nothing is not an entry about absence, it is a missing swatch beside
+   a stray word. So here the absence takes the colour the strip's ground has at
+   that hour: the track.
 
-   A tone would be wrong here for the reason it is wrong on the tick: an
-   absence is not an outcome, and on real data a gap is the norm. */
+   A tone would be wrong for the reason it is wrong on the tick: an absence is
+   not an outcome, and on real data a gap is the norm rather than the
+   exception.
+
+   The value matters more than it looks. An application that had to reach into
+   the kit and set --tone-mark to the track by hand ended up with a key drawn
+   in a colour its own bar was not drawn in — twenty pixels apart, and only one
+   of the two true. */
 .inst-legend-swatch[data-empty] { background: var(--track); }
 
 .inst-legend-value { color: var(--text-primary); font-weight: var(--weight-medium); }
