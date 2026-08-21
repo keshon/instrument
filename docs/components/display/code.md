@@ -91,6 +91,21 @@ group-en: "Data display"
 Область нажатия у кнопки растёт до нормы невидимым `::before` — тем же приёмом,
 что у флажка: растёт область, а не значок, и строка остаётся прежней высоты.
 
+### Листинг с номерами строк
+
+```html preview
+<div class="inst-code inst-code--numbered">
+  <div class="inst-code-line"><span class="inst-code-num">41</span><span class="inst-code-src">const size = 256;</span></div>
+  <div class="inst-code-line"><span class="inst-code-num">42</span><span class="inst-code-src">let seed = Date.now();</span></div>
+  <div class="inst-code-line"><span class="inst-code-num">43</span><span class="inst-code-src">return generate(size, seed);</span></div>
+</div>
+```
+
+Номер не выделяется мышью — `user-select: none`: копируют код, а не страницу.
+Колонка номеров ровно `5ch`, и это не запас на глаз: пятизначный номер строки
+встречается в настоящих файлах, а колонка, растущая от содержимого, сдвигала
+бы код при каждой подгрузке.
+
 | | `inst-code` | `inst-copyable` |
 |---|---|---|
 | Сколько строк | Сколько угодно | Одна |

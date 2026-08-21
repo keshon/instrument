@@ -48,6 +48,7 @@ group-en: "Overlays"
   <form method="dialog">
     <div class="inst-dialog-head">
       <span class="inst-dialog-title">Удалить прогон #4127?</span>
+      <span class="inst-dialog-sub">Артефакты уйдут вместе с ним</span>
       <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon inst-dialog-close" type="submit" aria-label="Закрыть">
         <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>
       </button>

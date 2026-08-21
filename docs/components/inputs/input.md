@@ -82,6 +82,9 @@ group-en: "Inputs"
 <input class="inst-input inst-input--sm" value="sm" aria-label="Поле sm">
 <input class="inst-input" value="md" aria-label="Поле md">
 <input class="inst-input inst-input--lg" value="lg" aria-label="Поле lg">
+<textarea class="inst-textarea inst-textarea--sm" aria-label="Многострочное sm">sm</textarea>
+<textarea class="inst-textarea" aria-label="Многострочное md">md</textarea>
+<textarea class="inst-textarea inst-textarea--lg" aria-label="Многострочное lg">lg</textarea>
 ```
 
 | Размер | Высота | Кегль |

@@ -27,16 +27,28 @@ group-en: "Agent layer"
 
 Иерархия: файлы проекта, структура сцены, вложенность вызовов.
 
+В примере четыре уровня и `inst-tree--guides` — вертикальные направляющие
+вложенности. От четырёх уровней глаз теряет, к какой ветке относится строка;
+на двух те же линии были бы шумом, и модификатор для того и отдельный.
+
 ```html preview
-<div class="inst-tree" role="tree" aria-label="Файлы проекта">
+<div class="inst-tree inst-tree--guides" role="tree" aria-label="Файлы проекта">
   <div class="inst-tree-item" role="treeitem" aria-level="1" aria-expanded="true"
        tabindex="0" style="--depth:0">
+    <span class="inst-tree-twist"></span>src
+  </div>
+  <div class="inst-tree-item" role="treeitem" aria-level="2" aria-expanded="true"
+       tabindex="-1" style="--depth:1">
+    <span class="inst-tree-twist"></span>world
+  </div>
+  <div class="inst-tree-item" role="treeitem" aria-level="3" aria-expanded="true"
+       tabindex="-1" style="--depth:2">
     <span class="inst-tree-twist"></span>terrain
   </div>
-  <div class="inst-tree-item" role="treeitem" aria-level="2"
-       tabindex="-1" style="--depth:1">heightmap.ts</div>
-  <div class="inst-tree-item" role="treeitem" aria-level="2" aria-selected="true"
-       tabindex="-1" style="--depth:1">chunks.bin</div>
+  <div class="inst-tree-item" role="treeitem" aria-level="4"
+       tabindex="-1" style="--depth:3">heightmap.ts</div>
+  <div class="inst-tree-item" role="treeitem" aria-level="4" aria-selected="true"
+       tabindex="-1" style="--depth:3">chunks.bin</div>
 </div>
 ```
 

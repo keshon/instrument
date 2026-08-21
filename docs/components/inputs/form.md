@@ -94,13 +94,16 @@ group-en: "Inputs"
 
 ### Полоса действий
 
-```html
-<div class="inst-form-actions">
-  <button class="inst-btn inst-btn--primary" type="submit">Сохранить</button>
-  <button class="inst-btn" type="button">Отмена</button>
+```html preview
+<div class="inst-form-actions inst-form-actions--end">
   <span class="inst-form-actions-note">Изменения применятся сразу</span>
+  <button class="inst-btn" type="button">Отмена</button>
+  <button class="inst-btn inst-btn--primary" type="submit">Сохранить</button>
 </div>
 ```
+
+В рамке — `inst-form-actions--end`; умолчание с действиями у начала строки
+стоит в примере формы выше.
 
 | Класс | Работа |
 |---|---|
@@ -126,10 +129,17 @@ group-en: "Inputs"
 
 ### Группа полей
 
-```html
-<fieldset class="inst-fieldset">
+```html preview
+<fieldset class="inst-fieldset inst-fieldset--framed inst-fieldset--side">
   <legend>Ограничения прогона</legend>
-  <div class="inst-field">…</div>
+  <div class="inst-field">
+    <label class="inst-label" for="lim-mem">Память</label>
+    <input class="inst-input" id="lim-mem" value="4 ГиБ">
+  </div>
+  <div class="inst-field">
+    <label class="inst-label" for="lim-time">Время</label>
+    <input class="inst-input" id="lim-time" value="30 мин">
+  </div>
 </fieldset>
 ```
 

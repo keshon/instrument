@@ -68,9 +68,15 @@ group-en: "Layout"
 ### Стопка
 
 ```html preview
-<div class="inst-stack inst-stack--tight">
-  <div class="inst-card"><div class="inst-card-title">Первый</div></div>
-  <div class="inst-card"><div class="inst-card-title">Второй</div></div>
+<div class="inst-stack inst-stack--loose">
+  <div class="inst-stack inst-stack--tight">
+    <div class="inst-card"><div class="inst-card-title">Первый</div></div>
+    <div class="inst-card"><div class="inst-card-title">Второй</div></div>
+  </div>
+  <div class="inst-stack inst-stack--tight">
+    <div class="inst-card"><div class="inst-card-title">Третий</div></div>
+    <div class="inst-card"><div class="inst-card-title">Четвёртый</div></div>
+  </div>
 </div>
 ```
 
@@ -107,8 +113,10 @@ column`, написанный руками, намерения не объяви
 
 ```html preview
 <div class="inst-cluster inst-cluster--loose">
-  <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
-  <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
+  <span class="inst-cluster inst-cluster--tight">
+    <span class="inst-badge" data-tone="ok"><span class="inst-dot"></span>готово</span>
+    <span class="inst-badge" data-tone="running"><span class="inst-dot"></span>идёт</span>
+  </span>
   <span class="inst-cluster-spacer"></span>
   <button class="inst-btn inst-btn--sm" type="button">Ещё</button>
 </div>

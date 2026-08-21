@@ -25,7 +25,27 @@ group-en: "Overlays"
 
 ```html preview
 <button class="inst-btn" type="button"
-        onclick="document.getElementById('dlg-params').showModal()">Параметры прогона</button>
+        onclick="document.getElementById('dlg-params').showModal()">От конечного края</button>
+<button class="inst-btn" type="button"
+        onclick="document.getElementById('dlg-nav').showModal()">От начального</button>
+
+<dialog class="inst-dialog inst-sheet inst-sheet--start" id="dlg-nav">
+  <form method="dialog">
+    <div class="inst-dialog-head">
+      <span class="inst-dialog-title">Разделы</span>
+      <button class="inst-btn inst-btn--sm inst-btn--ghost inst-btn--icon inst-dialog-close" type="submit" aria-label="Закрыть">
+        <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
+    <div class="inst-dialog-body">
+      <nav class="inst-nav" aria-label="Разделы">
+        <a class="inst-nav-item" href="#" aria-current="page">Прогоны</a>
+        <a class="inst-nav-item" href="#">Артефакты</a>
+        <a class="inst-nav-item" href="#">Настройки</a>
+      </nav>
+    </div>
+  </form>
+</dialog>
 
 <dialog class="inst-dialog inst-sheet" id="dlg-params">
   <form method="dialog">

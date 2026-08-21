@@ -112,7 +112,7 @@ group-en: "Agent layer"
 скопировать код, бесполезен в тот момент, когда он нужен.
 
 ```html preview context
-<div class="inst-diff">
+<div class="inst-diff inst-diff--flush">
   <div class="inst-diff-head">
     <span class="inst-diff-path">src/world/biomes.ts</span>
     <span class="inst-diff-stat"><span data-kind="add">+3</span> <span data-kind="del">−2</span></span>
