@@ -78,13 +78,14 @@
 
     <span class="inst-cluster-spacer"></span>
 
-    {{/* Значок GitHub нарисован здесь, а не в спрайте кита: спрайт — словарь
-         КИТА, он уезжает потребителю вместе с ним, и чужому логотипу там не
-         место. Это обвязка сайта, и живёт она в сайте.
+    {{/* The GitHub mark is drawn here rather than in the kit's sprite: the
+         sprite is the vocabulary OF THE KIT, it travels to the consumer with
+         it, and somebody else's logo has no place there. This is the site's
+         own trim, and it lives in the site.
 
-         Заливка, а не обводка: у марки GitHub одна каноническая форма, и
-         перерисовывать её штрихами под стиль кита значило бы нарисовать не
-         её. */}}
+         A fill rather than a stroke: the GitHub mark has one canonical shape,
+         and redrawing it in strokes to match the kit would mean drawing
+         something else. */}}
     <a class="inst-btn inst-btn--sm inst-btn--icon" href="https://github.com/keshon/instrument"
        target="_blank" rel="noopener" aria-label="{{ t .Lang "github" }}" title="{{ t .Lang "github" }}">
       <svg class="site-github" viewBox="0 0 16 16" aria-hidden="true">
@@ -96,26 +97,27 @@
 
     <div class="inst-popover inst-popover--anchored" id="site-view" popover>
       <div class="site-view-body">
-        {{/* Масштаб стоит ПЕРЕД плотностью, и порядок здесь смысловой: сначала
-             человек выбирает, насколько крупным ему видеть кит, и только потом
-             — сколько воздуха оставить внутри выбранного размера. Обратный
-             порядок читался бы как «плотность, а масштаб — её уточнение»,
-             тогда как в токенах первичен ровно масштаб.
+        {{/* Scale stands BEFORE density, and the order carries meaning: first
+             a person chooses how large to see the kit, and only then how much
+             air to leave inside the chosen size. The reverse order would read
+             as "density, and scale is a refinement of it", whereas in the
+             tokens it is precisely scale that comes first.
 
-             Список, а не сегментированный контрол, и подпись у пункта —
-             КЕГЛЬ, а не имя ступени. «Крупно» ни о чём не сообщает, пока не
-             нажато; «16px» отвечает на вопрос сразу, а имя ступени уезжает в
-             пояснение под ним. Ровно для этого случая в ките и существует
-             .inst-menu-item-sub. */}}
+             A list rather than a segmented control, and the label of an item
+             is the TYPE SIZE rather than the name of a step. "Large" says
+             nothing until it is pressed; "16px" answers the question at once,
+             and the name of the step moves into the explanation under it.
+             This is the very case the kit keeps .inst-menu-item-sub for. */}}
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "scale" }}</span>
           <button class="inst-btn inst-btn--sm site-pick" type="button" popovertarget="site-scale"
                   aria-label="{{ t .Lang "scale.aria" }}" data-pick-label>14px</button>
           <div class="inst-popover inst-popover--anchored" id="site-scale" popover>
-            {{/* Пояснение под кеглем — высота контрола на этой ступени. Она
-                 меняется на КАЖДОЙ ступени, в отличие от сценария («крупный
-                 монитор»), которого на пять ступеней честно не хватает: пришлось
-                 бы придумывать разницу между пятнадцатым и семнадцатым. */}}
+            {{/* The explanation under the type size is the height of a
+                 control at that step. It changes at EVERY step, unlike a
+                 scenario ("a large monitor"), of which there is honestly not
+                 enough for five: the difference between the fifteenth and the
+                 seventeenth would have to be invented. */}}
             <div class="inst-menu" role="menu" data-scale-picker>
               <button class="inst-menu-item" type="button" role="menuitem" data-v="default" data-label="14px" aria-checked="true">
                 <span class="inst-menu-item-main">14px
@@ -157,13 +159,14 @@
         </div>
         {{ end }}
 
-        {{/* Тема и акцент — меню кита, а не нативный <select>.
+        {{/* Theme and accent are menus of the kit rather than a native
+             <select>.
 
-             Нативный список рисует операционная система, и внутри поповера,
-             набранного китом, он единственный элемент, которого кит не
-             касается: своя гарнитура, свои отступы, своя подсветка выбранного.
-             Витрина, показывающая семьдесят два сочетания токенов, обязана
-             показывать и собственную выпадашку. */}}
+             A native list is drawn by the operating system, and inside a
+             popover set by the kit it is the one element the kit does not
+             touch: a typeface of its own, paddings of its own, a highlight of
+             its own on the selected item. A showcase displaying seventy-two
+             combinations of tokens has to display its own dropdown too. */}}
         <div class="site-view-row">
           <span class="inst-nav-label">{{ t .Lang "theme" }}</span>
           <button class="inst-btn inst-btn--sm site-pick" type="button" popovertarget="site-theme"
@@ -227,10 +230,11 @@
         {{ .Body }}
 
         {{ if not .Page.Splash }}
-        {{/* Одна строка, а не две. Значка в шапке мало — он говорит «есть
-             репозиторий», а не «этим можно пользоваться», — но и повод
-             прочитать конституцию, и условия лицензии живут в одном месте:
-             это подпись под страницей, а у подписи один абзац. */}}
+        {{/* One line rather than two. The mark in the header is not enough —
+             it says "there is a repository" rather than "this can be used" —
+             but both the reason to read the constitution and the terms of the
+             licence live in one place: this is the footer of the page, and a
+             footer has one paragraph. */}}
         <p class="site-source">{{ t .Lang "why" }} —
           <a href="{{ .Lang.Prefix }}/about/design-principles/">{{ t .Lang "constitution" }}</a> ·
           {{ t .Lang "license" }},

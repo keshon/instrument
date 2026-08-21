@@ -34,7 +34,7 @@ func renderMarkdown(p *Page, body []byte) error {
 			parser.WithASTTransformers(util.Prioritized(&linkRewriter{dir: p.Dir, prefix: p.Lang.Prefix()}, 100)),
 		),
 		goldmark.WithRendererOptions(
-			html.WithUnsafe(), // примеры — это HTML, в том и смысл
+			html.WithUnsafe(), // the examples ARE HTML, that is the whole point
 			renderer.WithNodeRenderers(util.Prioritized(cr, 1)),
 		),
 	)
@@ -124,12 +124,13 @@ type codeRenderer struct {
 	heroOpen   bool
 	sectionOn  bool
 	heroDemoOn bool
-	section    string // id открытого раздела: ссылкам «Связанного» нужен свой класс
+	section    string // id of the open section: Related links need a class of their own
 	ids        map[string]int
 
-	// Ограды, уже съеденные предыдущим примером как его дополнительные цели.
-	// Обход идёт по одному узлу, а цели собираются вперёд по соседям — без
-	// отметки та же ограда отрисовалась бы второй раз, уже сама по себе.
+	// Fences already eaten by the previous example as its extra targets. The
+	// walk goes one node at a time while the targets are gathered forward along
+	// the neighbours — without a mark the same fence would be drawn a second
+	// time, on its own.
 	eaten map[ast.Node]bool
 }
 
@@ -204,12 +205,13 @@ func (r *codeRenderer) heading(w util.BufWriter, source []byte, n ast.Node, ente
 	return ast.WalkContinue, nil
 }
 
-// Ссылка «Связанного» — КИТОВАЯ КНОПКА, а не своя плашка сайта.
+// A Related link is a BUTTON OF THE KIT rather than a plate of the site's own.
 //
-// Раздел показывает ряд переходов, и раньше сайт рисовал их сам: высота,
-// отступ, рамка, радиус — всё то, что уже умеет .inst-btn на <a>. Справочник,
-// который вокруг чужих компонентов рисует свои, показывает не то, что раздаёт.
-// В остальных разделах ссылка остаётся ссылкой: там она внутри предложения.
+// The section shows a row of transitions, and drawing them here would mean the
+// site owning a height, a padding, a border and a radius that .inst-btn on an
+// <a> already knows. A reference that draws its own around somebody else's
+// components shows something other than what it hands out. In the other
+// sections a link stays a link: there it sits inside a sentence.
 func (r *codeRenderer) link(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
 	n := node.(*ast.Link)
 	if !entering {
@@ -246,6 +248,10 @@ func headingID(h *ast.Heading, source []byte) string {
 	return slug(nodeText(h, source))
 }
 
+// THE TABLE IS DATA, not text: it turns the heading of a Russian page into an
+// anchor a link can point at. It leaves with the last Russian page, and the
+// kind vocabulary below it leaves the same way — both spellings stand there
+// side by side for as long as both kinds of page exist.
 var translit = map[rune]string{
 	'а': "a", 'б': "b", 'в': "v", 'г': "g", 'д': "d", 'е': "e", 'ё': "e",
 	'ж': "zh", 'з': "z", 'и': "i", 'й': "y", 'к': "k", 'л': "l", 'м': "m",
@@ -315,12 +321,14 @@ var (
 	previewRe = regexp.MustCompile(`(^|\s)preview(\s|$)`)
 	contextRe = regexp.MustCompile(`(^|\s)context(\s|$)`)
 
-	// Дополнительная цель примера: ограда сразу за живым примером, помеченная
-	// словом target. Подпись берётся из target=Имя, иначе из языка ограды.
+	// An extra target of an example: a fence right after the live example,
+	// marked with the word target. The label comes from target=Name, otherwise
+	// from the language of the fence.
 	targetRe = regexp.MustCompile(`(^|\s)target(=(\S+))?(\s|$)`)
 )
 
-// codeTarget — одна цель панели кода: тот же компонент на другом языке.
+// codeTarget is one target of the code panel: the same component in another
+// language.
 type codeTarget struct {
 	lang  string
 	label string
@@ -328,12 +336,14 @@ type codeTarget struct {
 	id    string
 }
 
-// Подпись цели по языку ограды. Список открыт намеренно: новая цель — это
-// строка здесь и ограда на странице, а не правка разметки примера.
+// The label of a target by the language of its fence. The list is open on
+// purpose: a new target is a line here and a fence on the page, not an edit to
+// the markup of the example.
 //
-// React и Svelte стоят в списке ДО появления адаптеров, и это не обещание
-// читателю: вкладка рисуется только тогда, когда на странице есть ограда с
-// таким языком. Пустой вкладки не бывает, а место для неё готово.
+// React and Svelte stand on the list BEFORE any adapter exists, and that is no
+// promise to the reader: a tab is drawn only when the page carries a fence in
+// that language. There is no such thing as an empty tab, and the place for one
+// is ready.
 var targetLabels = map[string]string{
 	"html":   "HTML",
 	"js":     "JS",
@@ -377,7 +387,7 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 	}
 
 	if lang == "icons" {
-		writeIcons(w)
+		writeIcons(w, r.page.Lang)
 		return ast.WalkSkipChildren, nil
 	}
 
@@ -420,32 +430,35 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 			label = i18n.T(lg, "demo.hero")
 		}
 
-		// Своего переключателя темы у примера нет. Тема справочника — одна
-		// ручка в шапке, и пример её наследует: .inst-theme берёт цвет и фон
-		// из токенов, а тема кита работает на любом поддереве. Второй
-		// переключатель у каждого из двухсот примеров был лишней дорогой к
-		// тому же результату.
-		// Рама примера — ГРАНИЦА, а не панель, и это смена решения.
+		// An example has no theme switch of its own. The theme of the
+		// reference is one knob in the header, and an example inherits it:
+		// .inst-theme takes colour and background from the tokens, and a theme
+		// of the kit works on any subtree. A second switch on each of two
+		// hundred examples was a longer road to the same result.
+		// The frame of an example is a BORDER rather than a panel.
 		//
-		// Панель кита в этой роли собиралась по рассуждению «справочник,
-		// рисующий свою рамку вокруг чужого компонента, показывает не то,
-		// что раздаёт». Рассуждение верное для рисунка и неверное для роли:
-		// панель — это ПРОДУКТ, кит её раздаёт, и демонстрация, одетая в
-		// неё, выглядит отгружаемой вещью и спорит за внимание с тем, что
-		// внутри. На странице кнопки таких панелей тринадцать.
+		// A panel of the kit in this role follows from the reasoning that a
+		// reference drawing its own frame around somebody else's component
+		// shows something other than what it hands out. The reasoning is right
+		// about the drawing and wrong about the role: a panel is a PRODUCT,
+		// the kit hands it out, and a demonstration dressed in one looks like
+		// a shipped thing and argues for attention with what is inside it. On
+		// the button page there are thirteen such panels.
 		//
-		// Штриховая граница китом не раздаётся — и потому ею можно обвести
-		// пример, не выдавая его за компонент. Токены при этом всё равно
-		// китовы: справочник не заводит своего языка, он лишь перестаёт
-		// одевать демонстрацию в товар.
+		// A dashed border is not handed out by the kit — and so an example can
+		// be outlined with one without passing it off as a component. The
+		// tokens are still the kit's: the reference starts no language of its
+		// own, it merely stops dressing a demonstration as merchandise.
 		//
-		// Класс .demo-stage остаётся: на нём висит два десятка правил со
-		// :has() — штриховка подложки, воздух, собранный экран. Снять его
-		// значило бы переписать их все заодно с рамой.
-		// Цели собираются ВПЕРЁД по соседям: ограда с пометкой target,
-		// стоящая сразу за живым примером, — это тот же пример на другом
-		// языке, а не отдельный блок кода. Обход у goldmark потоковый, узел
-		// приходит по одному, поэтому съеденное помечается.
+		// The class .demo-stage stays: a couple of dozen rules with :has()
+		// hang on it — the hatching of the ground, the air, the assembled
+		// screen. Removing it would mean rewriting them all along with the
+		// frame.
+		// The targets are gathered FORWARD along the neighbours: a fence
+		// marked target standing right after a live example is the same
+		// example in another language rather than a separate block of code.
+		// The goldmark walk is streaming and hands over one node at a time,
+		// which is why what has been eaten is marked.
 		targets := []codeTarget{{lang: lang, label: targetLabel(lang, info), raw: raw, id: id + "-0"}}
 		for sib, k := n.NextSibling(), 1; sib != nil; sib, k = sib.NextSibling(), k+1 {
 			fence, ok := sib.(*ast.FencedCodeBlock)
@@ -493,19 +506,21 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 	return ast.WalkSkipChildren, nil
 }
 
-// writeTargets рисует панель кода примера: подпись-раскладушку и, если целей
-// больше одной, полосу вкладок кита над блоками кода.
+// writeTargets draws the code panel of an example: the fold-out label and, if
+// there is more than one target, a tab strip of the kit above the blocks of
+// code.
 //
-// ВКЛАДКА РИСУЕТСЯ ТОЛЬКО ТОГДА, КОГДА ЗА НЕЙ ЕСТЬ КОД. Три равноправные
-// вкладки HTML/JS/React были бы нарисованным обещанием: React не существует,
-// а `## JS` встречается на восемнадцати страницах из пятидесяти — на прочих
-// вкладка сказала бы «то же, что в HTML» или оказалась пустой. Кит запрещает
-// такие обещания сам себе, и справочник кита не исключение.
+// A TAB IS DRAWN ONLY WHEN THERE IS CODE BEHIND IT. Three equal HTML/JS/React
+// tabs would be a drawn promise: React does not exist, and `## JS` occurs on
+// eighteen pages out of fifty — on the rest the tab would say "the same as in
+// HTML" or stand empty. The kit forbids itself such promises, and the kit's
+// reference is no exception.
 //
-// Полоса — китовый role="tablist" целиком: instrument.js уже выполняет его
-// контракт (стрелки, Home и End, бегущий tabindex) и сам переключает панели по
-// aria-controls. Своя полоса означала бы третью реализацию переключателя в
-// репозитории, где уже есть две проверенные.
+// The strip is the kit's role="tablist" entire: instrument.js already fulfils
+// its contract (arrows, Home and End, a roving tabindex) and switches the
+// panels by aria-controls itself. A strip of our own would mean a third
+// implementation of a switch in a repository that already has two proven
+// ones.
 func writeTargets(w util.BufWriter, targets []codeTarget, lg i18n.Lang) {
 	head := i18n.T(lg, "demo.markup")
 	if len(targets) > 1 {
@@ -552,16 +567,18 @@ func writeCode(w util.BufWriter, raw, lang string, inDemo bool, lg i18n.Lang) {
 		cls, copyButton(raw, lg), escape(lang), highlight(raw, lang))
 }
 
-// writeRelated печатает соседей страницы из реестра.
+// writeRelated prints the neighbours of a page from the registry.
 //
-// Ссылки не набираются руками, и причина измерима: на четырёх страницах
-// «Действий» списки соседей разошлись между собой — чип называл сегментированный
-// контрол, сегментированный чип не называл. Список, который надо держать
-// согласованным в четырёх файлах, рассогласовывается на первой же правке.
+// The links are not typed by hand, and the reason is measurable: across four
+// pages of the Actions section the lists of neighbours drifted apart from one
+// another — the chip named the segmented control, the segmented did not name
+// the chip. A list that has to be kept in agreement across four files falls out
+// of agreement on the first edit.
 //
-// Адрес собирается из каталога страницы соседа, а не хранится: имя компонента в
-// реестре совпадает со слагом страницы у всех шестидесяти восьми записей, и
-// второе отображение было бы вторым источником истины.
+// The address is assembled from the directory of the neighbour's page rather
+// than stored: the name of a component in the registry coincides with the slug
+// of its page across all sixty-eight entries, and a second mapping would be a
+// second source of truth.
 func writeRelated(w util.BufWriter, p *Page) {
 	names := p.Related()
 	if len(names) == 0 {
@@ -731,20 +748,22 @@ var (
 	cssPropRe = regexp.MustCompile(`(?m)^(\s*)([a-z-]+):`)
 	cssVarRe  = regexp.MustCompile(`(--[a-z][\w-]*)`)
 
-	// Строка и ключевое слово ловятся ОДНИМ проходом, а не двумя.
+	// A string and a keyword are caught in ONE pass rather than two.
 	//
-	// Двумя нельзя: что бы ни красилось первым, второй проход зайдёт внутрь
-	// уже покрашенного и покрасит `const` внутри строки или имя класса внутри
-	// подписи. Чередование в одном регулярном выражении разбирает строку
-	// слева направо, и внутренность строки для второй ветки просто не
-	// существует — она уже съедена первой.
+	// Two passes cannot work: whichever is painted first, the second pass
+	// steps inside what is already painted and paints a `const` inside a
+	// string or a class name inside a label. An alternation in one regular
+	// expression parses the line left to right, and the inside of a string
+	// simply does not exist for the second branch — it has been eaten by the
+	// first.
 	jsRe = regexp.MustCompile("(&#34;[^&\n]*&#34;|'[^'\n]*'|`[^`\n]*`)|" +
 		`\b(await|async|case|catch|class|const|continue|default|delete|else|export|extends|` +
 		`false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return|switch|` +
 		`this|throw|true|try|typeof|undefined|var|void|while|yield)\b`)
 
-	// Только полная строка-комментарий. `//` посреди строки — это чаще всего
-	// адрес: в `https://` первый же проход съел бы половину примера.
+	// A whole comment line only. A `//` in the middle of a line is most often
+	// an address: in `https://` the very first pass would eat half the
+	// example.
 	jsLineRe = regexp.MustCompile(`(?m)^(\s*)(//.*)$`)
 )
 
@@ -801,11 +820,11 @@ func nodeText(n ast.Node, src []byte) string {
 	return strings.TrimSpace(b.String())
 }
 
-// Символы спрайта — регуляркой по источнику: второй список имён разошёлся бы
-// с первым, а он уже разошёлся.
+// The symbols of the sprite come by a regexp over the source: a second list of
+// names would drift from the first, and one already did.
 var symbolRe = regexp.MustCompile(`<symbol id="(i-[a-z0-9-]+)"`)
 
-func writeIcons(w util.BufWriter) {
+func writeIcons(w util.BufWriter, lg i18n.Lang) {
 	var ui, pages []string
 	for _, m := range symbolRe.FindAllStringSubmatch(sprite, -1) {
 		if strings.HasPrefix(m[1], "i-p-") {
@@ -825,9 +844,9 @@ func writeIcons(w util.BufWriter) {
 	}
 	w.WriteString(`</div>`)
 
-	// Символы страниц справочника в каталог не идут: они принадлежат сайту, в
-	// поставку кита не входят, и место им не здесь. Названы числом, чтобы читатель
-	// видел, что файл спрайта больше того, что кит раздаёт.
-	fmt.Fprintf(w, `<p class="icon-note">Плюс %d символов страниц справочника `+
-		`(<code>i-p-*</code>) — они принадлежат сайту, а не киту.</p>`, len(pages))
+	// The symbols of the reference's own pages do not go into the catalogue:
+	// they belong to the site, they are not part of what the kit ships, and
+	// their place is not here. They are named by a number so that the reader
+	// sees the sprite file is larger than what the kit hands out.
+	fmt.Fprintf(w, i18n.T(lg, "icons.note"), len(pages))
 }

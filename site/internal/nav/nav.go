@@ -67,7 +67,7 @@ func Build(lang i18n.Lang, pages []*content.Page) []Section {
 	byDir := map[string][]*content.Page{}
 	for _, p := range pages {
 		if p.Slug == "index" && p.Dir == "" {
-			continue // главная живёт в шапке, а не в списке
+			continue // the front page lives in the header, not in the list
 		}
 		byDir[p.Dir] = append(byDir[p.Dir], p)
 	}
@@ -78,10 +78,10 @@ func Build(lang i18n.Lang, pages []*content.Page) []Section {
 		if len(items) == 0 {
 			continue
 		}
-		// Индекс раздела стоит первым всегда, назван он в порядке или нет:
-		// это страница НАД остальными, и место ей соответствующее. Ставить его
-		// в каждый список руками значило бы завести правило, которое забудут
-		// на первом же новом разделе.
+		// The index of a section always comes first, whether the order names
+		// it or not: it is the page ABOVE the rest, and its place matches
+		// that. Putting it into every list by hand would start a rule that
+		// gets forgotten on the first new section.
 		rank := map[string]int{"index": -1}
 		for i, slug := range s.order {
 			if slug != "index" {

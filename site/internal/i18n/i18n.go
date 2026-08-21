@@ -1,6 +1,7 @@
 package i18n
 
-// Lang — код языка. Пустая строка невозможна: язык всегда явный.
+// Lang is the code of a language. An empty string is impossible: the language
+// is always explicit.
 type Lang string
 
 const (
@@ -35,7 +36,25 @@ func (l Lang) Label() string {
 	}
 }
 
+// THE RUSSIAN HALF OF EVERY ENTRY IS THE TRANSLATION ITSELF, not text waiting
+// for one, and that is why this file is named in the exception list of the
+// language gate. The keys are Russian too where a page writes them — the
+// section titles and the kinds — and both halves stand here so that a page in
+// either language finds its own.
+//
+// The base language flips at step five: RU stops being the empty prefix, EN
+// takes its place, and the map is untouched by that — only Prefix, Suffix and
+// the order of All change.
 var strings = map[string]map[Lang]string{
+	// A format string, and the only one in the dictionary: the count is
+	// computed from the sprite, and a phrase built by gluing pieces around it
+	// would put the word order of one language into both.
+	"icons.note": {
+		RU: `<p class="icon-note">Плюс %d символов страниц справочника ` +
+			`(<code>i-p-*</code>) — они принадлежат сайту, а не киту.</p>`,
+		EN: `<p class="icon-note">Plus %d symbols of the reference's own pages ` +
+			`(<code>i-p-*</code>) — they belong to the site, not to the kit.</p>`,
+	},
 	"skip":          {RU: "Перейти к содержимому", EN: "Skip to content"},
 	"sections":      {RU: "Разделы", EN: "Sections"},
 	"nav.aria":      {RU: "Разделы документации", EN: "Documentation sections"},
@@ -48,8 +67,9 @@ var strings = map[string]map[Lang]string{
 	"density.sm":    {RU: "Плотно", EN: "Compact"},
 	"density.md":    {RU: "Обычно", EN: "Default"},
 	"density.lg":    {RU: "Свободно", EN: "Comfortable"},
-	// Пункт масштаба подписан кеглем, а высота контрола уходит в пояснение:
-	// «крупно» ни о чём не сообщает, пока не нажато, «16px» — сообщает сразу.
+	// A scale item is labelled by type size, and the height of a control moves
+	// into the explanation: "large" says nothing until it is pressed, "16px"
+	// says it at once.
 	"scale":            {RU: "Масштаб", EN: "Scale"},
 	"scale.aria":       {RU: "Базовый кегль интерфейса", EN: "Interface base size"},
 	"scale.base":       {RU: "умолчание", EN: "default"},
@@ -112,11 +132,11 @@ var strings = map[string]map[Lang]string{
 func T(l Lang, key string) string {
 	m, ok := strings[key]
 	if !ok {
-		panic("i18n: нет ключа " + key)
+		panic("i18n: no such key " + key)
 	}
 	s, ok := m[l]
 	if !ok {
-		panic("i18n: нет перевода " + key + " на " + string(l))
+		panic("i18n: no translation of " + key + " into " + string(l))
 	}
 	return s
 }
@@ -164,11 +184,11 @@ var sectionTitles = map[string]map[Lang]string{
 func SectionTitle(l Lang, id string) string {
 	m, ok := sectionTitles[id]
 	if !ok {
-		panic("i18n: нет заголовка раздела " + id)
+		panic("i18n: no title for section " + id)
 	}
 	s, ok := m[l]
 	if !ok {
-		panic("i18n: нет перевода раздела " + id + " на " + string(l))
+		panic("i18n: no translation of section " + id + " into " + string(l))
 	}
 	return s
 }

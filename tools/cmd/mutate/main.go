@@ -377,6 +377,14 @@ var mutations = []mutation{
 		"func main() {",
 		"// Раньше здесь стоял отдельный порог для крупного кегля.\nfunc main() {",
 		"tools/** entered the gate's zone; without a mutation that rested on nothing"},
+	// The payload is ENGLISH here, and that is the point rather than an
+	// oversight. Every phrase the gate knew was Russian, and `src` and `tools`
+	// stopped being Russian on steps 2 and 3 — the rule went on holding while
+	// matching nothing anybody could write.
+	{"an English chronicle comment in the kit", "site", "src/rows.css",
+		".inst-task {",
+		"/* The row takes its gap from the role. Previously it was set by hand. */\n.inst-task {",
+		"the corpus turned English, and a phrase list in the old language is an empty gate"},
 	// The page contract used to have two dictionaries at once while the pages
 	// migrated one at a time; a mutation stood here that declared the new shape
 	// on a page written under the old one. Both are gone: the last page took the

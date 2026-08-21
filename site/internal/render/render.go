@@ -1,4 +1,4 @@
-// Package render пишет собранный сайт на диск.
+// Package render writes the built site to disk.
 package render
 
 import (
@@ -33,12 +33,14 @@ type Options struct {
 	Out    string
 	Kit    string
 	Assets string
-	// Public — каталог, содержимое которого кладётся в КОРЕНЬ вывода как есть.
+	// Public is a directory whose contents are laid into the ROOT of the
+	// output as they are.
 	//
-	// Здесь живёт то, что не страница и не ресурс кита, но обязано оказаться
-	// рядом с ними: CNAME для домена, robots.txt. Могло бы дописываться в CI —
-	// и тогда собранное локально отличалось бы от опубликованного ровно теми
-	// файлами, которые решают, где сайт вообще открывается.
+	// What lives here is neither a page nor a resource of the kit, yet has to
+	// end up beside them: the CNAME for the domain, robots.txt. It could be
+	// appended in CI — and then a locally built site would differ from the
+	// published one by precisely the files that decide where the site opens
+	// at all.
 	Public string
 }
 
@@ -112,7 +114,7 @@ func Site(byLang map[i18n.Lang][]*content.Page, sections map[i18n.Lang][]nav.Sec
 	if err := copyDir(o.Assets, filepath.Join(o.Out, "assets")); err != nil {
 		return err
 	}
-	// Каталога может не быть: сайт собирается и без него.
+	// The directory may be absent: the site builds without it.
 	if o.Public != "" {
 		if _, err := os.Stat(o.Public); err == nil {
 			if err := copyDir(o.Public, o.Out); err != nil {

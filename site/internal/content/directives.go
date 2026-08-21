@@ -81,7 +81,7 @@ func expandDirectives(body []byte, lang i18n.Lang) ([]byte, error) {
 				// they are gone, the habit outlives them, and silently eating what
 				// the author typed is the one thing this build refuses to do.
 				if head != "" {
-					return nil, fmt.Errorf("строка %d: у :::%s нет заголовка, а в строке открытия стоит %q — этот текст пропал бы молча",
+					return nil, fmt.Errorf("line %d: :::%s takes no heading, and the opening line carries %q — that text would vanish in silence",
 						i+1, kind, head)
 				}
 				closeRow()
@@ -90,7 +90,7 @@ func expandDirectives(body []byte, lang i18n.Lang) ([]byte, error) {
 					"")
 				closes = "</div></div>"
 			default:
-				return nil, fmt.Errorf("строка %d: неизвестный блок :::%s (есть note · warn · danger · ok)", i+1, kind)
+				return nil, fmt.Errorf("line %d: unknown block :::%s (there are note · warn · danger · ok)", i+1, kind)
 			}
 			open = append(open, openBlock{kind, closes})
 			continue
@@ -98,7 +98,7 @@ func expandDirectives(body []byte, lang i18n.Lang) ([]byte, error) {
 
 		if directiveClose.MatchString(strings.TrimSpace(line)) {
 			if len(open) == 0 {
-				return nil, fmt.Errorf("строка %d: закрытие ::: без открытия", i+1)
+				return nil, fmt.Errorf("line %d: a ::: close with nothing open", i+1)
 			}
 			b := open[len(open)-1]
 			open = open[:len(open)-1]
@@ -114,7 +114,7 @@ func expandDirectives(body []byte, lang i18n.Lang) ([]byte, error) {
 	}
 
 	if len(open) > 0 {
-		return nil, fmt.Errorf("блок :::%s не закрыт", open[len(open)-1].kind)
+		return nil, fmt.Errorf("block :::%s is left open", open[len(open)-1].kind)
 	}
 	closeRow()
 	return []byte(strings.Join(out, "\n")), nil

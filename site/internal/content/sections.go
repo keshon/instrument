@@ -8,6 +8,11 @@ type SectionDef struct {
 	Aliases []string
 }
 
+// THE ALIASES ARE HEADINGS OF PAGES, not text of this file, and that is why
+// Russian stands among them while the rest is English. A page is matched to a
+// section by the words printed on it, so the vocabulary holds both spellings
+// while both kinds of page exist. The Russian half leaves with the last
+// Russian page, not before it.
 var sectionDefs = []SectionDef{
 	{"install", 10, []string{"Установка", "Installation"}},
 	{"usage", 20, []string{"Использование", "Usage", "Разметка", "Разметка обязательна"}},
@@ -26,10 +31,10 @@ var sectionDefs = []SectionDef{
 	{"rules", 120, []string{"Правила", "Rules"}},
 	{"a11y", 130, []string{"Доступность", "Accessibility"}},
 	{"customization", 140, []string{"Настройка", "Customization", "Свой вариант"}},
-	// The markup contract absorbs what «Использование» and «Доступность» used to
-	// keep apart: both said the same thing — what has to be written for the
-	// component to work rather than to lie — and across fifty pages that came to
-	// 1 480 lines of one rule told twice.
+	// The markup contract absorbs what `usage` and `a11y` used to keep apart:
+	// both said the same thing — what has to be written for the component to
+	// work rather than to lie — and across fifty pages that came to 1 480 lines
+	// of one rule told twice.
 	{"api", 150, []string{"API", "Справочник", "API Reference"}},
 	{"related", 160, []string{"Связанное", "Related"}},
 }

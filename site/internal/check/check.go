@@ -34,7 +34,7 @@ func Verify(pages []*content.Page, sprite string) []string {
 	for _, p := range pages {
 		for _, m := range leftMdRe.FindAllStringSubmatch(p.HTML, -1) {
 			problems = append(problems,
-				fmt.Sprintf("%s  ссылка осталась файловой: %s", p.Route, m[1]))
+				fmt.Sprintf("%s  the link stayed a file link: %s", p.Route, m[1]))
 		}
 		for _, m := range hrefRe.FindAllStringSubmatch(p.HTML, -1) {
 			t := m[1]
@@ -46,11 +46,11 @@ func Verify(pages []*content.Page, sprite string) []string {
 			}
 			if !routes[t] {
 				problems = append(problems,
-					fmt.Sprintf("%s  ссылка в никуда: %s", p.Route, m[1]))
+					fmt.Sprintf("%s  a link to nowhere: %s", p.Route, m[1]))
 			}
 		}
 		if strings.Contains(p.HTML, "```html preview") {
-			problems = append(problems, p.Route+"  ограда preview не развернулась")
+			problems = append(problems, p.Route+"  a preview fence did not unfold")
 		}
 
 		problems = append(problems, dupIDs(p)...)
@@ -77,7 +77,7 @@ func dupIDs(p *content.Page) []string {
 	var out []string
 	for id := range dup {
 		out = append(out, fmt.Sprintf(
-			"%s  id=%q объявлен в двух примерах: на одной странице они теперь рядом", p.Route, id))
+			"%s  id=%q is declared in two examples: on one page they now stand side by side", p.Route, id))
 	}
 	sort.Strings(out)
 	return out
@@ -91,11 +91,11 @@ func verifyDemo(p *content.Page, d content.Demo, sprite string) []string {
 	for _, m := range useRe.FindAllStringSubmatch(d.Markup, -1) {
 		id := m[1]
 		if id == "" {
-			out = append(out, fmt.Sprintf("%s  пустая ссылка на символ: <use href=\"#\">", p.Route))
+			out = append(out, fmt.Sprintf("%s  an empty reference to a symbol: <use href=\"#\">", p.Route))
 			continue
 		}
 		if !strings.Contains(sprite, `id="`+id+`"`) {
-			out = append(out, fmt.Sprintf("%s  нет символа в спрайте: #%s", p.Route, id))
+			out = append(out, fmt.Sprintf("%s  no such symbol in the sprite: #%s", p.Route, id))
 		}
 	}
 
@@ -116,7 +116,7 @@ func verifyDemo(p *content.Page, d content.Demo, sprite string) []string {
 	}
 	if visible == 0 {
 		out = append(out, fmt.Sprintf(
-			"%s  пустой кадр: всё содержимое примера скрыто по умолчанию (%s)",
+			"%s  an empty frame: the whole content of the example is hidden by default (%s)",
 			p.Route, d.ID))
 	}
 	return out

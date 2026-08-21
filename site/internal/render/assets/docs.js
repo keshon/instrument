@@ -1,37 +1,40 @@
-/* Скрипт сайта документации. В кит не входит.
-   Ровно семь работ: тема, акцент, масштаб, плотность, поиск, копирование и
-   вызов тоста в примере — его нельзя показать разметкой, он заводится
-   вызовом. */
+/* The script of the documentation site. Not part of the kit.
+   Exactly seven jobs: theme, accent, scale, density, search, copying and
+   raising a toast in an example — a toast cannot be shown by markup, it is
+   started by a call. */
 
 (() => {
   const root = document.documentElement;
 
-  /* ── Тема, акцент, масштаб и плотность ──────────────────────────────────
-     Сайт переключает их теми же атрибутами, что и любое приложение на ките.
-     Это не демонстрация ради демонстрации: если темизация где-то протекает,
-     видно будет здесь первым.
+  /* ── Theme, accent, scale and density ───────────────────────────────────
+     The site switches them with the same attributes as any application on the
+     kit. This is not demonstration for its own sake: if the theming leaks
+     anywhere, it will be seen here first.
 
-     Четыре ручки ортогональны: 5 тем × 4 акцента × 5 масштабов × 3 плотности =
-     300 сочетаний, и справочник обязан показывать любое из них. Ровно поэтому
-     переключатели независимы, а не сведены в один список пресетов: пресет
-     скрыл бы, что оси не пересекаются, и первое же протёкшее сочетание
-     нашлось бы у пользователя, а не здесь.
+     The four knobs are orthogonal: 5 themes × 4 accents × 5 scales × 3
+     densities = 300 combinations, and the reference has to be able to show any
+     of them. That is precisely why the switches are independent rather than
+     gathered into one list of presets: a preset would hide that the axes do
+     not intersect, and the first leaking combination would be found by a user
+     rather than here.
 
-     Масштаб добавлен четвёртой осью потому, что тремя плотностями «крупнее»
-     было не выразить: просторная давала воздух, а не размер. */
+     Scale was added as the fourth axis because three densities could not say
+     "larger": the comfortable one gave air rather than size. */
 
-  /* Атрибут на корне: пустое значение — снять, иначе поставить. Одна функция
-     на масштаб, тему и акцент, потому что разница между ними ровно в имени
-     атрибута; три одинаковых блока разошлись бы при первой правке.
+  /* An attribute on the root: an empty value removes it, otherwise it is set.
+     One function for scale, theme and accent, because the difference between
+     them is exactly the name of the attribute; three identical blocks would
+     drift apart on the first edit.
 
-     Выпадашка — меню кита в поповере, а не нативный <select>: список,
-     нарисованный операционной системой, был единственным местом в этой панели,
-     до которого кит не дотягивался.
+     The dropdown is a menu of the kit in a popover rather than a native
+     <select>: a list drawn by the operating system was the one place in this
+     panel the kit did not reach.
 
-     Состояние ведёт САЙТ, а не кит, и это не обход, а контракт: у кита
-     `follows: null` на роли menu, потому что пункт меню — действие, а не
-     выбор. Здесь пункт всё-таки выбор, поэтому aria-checked переносим сами.
-     Стрелки и Escape при этом остаются за китом. */
+     The state is led by the SITE rather than by the kit, and that is a
+     contract rather than a workaround: the kit has `follows: null` on the menu
+     role, because a menu item is an action rather than a choice. Here an item
+     is a choice after all, so aria-checked is carried over here. The arrows
+     and Escape stay with the kit. */
   const menuKnob = (sel, attr, key) => {
     const menu = document.querySelector(sel);
     if (!menu) return;
@@ -45,8 +48,8 @@
       for (const x of items) {
         const on = (x.dataset.v || '') === (v || '');
         x.setAttribute('aria-checked', String(on));
-        /* Подпись кнопки — то, что выбрано. Иначе панель приходится
-           открывать, чтобы вспомнить, на чём остановился. */
+        /* The label of the button is what is selected. Otherwise the panel
+           has to be opened to recall where one stopped. */
         if (on && trigger) trigger.textContent = x.dataset.label || x.textContent.trim();
       }
     };
@@ -65,14 +68,15 @@
   menuKnob('[data-theme-picker]', 'data-theme', 'instrument-theme');
   menuKnob('[data-accent-picker]', 'data-accent', 'instrument-accent');
 
-  /* Плотность осталась сегментированным контролом: три коротких слова, и все
-     три видны сразу — прятать их в список значило бы менять один щелчок на
-     два. У масштаба выбор подписан кеглем, а не словом, и там список выигрывает.
+  /* Density stayed a segmented control: three short words, and all three are
+     visible at once — hiding them in a list would trade one click for two. On
+     scale the choice is labelled by type size rather than by a word, and there
+     a list wins.
 
-     Обе ручки стоят в панели раздельно, а не сведены в один список из пяти
-     положений: пресет скрыл бы, что оси не пересекаются, и сочетание «крупно
-     и плотно» — самое полезное на большом мониторе — оказалось бы
-     невыразимым. */
+     Both knobs stand apart in the panel rather than gathered into one list of
+     five positions: a preset would hide that the axes do not intersect, and
+     the combination "large and compact" — the most useful one on a big monitor
+     — would become inexpressible. */
   const picker = (sel, attr, key) => {
     const group = document.querySelector(sel);
     if (!group) return;
@@ -82,8 +86,8 @@
       else { root.dataset[attr] = v; localStorage.setItem(key, v); }
     };
 
-    /* Начальное состояние ставит сайт: он один знает, что лежит в
-       localStorage. Дальше выбор ведёт кит. */
+    /* The initial state is set by the site: it alone knows what lies in
+       localStorage. After that the kit leads the choice. */
     const saved = localStorage.getItem(key) || 'default';
     const start = items.find((x) => x.dataset.v === saved)
       || items.find((x) => x.dataset.v === 'default') || items[0];
@@ -93,22 +97,22 @@
     }
     apply(start.dataset.v);
 
-    /* Дальше — событие кита, а не свой обработчик щелчка и не подглядывание
-       за атрибутом после стрелки. Кит переносит aria-checked и по щелчку, и
-       по стрелке; сайту остаётся то, чего кит знать не может, — что делать с
-       выбранным значением.
+    /* From here on an event of the kit, rather than a click handler of our
+       own or a peek at the attribute after an arrow key. The kit carries
+       aria-checked over on a click and on an arrow alike; what is left to the
+       site is what the kit cannot know — what to do with the chosen value.
 
-       Это и есть проверка поведения на живом: перестань кит работать —
-       плотность перестанет переключаться на глазах. */
+       This is a check of the behaviour on the live thing: let the kit stop
+       working and the density stops switching before your eyes. */
     group.addEventListener('inst:select', (e) => apply(e.target.dataset.v));
   };
 
   picker('[data-density-picker]', 'density', 'instrument-density');
 
-  /* ── Поиск ──────────────────────────────────────────────────────────────
-     Индекс — один JSON на весь сайт, грузится по первому обращению.
-     Готовый поисковик тянул бы бинарник и WASM на каждую страницу; здесь
-     весь кит помещается в несколько сотен килобайт. */
+  /* ── Search ─────────────────────────────────────────────────────────────
+     The index is one JSON for the whole site, loaded on the first request. A
+     ready-made search engine would pull a binary and WASM onto every page;
+     here the whole kit fits into a few hundred kilobytes. */
 
   const input = document.querySelector('[data-search]');
   const box = document.querySelector('[data-results]');
@@ -117,23 +121,31 @@
 
     const load = async () => {
       if (index) return index;
-      /* Индекс свой у каждого языка: искать по русским телам из английской
-         версии значило бы отдавать читателю страницы, которых он не
-         прочтёт. Язык берётся из документа, а не из адреса — он там уже
-         объявлен, и второй источник разошёлся бы. */
+      /* The index is its own per language: searching Russian bodies from the
+         English version would mean handing the reader pages they will not
+         read. The language is taken from the document rather than from the
+         address — it is declared there already, and a second source would
+         drift from the first. */
       const lang = document.documentElement.lang || 'ru';
       const file = lang === 'ru' ? '/search.json' : '/' + lang + '-search.json';
       index = await (await fetch(file)).json();
       return index;
     };
 
+    /* THE TWO RUSSIAN LETTERS ARE DATA, and they are the reason this file is
+       named in the exception list of the language gate. A reader types «е»
+       where a heading is set with «ё», and without the fold «Модалка» is found
+       while «Всплывашка» is not. The pair leaves with the last Russian page.
+       The one visible phrase below is data of the same kind: it IS the
+       translation, not a line awaiting one. */
     const norm = (s) => s.toLowerCase().replace(/ё/g, 'е');
 
-    /* Разметка собирается узлами, а не строкой. innerHTML со вставкой t/g/r
-       сегодня безопасен, потому что содержимое своё, но это мина: первый же
-       заголовок страницы с «<» или кавычкой ломает результаты молча. Проект,
-       у которого выдуманный токен ловится машиной, не имеет права оставлять
-       такое на «пока не случалось». */
+    /* The markup is assembled from nodes rather than from a string. An
+       innerHTML with t/g/r pasted in is safe today because the content is our
+       own, but it is a mine: the first page heading with a "<" or a quote in
+       it breaks the results in silence. A project where an invented token is
+       caught by a machine has no right to leave such a thing on "it has not
+       happened yet". */
     const setOpen = (on) => {
       box.hidden = !on;
       input.setAttribute('aria-expanded', String(on));
@@ -180,13 +192,14 @@
       const q = norm(input.value.trim());
       if (q.length < 2) { setOpen(false); return; }
       const words = q.split(/\s+/);
-      /* Веса расставлены по тому, ЧТО человек набрал, а не по тому, где
-         совпало. Точное имя класса — это адрес, а не поиск: тот, кто ввёл
-         «inst-badge», знает, чего хочет, и ему нельзя показывать пять
-         страниц, где это слово просто упомянуто.
+      /* The weights are set by WHAT a person typed rather than by where it
+         matched. An exact class name is an address rather than a search:
+         somebody who entered "inst-badge" knows what they want, and showing
+         them five pages where the word is merely mentioned is not allowed.
 
-         Слаг стоит наравне с заголовком, потому что для латинского запроса
-         он И ЕСТЬ заголовок: документация по-русски, API по-английски. */
+         The slug stands level with the heading, because for a Latin query it
+         IS the heading: the documentation is in Russian, the API in
+         English. */
       const scored = (await load()).map((p) => {
         const t = norm(p.t), s0 = norm(p.s || ''), g = norm(p.g || '');
         const own = norm(p.o || '').split(' ');
@@ -194,16 +207,16 @@
         const b = norm(p.b);
         let s = 0;
         for (const w of words) {
-          /* ОПИСЫВАЕТ важнее, чем УПОМИНАЕТ, и разрыв должен быть таким,
-             чтобы никакое число совпадений в теле его не перекрыло.
-             `inst-btn` встречается на 26 страницах: без этого разрыва
-             первой выходила конституция, где перечислено всё. */
+          /* DESCRIBES beats MENTIONS, and the gap has to be such that no
+             number of matches in a body can outweigh it. `inst-btn` occurs on
+             26 pages: without this gap the constitution came first, where
+             everything is listed. */
           if (own.includes(w)) s += 120;
           else if (own.some((n) => n.startsWith(w))) s += 60;
           else if (names.includes(w)) s += 12;
           else if (names.some((n) => n.startsWith(w))) s += 6;
 
-          if (s0 === w) s += 100;                       // слаг целиком: dialog → Модалка
+          if (s0 === w) s += 100;                       // the whole slug: dialog → the modal page
           else if (s0.startsWith(w)) s += 40;
 
           if (t.startsWith(w)) s += 12;
@@ -228,9 +241,10 @@
         active = (active + (e.key === 'ArrowDown' ? 1 : -1) + opts.length) % opts.length;
         opts.forEach((o, i) => o.setAttribute('aria-selected', String(i === active)));
         opts[active].scrollIntoView({ block: 'nearest' });
-        /* Фокус остаётся в поле, поэтому «где я» скринридеру сообщает
-           aria-activedescendant. Без неё стрелки двигали подсветку молча:
-           роль listbox была объявлена и не выполнена. */
+        /* The focus stays in the field, so what tells a screen reader "where
+           am I" is aria-activedescendant. Without it the arrows moved the
+           highlight in silence: the listbox role was declared and not
+           fulfilled. */
         input.setAttribute('aria-activedescendant', opts[active].id);
       } else if (e.key === 'Enter' && active >= 0) {
         e.preventDefault();
@@ -242,7 +256,7 @@
       if (!e.target.closest('.site-search')) setOpen(false);
     });
 
-    /* «/» — фокус в поиск. Ожидаемо там, где сидят часами. */
+    /* "/" puts the focus into search. Expected where people sit for hours. */
     document.addEventListener('keydown', (e) => {
       if (e.key !== '/' || e.metaKey || e.ctrlKey) return;
       const t = e.target;
@@ -251,17 +265,17 @@
     });
   }
 
-  /* ── Копирование ───────────────────────────────────────────────────────── */
+  /* ── Copying ──────────────────────────────────────────────────────────── */
 
-  /* Копирование делает КИТ: класс inst-copy и data-copy — его контракт.
-     Своего обработчика здесь нет намеренно. Копирование стало поведением
-     кита, и вторая реализация в его же справочнике означала бы, что кит
-     документирует одно, а показывает другое. */
+  /* Copying is done by the KIT: the class inst-copy and data-copy are its
+     contract. There is deliberately no handler of our own here. Copying became
+     a behaviour of the kit, and a second implementation in the kit's own
+     reference would mean the kit documents one thing and shows another. */
 
-  /* Тост в примере. Разметки у него нет: область строит кит по вызову,
-     поэтому единственный честный пример — кнопка, которая его зовёт.
-     Параметры лежат в data-demo-toast, чтобы страница оставалась
-     разметкой, а не скриптом. */
+  /* A toast in an example. It has no markup: the region is built by the kit
+     on a call, so the one honest example is a button that calls it. The
+     parameters live in data-demo-toast so that the page stays markup rather
+     than script. */
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-demo-toast]');
     if (!btn) return;
@@ -269,11 +283,12 @@
     toast(JSON.parse(btn.dataset.demoToast));
   });
 
-  /* ── Бургер ──────────────────────────────────────────────────────────────
-     Выезд ящика рисует кит по aria-expanded. Сайту остаётся ровно то, что
-     кит объявил слоем приложения: переключение атрибута, Escape, клик мимо
-     и возврат фокуса. Без последних трёх ящик открывается и не закрывается
-     ничем, кроме повторного нажатия. */
+  /* ── The burger ─────────────────────────────────────────────────────────
+     The slide-out of the drawer is drawn by the kit from aria-expanded. What
+     is left to the site is exactly what the kit declared the application's
+     layer: toggling the attribute, Escape, a click outside and returning the
+     focus. Without the last three the drawer opens and closes by nothing but
+     a second press. */
 
   const burger = document.querySelector('[data-burger]');
   const drawer = document.getElementById('sidebar');
@@ -295,8 +310,9 @@
       if (e.key === 'Escape' && isOpen()) setNav(false);
     });
 
-    /* Клик по подложке. Подложка — псевдоэлемент оболочки, поэтому цели у
-       события нет: считаем промахом всё, что не ящик и не кнопка. */
+    /* A click on the ground. The ground is a pseudo-element of the shell, so
+       the event has no target: anything that is neither the drawer nor the
+       button counts as a miss. */
     document.addEventListener('click', (e) => {
       if (!isOpen()) return;
       if (e.target.closest('#sidebar') || e.target.closest('[data-burger]')) return;
@@ -304,7 +320,7 @@
     });
   }
 
-  /* ── Подсветка текущего пункта оглавления ──────────────────────────────── */
+  /* ── Highlighting the current item of the table of contents ───────────── */
 
   const toc = [...document.querySelectorAll('.site-toc-item')];
   if (toc.length) {

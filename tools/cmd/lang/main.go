@@ -116,10 +116,58 @@ var zones = []zone{
 		},
 	},
 	{
-		name:  "site",
-		paths: []string{"site"},
+		name: "site",
+		// The build output is not on the list, and not because it is
+		// gitignored: `site/dist` is the RENDERED Russian pages. It turns
+		// English when they do, on step 4, and a zone that watched it would be
+		// red for the whole of that step while saying nothing about the site's
+		// own sources. `public` holds CNAME and robots.txt.
+		paths: []string{"site/cmd", "site/internal", "site/public", "site/go.mod"},
+		on:    true,
 		step:  "3",
-		why:   "",
+		why:   "the output of the build lives in the same lines as the code",
+		// Six files, and in every one of them the Cyrillic is a KEY or a
+		// PATTERN rather than a phrase: it is matched against a Russian page,
+		// or it is one half of a translation that already exists. None of it
+		// is translated — all of it leaves with the last Russian page.
+		except: []exception{
+			{
+				path: "site/internal/i18n/i18n.go",
+				why: "the Russian half of every entry IS the translation rather than text " +
+					"awaiting one. The base language flips on step 5, and the map is not " +
+					"touched by that — only Prefix, Suffix and the order of All change.",
+			},
+			{
+				path: "site/internal/content/sections.go",
+				why: "the aliases are the headings printed on a page, and a page is matched " +
+					"to a section by them. Both spellings stand there while both kinds of " +
+					"page exist; the Russian half goes on step 4.",
+			},
+			{
+				path: "site/internal/content/markdown.go",
+				why: "the transliteration table turns the heading of a Russian page into an " +
+					"anchor, and the kind vocabulary beside it lists both spellings. Both " +
+					"are read against a page rather than shown to anybody.",
+			},
+			{
+				path: "site/internal/content/content.go",
+				why: "apiKinds is the vocabulary a page writes in its frontmatter, and the " +
+					"kind generated for a token is a key of that same dictionary. What is " +
+					"printed comes from i18n, not from here.",
+			},
+			{
+				path: "site/internal/render/assets/docs.js",
+				why: "the two Russian letters folded onto one another are what makes a " +
+					"heading findable when the reader types the other of the pair, and the " +
+					"one visible phrase beside them is the translation itself.",
+			},
+			{
+				path: "site/internal/check/assets.go",
+				why: "the chronicle phrases are the PATTERN the comment gate matches, and " +
+					"feeding it English would test nothing while Russian comments can still " +
+					"appear. The English half stands beside them.",
+			},
+		},
 	},
 	{
 		name:  "documentation",

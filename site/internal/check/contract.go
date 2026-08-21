@@ -56,7 +56,7 @@ func Contract(pages []*content.Page) (errs, warns []string) {
 		var out []string
 		for _, s := range p.Sections {
 			if !s.Known {
-				out = append(out, fmt.Sprintf("%s  раздел %q не из словаря (сделайте его H3 внутри канонического раздела)",
+				out = append(out, fmt.Sprintf("%s  the section %q is not in the vocabulary (make it an H3 inside a canonical section)",
 					p.Route, s.Title))
 			}
 		}
@@ -67,7 +67,7 @@ func Contract(pages []*content.Page) (errs, warns []string) {
 				continue
 			}
 			if s.Order < prev {
-				out = append(out, fmt.Sprintf("%s  раздел %q стоит после %q, а должен перед ним",
+				out = append(out, fmt.Sprintf("%s  the section %q stands after %q and belongs before it",
 					p.Route, s.ID, prevID))
 			}
 			prev, prevID = s.Order, s.ID
@@ -76,32 +76,32 @@ func Contract(pages []*content.Page) (errs, warns []string) {
 		seen := map[string]bool{}
 		for _, s := range p.Sections {
 			if s.Known && seen[s.ID] {
-				out = append(out, fmt.Sprintf("%s  раздел %q встречается дважды", p.Route, s.ID))
+				out = append(out, fmt.Sprintf("%s  the section %q occurs twice", p.Route, s.ID))
 			}
 			seen[s.ID] = true
 		}
 
 		for _, id := range required {
 			if !seen[id] {
-				out = append(out, fmt.Sprintf("%s  нет обязательного раздела %q", p.Route, id))
+				out = append(out, fmt.Sprintf("%s  the required section %q is missing", p.Route, id))
 			}
 		}
 		for _, s := range p.Sections {
 			if why, gone := gone[s.ID]; gone {
 				out = append(out, fmt.Sprintf(
-					"%s  раздел %q больше не живёт на странице: %s", p.Route, s.ID, why))
+					"%s  the section %q no longer lives on a page: %s", p.Route, s.ID, why))
 			}
 		}
 		if !p.Hero {
-			out = append(out, p.Route+"  нет главного примера: живой пример обязан стоять в шапке, до первого раздела")
+			out = append(out, p.Route+"  no lead example: a live example has to stand in the header, before the first section")
 		}
 
 		if p.JS != "" || p.JSOpt != "" {
 			if !p.HasJS {
-				out = append(out, p.Route+"  объявлен js, но нет ни одного примера на JS")
+				out = append(out, p.Route+"  js is declared, and there is not one example on JS")
 			}
 			if !seen["js"] {
-				out = append(out, p.Route+"  объявлен js, но нет раздела «JS»")
+				out = append(out, p.Route+"  js is declared, and there is no 'JS' section")
 			}
 		}
 

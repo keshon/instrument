@@ -1,14 +1,15 @@
-/* Леса сайта документации. В кит не входят.
+/* The scaffolding of the documentation site. Not part of the kit.
 
-   Правило то же, что у живой спецификации: здесь допустимо только то, что
-   принадлежит САЙТУ. Если для показа компонента понадобилось его
-   дооформить — значит, в ките дыра, и чинить надо кит.
+   The rule is the same as for a live specification: only what belongs to the
+   SITE is allowed here. If showing a component called for finishing it off,
+   then there is a hole in the kit, and it is the kit that has to be fixed.
 
-   Раскладку, навигацию, прозу, поля, кнопки и панель даёт кит. Здесь —
-   логотип, поиск, оглавление, сцена примера и подсветка кода. */
+   The layout, the navigation, the prose, the fields, the buttons and the panel
+   come from the kit. Here are the logo, the search, the table of contents, the
+   stage of an example and the highlighting of code. */
 
 
-/* ── Шапка и логотип ────────────────────────────────────────────────────── */
+/* ── The header and the logo ────────────────────────────────────────────── */
 
 .site-logo {
   display: flex; align-items: center; gap: var(--space-4);
@@ -22,16 +23,17 @@
   letter-spacing: var(--tracking-tight); line-height: 1;
 }
 
-/* ── Поиск ──────────────────────────────────────────────────────────────── */
+/* ── Search ─────────────────────────────────────────────────────────────── */
 
-/* Поиск ужимается, но НЕ ДО НУЛЯ. Пока минимум был нулевой, на 390px поле
-   сжималось до 18 пикселей: переключатели плотности и темы забирали 411 из
-   390 доступных, шапка переполнялась на 83px и заводила документу
-   горизонтальную прокрутку.
+/* Search shrinks, but NOT TO NOTHING. While the minimum was zero, at 390px the
+   field shrank to 18 pixels: the density and theme switches took 411 of the
+   390 available, the header overflowed by 83px and gave the document a
+   horizontal scrollbar.
 
-   Теперь у поля есть пол, а переключатели уехали в поповер и ширину больше
-   не отнимают. Перенос строки в шапке при этом снова разрешён — его гасил
-   сайт, хотя кит ставит его намеренно и объясняет почему. */
+   The field has a floor now, and the switches have moved into a popover and no
+   longer take width away. Wrapping in the header is allowed again as well —
+   the site used to suppress it, though the kit sets it deliberately and
+   explains why. */
 .site-search {
   position: relative;
   flex: 1 1 12rem;
@@ -39,13 +41,13 @@
   max-inline-size: 20rem;
 }
 
-/* Сайту здесь принадлежит только МЕСТО плашки на странице: где она висит и
-   докуда растёт. Поверхность — рамка, радиус, фон, тень, внутренний отступ —
-   приходит от `inst-popover`.
+/* What belongs to the site here is only the PLACE of the plate on the page:
+   where it hangs and how far it grows. The surface — border, radius,
+   background, shadow, inner padding — comes from `inst-popover`.
 
-   Панель для этого не годится: у неё другой радиус и другая поверхность, а
-   тени нет вовсе — приписанная ей тень поповера даёт две разные плашки на
-   одном экране. */
+   A panel will not do for this: it has a different radius and a different
+   surface, and no shadow at all — a popover's shadow ascribed to it gives two
+   different plates on one screen. */
 .site-results {
   position: absolute; inset-inline: 0; inset-block-start: calc(100% + var(--space-3));
   z-index: var(--z-popover);
@@ -53,14 +55,14 @@
 }
 .site-results[hidden] { display: none; }
 
-/* Ряд результата — двухстрочный, и своего класса в ките у него нет: пара
-   «заголовок + раздел» это содержимое поиска, а не компонент. Метрика взята у
-   `inst-menu-item` целиком — радиус, отступ, поверхность наведения, — потому
-   что ряд внутри плавающей плашки обязан выглядеть как ряд внутри плавающей
-   плашки, где бы он ни стоял.
+/* A result row is two lines, and it has no class of its own in the kit: the
+   pair "title + section" is content of the search rather than a component. The
+   metrics are taken from `inst-menu-item` entire — radius, padding, hover
+   surface — because a row inside a floating plate has to look like a row
+   inside a floating plate wherever it stands.
 
-   Разделительных линий нет: у меню их нет, а линия между пунктами превращает
-   короткий список в таблицу. */
+   There are no dividing lines: a menu has none, and a line between items turns
+   a short list into a table. */
 .site-result {
   display: block;
   padding: var(--space-2) var(--space-3);
@@ -75,24 +77,26 @@
   color: var(--text-muted); font-size: var(--text-sm);
 }
 
-/* Тема и плотность живут в поповере, а не в ряду шапки.
+/* Theme and density live in a popover rather than in the row of the header.
 
-   Причина не в экономии места на телефоне, хотя и в ней тоже. Голыми
-   контролами переключатель плотности безымянен: одна из двух уникальных идей
-   кита выглядела бы как три кнопки без подписи. Кнопка «Вид» даёт им имя. */
+   The reason is not saving room on a phone, though that is part of it. As bare
+   controls the density switch has no name: one of the two ideas unique to the
+   kit would look like three buttons with no label. The "View" button gives
+   them one. */
 .site-view-body { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-3); }
 .site-view-row { display: flex; flex-direction: column; gap: var(--space-3); }
-/* Кнопка, открывающая список. Ведёт себя как поле выбора, а не как кнопка
-   действия: занимает всю ширину строки и прижимает подпись к началу, потому
-   что подпись здесь — выбранное значение, а не название команды. */
+/* The button that opens the list. It behaves as a field of choice rather than
+   as a button of action: it takes the whole width of the row and pushes its
+   label to the start, because the label here is the chosen value rather than
+   the name of a command. */
 .site-pick {
   inline-size: 100%;
   justify-content: flex-start;
   font-variant-numeric: tabular-nums;
 }
 
-/* Переключатель языка — ссылки внутри сегментированного контрола: смена
-   языка это переход, а не состояние, и средний клик обязан работать. */
+/* The language switch is links inside a segmented control: changing language
+   is a transition rather than a state, and a middle click has to work. */
 .site-lang {
   display: inline-flex; align-items: center; justify-content: center;
   min-block-size: calc(var(--control-h-md) - var(--space-2));
@@ -107,7 +111,7 @@
   box-shadow: 0 0 0 var(--hairline) var(--border);
 }
 
-/* ── Раскладка страницы ─────────────────────────────────────────────────── */
+/* ── The layout of a page ───────────────────────────────────────────────── */
 
 .site-layout {
   display: grid;
@@ -119,54 +123,57 @@
 }
 .site-layout--splash { grid-template-columns: minmax(0, 1fr); }
 
-/* Проза справочника — --text-sm с прозаическим интерлиньяжем, ровно как
-   пояснения в живой спецификации.
+/* The prose of the reference is --text-sm with the prose leading, exactly as
+   the explanations in a live specification are.
 
-   Не --text-md, который .inst-prose ставит по умолчанию: 15px это тело
-   ответа агента внутри панели, где абзац короткий и стоит среди данных.
-   Здесь абзацев подряд десятки, и на такой длине 15/1.65 читается крупно
-   и рыхло — кит про плотность, и справочник не имеет права быть рыхлее
-   того, что описывает.
+   Not --text-md, which .inst-prose sets by default: 15px is the body of an
+   agent's reply inside a panel, where a paragraph is short and stands among
+   data. Here there are dozens of paragraphs in a row, and at that length
+   15/1.65 reads large and loose — the kit is about density, and its reference
+   has no right to be looser than what it describes.
 
-   Побочно чинится лестница: между h3 (17) и прозой (13) появляется
-   настоящий шаг, которого при 15px не было. */
+   Incidentally the ladder is repaired: between h3 (17) and the prose (13) a
+   real step appears, which at 15px was not there. */
 .site-body {
   max-inline-size: none;
   font-size: var(--text-sm);
   line-height: var(--leading-prose);
 }
 
-/* Вертикальный ритм внутри раздела.
-   `.inst-prose` расставляет его прямым потомкам, а между ней и абзацем стоит
-   <section>: до этого правила абзацы шли встык, без единого просвета. */
+/* The vertical rhythm inside a section.
+   `.inst-prose` sets it for its direct children, and between it and a
+   paragraph stands a <section>: without this rule the paragraphs run flush,
+   with not a single gap. */
 .site-body :is(.doc-hero, .doc-s) > * + * { margin-block-start: var(--space-5); }
-/* 68ch — мера читаемости, и она нужна только тексту. Живой пример и
-   таблица справочника меряются содержимым и выходят на всю колонку.
-   Считается от прямого родителя-раздела, а не от тела: с появлением
-   <section> проза перестала быть прямым потомком .site-body, и мера
-   молча отвалилась бы на всех страницах разом. */
+/* 68ch is the measure of readability, and only text needs it. A live example
+   and a table of the reference are measured by their content and take the
+   whole column. It is counted from the direct parent section rather than from
+   the body: once <section> appeared the prose stopped being a direct child of
+   .site-body, and the measure would have fallen off every page at once, in
+   silence. */
 .site-body :is(.doc-hero, .doc-s) > :is(p, ul, ol, blockquote, h3, h4) {
   max-inline-size: 68ch;
 }
 
-/* ── Опознание страницы ─────────────────────────────────────────────────── */
+/* ── Identifying the page ───────────────────────────────────────────────── */
 
-/* Первый экран отвечает на четыре вопроса, и все четыре — до прокрутки:
-   что это (раздел и имя), можно ли этому верить (зрелость), где это лежит
-   (исходник), как это выглядит (главный пример).
+/* The first screen answers four questions, and all four before any scrolling:
+   what this is (section and name), whether it can be trusted (maturity), where
+   it lies (the source), what it looks like (the lead example).
 
-   Зрелость и исходник — не украшение: без первого непонятно, можно ли верить
-   написанному ниже, без второго — где это лежит. */
+   Maturity and the source are not decoration: without the first it is unclear
+   whether what is written below can be trusted, without the second, where it
+   lies. */
 .doc-id { margin-block-end: var(--space-6); }
 
-/* Подпись раздела — китовая идиома тихой метки: --text-2xs, --text-muted,
-   --leading-ui. Ровно та же, что у .inst-nav-label, где эта работа уже
-   делается.
+/* The label of a section is the kit's idiom for a quiet mark: --text-2xs,
+   --text-muted, --leading-ui. Exactly the one .inst-nav-label uses, where this
+   work is already being done.
 
-   Капса с трекингом здесь нет: третий принцип конституции называет его
-   дословно — «заголовок капсом с трекингом кричит громче числа, которое он
-   подписывает». Во всём ките text-transform не встречается ни разу, и сайту
-   заводить его нечем оправдать. */
+   There are no tracked capitals here: the third principle of the constitution
+   names them word for word — a heading in tracked capitals shouts louder than
+   the number it labels. Across the whole kit text-transform does not occur
+   once, and the site has nothing to justify starting it with. */
 .doc-id-group {
   margin: 0 0 var(--space-2);
   font-size: var(--text-2xs); color: var(--text-muted);
@@ -180,51 +187,55 @@
 }
 .doc-id-source { color: var(--text-muted); }
 
-/* Бейдж JS — ссылка на раздел, а не отметка.
-   Читатель, увидевший его в шапке, идёт за одним: что вызвать. Поэтому у
-   бейджа есть адрес, а объяснение стоит рядом текстом, а не прячется в
-   `title`: подсказку не видно с тачскрина и не слышно скринридеру. */
+/* The JS badge is a link to a section rather than a mark.
+   A reader who sees it in the header comes for one thing: what to call. So the
+   badge has an address, and the explanation stands beside it as text rather
+   than hiding in a `title`: a tooltip is not seen from a touchscreen and not
+   heard by a screen reader. */
 .site-js { text-decoration: none; }
 .site-js:hover { border-color: var(--border-strong); }
 .doc-id-note { color: var(--text-muted); }
 
-/* ── Шапка страницы: определение и главный пример ───────────────────────── */
+/* ── The header of a page: the definition and the lead example ──────────── */
 
-/* Первый абзац — определение компонента, а не первый абзац прозы. Он крупнее
-   тела и стоит в один-два ряда: тот, кто пришёл со страницы другого кита,
-   должен за секунду понять, на что смотрит, и только потом начать читать. */
-/* Мера остаётся 68ch — та же, что у всей прозы и у .inst-page-desc в ките.
-   Своей меры здесь нет: две меры читаемости на одну страницу — это параметр
-   в двух экземплярах. */
-/* Ведущий абзац отличается тоном, а не кеглем: кегль у всей прозы теперь
-   один, и лишняя ступень тут была бы украшением. */
+/* The first paragraph is the definition of the component rather than the first
+   paragraph of the prose. It stands in a line or two: somebody arriving from
+   the page of another kit has to understand in a second what they are looking
+   at, and only then begin reading. */
+/* The measure stays 68ch — the same as for all the prose and for
+   .inst-page-desc in the kit. There is no measure of its own here: two
+   measures of readability on one page are one parameter in two copies. */
+/* The lead paragraph differs by tone rather than by type size: the size across
+   all the prose is now one, and an extra step here would be decoration. */
 .doc-hero > p:first-of-type {
   margin-block-start: 0;
   color: var(--text-secondary);
 }
 
-/* Главный пример — вход в компонент, а не иллюстрация к абзацу. Сцена выше
-   обычной и стоит вплотную к определению: между ними нет ни заголовка, ни
-   пояснения, потому что показывать надо сразу. */
+/* The lead example is the way into the component rather than an illustration
+   to a paragraph. The stage is taller than usual and stands flush against the
+   definition: between them there is neither a heading nor an explanation,
+   because the showing has to come at once. */
 .demo--hero { margin-block: var(--space-6) 0; }
-/* Первому примеру страницы воздуха больше: он показывает компонент в полный
-   рост и стоит сразу под заголовком. Воздух добавляется ТОЛЬКО по вертикали:
-   горизонтальный край у рамы один на все три её этажа, и трогать его нельзя.
-   Мера при этом из ролей, а не число. */
+/* The first example of a page gets more air: it shows the component at full
+   height and stands right under the heading. The air is added VERTICALLY
+   ONLY: the horizontal edge of the frame is one across all three of its
+   floors, and touching it is not allowed. The amount comes from the roles
+   rather than as a number. */
 .demo--hero .demo-stage { padding-block: var(--space-8); }
 
-/* ── Разделы ────────────────────────────────────────────────────────────── */
+/* ── Sections ───────────────────────────────────────────────────────────── */
 
-/* Раздел — отсек, а не абзац с подзаголовком.
+/* A section is a compartment rather than a paragraph with a subheading.
 
-   Отличает его воздух, а не линейка: четырнадцать волосков на странице
-   читаются решёткой и спорят с содержимым, ради которого страница написана.
-   Тот же довод, по которому у кита нет разделительных линий в меню и в
-   боковой колонке. */
+   What sets it apart is air rather than a rule: fourteen hairlines on a page
+   read as a grid and argue with the content the page was written for. The same
+   argument by which the kit has no dividing lines in a menu or in a side
+   column. */
 .doc-s { scroll-margin-block-start: var(--space-6); }
-/* Тот же воздух и перед первым разделом: он идёт за главным примером, и
-   шов между шапкой и содержанием ничем не отличается от шва между
-   разделами. */
+/* The same air before the first section too: it follows the lead example, and
+   the seam between the header and the content differs in nothing from the seam
+   between sections. */
 :is(.doc-hero, .doc-s) + .doc-s { margin-block-start: var(--space-9); }
 
 .doc-s-title {
@@ -236,33 +247,36 @@
 }
 .doc-s > :first-child + * { margin-block-start: 0; }
 
-/* «Связанное» — не абзац со ссылками через точку, а ряд переходов. Пока это
-   был поток текста, пять ссылок подряд читались как одно предложение, и
-   выбрать из них было нельзя. */
+/* Related is a row of transitions rather than a paragraph of links separated
+   by dots. While it was a flow of text, five links in a row read as one
+   sentence, and choosing among them was impossible. */
 .doc-s[data-section="related"] p {
   display: flex; flex-wrap: wrap; gap: var(--space-3);
   max-inline-size: none;
 }
-/* Сама плашка — КИТОВАЯ КНОПКА на <a>: класс ставит рендерер, а высота,
-   отступ, рамка и радиус приходят из кита. Сайту здесь принадлежит только
-   ряд, в который они выложены.
+/* The plate itself is a BUTTON OF THE KIT on an <a>: the class is set by the
+   renderer, and the height, the padding, the border and the radius come from
+   the kit. What belongs to the site here is only the row they are laid out in.
 
-   Разделители «·» между ссылками в разметке больше не нужны — их работу
-   делает промежуток. Прячутся, а не вычищаются из семидесяти страниц. */
+   The «·» separators between the links in the markup are no longer needed —
+   the gap does their work. They are hidden rather than cleaned out of seventy
+   pages. */
 .doc-s[data-section="related"] p { font-size: 0; }
 .doc-s[data-section="related"] a { font-size: var(--text-xs); }
 
-/* Тело заметки кита. inst-note — флексбокс со значком в первой позиции, и без
-   собственного потока абзацы вставали бы в строку рядом со значком. */
+/* The body of a note of the kit. inst-note is a flexbox with the icon in the
+   first position, and without a flow of its own the paragraphs would line up
+   beside the icon. */
 .note-body { min-inline-size: 0; }
 .note-body > * { max-inline-size: none; margin-block: 0; }
 .note-body > * + * { margin-block-start: var(--space-4); }
-/* Воздух вокруг заметки — мера СТАТЬИ, а не компонента: в примере несколько
-   заметок подряд расходились на 24px, хотя показывают их как раз рядом. */
+/* The air around a note is a measure of the ARTICLE rather than of the
+   component: inside an example several notes in a row parted by 24px, though
+   showing them side by side is exactly the point. */
 .site-body .inst-note:not(.demo-stage *) { margin-block: var(--space-6); }
 
-/* Разделы боковой колонки разделены воздухом, а не линиями: одиннадцать
-   линеек в одной колонке читаются как решётка и спорят с содержимым. */
+/* The sections of the side column are parted by air rather than by lines:
+   eleven rules in one column read as a grid and argue with the content. */
 .inst-shell-aside .inst-nav-group + .inst-nav-group { margin-block-start: var(--space-6); }
 
 .site-source {
@@ -272,7 +286,7 @@
   font-size: var(--text-sm); color: var(--text-muted);
 }
 
-/* ── Оглавление ─────────────────────────────────────────────────────────── */
+/* ── The table of contents ──────────────────────────────────────────────── */
 
 .site-toc {
   position: sticky; inset-block-start: var(--space-7);
@@ -285,60 +299,63 @@
   border-inline-start: var(--size-marker) solid transparent;
   color: var(--text-secondary); text-decoration: none;
 }
-/* Вложенность показывает отступ, а не второй кегль: два размера в одном
-   списке из семнадцати строк читаются как две разные вещи. */
+/* Nesting is shown by an indent rather than by a second type size: two sizes
+   in one list of seventeen rows read as two different things. */
 .site-toc-item[data-level="3"] { padding-inline-start: var(--space-7); color: var(--text-muted); }
 .site-toc-item:hover { color: var(--text-primary); }
 .site-toc-item[aria-current="true"] {
   border-inline-start-color: var(--accent-mark); color: var(--text-primary);
 }
 
-/* ── Живой пример ───────────────────────────────────────────────────────── */
+/* ── A live example ─────────────────────────────────────────────────────── */
 
-/* Стол вокруг примера — сообщение «дальше чужой экран»: без рамки компонент
-   читается сиротой, и непонятно, где кончается справочник. Полоса сверху
-   держит переключатель темы: у стола тема своя, независимая от сайта. */
+/* The table around an example says "somebody else's screen from here on":
+   without a frame the component reads as an orphan, and where the reference
+   ends is unclear. */
 
-/* Поверхность сцены зависит от того, ЧТО на ней стоит, и это не компромисс, а
-   единственное описание, при котором стопка не переворачивается.
+/* The surface of the stage depends on WHAT stands on it, and that is not a
+   compromise but the one description under which the stack does not turn over.
 
-   Пример бывает двух родов, и разметка их уже различает — `demo-root--context`
-   ставится там, где показан целый экран, а не отдельный контрол.
+   An example comes in two kinds, and the markup already tells them apart —
+   `demo-root--context` is set where a whole screen is shown rather than a
+   single control.
 
-   · КОМПОНЕНТ стоит на приподнятой поверхности. Кнопка, поле, бейдж в жизни
-     лежат на панели, и сцена изображает панель. Страницы внутри нет, значит и
-     переворачивать нечего.
+   · A COMPONENT stands on a raised surface. A button, a field, a badge lie on
+     a panel in life, and the stage plays the part of a panel. There is no page
+     inside it, so there is nothing to turn over.
 
-   · ЭКРАН стоит на странице. Внутри у него свои панели и карточки, и рама,
-     покрашенная приподнятой, оказалась бы ВЫШЕ страницы, которую содержит:
-     вложение шло бы белое → серое → белое, а порядок светлоты — тот, на
-     котором держится вся глубина кита, — читался бы наизнанку. Заметнее всего
-     на странице «Высота и поверхности», где пример про порядок поверхностей
-     стоял бы в раме, этот порядок нарушающей.
+   · A SCREEN stands on a page. Inside it are panels and cards of its own, and
+     a frame painted raised would end up ABOVE the page it contains: the
+     nesting would run white → grey → white, and the order of lightness — the
+     one the whole depth of the kit rests on — would read inside out. Most
+     visible on the "Elevation and surfaces" page, where the example about the
+     order of surfaces would stand in a frame breaking that order.
 
-   Один цвет на оба рода не годится ни в какую сторону: приподнятая
-   переворачивает стопку у экранов, страница делает серыми все двести примеров
-   компонентов — а справочник и так показывает кит светлым.
+   One colour for both kinds will not do in either direction: raised turns the
+   stack over on screens, and the page colour makes all two hundred component
+   examples grey — while the reference already shows the kit light.
 
-   Рама примера — ШТРИХОВАЯ ГРАНИЦА, и это смена решения. Здесь стоит китовая
-   панель по рассуждению «справочник, рисующий свою рамку вокруг чужого
-   компонента, показывает не то, что раздаёт».
+   The frame of an example is a DASHED BORDER. A panel of the kit would follow
+   from the reasoning that a reference drawing its own frame around somebody
+   else's component shows something other than what it hands out.
 
-   Рассуждение верно для рисунка и неверно для роли. Панель — это ПРОДУКТ, кит
-   её раздаёт, и пример, одетый в панель, выглядит отгружаемой вещью: на
-   странице кнопки таких панелей тринадцать, и внутри каждой что-то есть.
-   Штриховая граница китом не раздаётся — потому ею и можно обвести пример, не
-   выдавая его за компонент.
+   The reasoning is right about the drawing and wrong about the role. A panel is
+   a PRODUCT, the kit hands it out, and an example dressed in a panel looks like
+   a shipped thing: on the button page there are thirteen such panels, and
+   inside each of them there is something. A dashed border is not handed out by
+   the kit — and that is why an example can be outlined with one without passing
+   it off as a component.
 
-   Своего языка сайт при этом не заводит: цвет, радиус и толщина берутся
-   токенами кита. Меняется не палитра, а то, чем пример объявлен, — пометкой на
-   полях вместо панели.                                                     */
+   The site starts no language of its own by this: the colour, the radius and
+   the thickness are taken as tokens of the kit. What changes is not the
+   palette but what the example is declared to be — a mark in the margin
+   instead of a panel.                                                       */
 .demo { margin: var(--space-6) 0; }
 
-/* Подпись стоит НАД границей, а не внутри неё: внутри рамы живут варианты
-   компонента, и подпись, попавшая туда, читается его частью. Мелкая и
-   приглушённая — она отвечает на вопрос «что это», который задают один раз, а
-   не сопровождает чтение.                                                  */
+/* The label stands ABOVE the border rather than inside it: inside the frame
+   live the variants of the component, and a label that lands there reads as
+   part of it. Small and muted — it answers the question "what is this", which
+   is asked once, rather than accompanying the reading.                     */
 .demo-label {
   font-size: var(--text-2xs);
   color: var(--text-muted);
@@ -346,84 +363,95 @@
 }
 
 .demo-frame {
-  /* Толщина в ДВА штриха, и это не вкус. Длина штриха у border-style: dashed
-     пропорциональна толщине: на волосяной линии (0.67px при DPR 1.5) штрих
-     выходит около полутора пикселей и сливается в сплошную — проверено
-     глазом. Полтора штриха дают различимый пунктир, два уже жирно: подобрано
-     глазом на экране, потому что длина штриха рисуется браузером и из токенов
-     не выводится.
+  /* A thickness of ONE AND A HALF strokes, and that is not taste. The length
+     of a dash under border-style: dashed is proportional to the thickness: on
+     a hairline (0.67px at DPR 1.5) a dash comes out around one and a half
+     pixels and merges into a solid line — checked by eye. One and a half
+     strokes give a discernible dash, two are already heavy: fitted by eye on
+     screen, because the length of a dash is drawn by the browser and does not
+     follow from the tokens.
 
-     Цвет при этом остаётся мягким (--border, а не --border-strong): читаться
-     должен ПУНКТИР, а не линия. Толщина отвечает за различимость, цвет — за
-     громкость, и путать их значит получить забор вокруг примера. */
+     The colour meanwhile stays soft (--border rather than --border-strong):
+     what has to read is a DASHED LINE, not a line. Thickness answers for
+     discernibility and colour for loudness, and confusing them means getting a
+     fence around the example. */
   border: calc(var(--stroke) * 1.5) dashed var(--border);
   border-radius: var(--radius-md);
 }
 
-/* Раскладушка с кодом — китовый .inst-accordion-item целиком: своя была
-   написана и оказалась невыполненным обещанием, подпись нажималась и не
-   выглядела нажимаемой. Сайту остаётся только отступ от рамы. */
+/* The fold-out with the code is the kit's .inst-accordion-item entire: one of
+   our own was written and turned out to be an unkept promise, its label being
+   pressable without looking pressable. What is left to the site is the gap from
+   the frame. */
 .demo-code { margin-block-start: var(--space-3); }
 
-/* Полоса целей выравнивается по ПОДПИСИ раскладушки, а не по краю блока.
-   .inst-accordion-head несёт --pad-cell-x, .inst-tabs своего отступа не имеет
-   (в ките полоса стоит во всю ширину области), и без этой строки на панели
-   получалось три разных левых края подряд: подпись, вкладки, код. */
+/* The strip of targets is aligned to the LABEL of the fold-out rather than to
+   the edge of the block. .inst-accordion-head carries --pad-cell-x, .inst-tabs
+   has no padding of its own (in the kit the strip stands across the whole
+   width of an area), and without this line the panel gave three different left
+   edges in a row: the label, the tabs, the code. */
 .demo-targets { padding-inline: var(--pad-cell-x); }
 
-/* ПОТОЛОК ШИРИНЫ. Проза живёт в мере 68ch, а пример растягивался во всю
-   статью: на широком экране текст шёл колонкой в полтысячи пикселей, а панель
-   рядом занимала полторы тысячи. Разница в два с половиной раза и читается как
-   «пример растянут» — он перестаёт быть примером и становится секцией.
+/* A CEILING ON THE WIDTH. The prose lives in a measure of 68ch while an
+   example stretched across the whole article: on a wide screen the text ran in
+   a column of five hundred pixels and the panel beside it took fifteen
+   hundred. A difference of two and a half times is what reads as "the example
+   is stretched" — it stops being an example and becomes a section.
 
-   Потолок взят у кита: --container-max это потолок рабочей области, то есть
-   ширина, в которой компонент окажется в приложении. Собранный экран потолка
-   не имеет — он и есть рабочая область целиком.                            */
+   The ceiling is taken from the kit: --container-max is the ceiling of the
+   working area, that is, the width the component will find itself in inside an
+   application. An assembled screen has no ceiling — it is the working area
+   entire.                                                                   */
 .demo { max-inline-size: var(--container-max); }
 .demo:has(.demo-root--context) { max-inline-size: none; }
 
-/* ВОЗДУХ ДАЁТСЯ СЦЕНЕ, А НЕ ПОДПИСИ.
+/* THE AIR IS GIVEN TO THE STAGE, NOT TO THE LABEL.
 
-   Подпись сверху и ручка снизу — это хром рамы, и стоят они на её собственном
-   краю (--pad-panel), как у любой панели кита. Отодвигать их вместе со сценой
-   пробовали: подпись уезжает вглубь и читается сдвинутой относительно всего
-   остального на странице.
+   The label above and the handle below are the chrome of the frame, and they
+   stand on its own edge (--pad-panel), as on any panel of the kit. Pushing them
+   inward along with the stage was tried: the label moves in and reads as
+   shifted against everything else on the page.
 
-   Сцена — холст, и поле у неё своё: контрол в 26 пикселей, прижатый к краям
-   двенадцатью, читается зажатым, а пример существует ровно для того, чтобы
-   компонент было видно. Краёв получается два, и это честно: хром рамы и поле
-   холста внутри неё — разные вещи.                                        */
+   The stage is a canvas, and it has a field of its own: a control of 26 pixels
+   pressed to the edges by twelve reads as cramped, and an example exists
+   precisely so that the component can be seen. That gives two edges, and it is
+   honest: the chrome of the frame and the field of the canvas inside it are
+   different things.                                                        */
 .demo-stage { padding-inline: var(--space-7); }
 
-/* Сцена несёт `.inst-theme`, а он объявляет базу приложения — включая фон
-   страницы. Для примера-КОМПОНЕНТА это не тот фон: страницы здесь нет, есть
-   поверхность, на которой лежит контрол. Перекрывается снаружи, потому что
-   `.inst-theme` обязан оставаться самодостаточным везде, где его применят.
+/* The stage carries `.inst-theme`, and that declares the base of an
+   application — the background of the page included. For a COMPONENT example
+   that is the wrong background: there is no page here, there is a surface a
+   control lies on. It is overridden from outside, because `.inst-theme` has to
+   stay self-sufficient wherever it is applied.
 
-   Переопределять фон сцены сайту разрешено прямо: `.demo-root` и `.demo-stage`
-   выведены из-под запрета на переоформление кита как «рама вокруг компонента,
-   а не он сам» — см. docscheck.                                            */
-/* ПОВЕРХНОСТЬ СЦЕНЫ ПОКАЗЫВАЕТ ТО, НА ЧЁМ КОМПОНЕНТ ЛЕЖИТ В ПРИЛОЖЕНИИ.
+   Overriding the background of the stage is expressly allowed to the site:
+   `.demo-root` and `.demo-stage` are taken out from under the ban on
+   redressing the kit as "a frame around a component rather than the component
+   itself" — see docscheck.                                                 */
+/* THE SURFACE OF THE STAGE SHOWS WHAT THE COMPONENT LIES ON IN AN
+   APPLICATION.
 
-   Одной краской сцену красить нельзя ни в ту, ни в другую сторону.
-   Приподнятая под всё подряд ставит белое на белое и съедает раму панели.
-   Утопленная под всё подряд врёт иначе: по такому примеру не сказать, чей это
-   серый — компонента или подложки под ним.
+   The stage cannot be painted with one colour in either direction. Raised
+   under everything puts white on white and eats the border of a panel. Sunken
+   under everything lies in another way: from such an example there is no
+   telling whose grey it is — the component's or the ground's beneath it.
 
-   Различие проходит по тому, ЧТО показывают.
+   The distinction runs by WHAT is being shown.
 
-   Кнопка, поле, бейдж, таблица, вкладки живут ВНУТРИ карточки или панели, и
-   под ними приподнятая — ровно та поверхность, на которой они окажутся. Это
-   умолчание, потому что таких компонентов большинство.
+   A button, a field, a badge, a table, tabs live INSIDE a card or a panel, and
+   raised under them is exactly the surface they will end up on. That is the
+   default, because such components are the majority.
 
-   Панель, карточка, сплит, контейнер, сетка и оболочка — САМИ поверхности, и
-   лежат они на странице. Под ними --surface-page плюс косая штриховка.
-   Штриховка не украшение: она говорит «этого фона в вашем приложении не
-   будет», и потому снимает вопрос, где кончается компонент и начинается
-   подложка.
+   A panel, a card, a split, a container, a grid and the shell ARE surfaces
+   themselves, and they lie on a page. Under them --surface-page plus a
+   diagonal hatching. The hatching is not decoration: it says "this background
+   will not be there in your application", and so removes the question of where
+   the component ends and the ground begins.
 
-   Собранный экран штриховки не получает: он занимает сцену целиком, подложки
-   под ним не видно, а полоски по краям читались бы дефектом экрана.        */
+   An assembled screen gets no hatching: it takes the stage entire, the ground
+   under it is not visible, and stripes along the edges would read as a defect
+   of the screen.                                                           */
 .demo-stage {
   background: var(--surface-raised);
   padding-block: var(--space-7);
@@ -442,40 +470,46 @@
   background-image: none;
 }
 
-/* Карточка НА СЦЕНЕ приподнята, даже когда рама примера — панель.
+/* A card ON THE STAGE is raised, even when the frame of the example is a
+   panel.
 
-   У кита есть правило `.inst-panel .inst-card`: карточка внутри панели уходит
-   на утопленную, потому что там она вложена. Здесь вложенности нет — рама это
-   рама, а не панель приложения, — и правило срабатывало не по делу.
+   The kit has a rule `.inst-panel .inst-card`: a card inside a panel goes to
+   the sunken surface, because there it is nested. Here there is no nesting —
+   the frame is a frame rather than a panel of an application — and the rule
+   fired where it did not belong.
 
-   Снимается у ЛЮБОЙ карточки на сцене, кроме той, что лежит в настоящей
-   панели: там вложенность настоящая, и пример показывает как раз её. */
+   It is lifted from ANY card on the stage except one lying in a real panel:
+   there the nesting is real, and the example is showing precisely that. */
 .demo-stage .inst-card:not(.demo-root .inst-panel .inst-card) {
   --card-surface: var(--surface-raised);
 }
 
-/* Рама примера обрезает по радиусу — так же, как панель кита, из которой она
-   собрана. Исключение ровно одно и названо поимённо: тултип.
+/* The frame of an example clips to its radius, the same way the panel of the
+   kit it is assembled from does. There is exactly one exception, and it is
+   named: the tooltip.
 
-   Контракт кита говорит, что всплывающее рисуется в top layer, и панель имеет
-   полное право его обрезать. Но тултип объявлен обычным потоком (`position:
-   absolute` от триггера) — это его устройство, а не недосмотр, — и в раме он
-   уходил под её край. Снимать обрезку у ВСЕХ примеров ради одного значило бы
-   выпустить наружу углы полноширинных: оболочка и спарклайн лежат встык к
-   краям, и их прямые углы торчали бы из скруглённых. */
+   The contract of the kit says a popover is drawn in the top layer, and a
+   panel has every right to clip it. But a tooltip is declared in the ordinary
+   flow (`position: absolute` from its trigger) — that is how it is built, not
+   an oversight — and inside a frame it went under the edge. Lifting the
+   clipping from ALL examples for the sake of one would let the corners of the
+   full-width ones out: the shell and the sparkline lie flush against the
+   edges, and their square corners would stick out of the rounded ones. */
 .demo:has(.inst-tooltip),
 .demo:has(.inst-tooltip) .demo-stage { overflow: visible; }
 
-/* ── Сцена ────────────────────────────────────────────────────────────────
+/* ── The stage ────────────────────────────────────────────────────────────
 
-   Пример живёт в потоке страницы и наследует тему справочника: `.inst-theme`
-   берёт цвет и фон из токенов, а тема кита работает на любом поддереве.
-   Своего переключателя у примера нет — ручка одна, в шапке.
+   An example lives in the flow of the page and inherits the theme of the
+   reference: `.inst-theme` takes colour and background from the tokens, and a
+   theme of the kit works on any subtree. An example has no switch of its own —
+   there is one knob, in the header.
 
-   Сцена ведёт себя как `.inst-cluster` — китовый примитив ряда, а не как
-   собственная выдумка. Выравнивание по ЦЕНТРУ: в ряду из элементов разной
-   высоты — аватары трёх размеров, кнопка рядом с полем — верхняя кромка
-   выстраивает их лесенкой, и ряд перестаёт читаться рядом. */
+   The stage behaves as `.inst-cluster` — the kit's primitive for a row —
+   rather than as an invention of ours. Alignment to the CENTRE: in a row of
+   elements of different heights — avatars in three sizes, a button beside a
+   field — a top edge lines them up as a staircase, and the row stops reading
+   as a row. */
 
 .demo-stage { display: block; }
 
@@ -484,14 +518,15 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-5);
-  /* СВОЕГО ОТСТУПА У СЦЕНЫ НЕТ. Он приходит от тела панели, как у любого
-     содержимого внутри рамы, — иначе у одной карточки три разных края: 12 у
-     подписи, 36 у примера, 8 у ручки внизу. Фиксированные 24 и 32 к тому же
-     не реагировали на плотность и в плотном режиме были втрое больше отступа
-     самой рамы. */
+  /* THE STAGE HAS NO PADDING OF ITS OWN. It comes from the body of the
+     panel, as for any content inside the frame — otherwise one card has three
+     different edges: 12 at the label, 36 at the example, 8 at the handle
+     below. Fixed values of 24 and 32 moreover did not react to density and in
+     the compact mode were three times the padding of the frame itself. */
 }
 
-/* Блочное занимает всю ширину сцены, а не жмётся в ряд. */
+/* Block-level content takes the whole width of the stage rather than
+   squeezing into a row. */
 .demo-root > :is(.inst-panel, .inst-card, .inst-table, .inst-form, .inst-log,
                  .inst-diff, .inst-approval, .inst-failure, .inst-calendar,
                  .inst-timeline, .inst-lanes, .inst-budget, .inst-tree,
@@ -506,55 +541,57 @@
   flex: 1 1 100%;
 }
 
-/* Сегментированный контрол — контрол, и ширину берёт по содержимому.
-   Роли `radiogroup` в списке выше нет намеренно: её носит именно он, а
-   `.inst-segmented` объявлен `inline-flex`. Растянутый на всю сцену, он
-   показывает утопленную дорожку во всю сцену и три кнопки в её углу. */
+/* A segmented control is a control, and it takes its width from its content.
+   The `radiogroup` role is deliberately absent from the list above: it is
+   precisely what carries that role, while `.inst-segmented` is declared
+   `inline-flex`. Stretched across the stage it shows a sunken track across the
+   whole stage with three buttons in its corner. */
 
-/* Оболочка приложения занимает сцену целиком — она и есть экран, и высоту
-   берёт `100dvh`. В потоке страницы это означает пример во весь экран, поэтому
-   сцена задаёт ей свой потолок. Поле снимается ТОЛЬКО ради оболочки: без
-   :has() правило било бы по всем примерам подряд, и ряд метрик прилипал к
-   краям. */
+/* The application shell takes the stage entire — it IS the screen, and it
+   takes its height from `100dvh`. In the flow of a page that means an example
+   the size of the viewport, so the stage sets a ceiling of its own on it. The
+   field is removed ONLY for the shell's sake: without :has() the rule would
+   hit every example in a row, and a row of metrics would stick to the
+   edges. */
 .demo-stage:has(> .demo-root > .inst-shell) { padding: 0; }
 .demo-root:has(> .inst-shell) { gap: 0; }
-/* Оболочка показывает КАРКАС — колонку, шапку, рабочую область, — и на это
-   хватает 26rem: выше она просто держит пустоту.
+/* The shell shows the FRAMEWORK — the column, the header, the working area —
+   and 26rem is enough for that: above it the shell simply holds emptiness.
 
-   Собранный экран показывает РАБОТУ, и ему нужно 36: на 26 внутри появлялась
-   вторая прокрутка, то есть экран в экране. Признак различает их сам —
-   собранные экраны помечены как контекст. */
+   An assembled screen shows the WORK, and it needs 36: at 26 a second
+   scrollbar appeared inside it, that is, a screen within a screen. The marker
+   tells them apart by itself — assembled screens are marked as context. */
 .demo-root > .inst-shell { block-size: 26rem; border: 0; border-radius: 0; }
 .demo-root--context > .inst-shell { block-size: 36rem; }
 
-/* Календарь — сетка на семь колонок без собственной ширины: растянутый на
-   всю сцену месяц читается лентой, а не месяцем. */
+/* A calendar is a grid of seven columns with no width of its own: a month
+   stretched across the stage reads as a ribbon rather than as a month. */
 .demo-root > .inst-calendar { flex: 0 1 24rem; }
 
-/* Мера, слайдер и спарклайн меряют горизонталь: без явной основы флекс
-   сжимает их в ноль, и сцена выглядит пустой. */
+/* A meter, a slider and a sparkline measure the horizontal: without an
+   explicit basis flex squeezes them to nothing, and the stage looks empty. */
 .demo-root > :is(.inst-meter, .inst-slider, .inst-sparkline, .inst-meter-row) {
   flex: 1 1 100%;
 }
 
-/* Спарклайн — график, и горизонталь у него ДАННЫЕ, а не оформление: боковое
-   поле сцены отрезает от ряда первые и последние точки. */
+/* A sparkline is a chart, and its horizontal is DATA rather than styling: the
+   side field of the stage cuts the first and last points off the series. */
 .demo-stage:has(> .demo-root > .inst-sparkline) { padding-inline: 0; }
 
-/* Тултип раскрывается ВВЕРХ и позиционирован абсолютно: без запаса сверху он
-   уходит под полосу сцены. Отрицательную координату подгонкой высоты не
-   вылечить. */
+/* A tooltip opens UPWARDS and is positioned absolutely: without room above it
+   goes under the edge of the stage. A negative coordinate is not cured by
+   fitting the height. */
 .demo-root:has(.inst-tooltip) { padding-block-start: 4.5rem; }
 
-/* ── Показ материала ──────────────────────────────────────────────────────
+/* ── Showing the material ─────────────────────────────────────────────────
 
-   Рампа, образец поверхности и строка шкалы — НЕ компоненты кита, и классов
-   в ките у них не будет: это не части интерфейса, а способ посмотреть на сам
-   материал.
+   A ramp, a surface swatch and a row of a scale are NOT components of the kit,
+   and they will have no classes in it: these are not parts of an interface but
+   a way of looking at the material itself.
 
-   Цвет и размер приходят инлайном через --c и --v. Это канал ДАННЫХ, а не
-   оформления: показываемое значение и есть содержание примера — тот же
-   случай, что ширина заливки меры. */
+   The colour and the size arrive inline through --c and --v. That is a channel
+   of DATA rather than of styling: the value on show IS the content of the
+   example — the same case as the width of a meter's fill. */
 
 .ramp { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; inline-size: 100%; }
 .ramp-step {
@@ -589,26 +626,29 @@
 }
 .scale-sample { font-size: var(--v); }
 
-/* ── Разметка примера ───────────────────────────────────────────────────── */
+/* ── The markup of an example ───────────────────────────────────────────── */
 
-/* Ручка, её шов и край приходят из .inst-accordion-item--flush. Блок кода
-   лежит прямо в <details>, без .inst-accordion-body: он занимает всю ширину
-   примера, и своё поле ему не нужно. Правил у сайта здесь не осталось.     */
+/* The handle, its seam and its edge come from .inst-accordion-item--flush. The
+   block of code lies directly in the <details>, without .inst-accordion-body:
+   it takes the whole width of the example and needs no field of its own. The
+   site has no rules left here.                                             */
 
-/* ── Справочник ─────────────────────────────────────────────────────────── */
+/* ── The reference ──────────────────────────────────────────────────────── */
 
-/* Одна таблица с постоянными колонками вместо шести с разными. Ширины
-   заданы явно: имя и вид не должны прыгать от страницы к странице, иначе
-   постоянство колонок теряется ровно там, ради чего затевалось. */
+/* One table with constant columns instead of six with different ones. The
+   widths are set explicitly: the name and the kind must not jump from page to
+   page, otherwise the constancy of the columns is lost precisely where it was
+   started for. */
 .api { margin-block: var(--space-6); }
 
-/* Прокрутка у каждого блока своя, а не одна на раздел. С общей три таблицы
-   выходили разной ширины: две укладывались в раздел, а таблица токенов
-   распирала его до 751 при 644 — значение бывает в девяносто знаков
-   (light-dark из двух oklch), и уложить его без переноса нельзя. Три таблицы
-   одного раздела разной ширины читаются тремя чужими друг другу; со своим
-   скроллером каждая ровно по разделу, а ездит внутри себя только та, которой
-   правда тесно. */
+/* The scrolling belongs to each block rather than one to a section. With a
+   shared one the three tables came out different widths: two fitted the
+   section while the table of tokens pushed it to 751 against 644 — a value can
+   be ninety characters long (a light-dark of two oklch), and laying it out
+   without a wrap is impossible. Three tables of one section at different
+   widths read as three strangers to one another; with a scroller of its own
+   each is exactly the width of the section, and only the one that is really
+   cramped travels inside itself. */
 .api-scroll { overflow-x: auto; }
 .api-scroll + .api-scroll { margin-block-start: var(--space-7); }
 
@@ -630,11 +670,11 @@
 .api-table tbody tr:hover td { background: var(--surface-hover); }
 .api-table { min-inline-size: 34rem; }
 
-/* Название блока. Подпись таблицы, а не заголовок: три блока живут внутри
-   ОДНОГО раздела «API», и H3 у них означал бы три раздела — оглавление
-   страницы собирается из разметки и про эти таблицы ничего не знает, так что
-   заголовки в нём просто не появились бы, а разошлись бы с настоящими H3,
-   которые появляются. */
+/* The name of a block. A caption for the table rather than a heading: the
+   three blocks live inside ONE "API" section, and an H3 on them would mean
+   three sections — the table of contents of a page is assembled from the
+   markup and knows nothing of these tables, so the headings would simply not
+   appear in it and would part ways with the real H3s that do. */
 .api-table caption {
   text-align: start; color: var(--text-secondary);
   font-size: var(--text-xs); font-weight: var(--weight-medium);
@@ -642,33 +682,36 @@
 }
 
 .api-table th:nth-child(1), .api-table td:nth-child(1) { inline-size: 1%; white-space: nowrap; }
-/* Колонка «Что делает» держит свою ширину, а не отдаёт её значению: за
-   справочником приходят читать именно её. У таблицы токенов третья колонка
-   другая — «Откуда», она короткая, и держать ей восемнадцать рем незачем. */
+/* The "What it does" column holds its width rather than handing it to the
+   value: it is what people come to the reference to read. In the table of
+   tokens the third column is a different one — "From" — it is short, and there
+   is no point holding eighteen rem for it. */
 .api-table--2 th:nth-child(2), .api-table--2 td:nth-child(2),
 .api-table--3 th:nth-child(3), .api-table--3 td:nth-child(3) { min-inline-size: 18rem; }
 .api-table--4 th:nth-child(3), .api-table--4 td:nth-child(3) { inline-size: 1%; }
 
-/* Приписка: и прозаическое пояснение под именем токена, и «+14: плотность ·
-   масштаб» в колонке «Откуда». Тише строки, но не тише порога 4,5:1 —
-   поэтому muted, а не faint; ровно та же граница, что у прочерка ниже. */
+/* A note: both the prose explanation under the name of a token and the
+   "+14: density · scale" in the "From" column. Quieter than the row, but not
+   quieter than the 4.5:1 threshold — hence muted rather than faint; exactly
+   the same boundary as the dash below. */
 .api-note {
   display: block; color: var(--text-muted);
   font-size: var(--text-xs); line-height: var(--leading-ui);
   white-space: normal;
 }
-/* «база +14: плотность · масштаб» — строка длинная, и nowrap на ней распирал
-   таблицу токенов шире соседних двух: три блока одного раздела расходились по
-   ширине, и общий скроллер ездил из-за одной колонки. Переносится. */
+/* "base +14: density · scale" is a long line, and a nowrap on it pushed the
+   table of tokens wider than its two neighbours: three blocks of one section
+   parted in width, and the shared scroller travelled because of one column. It
+   wraps. */
 .api-where {
   color: var(--text-secondary);
   inline-size: 1%; min-inline-size: 9rem;
 }
 .api-where .api-note { display: inline; }
 
-/* Значение не переносится, пока короткое, и переносится, когда длинное:
-   у --font-mono оно в девяносто знаков, и nowrap распирал им таблицу так,
-   что колонка «Что делает» уезжала за край. */
+/* A value does not wrap while it is short and wraps when it is long: for
+   --font-mono it is ninety characters, and a nowrap pushed the table so wide
+   with it that the "What it does" column went off the edge. */
 .api-table--3 th:nth-child(2), .api-table--3 td:nth-child(2),
 .api-table--4 th:nth-child(2), .api-table--4 td:nth-child(2) { inline-size: 1%; }
 .api-table--3 td:nth-child(2) > code,
@@ -679,27 +722,31 @@
 }
 
 .api-name { color: var(--text-primary); }
-/* Прочерк «значения нет» — это ТЕКСТ, а не украшение, поэтому muted, а не
-   faint: у faint порог 3:1, он для линий и разделителей. Поймано проверкой по
-   отрисованным пикселям — текстовый гейт сюда не смотрит, docs.css в него не
-   входит. Было 3,63:1 при норме 4,5. */
+/* The dash for "there is no value" is TEXT rather than decoration, hence
+   muted rather than faint: faint has a 3:1 threshold and is for lines and
+   dividers. Caught by the check over the rendered pixels — the text gate does
+   not look here, docs.css is not part of it. It stood at 3.63:1 against a norm
+   of 4.5. */
 .api-none { color: var(--text-muted); }
 
-/* Кнопка копирования в строке справочника.
+/* The copy button in a row of the reference.
 
-   Стоит ПЕРЕД значением, а не после: имена в колонке выровнены по левому
-   краю, и кнопка после них плясала бы по горизонтали вслед за длиной имени.
+   It stands BEFORE the value rather than after: the names in the column are
+   aligned to the left, and a button after them would dance horizontally with
+   the length of the name.
 
-   Видна по наведению на строку и по фокусу — но не спрятана от тачскрина:
-   ниже 60rem она видна всегда, потому что наведения там нет. */
-/* Кнопка и значение — одна строка, и рвать её нельзя: перенос оставляет
-   значок копирования висеть отдельно от того, что он копирует. Длинному
-   значению разрешено переноситься внутри самого `<code>` — там разрыв
-   безобиден, а ячейке от него не тесно. */
+   It shows on hover over the row and on focus — but it is not hidden from a
+   touchscreen: below 60rem it is always visible, because there is no hover
+   there. */
+/* The button and the value are one line, and breaking it is not allowed: a
+   wrap leaves the copy icon hanging apart from what it copies. A long value is
+   allowed to wrap inside the `<code>` itself — a break there is harmless, and
+   the cell is not cramped by it. */
 .api-cell { white-space: nowrap; }
-/* Длинному значению перенос внутри `<code>` возвращается: у --font-mono оно
-   бывает в девяносто знаков, и nowrap распирал бы им таблицу. Разрыв внутри
-   значения безобиден — в отличие от разрыва между значком и значением. */
+/* A long value gets its wrap inside `<code>` back: for --font-mono it can be
+   ninety characters, and a nowrap would push the table wide with it. A break
+   inside a value is harmless — unlike a break between the icon and the
+   value. */
 .api-cell > code { white-space: normal; overflow-wrap: anywhere; }
 .api-copy {
   margin-inline-end: var(--space-2);
@@ -710,13 +757,15 @@
 .api-table tbody tr:hover .api-copy,
 .api-copy:focus-visible { opacity: 1; }
 .api-copy:hover { color: var(--text-primary); }
-/* Ответ на нажатие. Атрибут ставит кит; цвет объявлен ЗДЕСЬ, потому что цвет
-   покоя объявлен здесь же: стили сайта лежат вне слоёв и выигрывают у кита по
-   его собственному правилу. Кит красит `[data-copied]` для приложения,
-   которое `.inst-copy` не трогает, — этот случай не наш.
+/* The response to a press. The attribute is set by the kit; the colour is
+   declared HERE because the resting colour is declared here too: the site's
+   styles lie outside the layers and beat the kit by its own rule. The kit
+   paints `[data-copied]` for an application that does not touch `.inst-copy` —
+   that case is not ours.
 
-   Видимость держится тем же атрибутом: кнопка проявляется по наведению
-   строки, а курсор к моменту ответа нередко уже ушёл. */
+   The visibility is held by the same attribute: the button appears on hover
+   over the row, and by the time of the response the cursor has often already
+   left. */
 .api-copy[data-copied] { opacity: 1; }
 .api-copy[data-copied="true"] { color: var(--ok-text); }
 .api-copy[data-copied="false"] { color: var(--err-text); }
@@ -725,9 +774,10 @@
   .api-copy { opacity: 1; }
 }
 
-/* Строка-заголовок вида. Утопленная поверхность, а не жирное начертание:
-   она делит список, но не спорит с именами, которые здесь главные.
-   Первой группе верхняя линия не нужна — над ней уже шапка таблицы. */
+/* The heading row of a kind. A sunken surface rather than a bold weight: it
+   divides the list without arguing with the names, which are what matters
+   here. The first group needs no line above it — the head of the table is
+   already there. */
 .api-group > th {
   padding: var(--space-4) var(--pad-cell-x) var(--space-2);
   background: var(--surface-sunken);
@@ -738,7 +788,7 @@
 }
 .api-table tbody tr.api-group:first-child > th { border-block-start: none; }
 
-/* ── Код ────────────────────────────────────────────────────────────────── */
+/* ── Code ───────────────────────────────────────────────────────────────── */
 
 .code-block { position: relative; }
 .code-block pre {
@@ -751,14 +801,14 @@
 .code-block--demo pre { border-radius: 0; border-block-start: var(--hairline) solid var(--border-subtle); }
 .code-block code { font-size: inherit; }
 
-/* Кнопка копирования ВИДНА ВСЕГДА, просто тихая.
+/* The copy button is ALWAYS VISIBLE, merely quiet.
 
-   Она была прозрачной до наведения — то есть не существовала для тачскрина и
-   для того, кто не знает, что она там есть. Наведение может усиливать
-   элемент, но не вводить его в бытие.
+   Transparent until hover, it does not exist for a touchscreen or for somebody
+   who does not know it is there. Hover may strengthen an element, but it may
+   not bring one into being.
 
-   Иконочная, а не со словом: подпись «копировать» на узком экране наезжала на
-   первую строку кода. */
+   An icon rather than a word: a "copy" label on a narrow screen ran into the
+   first line of the code. */
 .code-copy {
   position: absolute;
   inset-block-start: var(--space-3); inset-inline-end: var(--space-3);
@@ -772,46 +822,49 @@
 .code-copy[data-copied="true"] { color: var(--ok-text); }
 .code-copy[data-copied="false"] { color: var(--err-text); }
 
-/* Два значка в разметке, переключение — здесь. Подменить href у <use>
-   стилями нельзя, а менять его скриптом значило бы вернуть сайту
-   обработчик, который только что стал поведением кита. */
+/* Two icons in the markup, the switching here. The href of a <use> cannot be
+   substituted by styles, and changing it by script would mean handing the site
+   back a handler that has just become a behaviour of the kit. */
 .copy-i-done { display: none; }
 .inst-copy[data-copied="true"] .copy-i { display: none; }
 .inst-copy[data-copied="true"] .copy-i-done { display: block; }
 
-/* Место под кнопку в блоке кода: без него длинная первая строка уходит под
-   неё. Полоса прокрутки у <pre> своя, поэтому отступ ставится содержимому.
+/* Room for the button in a block of code: without it a long first line goes
+   under it. The <pre> has a scrollbar of its own, so the padding is put on the
+   content.
 
-   Резервируется ровно ширина кнопки плюс её же отступ от края — раньше
-   считалось от --space-5 и давало 38px правого поля против 12px левого, то
-   есть колонка кода стояла не по центру своего блока и это было видно. */
+   What is reserved is exactly the width of the button plus its own gap from
+   the edge — counting from --space-5 gave 38px of right field against 12px of
+   left, that is, the column of code did not stand in the middle of its block,
+   and it showed. */
 .code-block pre { padding-inline-end: calc(var(--control-h-sm) + var(--space-3) * 2); }
 
-/* Подсветка на три цвета. Шестьдесят цветов на макете из хайрлайнов кричали бы
-   громче кода, который подсвечивают, — эта часть замысла остаётся.
+/* Highlighting in three colours. Sixty colours on a layout of hairlines would
+   shout louder than the code they highlight — that part of the intent stands.
 
-   А вот ЧЬИ это были цвета — ошибка, и грубая. Стояли --accent-text и
-   --ok-text, то есть акцент («интеракция», «идёт») и зелёный статус
-   («готово»). Собственный файл токенов запрещает это прямым текстом:
-   «Зарезервированные тона — никогда не используются как украшение». На
-   странице, где рядом с кодом стоят настоящие бейджи состояний, один и тот же
-   зелёный означал две разные вещи.
+   WHOSE colours they were, though, was a mistake, and a coarse one. They were
+   --accent-text and --ok-text, that is the accent ("interaction", "running")
+   and the green status ("done"). The kit's own file of tokens forbids this in
+   as many words: the reserved tones are never used as decoration. On a page
+   where real state badges stand beside the code, one and the same green meant
+   two different things.
 
-   Тип синтаксического токена — это КАТЕГОРИЯ, ровно как ряд графика, поэтому
-   тона взяты у категориальной палитры: 280, 55 и 190. Дальше от статусных
-   (25, 85, 150) и от акцента (250) на положенные 25°.
+   The type of a syntax token is a CATEGORY, exactly as a series of a chart is,
+   so the hues are taken from the categorical palette: 280, 55 and 190. Away
+   from the status hues (25, 85, 150) and from the accent (250) by the due 25°.
 
-   А вот сами ЗНАЧЕНИЯ палитры сюда не годятся: она рассчитана на МЕТКУ с
-   порогом 3:1 — точку, отрезок, заливку столбика, — а здесь тон лежит на
-   тексте, который читают, и порог ему 4.5. Тот же разрыв, из-за которого у
-   статусов метка и текст стоят на разных шагах.
+   The VALUES of the palette, however, will not do here: it is calculated for a
+   MARK with a 3:1 threshold — a dot, a segment, the fill of a bar — while here
+   the hue lies on text that gets read, and its threshold is 4.5. The same gap
+   that puts the mark and the text of a status on different steps.
 
-   Отсюда три собственных значения на светлоте 0.48 и 0.76: в светлой теме они
-   дают 6.11, 6.00 и 5.35, в худшей из тёмных не ниже 8.08 — с запасом,
-   которого хватит и на полупрозрачные слои поверх.
+   Hence three values of our own at lightness 0.48 and 0.76: in the light theme
+   they give 6.11, 6.00 and 5.35, in the worst of the dark ones no lower than
+   8.08 — with margin enough for translucent layers on top as well.
 
-   Живут они ЗДЕСЬ, а не в токенах кита, и это правильно: подсветки синтаксиса
-   в ките нет и быть не должно — это забота справочника о своём содержимом. */
+   They live HERE rather than in the tokens of the kit, and that is right:
+   there is no syntax highlighting in the kit and there should be none — it is
+   the reference's business with its own content. */
 :root {
   --code-tag:  light-dark(oklch(0.48 0.15 280), oklch(0.76 0.13 280));
   --code-attr: light-dark(oklch(0.48 0.11 55),  oklch(0.76 0.11 55));
@@ -821,74 +874,79 @@
 .t-tag  { color: var(--code-tag);  font-weight: var(--weight-normal); }
 .t-attr { color: var(--code-attr); font-weight: var(--weight-normal); }
 .t-val  { color: var(--code-val);  font-weight: var(--weight-normal); }
-/* Комментарий уходит с --text-faint на --text-muted: faint это порог
-   декорации (3:1), а комментарий читают. */
+/* A comment moves from --text-faint to --text-muted: faint is the threshold
+   of decoration (3:1), and a comment gets read. */
 .t-com  { color: var(--text-muted); font-style: normal; }
 
-/* ── Таблицы в прозе ────────────────────────────────────────────────────── */
+/* ── Tables in prose ────────────────────────────────────────────────────── */
 
-/* Жалоба «колонки не вмещают большой объём текста» — про этот блок, и у неё
-   было три причины, каждая из которых чинится отдельно.
+/* The complaint that the columns do not hold a large amount of text is about
+   this block, and it had three causes, each fixed separately.
 
-   Первая: таблица распирала ДОКУМЕНТ. Четыре колонки с предложением в каждой
-   не помещаются в колонку прозы никак, и горизонтальная прокрутка доставалась
-   всей странице — вместе с шапкой, оглавлением и навигацией. Теперь скролл
-   свой у каждой таблицы (.table-wrap), а страница остаётся на месте.
+   The first: a table pushed the DOCUMENT wide. Four columns with a sentence in
+   each do not fit into a column of prose by any means, and the horizontal
+   scrolling fell to the whole page — the header, the table of contents and the
+   navigation along with it. The scrolling now belongs to each table
+   (.table-wrap), and the page stays where it is.
 
-   Вторая: `white-space: nowrap` у шапки. С ним колонка резервирует ширину по
-   самому длинному заголовку, и содержимому остаётся то, что уцелело.
+   The second: a `white-space: nowrap` on the head. With it a column reserves
+   width by its longest heading, and the content gets what survives.
 
-   Третья: имена классов. `inst-dialog-foot--end` — двадцать один знак без
-   пробела; браузер рвал его посреди слова или распирал колонку. Теперь имя не
-   рвётся, а на узком экране таблица уезжает в свой скролл. */
+   The third: the class names. `inst-dialog-foot--end` is twenty-one characters
+   with no space; the browser broke it mid-word or pushed the column wide. The
+   name no longer breaks, and on a narrow screen the table travels into its own
+   scrolling. */
 .table-wrap {
   overflow-x: auto;
   scrollbar-gutter: stable;
   margin-block: var(--space-6);
 }
 
-/* ── Таблица ПРОЗЫ, и только она ───────────────────────────────────────────
+/* ── A table OF PROSE, and only that ───────────────────────────────────────
 
-   `:not(.demo-stage *)` обязателен на каждом правиле ниже, и это не
-   перестраховка, а починка измеренного дефекта.
+   `:not(.demo-stage *)` is required on every rule below, and that is not
+   over-caution but the repair of a measured defect.
 
-   Стили сайта лежат ВНЕ слоёв и потому выигрывают у кита по его собственному
-   правилу — тому самому, которое даёт приложению переопределять кит без
-   `!important`. Голый селектор элемента этим правилом пользуется одинаково
-   что в прозе, что внутри живого примера: `.site-body td` (0,1,1) перебивал
-   `.inst-table td` из `@layer kit.components` при любой специфичности.
+   The site's styles lie OUTSIDE the layers and therefore beat the kit by its
+   own rule — the very one that lets an application override the kit without
+   `!important`. A bare element selector uses that rule alike in prose and
+   inside a live example: `.site-body td` (0,1,1) beat `.inst-table td` from
+   `@layer kit.components` at any specificity.
 
-   Цена мерялась на «Дашборде». Отступ ячейки оставался 8px, а высота строки
-   37.7px во ВСЕХ трёх плотностях, тогда как токены честно ездили: --row-pad-y
-   6 → 4 → 12, --pad-cell-x 8 → 6 → 12. То есть таблица в главном примере кита
-   была таблицей САЙТА, надевшей китовый класс, и плотность на ней не работала
-   вовсе — при том что страница рядом обещает читателю обратное: «высоты
-   контролов, отступы панелей и шаг таблицы меняются разом».
+   The cost was measured on the Dashboard. The cell padding stayed 8px and the
+   row height 37.7px across ALL three densities, while the tokens honestly
+   moved: --row-pad-y 6 → 4 → 12, --pad-cell-x 8 → 6 → 12. That is, the table
+   in the kit's own lead example was a table OF THE SITE wearing a class of the
+   kit, and density did not work on it at all — while the page beside it
+   promises the reader the opposite: that control heights, panel paddings and
+   the step of a table change together.
 
-   Живая спецификация обещает, что пример — работающая разметка. Разметка и
-   работала; врала отрисовка. Это тот же дефект, что однажды уже чинили на
-   `.inst-page-title`, и чинили симптом: `docscheck` ищет правила, НАЗЫВАЮЩИЕ
-   имя китового класса, а голый `td` его не называет.
+   A live specification promises that an example is working markup. The markup
+   did work; the rendering lied. This is the same defect once fixed on
+   `.inst-page-title`, and fixed there as a symptom: `docscheck` looks for
+   rules that NAME the name of a class of the kit, and a bare `td` names
+   none.
 
-   Поэтому теперь за этим следит проверка, а не внимательность: docscheck
-   отдельно ловит правила `.site-body`, достающие внутрь `.demo-stage`.       */
+   So a check watches this now rather than attentiveness: docscheck catches
+   `.site-body` rules reaching inside `.demo-stage` separately.              */
 .site-body table:not(.demo-stage *) {
   inline-size: 100%; border-collapse: collapse;
-  /* Минимум — точка, с которой таблица уходит в скролл вместо того, чтобы
-     сжимать колонки до одного слова в строке. */
+  /* The minimum is the point from which a table travels into scrolling
+     instead of squeezing the columns to one word per line. */
   min-inline-size: 32rem;
   font-size: var(--text-sm); line-height: var(--leading-ui);
 }
-/* Отступы ячейки — --pad-panel, а не --pad-cell-x.
+/* The cell padding is --pad-panel rather than --pad-cell-x.
 
-   Токены таблицы кита рассчитаны на ДАННЫЕ: короткая ячейка, число, бейдж,
-   строка на одно слово. Здесь в ячейке лежит предложение, иногда два, и на
-   8 пикселях по горизонтали строки соседних колонок сливаются в сплошное поле
-   текста — глазу не за что зацепиться на границе.
+   The tokens of the kit's table are calculated for DATA: a short cell, a
+   number, a badge, a line of one word. Here a cell holds a sentence, sometimes
+   two, and at 8 pixels horizontally the lines of neighbouring columns merge
+   into one continuous field of text — the eye has nothing to catch on at the
+   boundary.
 
-   По вертикали то же: 6 пикселей держат строку данных, но не абзац. Пара
-   12/12 даёт ячейке поля, сравнимые с интерлиньяжем внутри неё, и таблица
-   начинает читаться построчно, а не одним пятном.                          */
+   Vertically the same: 6 pixels hold a row of data, but not a paragraph. A
+   pair of 12/12 gives a cell fields comparable to the leading inside it, and
+   the table begins to read line by line rather than as one blot.           */
 .site-body th:not(.demo-stage *) {
   text-align: start; font-weight: var(--weight-normal); color: var(--text-muted);
   padding: var(--space-4) var(--pad-panel);
@@ -900,19 +958,21 @@
   vertical-align: baseline;
   overflow-wrap: break-word;
 }
-/* Имя класса или токена не рвётся посреди слова: разорванный
-   `inst-dialog-foot--end` перестаёт быть именем, которое можно скопировать. */
+/* The name of a class or a token does not break mid-word: a broken
+   `inst-dialog-foot--end` stops being a name that can be copied. */
 .site-body :is(td, th):not(.demo-stage *) > code { white-space: nowrap; }
 
-/* Шапка из пустых ячеек прячется целиком.
+/* A head made of empty cells is hidden entirely.
 
-   Таблицы «Доступность» и «Свойства» пишутся как `| | |` — у них нет
-   заголовков колонок, потому что колонки здесь это «что» и «как», и называть
-   их незачем. Пустая полоса над ними выглядела ошибкой вёрстки. */
+   The Accessibility and Properties tables are written as `| | |` — they have
+   no column headings, because the columns here are "what" and "how", and there
+   is no point naming them. An empty strip above them looked like a mistake of
+   the layout. */
 .site-body thead:not(.demo-stage *):not(:has(th:not(:empty))) { display: none; }
 
-/* Цитата — тихая врезка, а не второе предупреждение: жёлтая заливка тут
-   означала бы тон, а тон в ките носит сноска. Метрика взята у неё же. */
+/* A quotation is a quiet inset rather than a second warning: a yellow fill
+   here would mean a tone, and in the kit a tone is carried by a note. The
+   metrics are taken from that note. */
 .site-body blockquote:not(.demo-stage *) {
   margin-block: var(--space-6);
   padding: var(--space-3) var(--pad-panel);
@@ -922,71 +982,77 @@
 }
 .site-body blockquote:not(.demo-stage *) > * + * { margin-block-start: var(--space-4); }
 
-/* ── Лестница заголовков ───────────────────────────────────────────────────
+/* ── The ladder of headings ────────────────────────────────────────────────
 
-   Кит даёт заголовку экрана --text-xl и объявляет --text-2xl «только для
-   чисел-героев». Для инструмента это верно: главное на экране — данные, и
-   заголовок не имеет права кричать громче числа, которое подписывает.
+   The kit gives a screen title --text-xl and declares --text-2xl to be for
+   hero numbers only. For a tool that is right: what matters on a screen is the
+   data, and a title has no right to shout louder than the number it labels.
 
-   Справочник — единственная поверхность, где данных нет. Здесь герой это
-   сам текст, поэтому название страницы берёт --text-2xl. Иначе оно
-   совпадает с --text-xl у h2, и на странице с десятью разделами название
-   не отличается от них ничем — что и происходило.
+   The reference is the one surface with no data on it. Here the hero is the
+   text itself, so the title of a page takes --text-2xl. Otherwise it coincides
+   with the --text-xl of an h2, and on a page with ten sections the title
+   differs from them in nothing — which is what happened.
 
-   Шкала остаётся китовой, ни одной новой ступени не заведено:
+   The scale stays the kit's, and not one new step is started:
    27 · 21 · 17 · 15. */
 
-/* Правила здесь больше нет, и это ответ лучше прежнего.
+/* There is no rule here any more, and that is a better answer than the rule
+   was.
 
-   Стояло `.site-body .inst-page-title { font-size: --text-2xl }` — то есть
-   справочник переоформлял КЛАСС КИТА, и правило доставало не только до
-   названия страницы, но и до заголовка экрана внутри живых примеров: там он
-   рисовался в 27px вместо китового 21px. Живая спецификация обещает, что
-   пример — работающая разметка; разметка и работала, врала отрисовка.
+   A `.site-body .inst-page-title { font-size: --text-2xl }` means the
+   reference redressing a CLASS OF THE KIT, and it reaches not only the title
+   of a page but the screen title inside live examples: there it is drawn at
+   27px instead of the kit's 21px. A live specification promises that an
+   example is working markup; the markup worked, the rendering lied.
 
-   Оказалось, что переопределять было нечего. Название страницы справочника —
-   это <h1>, а base.css уже даёт <h1> ровно --text-2xl, tracking-tight и
-   leading-tight. Класс кита на нём был лишним: он сначала уводил заголовок в
-   --text-xl, а потом эта строка возвращала его обратно. Теперь в шаблоне
-   стоит `.doc-title`, а вид приходит от самого тега.
+   It turned out there was nothing to override. The title of a reference page
+   is an <h1>, and base.css already gives an <h1> exactly --text-2xl,
+   tracking-tight and leading-tight. The class of the kit on it was
+   superfluous: it first took the heading down to --text-xl, and then that line
+   brought it back. The template now carries `.doc-title`, and the look comes
+   from the tag itself.
 
-   За тем, чтобы правило не вернулось, следит tools/cmd/docscheck: сайту
-   разрешено ставить китовому классу отступ — это раскладка его собственной
-   статьи, — но не кегль, цвет, рамку и прочее, из чего состоит рисунок. */
+   tools/cmd/docscheck watches that the rule does not come back: the site is
+   allowed to give a class of the kit a margin — that is the layout of its own
+   article — but not a type size, a colour, a border or anything else the
+   drawing is made of. */
 
 .site-body :is(h2, h3, h4) { scroll-margin-block-start: var(--space-6); }
 
-/* Шаг h3 → проза всего 2px, и разницы в кегле не хватает. Подраздел
-   отделяется воздухом сверху: расстояние читается быстрее двух пикселей.
+/* The step from h3 to prose is only 2px, and the difference in size is not
+   enough. A subsection is parted by air above it: distance reads faster than
+   two pixels.
 
-   Область — прямые потомки разделов статьи, как и у правил ритма выше. Без
-   оговорки правило доставало внутрь живых примеров: заголовок экрана в демо —
-   тоже h3, и стоящий за ним .inst-page-desc получал 8px поверх китового
-   зазора в 4px. В примере было нарисовано 12px там, где кит объявляет 4.   */
+   The scope is the direct children of the article's sections, as in the rhythm
+   rules above. Without that proviso the rule reached inside live examples: a
+   screen title in a demo is an h3 too, and the .inst-page-desc after it got
+   8px on top of the kit's 4px gap. The example had 12px drawn where the kit
+   declares 4.                                                              */
 .site-body :is(.doc-hero, .doc-s) > h3 { margin-block-start: var(--space-7); }
 .site-body :is(.doc-hero, .doc-s) > h3 + * { margin-block-start: var(--space-4); }
 
-/* ── Узкий экран ────────────────────────────────────────────────────────── */
+/* ── A narrow screen ────────────────────────────────────────────────────── */
 
-/* Оглавление уходит первым и рано: до 78rem оно съедает 272px из рабочей
-   области, и колонка прозы становится у́же собственной меры читаемости.
-   Навигация по странице ценна, но не ценой самой страницы. */
+/* The table of contents goes first and early: below 78rem it eats 272px of the
+   working area, and the column of prose becomes narrower than its own measure
+   of readability. Navigation within a page is valuable, but not at the price
+   of the page. */
 @media (width < 78rem) {
   .site-layout { grid-template-columns: minmax(0, 1fr); }
   .site-toc { display: none; }
 }
 
-/* Ниже 60rem колонка становится выезжающим ящиком — это делает САМ КИТ по
-   классу inst-shell-aside--drawer. Здесь не осталось ни одного правила про
-   неё, и это правильный признак: два механизма на одну работу расходятся
-   всегда. */
+/* Below 60rem the column becomes a sliding drawer — and THE KIT ITSELF does
+   that, by the class inst-shell-aside--drawer. Not one rule about it is left
+   here, and that is the right sign: two mechanisms for one job always drift
+   apart. */
 @media (width < 60rem) {
   .site-layout { padding-inline: var(--space-6); }
 }
 
-/* ── Галерея иконок ───────────────────────────────────────────────────────
-   Список печатается из спрайта, поэтому растёт вместе с китом. Сетка
-   интринсик: ячеек столько, сколько поместится. */
+/* ── The icon gallery ─────────────────────────────────────────────────────
+   The list is printed from the sprite, so it grows along with the kit. The
+   grid is intrinsic: there are as many cells as fit. */
 .icon-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
@@ -1003,15 +1069,15 @@
 }
 .icon-note { color: var(--text-muted); }
 
-/* Марка GitHub.
+/* The GitHub mark.
 
-   Не `.inst-icon`: тот ставит `fill: none; stroke: currentColor` — язык
-   штриховых значков кита, и залитая форма под ним пропадает целиком. Свои
-   presentation-атрибуты на <svg> классу проигрывают, поэтому размер и
-   заливка объявлены здесь.
+   Not `.inst-icon`: that sets `fill: none; stroke: currentColor` — the
+   language of the kit's stroked icons — and a filled shape disappears entirely
+   under it. Presentation attributes on the <svg> itself lose to a class, so
+   the size and the fill are declared here.
 
-   Цвет — currentColor: марка живёт внутри кнопки и обязана гаснуть и
-   загораться вместе с ней. */
+   The colour is currentColor: the mark lives inside a button and has to dim
+   and light up along with it. */
 .site-github {
   inline-size: var(--size-icon);
   block-size: var(--size-icon);
@@ -1019,17 +1085,20 @@
   stroke: none;
 }
 
-/* Правила здесь больше нет, и это ответ лучше прежнего.
+/* There is no rule here any more, and that is a better answer than the rule
+   was.
 
-   Стояло `:root:not([data-theme]) { --tint: 0 }` с объяснением, что кит по
-   умолчанию тёплый, а справочник обязан показывать компоненты, а не себя.
-   Рассуждение было верным, а вывод — нет: если витрине приходится гасить
-   умолчание кита, чтобы честно показать кит, то неверно умолчание.
+   A `:root:not([data-theme]) { --tint: 0 }` came with the explanation that the
+   kit is warm by default while the reference has to show the components rather
+   than itself. The reasoning was right and the conclusion was not: if a
+   showcase has to suppress the kit's default in order to show the kit
+   honestly, then it is the default that is wrong.
 
-   Теперь нейтраль объявлена умолчанием в самом `tokens.css` (причина —
-   Windows: там Fluent живёт на чистом сером, и уклон читается как сбитый
-   профиль монитора), а уклон стал признаком двух ИМЕНОВАННЫХ тем, которые
-   выбирают осознанно. Справочнику гасить нечего.
+   The neutral is now declared the default in `tokens.css` itself (the reason
+   being Windows: there Fluent lives on a pure grey, and a cast reads as a
+   knocked-about monitor profile), and the cast became a mark of two NAMED
+   themes chosen deliberately. The reference has nothing to suppress.
 
-   Побочно исчез целый класс расхождений: пока сайт переопределял токен кита,
-   любой замер по пикселям на этих страницах мерил не кит. */
+   Incidentally a whole class of divergences disappeared: while the site
+   overrode a token of the kit, any measurement over the pixels on these pages
+   measured something other than the kit. */

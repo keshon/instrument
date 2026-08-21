@@ -1,5 +1,5 @@
-// go run ./cmd/site                 собрать в ../dist
-// go run ./cmd/site -serve :4321    собрать и поднять сервер
+// go run ./cmd/site                 build into ../dist
+// go run ./cmd/site -serve :4321    build and raise a server
 package main
 
 import (
@@ -21,60 +21,60 @@ import (
 
 func main() {
 	var (
-		docs   = flag.String("docs", "../docs", "каталог с исходниками страниц")
-		out    = flag.String("out", "dist", "каталог вывода")
-		kit    = flag.String("kit", "../src", "каталог кита")
-		assets = flag.String("assets", "../assets", "каталог ресурсов кита")
-		public = flag.String("public", "public", "каталог, копируемый в корень вывода как есть")
-		serve  = flag.String("serve", "", "поднять сервер после сборки, например :4321")
+		docs   = flag.String("docs", "../docs", "directory holding the page sources")
+		out    = flag.String("out", "dist", "output directory")
+		kit    = flag.String("kit", "../src", "directory of the kit")
+		assets = flag.String("assets", "../assets", "directory of the kit's assets")
+		public = flag.String("public", "public", "directory copied into the output root as it is")
+		serve  = flag.String("serve", "", "raise a server after the build, for example :4321")
 
-		registry = flag.String("registry", "../components.json", "реестр компонентов: связи для раздела «Связанное»")
+		registry = flag.String("registry", "../components.json", "component registry: the relations behind the Related section")
 
-		verbose = flag.Bool("contract", false, "печатать замечания контракта по непереносенным страницам")
+		verbose = flag.Bool("contract", false, "print contract remarks for pages not yet moved over")
 	)
 	flag.Parse()
 
 	byLang, err := content.Collect(*docs)
 	if err != nil {
-		log.Fatalf("сбор страниц: %v", err)
+		log.Fatalf("collecting pages: %v", err)
 	}
 	pages := content.Flat(byLang)
 	if len(pages) == 0 {
-		log.Fatalf("в %s не найдено ни одной страницы", *docs)
+		log.Fatalf("not one page found in %s", *docs)
 	}
 
 	sprite, err := os.ReadFile(filepath.Join(*assets, "sprite.svg"))
 	if err != nil {
-		log.Fatalf("не прочитать спрайт: %v", err)
+		log.Fatalf("cannot read the sprite: %v", err)
 	}
 	var missing []string
 	for _, p := range pages {
 		if p.Icon != "" && !strings.Contains(string(sprite), `id="`+p.Icon+`"`) {
-			missing = append(missing, fmt.Sprintf("%s  нет символа %s в спрайте", p.Route, p.Icon))
+			missing = append(missing, fmt.Sprintf("%s  no symbol %s in the sprite", p.Route, p.Icon))
 		}
 	}
 
 	tokens, err := content.TokenValues(*kit)
 	if err != nil {
-		log.Fatalf("не прочитать токены кита: %v", err)
+		log.Fatalf("cannot read the kit's tokens: %v", err)
 	}
 	content.ResolveTokens(pages, tokens)
 
 	content.SetSprite(string(sprite))
 	rel, err := content.LoadRelations(*registry)
 	if err != nil {
-		log.Fatalf("не прочитать реестр: %v", err)
+		log.Fatalf("cannot read the registry: %v", err)
 	}
 	content.SetRelations(rel)
 	if err := content.Render(pages); err != nil {
-		log.Fatalf("разметка: %v", err)
+		log.Fatalf("rendering: %v", err)
 	}
 
 	contractErrs, contractWarns := check.Contract(pages)
 
 	styles, err := render.Stylesheets()
 	if err != nil {
-		log.Fatalf("не прочитать стили сайта: %v", err)
+		log.Fatalf("cannot read the site's styles: %v", err)
 	}
 	assetErrs := check.Assets(styles, tokens)
 	assetErrs = append(assetErrs, check.Base(tokens)...)
@@ -83,23 +83,24 @@ func main() {
 	for n, s := range styles {
 		sources["site/"+n] = s
 	}
-	// Правило комментария одно на весь репозиторий, значит и зона у гейта
-	// одна. Пока сюда не входили `tools` и `cmd`, правило держалось на
-	// внимательности ровно там, где живут сами проверки: 4 384 строки Go и
-	// две команды на JS оставались снаружи, и «Раньше все три размера брали
-	// --radius-md» проходило молча.
+	// The comment rule is one for the whole repository, so the gate's zone is
+	// one as well. While `tools` and `cmd` were outside it, the rule rested on
+	// attentiveness in the very place the checks themselves live: 4 384 lines
+	// of Go and two commands in JS stayed out, and a chronicle line about all
+	// three sizes once taking --radius-md went through in silence.
 	//
-	// Каталог инструментов ищется рядом с китом, а не задаётся флагом: он
-	// лежит на одном уровне с `src`, и второй флаг разошёлся бы с первым.
+	// The tools directory is looked for beside the kit rather than given by a
+	// flag: it lies at the same level as `src`, and a second flag would drift
+	// apart from the first.
 	tools := filepath.Join(filepath.Dir(*kit), "tools")
 	for _, dir := range []string{*kit, "internal", "cmd", tools} {
-		// Отсутствующий каталог — не ошибка: сайт собирается из своего
-		// модуля, и снаружи его дерева может не оказаться ничего.
+		// A missing directory is not an error: the site builds from a module
+		// of its own, and outside its tree there may be nothing at all.
 		if _, err := os.Stat(dir); err != nil {
 			continue
 		}
 		if err := collectSources(sources, dir); err != nil {
-			log.Fatalf("не прочитать исходники: %v", err)
+			log.Fatalf("cannot read the sources: %v", err)
 		}
 	}
 	assetErrs = append(assetErrs, check.Comments(sources)...)
@@ -113,7 +114,7 @@ func main() {
 		for _, p := range problems {
 			fmt.Fprintln(os.Stderr, "  "+p)
 		}
-		log.Fatalf("сборка остановлена: %d проблем", len(problems))
+		log.Fatalf("build stopped: %d problems", len(problems))
 	}
 
 	sections := map[i18n.Lang][]nav.Section{}
@@ -123,7 +124,7 @@ func main() {
 	if err := render.Site(byLang, sections, render.Options{
 		Out: *out, Kit: *kit, Assets: *assets, Public: *public,
 	}); err != nil {
-		log.Fatalf("сборка: %v", err)
+		log.Fatalf("building: %v", err)
 	}
 
 	demos := map[string]bool{}
@@ -132,7 +133,7 @@ func main() {
 			demos[d.ID] = true
 		}
 	}
-	fmt.Printf("страниц: %d  ·  живых примеров: %d  ·  разделов навигации: %d\n",
+	fmt.Printf("pages: %d  ·  live examples: %d  ·  navigation sections: %d\n",
 		len(byLang[i18n.RU]), len(demos), len(sections[i18n.RU]))
 	onContract := 0
 	for _, p := range byLang[i18n.RU] {
@@ -140,7 +141,7 @@ func main() {
 			onContract++
 		}
 	}
-	fmt.Printf("под контрактом страницы: %d  ·  ждут переноса: %d замечаний\n",
+	fmt.Printf("pages under the contract: %d  ·  awaiting the move: %d remarks\n",
 		onContract, len(contractWarns))
 	if *verbose {
 		for _, w := range contractWarns {
@@ -149,7 +150,7 @@ func main() {
 	}
 
 	if *serve != "" {
-		fmt.Printf("сервер: http://localhost%s\n", *serve)
+		fmt.Printf("server: http://localhost%s\n", *serve)
 		log.Fatal(http.ListenAndServe(*serve, http.FileServer(http.Dir(*out))))
 	}
 }
@@ -159,9 +160,9 @@ func collectSources(out map[string]string, dir string) error {
 		if err != nil || d.IsDir() {
 			return err
 		}
-		// `.mjs` в списке потому, что бегунок пиксельной проверки написан
-		// именно так, и без этого расширения он был бы единственным файлом
-		// репозитория, где комментарий не сторожит никто.
+		// `.mjs` is on the list because the runner of the pixel check is
+		// written that way, and without the extension it would be the one file
+		// in the repository whose comments nobody guards.
 		switch filepath.Ext(p) {
 		case ".css", ".js", ".mjs", ".go":
 		default:

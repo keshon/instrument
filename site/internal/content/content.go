@@ -1,5 +1,5 @@
-// Package content читает страницы документации: frontmatter, markdown,
-// оглавление и живые примеры.
+// Package content reads the documentation pages: frontmatter, markdown, the
+// table of contents and the live examples.
 package content
 
 import (
@@ -61,6 +61,11 @@ type APIRow struct {
 	Cells []string
 }
 
+// THE KINDS ARE KEYS, not display text, and that is why they stay Russian
+// while the rest of the file is English. The dictionary maps each of them onto
+// both languages, and a page prints what the map gives. They turn English when
+// the base language flips, together with the dictionary — not before, because
+// until then the key is what a Russian page writes in its frontmatter.
 var apiKinds = []string{"класс", "модификатор", "атрибут", "событие", "переменная", "токен"}
 
 // One declaration, matched against text that has already been cut at the
@@ -212,7 +217,7 @@ func TokenValues(kitDir string) (map[string]Token, error) {
 
 func ResolveTokens(pages []*Page, tokens map[string]Token) {
 	for _, p := range pages {
-		// Страница-справочник перечисляет всё, что объявлено в её файле.
+		// A reference page lists everything declared in its own file.
 		if p.APIFrom == "kit" {
 			var names []string
 			for name, t := range tokens {
@@ -223,7 +228,7 @@ func ResolveTokens(pages []*Page, tokens map[string]Token) {
 			sort.Strings(names)
 			for _, name := range names {
 				p.API = append(p.API, APIRow{
-					Name: name, Kind: "токен",
+					Name: name, Kind: "токен", // a key of the dictionary, see apiKinds
 					Value: tokens[name].Value, Cells: tokens[name].Cells,
 				})
 			}
@@ -240,7 +245,7 @@ func ResolveTokens(pages []*Page, tokens map[string]Token) {
 				p.API[i].Cells = t.Cells
 			}
 			if isToken && known && t.File != p.Source {
-				continue // используется, но объявлено не здесь
+				continue // used here, declared elsewhere
 			}
 			own = append(own, r.Name)
 		}
@@ -248,26 +253,29 @@ func ResolveTokens(pages []*Page, tokens map[string]Token) {
 	}
 }
 
-// sprite — содержимое спрайта кита. Нужен галерее иконок: она печатает
-// список символов из него, а не из таблицы, набранной руками.
+// sprite holds the contents of the kit's sprite. The icon gallery needs it:
+// the gallery prints the list of symbols from the sprite rather than from a
+// table typed by hand.
 var sprite string
 
 func SetSprite(s string) { sprite = s }
 
-// Связи между компонентами: имя → имена соседей. Приходят из components.json,
-// того же файла, по которому cmd/registry сверяет сквозные оси.
+// The relations between components: a name onto the names of its neighbours.
+// They come from components.json, the same file cmd/registry checks the
+// cross-cutting axes against.
 //
-// Реестр, а не фронтматтер страницы, по одной причине: связь — утверждение о
-// ДВОИХ, и лежать ей полагается там, где обе стороны видны сразу. Списки,
-// набранные руками на каждой странице, расходятся по одной строке за правку, и
-// заметить это можно только прочитав обе.
+// The registry rather than a page's frontmatter, for one reason: a relation is
+// a statement about TWO, and its place is where both sides are visible at once.
+// Lists typed by hand on every page drift by one line per edit, and noticing
+// that takes reading both.
 var relations map[string][]string
 
 func SetRelations(m map[string][]string) { relations = m }
 
-// pageBySlug — страницы по слагу, для разрешения имён из реестра в адреса.
-// Заполняется один раз перед разметкой: соседи бывают из другого каталога, и
-// искать их обходом на каждую ссылку значило бы обходить дерево двести раз.
+// pageBySlug holds the pages by slug, for resolving names from the registry
+// into addresses. It is filled once before rendering: neighbours come from
+// other directories, and finding them by a walk per link would mean walking
+// the tree two hundred times.
 var pageBySlug = map[string]*Page{}
 
 func indexPages(pages []*Page) {
@@ -278,16 +286,17 @@ func indexPages(pages []*Page) {
 	}
 }
 
-// Related возвращает соседей страницы: имя компонента совпадает со слагом
-// страницы у всех шестидесяти восьми записей реестра, поэтому отображение
-// хранить негде и незачем.
+// Related returns the neighbours of a page: the name of a component coincides
+// with the slug of its page across all sixty-eight entries of the registry, so
+// there is nowhere and no need to keep a mapping.
 func (p *Page) Related() []string { return relations[p.Slug] }
 
-// LoadRelations читает связи из реестра компонентов.
+// LoadRelations reads the relations from the component registry.
 //
-// Отсутствие файла — ошибка, а не пустой список: раздел «Связанное» на странице
-// формы 2 берётся только отсюда, и молча отдать ноль связей значит собрать
-// страницу без соседей и не сказать об этом.
+// A missing file is an error rather than an empty list: the Related section of
+// a shape-2 page is taken from here and nowhere else, and handing back zero
+// relations in silence means building a page with no neighbours and saying
+// nothing about it.
 func LoadRelations(path string) (map[string][]string, error) {
 	b, err := os.ReadFile(path)
 	if err != nil {
@@ -470,10 +479,10 @@ func parse(fsPath, rel string, lang i18n.Lang, translated bool) (*Page, error) {
 
 	for i, row := range p.API {
 		if row.Name == "" {
-			return nil, fmt.Errorf("api[%d]: пустое имя", i)
+			return nil, fmt.Errorf("api[%d]: an empty name", i)
 		}
 		if _, ok := apiRank(row.Kind); !ok {
-			return nil, fmt.Errorf("api[%d] (%s): вид %q не из словаря (%s)",
+			return nil, fmt.Errorf("api[%d] (%s): the kind %q is not in the vocabulary (%s)",
 				i, row.Name, row.Kind, strings.Join(apiKinds, " · "))
 		}
 	}

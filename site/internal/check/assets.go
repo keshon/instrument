@@ -9,10 +9,10 @@ import (
 	"instrument/site/internal/content"
 )
 
-// Собственные переменные сайта: те, которым в ките места нет и не будет.
-// --c и --v — канал данных у образца цвета и у строки API.
-// --code-* — подсветка синтаксиса: кит кода не подсвечивает, это забота
-// справочника о своём содержимом.
+// The site's own variables: those that have no place in the kit and never
+// will. --c and --v are the data channel of a colour swatch and of an API row.
+// --code-* is syntax highlighting: the kit does not highlight code, that is
+// the reference's business with its own content.
 var ownVars = map[string]bool{
 	"--c": true, "--v": true,
 	"--code-tag": true, "--code-attr": true, "--code-val": true,
@@ -25,24 +25,40 @@ var (
 
 	hexColor = regexp.MustCompile(`#[0-9a-fA-F]{3,8}\b`)
 
+	// TWO HALVES, ONE RULE. The Russian half is the pattern the gate was
+	// written with; the English half exists because `src` and `tools` are now
+	// English, and against them the Russian half matches nothing at all. A gate
+	// whose phrase list is in a language the corpus no longer speaks is green
+	// for the same reason an empty gate is.
+	//
+	// The English phrases are narrower than a literal translation, and that is
+	// deliberate: «раньше» carries the sense of a chronicle by itself, while a
+	// bare "previously" is also how a sentence about a browser starts. Each of
+	// the six was run over every comment in `src`, `tools` and `site` before
+	// being added — zero matches on the corpus as it stands. A gate that
+	// complains about what a human did not write is the first one people stop
+	// reading.
 	pastTense = regexp.MustCompile(`(?i)(^|[.!?;] )раньше|ни разу не|выяснилось|` +
-		`здесь сто(ял|яла|яли|яло)|было объявлено`)
+		`здесь сто(ял|яла|яли|яло)|было объявлено|` +
+		`(^|[.!?;] )(previously|formerly|originally)\b|` +
+		`\bhere (stood|used to stand|used to be)\b|there used to be|` +
+		`\bit turned out that\b|\bnot once did\b|\bwas declared here\b`)
 )
 
-// Base проверяет, что у токена, объявленного в ЯЧЕЙКЕ, есть объявление и в
-// базе.
+// Base checks that a token declared in a CELL has a declaration in the base
+// as well.
 //
-// На этом стоит колонка «Откуда» в справочнике. Она печатает первое
-// объявление и называет его базой, а остальные считает отклонениями: «база
-// +14: плотность · масштаб». Если токен объявлен только в
-// `[data-density="compact"]`, первым окажется оно — и страница назовёт базой
-// то, что базой не является, ни разу об этом не сказав. Число будет верным и
-// будет означать не то, что написано рядом, — ровно та болезнь, ради которой
-// колонка и заводилась.
+// The "From" column of the reference stands on this. It prints the first
+// declaration and calls it the base, counting the rest as deviations: "base
+// +14: density · scale". If a token is declared only in
+// `[data-density="compact"]`, that is what comes first — and the page calls a
+// base what is not one, without saying so once. The number will be right and
+// will mean something other than what is written beside it, which is exactly
+// the illness the column was started for.
 //
-// Сегодня инвариант держится на всех ста восьмидесяти двух токенах
-// `tokens.css`, и проверка нужна не чтобы его установить, а чтобы он не
-// разошёлся молча.
+// Today the invariant holds across all one hundred and eighty-two tokens of
+// `tokens.css`, and the check is needed not to establish it but to keep it
+// from drifting in silence.
 func Base(tokens map[string]content.Token) []string {
 	var problems []string
 	var names []string
@@ -52,12 +68,12 @@ func Base(tokens map[string]content.Token) []string {
 	sort.Strings(names)
 	for _, n := range names {
 		t := tokens[n]
-		// Только tokens.css. У остальных файлов ячеек нет: там переменная
-		// компонента объявляется на самом компоненте — `--btn-bg` на
-		// `.inst-btn`, — и это её дом, а не отклонение от базы. Требовать ей
-		// `:root` значило бы требовать глобального имени тому, что нарочно
-		// local: первая версия этой проверки так и делала и выдала двадцать
-		// три ложных.
+		// tokens.css only. The other files have no cells: there a component's
+		// variable is declared on the component itself — `--btn-bg` on
+		// `.inst-btn` — and that is its home rather than a deviation from a
+		// base. Demanding `:root` of it would mean demanding a global name of
+		// something deliberately local: the first version of this check did
+		// exactly that and produced twenty-three false ones.
 		if t.File != "src/tokens.css" || len(t.Cells) == 0 {
 			continue
 		}
@@ -71,7 +87,7 @@ func Base(tokens map[string]content.Token) []string {
 		}
 		if !base {
 			problems = append(problems, fmt.Sprintf(
-				"%s  токен %s объявлен только в ячейке (%s): справочник назовёт базой не базу",
+				"%s  the token %s is declared only in a cell (%s): the reference will call a base what is not one",
 				t.File, n, t.Cells[0]))
 		}
 	}
@@ -93,18 +109,18 @@ func Assets(files map[string]string, tokens map[string]content.Token) []string {
 			seen[v] = true
 			if _, ok := tokens[v]; !ok {
 				problems = append(problems, fmt.Sprintf(
-					"%s  токена %s в ките нет: объявление молча отбрасывается", name, v))
+					"%s  there is no token %s in the kit: the declaration is dropped in silence", name, v))
 			}
 		}
 
 		for _, m := range bannedProps.FindAllStringSubmatch(code, -1) {
 			problems = append(problems, fmt.Sprintf(
-				"%s  свойство %s не встречается в ките ни разу — сайту его заводить нечем оправдать", name, m[1]))
+				"%s  the property %s does not occur in the kit at all — the site has nothing to justify starting it with", name, m[1]))
 		}
 
 		for _, m := range hexColor.FindAllString(code, -1) {
 			problems = append(problems, fmt.Sprintf(
-				"%s  цвет %s в обход семантики: захардкожена одна тема", name, m))
+				"%s  the colour %s bypasses the semantics: one theme is hard-coded", name, m))
 		}
 
 	}
@@ -113,17 +129,17 @@ func Assets(files map[string]string, tokens map[string]content.Token) []string {
 	return problems
 }
 
-// StrayCommentEnd ищет `*/`, который закрыл комментарий раньше времени.
+// StrayCommentEnd looks for a `*/` that closed a comment ahead of time.
 //
-// Комментарии в CSS не вкладываются. Строка `--pad-*/--gap-*` внутри
-// пояснения закрывает его на месте: остаток текста становится мусором, а
-// парсер, восстанавливаясь, доедает СЛЕДУЮЩЕЕ правило целиком. Ошибка
-// молчаливая — файл грузится, стили частично работают, и найти её можно
-// только по отсутствующему поведению.
+// Comments in CSS do not nest. A line like `--pad-*/--gap-*` inside an
+// explanation closes it on the spot: the rest of the text becomes rubbish,
+// and the parser, recovering, eats the WHOLE of the NEXT rule. The error is
+// silent — the file loads, the styles partly work, and it can be found only
+// by the behaviour that is missing.
 //
-// Так из кита пропали тон `neutral` (сноска без значка и без заливки) и
-// область нажатия у чекбокса, радио и свитча — то есть требование WCAG
-// 2.2 AA, ради которого правило и написано.
+// That is how the kit lost the `neutral` tone (a note with neither icon nor
+// fill) and the tap area of the checkbox, the radio and the switch — that is,
+// the WCAG 2.2 AA requirement the rule was written for.
 func StrayCommentEnd(files map[string]string) []string {
 	var problems []string
 	for name, src := range files {
@@ -148,7 +164,7 @@ func StrayCommentEnd(files map[string]string) []string {
 		if k := strings.Index(code.String(), "*/"); k >= 0 {
 			line := strings.Count(code.String()[:k], "\n") + 1
 			problems = append(problems, fmt.Sprintf(
-				"%s:%d  комментарий закрылся раньше времени: `*/` внутри пояснения съедает следующее правило",
+				"%s:%d  a comment closed ahead of time: a `*/` inside an explanation eats the next rule",
 				name, line))
 		}
 	}
@@ -168,26 +184,26 @@ func Comments(files map[string]string) []string {
 			}
 			seen[key] = true
 			problems = append(problems, fmt.Sprintf(
-				"%s  комментарий рассказывает историю («%s»): нужно, почему так сейчас", name, m))
+				"%s  the comment tells a story (\"%s\"): what is wanted is why it is so now", name, m))
 		}
 	}
 	sort.Strings(problems)
 	return problems
 }
 
-// comments вынимает из исходника то, что человек написал ЧЕЛОВЕКУ.
+// comments takes out of a source what a human wrote to a HUMAN.
 //
-// Строковые литералы при этом пропускаются, и это не педантизм. Разбор по
-// первому `//` в строке считает комментарием всё, что стоит за кавычками, —
-// а мутационный стенд хранит запрещённые фразы ДАННЫМИ: у него это текст
-// мутации, а не пояснение к соседней функции. Без такого различения стенд
-// роняет сборку сайта собственным содержимым, и роняет заслуженно: с точки
-// зрения разбора он неотличим от нарушителя.
+// String literals are skipped, and that is not pedantry. Parsing by the first
+// `//` on a line counts as a comment everything standing behind the quotes —
+// and the mutation stand keeps the forbidden phrases as DATA: for it they are
+// the text of a mutation rather than an explanation beside a function. Without
+// that distinction the stand brings down the site build with its own content,
+// and deservedly so: to the parser it is indistinguishable from an offender.
 //
-// Разбор построчный: многострочный сырой литерал Go он не отследит. Цена
-// ошибки при этом односторонняя — пропущенный комментарий, а не выдуманный,
-// — и это правильная сторона: гейт, который ругается на то, чего человек не
-// писал, отучают читать первым.
+// The parsing is line by line: a multi-line raw Go literal is beyond it. The
+// cost of that error is one-sided — a missed comment, never an invented one —
+// and that is the right side: a gate that complains about what a human did not
+// write is the first one people stop reading.
 func comments(src string) string {
 	var b strings.Builder
 	for _, line := range strings.Split(src, "\n") {
@@ -213,18 +229,19 @@ func comments(src string) string {
 	}
 }
 
-// lineComment — позиция `//`, начинающего комментарий, или -1.
+// lineComment is the position of the `//` that starts a comment, or -1.
 func lineComment(line string) int {
 	return outsideQuotes(line, "//", false)
 }
 
-// blockOpen — позиция `/*`, начинающего комментарий, или -1.
+// blockOpen is the position of the `/*` that starts a comment, or -1.
 func blockOpen(src string) int {
 	return outsideQuotes(src, "/*", true)
 }
 
-// outsideQuotes ищет первое вхождение want вне кавычек. Кавычка, не закрытая
-// до конца строки, кавычкой не считается: это апостроф в прозе, а не литерал.
+// outsideQuotes looks for the first occurrence of want outside quotes. A quote
+// left unclosed by the end of the line does not count as one: it is an
+// apostrophe in prose rather than a literal.
 func outsideQuotes(src, want string, multiline bool) int {
 	var quote byte
 	for i := 0; i < len(src); i++ {
@@ -247,7 +264,7 @@ func outsideQuotes(src, want string, multiline bool) int {
 			continue
 		}
 		if c == '"' || c == '\'' || c == '`' {
-			// Одиночная кавычка без пары до конца строки — апостроф.
+			// A lone quote with no pair before the line ends is an apostrophe.
 			if !closes(src[i+1:], c) {
 				continue
 			}
@@ -261,7 +278,7 @@ func outsideQuotes(src, want string, multiline bool) int {
 	return -1
 }
 
-// closes отвечает, встречается ли кавычка ещё раз до конца строки.
+// closes answers whether the quote occurs again before the line ends.
 func closes(rest string, q byte) bool {
 	for i := 0; i < len(rest); i++ {
 		if rest[i] == '\n' {
