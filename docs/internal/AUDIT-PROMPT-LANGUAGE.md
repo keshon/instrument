@@ -35,13 +35,27 @@ server: `check serve`, then `check pixels` / `check behavior`.
 ## The premise of this audit
 
 The kit is **a close reading of Anthropic's design language, primarily Claude
-Code**. Not a clone: the kit has obligations Claude Code does not — five themes,
+Code**, and the default for anything the two share is that it **matches
+closely**. A composer, a menu, a turn, a permission prompt, a small control at
+the foot of a field — where the reference has drawn it, the kit's version should
+be recognisably the same object at the same proportions, not a reinterpretation.
+Treat a visible difference in a shared element as a defect until something
+specific excuses it.
+
+It is not a clone, and the excuses are real but they are finite: five themes,
 four accents, five scales, three densities, a contrast gate, a tap-target gate,
 forced-colors, print. Some of what the reference does would fail the kit's own
-gates, and in those cases the kit is right and the reference is not the target.
+gates — the reference's off switch and its light control borders both do — and
+there the kit is right and the reference is not the target.
 
-So this is **not** "make it look like the screenshot". For every divergence the
-question is which of three answers holds:
+The distinction that matters: an obligation has to be **named and shown to
+bite**. "The kit is a general library and the reference is one app" is not an
+excuse, it is a way of not answering. If a divergence cannot be traced to a
+gate, an axis or a stated law, it is drift.
+
+So this is **not** "make it look like the screenshot", and it is **not** "we are
+different on purpose" either. For every divergence the question is which of
+three answers holds:
 
 1. **The kit is behind.** The reference solved something the kit has not, and
    nothing in the kit's obligations prevents adopting it. → adopt.
@@ -127,7 +141,82 @@ divergence:
 
 ---
 
-## Focus 2 — the doctrine, not just the pixels
+## Focus 2 — THE SCALE GRID
+
+The newest question and probably the largest. It came out of two changes made
+back to back: a chat screen assembled from kit parts, and a status bar that
+turned out not to be a component. Both landed on the same missing idea.
+
+**The theory to test.** Every component may need a size dimension of its own —
+`xs · sm · md · lg` — *inside* the global density and scale axes rather than
+instead of them. Density says how tight the whole screen is; a component's own
+rung says how big this instance is against its neighbours on that screen. With
+both, any two parts can be combined at any weight. With only the first, a
+component that needs to be quieter than its surroundings has no way to say so
+and the application reaches for CSS.
+
+The reference plays this game openly: a Claude Code panel in a place that suits
+it has smaller padding than the same panel elsewhere. Look for every instance
+of that in the screenshots and name what varies — padding, height, type, glyph,
+corner — and by how much.
+
+**What exists today.** Nine class families carry a size modifier, and they do
+not agree on the rungs:
+
+| Family | Rungs |
+|---|---|
+| `inst-btn` | xs · sm · (md) · lg |
+| `inst-input` `inst-textarea` `inst-select` | sm · (md) · lg |
+| `inst-ring` | xs · sm · (lg) |
+| `inst-history` `inst-avatar` | sm · (md) · lg |
+| `inst-icon` | sm only |
+| `inst-share` | lg only |
+
+Sixty-four other components have no rung at all. A panel, a card, a menu, a
+table, a step, a turn are one size each.
+
+**The competing mechanism, which already works.** `[data-density]` and
+`[data-scale]` NEST: a panel carrying `data-density="compact"` inside a
+comfortable page recomputes its own control heights and paddings from its own
+attribute. That is a per-subtree size dimension the kit already ships, and it is
+how a tighter panel can be asked for today without a single line of app CSS.
+
+So the audit's job here is not "add ladders everywhere". It is to decide **which
+of the two mechanisms owns which job**, and to say why nine families chose the
+modifier while the rest, in effect, chose nesting.
+
+Questions to answer with evidence:
+
+- For each of the two mechanisms: what can it express that the other cannot?
+  A modifier changes ONE component; a nested attribute changes a subtree.
+  Which of the reference's variations are one and which are the other?
+- Is `[data-density]` on a single panel a legitimate authoring move or a misuse
+  of a page-level axis? It works — but does it *mean* what a reader will think
+  it means, and does it stay legible in markup?
+- Where a ladder exists, are its rungs the right ones? `inst-icon` has only
+  `sm`, `inst-share` only `lg`, `inst-ring` has no `md`. Are those absences
+  decisions or gaps?
+- Which of the sixty-four unladdered components does the reference actually vary
+  in size? Rank by evidence from the screenshots, not by symmetry — a ladder
+  nobody needs is API weight, and the kit already deleted two classes this month
+  for being weight.
+- Is there a THIRD answer? A component that inherits its rung from context —
+  the way `.inst-btn--xs` reads `--icon-size` and the status bar sets the
+  register for whatever stands in it — costs no API at all. How much of the
+  theory does that already cover?
+- What would a ladder have to guarantee to be worth adding? Name the invariant
+  and say whether `cmd/proportion` can hold it. A rung whose ratios nothing
+  checks will drift the first time the type scale moves.
+
+**The failure mode to watch for.** Four rungs on seventy-three components is two
+hundred and ninety-two states, and the kit's matrix is already 300 combinations
+of theme, accent, scale and density. Say plainly what the combinatorics cost —
+in gate runtime, in documentation, and in the number of cells nobody will ever
+look at — before recommending any of it.
+
+---
+
+## Focus 3 — the doctrine, not just the pixels
 
 The kit's real asset is that every decision carries its reasoning, in the CSS
 comment, next to the rule. The audit has to check that asset the same way it
@@ -147,7 +236,7 @@ checks the pixels.
 
 ---
 
-## Focus 3 — what the kit has that the reference does not
+## Focus 4 — what the kit has that the reference does not
 
 The kit is not only a subset. It covers dashboards, queues, monitoring, audit
 trails — surfaces Claude Code has no equivalent of. Those parts have no
@@ -169,12 +258,15 @@ designed without one.
    **what differs → shown on which screen → which is right and why → what it
    costs to close → P0/P1/P2**.
    For each, state explicitly which of the three answers above applies.
-3. **Undocumented decisions** — separately from divergences. For each: the rule,
+3. **The scale grid** — a verdict on the theory, then a table: which mechanism
+   owns which job, which components want a rung and which want nesting, and
+   which want neither. Include what you would NOT add and why.
+4. **Undocumented decisions** — separately from divergences. For each: the rule,
    the number with no derivation, and what should be written where.
-4. **Stale reasoning** — comments whose evidence no longer holds.
-5. **The unreferenced half** — the components with no model, and how they fare
+5. **Stale reasoning** — comments whose evidence no longer holds.
+6. **The unreferenced half** — the components with no model, and how they fare
    against the kit's own laws.
-6. **What NOT to change** — things that look like divergences and are correct.
+7. **What NOT to change** — things that look like divergences and are correct.
    Name them, so the next audit does not spend its budget here.
 
 ---
