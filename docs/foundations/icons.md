@@ -7,6 +7,7 @@ api:
   - { name: "inst-sprite", kind: "class", doc: "The sprite in the body of the page. Hides it: without the rule it is a visible block of 150px" }
   - { name: "inst-icon", kind: "class", doc: "The base one. Always required" }
   - { name: "inst-icon--sm", kind: "modifier", doc: "Reduction to `--size-chevron`" }
+  - { name: "inst-icon--down", kind: "modifier", doc: "The same chevron, turned to point down: a dropdown affordance. Clockwise from inline-end, so it lands on down in RTL too" }
   - { name: "--icon-size", kind: "variable", doc: "The size of this icon. Set on the CONTAINER and inherited downwards. Through a variable rather than through a descendant selector: the layout lies in an earlier layer, and a selector from there is dead in silence" }
   - { name: "--size-icon", kind: "token", value: "18px", doc: "The default: an icon beside a label at the base type size" }
   - { name: "--size-icon-sm", kind: "token", value: "14px", doc: "An icon at type size `--text-2xs`: the status bar" }
@@ -114,6 +115,7 @@ already parted from the library by four symbols once.
 |---|---|---|---|
 | `inst-icon` | 18px | `--size-icon` | The default: a button, a menu item, a note, a header |
 | `inst-icon--sm` | 10px | `--size-chevron` | The chevron of a select, the cross of a tag — a utility glyph |
+| `inst-icon--down` | — | rotate `90deg` | The one chevron, turned: a dropdown affordance on a button |
 | `--icon-size: var(--size-icon-sm)` | 14px | `--size-icon-sm` | A reading in [the status bar](../layout/statusbar.md): the type size there is `--text-2xs` |
 | `--icon-size: var(--size-icon-lg)` | 24px | `--size-icon-lg` | An icon in [the rail](../layout/rail.md), where there is no label at all |
 

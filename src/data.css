@@ -393,21 +393,59 @@
 }
 
 .inst-ring {
-  inline-size: var(--control-h-lg);
-  block-size: var(--control-h-lg);
+  /* The same `flex: none` an icon takes, for the same reason: standing in a
+     row of controls it would otherwise be the first thing squashed when the
+     labels beside it do not fit, and a squashed circle is an ellipse that
+     still claims to be a share. */
+  flex: none;
+  inline-size: var(--ring-size, var(--control-h-lg));
+  block-size: var(--ring-size, var(--control-h-lg));
   rotate: -90deg;
 
-  & > .inst-ring-track { fill: none; stroke: var(--track); stroke-width: 3; }
+  & > .inst-ring-track { fill: none; stroke: var(--track); stroke-width: var(--ring-stroke, 3); }
   & > .inst-ring-fill {
     fill: none;
     stroke: var(--tone-mark, var(--accent-mark));
-    stroke-width: 3;
+    stroke-width: var(--ring-stroke, 3);
     stroke-linecap: round;
     /* The value is given as a 0…1 fraction in --value: the circumference at
        r=8 is 50.27, so the dash is computed straight from it.            */
     stroke-dasharray: calc(var(--value, 0) * 50.27) 50.27;
   }
 }
+
+/* A LADDER, because the ring is no longer only a figure in a card.
+
+   At --control-h-lg it stands beside the text of a card and holds a number in
+   the middle. Standing in a row of controls it has to be the size of the
+   controls, or it is a third object between them — a context gauge at the end
+   of a session bar is exactly that case, and the rungs are therefore the
+   CONTROL heights rather than sizes of its own. Sharing the ladder is what
+   keeps the ring from drifting when density moves.
+
+   THE STROKE COMES DOWN WITH THE BOX, and not in proportion. It is stated in
+   viewBox units, so it already scales with the box: 3 of 20 stays 15% at every
+   size, and 15% of 20px is a doughnut rather than a ring. 2 is where the arc
+   still reads as an arc and the track behind it is still a track.
+
+   THE SMALLEST RUNG IS NOT A CONTROL HEIGHT. In a row of controls the ring
+   does not stand where a button stands — it stands where a GLYPH stands, at
+   the end of a session bar beside the model and the effort. So it takes
+   --icon-size, the same variable every icon in that row reads, and it moves
+   when the row moves. Given the control height instead it came out 22px
+   against 14px glyphs and read as a third object between them.
+
+   The stroke follows the same argument. An icon is drawn at 1.5 on a grid of
+   16, or 9.4%; the ring's grid is 20, so 2 is the same optical weight and the
+   ring sits in the row as one more glyph rather than as a doughnut.
+
+   The label does not come down with it: --text-2xs is the floor of the type
+   scale, and it does not fit inside 22px, let alone 14. Below --control-h-lg
+   the number goes BESIDE the ring, or into a tooltip — the accessibility table
+   on the ring's page names both, because an arc with no number anywhere is
+   read by its length and its colour alone.                                 */
+.inst-ring--sm { --ring-size: var(--control-h-sm); --ring-stroke: 2.5; }
+.inst-ring--xs { --ring-size: var(--icon-size, var(--size-icon)); --ring-stroke: 2; }
 
 .inst-ring-wrap { position: relative; display: inline-flex; align-self: var(--flow-self, center); }
 .inst-ring-label {

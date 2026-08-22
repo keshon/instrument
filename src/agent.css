@@ -197,8 +197,18 @@
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-composer {
-  display: flex;
-  flex-direction: column;
+  /* A GRID RATHER THAN A COLUMN, so the bar has two places to stand.
+
+     Under the field it spans both tracks and the composer is what it was. At
+     the field's trailing edge it takes the second track and the first row, and
+     an empty composer is then ONE LINE TALL — which is the shape the field
+     actually has. A column could not do that: it puts the bar on its own line
+     whether or not there is anything on the line to justify it. */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  /* The bar sinks to the bottom of its row. On one line that reads as centred;
+     on ten it stays with the last one, where the text is. */
+  align-items: end;
   border: var(--hairline) solid var(--border-control);
   border-radius: var(--radius-lg);
   background: var(--surface-field);
@@ -218,13 +228,49 @@
   /* The field gives up its frame, and its resize grip with it: a corner grip
      inside a frame that also holds a bar tears the object in half. */
   & > .inst-textarea {
+    grid-column: 1 / -1;
     border: none;
     border-radius: 0;
     background: transparent;
     resize: none;
 
+    /* AN EMPTY FIELD IS ONE LINE TALL, and this is a correction rather than a
+       preference. A textarea is two and a half controls tall by definition,
+       and that definition is right for a form: the field says how much answer
+       is expected. A composer says something else. Empty, it was drawing three
+       rows of nothing and promising a paragraph nobody had typed — the shape
+       of the object lied about its content, which is the one thing this kit
+       exists not to do.
+
+       So the floor goes and the content sets the height. `field-sizing:
+       content` is what makes it grow while it is typed into; the cap is eight
+       controls, after which it scrolls rather than eating the thread above it.
+
+       Where `field-sizing` is not implemented the field does not grow — it
+       takes the height of its `rows` and scrolls. That is a smaller field, not
+       a broken one, and the alternative is a script. The kit has none. */
+    field-sizing: content;
+    min-block-size: 0;
+    max-block-size: calc(var(--control-h-md) * 8);
+
+    /* THE AIR IS A TEXT SURFACE'S, NOT A CONTROL'S. --space-3 is what a field
+       in a form takes, and there it is right: the field is one control in a
+       column of them and its padding has to match theirs. A composer is the
+       only thing on its line and the largest thing on the screen after the
+       thread itself; at 6px a single line came out 35px tall and read as a
+       search box that had wandered in. --space-5 puts one line at 46 — the
+       proportion the reference draws, and the one this field has when it is
+       the subject rather than a row in a form. */
+    padding-block: var(--space-5);
+
     &:focus-visible { outline: none; border-color: transparent; }
   }
+
+  & > .inst-composer-bar { grid-column: 1 / -1; }
+
+  /* The trailing slot: second track, first row, beside the field. */
+  & > .inst-composer-bar--edge { grid-column: 2; grid-row: 1; }
+  &:has(> .inst-composer-bar--edge) > .inst-textarea { grid-column: 1; grid-row: 1; }
 }
 
 /* The controls of the composer: attachments and the model at the leading edge,
@@ -250,6 +296,11 @@
      annotates the field rather than competing with it. */
   --icon-size: var(--size-icon-sm);
 }
+
+/* Against the field there is no edge to clear, so the inset on that side goes:
+   the send affordance would otherwise sit a full field-padding away from text
+   it belongs to. */
+.inst-composer-bar--edge { padding-inline-start: 0; }
 
 /* THE ROW STANDS INSIDE THE FRAME OR UNDER IT, and both are the composer's.
 

@@ -113,20 +113,29 @@ class except the library's own, and not a single line of script.
 
         <div class="inst-stack inst-stack--tight">
           <div class="inst-composer">
-            <textarea class="inst-textarea" rows="2" placeholder="Describe a task" aria-label="Describe a task"></textarea>
-            <div class="inst-composer-bar">
-              <span class="inst-cluster-spacer"></span>
-              <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Send"><svg class="inst-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+            <textarea class="inst-textarea" rows="1" placeholder="Describe a task or ask a question" aria-label="Describe a task or ask a question"></textarea>
+            <div class="inst-composer-bar inst-composer-bar--edge">
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Send"><svg class="inst-icon" aria-hidden="true"><use href="#i-enter"/></svg></button>
             </div>
           </div>
 
           <div class="inst-composer-bar">
             <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Auto</button>
-            <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-haspopup="menu" aria-label="Add"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
+            <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Add context"><svg class="inst-icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
+            <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Dictate"><svg class="inst-icon" aria-hidden="true"><use href="#i-mic"/></svg></button>
+            <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-haspopup="menu" aria-label="More"><svg class="inst-icon inst-icon--down" aria-hidden="true"><use href="#i-chevron"/></svg></button>
             <span class="inst-cluster-spacer"></span>
             <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
             <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">High</button>
-            <span class="inst-badge" data-tone="warn">context 90%</span>
+            <span class="inst-tooltip">
+              <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-describedby="tt-ctx" aria-label="Context used: 90%">
+                <svg class="inst-ring inst-ring--xs" viewBox="0 0 20 20" aria-hidden="true">
+                  <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
+                  <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.9"/>
+                </svg>
+              </button>
+              <span class="inst-tooltip-text inst-tooltip-text--end" role="tooltip" id="tt-ctx">Context used: 90%</span>
+            </span>
           </div>
         </div>
 

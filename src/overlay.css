@@ -481,6 +481,23 @@
   text-align: start;
 }
 
+/* THE PLATE IS CENTRED OVER ITS TRIGGER, AND ON THE LAST CONTROL IN A ROW THAT
+   RUNS OFF THE EDGE. A tooltip is `nowrap` and can be several times wider than
+   the glyph it annotates, so half of it hangs past the container and the half
+   that is clipped is the half that was being read.
+
+   The kit does not reach for anchor positioning here. That would put the
+   browser in charge of the flip, and the browsers do not yet agree on it; this
+   is one declaration and it is the caller who knows their control is last.
+
+   Trailing edge to trailing edge, in logical properties, so it is the RIGHT
+   edge in LTR and the LEFT one in RTL without a second rule. */
+.inst-tooltip-text--end {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  translate: 0 0;
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    Modal
 

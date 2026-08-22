@@ -6,6 +6,7 @@ source: src/overlay.css
 api:
   - { name: "inst-tooltip", kind: "class", doc: "The wrapper of the trigger. `position: relative`, the position is counted from it" }
   - { name: "inst-tooltip-text", kind: "class", doc: "The label itself. Above the trigger, centred" }
+  - { name: "inst-tooltip-text--end", kind: "modifier", doc: "The plate's trailing edge over the trigger's, instead of centred. For the last control in a row, where a centred plate runs past the container" }
   - { name: "inst-tooltip-text--wide", kind: "modifier", doc: "Line wrapping and a width ceiling of `22rem`" }
   - { name: "--z-popover", kind: "token" }
   - { name: "--surface-overlay", kind: "token" }
@@ -79,6 +80,13 @@ A base tooltip is one line (`white-space: nowrap`). That is right for a label
 of two words and breaks on a sentence: the line stretches past the edge of the
 screen. So a long text wants an explicit `inst-tooltip-text--wide` — wrapping
 and a width ceiling of `22rem`.
+
+The plate is centred over its trigger, and on the **last control in a row** that
+runs off the edge: a `nowrap` plate is several times wider than the glyph it
+annotates, and the half that is clipped is the half being read.
+`inst-tooltip-text--end` puts its trailing edge over the trigger's — the right
+edge in LTR, the left in RTL, one rule for both. The caller knows their control
+is last; the kit does not.
 
 ## Behavior
 

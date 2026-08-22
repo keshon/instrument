@@ -113,20 +113,29 @@ template: splash
 
         <div class="inst-stack inst-stack--tight">
           <div class="inst-composer">
-            <textarea class="inst-textarea" rows="2" placeholder="Опишите задачу" aria-label="Опишите задачу"></textarea>
-            <div class="inst-composer-bar">
-              <span class="inst-cluster-spacer"></span>
-              <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Отправить"><svg class="inst-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+            <textarea class="inst-textarea" rows="1" placeholder="Опишите задачу или задайте вопрос" aria-label="Опишите задачу или задайте вопрос"></textarea>
+            <div class="inst-composer-bar inst-composer-bar--edge">
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Отправить"><svg class="inst-icon" aria-hidden="true"><use href="#i-enter"/></svg></button>
             </div>
           </div>
 
           <div class="inst-composer-bar">
             <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Авто</button>
-            <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-haspopup="menu" aria-label="Добавить"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
+            <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Добавить контекст"><svg class="inst-icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
+            <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Диктовать"><svg class="inst-icon" aria-hidden="true"><use href="#i-mic"/></svg></button>
+            <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-haspopup="menu" aria-label="Ещё"><svg class="inst-icon inst-icon--down" aria-hidden="true"><use href="#i-chevron"/></svg></button>
             <span class="inst-cluster-spacer"></span>
             <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
             <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Высокое</button>
-            <span class="inst-badge" data-tone="warn">контекст 90%</span>
+            <span class="inst-tooltip">
+              <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-describedby="tt-ctx-ru" aria-label="Контекст израсходован на 90%">
+                <svg class="inst-ring inst-ring--xs" viewBox="0 0 20 20" aria-hidden="true">
+                  <circle class="inst-ring-track" cx="10" cy="10" r="8"/>
+                  <circle class="inst-ring-fill" cx="10" cy="10" r="8" style="--value:0.9"/>
+                </svg>
+              </button>
+              <span class="inst-tooltip-text inst-tooltip-text--end" role="tooltip" id="tt-ctx-ru">Контекст израсходован на 90%</span>
+            </span>
           </div>
         </div>
 

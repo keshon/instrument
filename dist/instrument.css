@@ -3322,6 +3322,16 @@ hr {
 
 .inst-icon--sm { --icon-size: var(--size-chevron); }
 
+/* THE ONE DISCLOSURE GLYPH, TURNED. The kit draws a single chevron and points
+   it along the reading direction; a dropdown affordance points down, and that
+   is the same glyph rotated rather than a second one drawn — the arrangement
+   `.inst-accordion-head` and `.inst-step-twist` already use in place.
+
+   Clockwise from inline-end, so it lands on "down" in RTL as well as LTR: a
+   physical `transform` written for one direction is wrong in the other, and
+   nothing in the markup would say so. */
+.inst-icon--down { rotate: 90deg; }
+
 }
 
 /* ── actions.css → kit.components ─────────────────────────────── */
@@ -6885,21 +6895,59 @@ hr {
 }
 
 .inst-ring {
-  inline-size: var(--control-h-lg);
-  block-size: var(--control-h-lg);
+  /* The same `flex: none` an icon takes, for the same reason: standing in a
+     row of controls it would otherwise be the first thing squashed when the
+     labels beside it do not fit, and a squashed circle is an ellipse that
+     still claims to be a share. */
+  flex: none;
+  inline-size: var(--ring-size, var(--control-h-lg));
+  block-size: var(--ring-size, var(--control-h-lg));
   rotate: -90deg;
 
-  & > .inst-ring-track { fill: none; stroke: var(--track); stroke-width: 3; }
+  & > .inst-ring-track { fill: none; stroke: var(--track); stroke-width: var(--ring-stroke, 3); }
   & > .inst-ring-fill {
     fill: none;
     stroke: var(--tone-mark, var(--accent-mark));
-    stroke-width: 3;
+    stroke-width: var(--ring-stroke, 3);
     stroke-linecap: round;
     /* The value is given as a 0…1 fraction in --value: the circumference at
        r=8 is 50.27, so the dash is computed straight from it.            */
     stroke-dasharray: calc(var(--value, 0) * 50.27) 50.27;
   }
 }
+
+/* A LADDER, because the ring is no longer only a figure in a card.
+
+   At --control-h-lg it stands beside the text of a card and holds a number in
+   the middle. Standing in a row of controls it has to be the size of the
+   controls, or it is a third object between them — a context gauge at the end
+   of a session bar is exactly that case, and the rungs are therefore the
+   CONTROL heights rather than sizes of its own. Sharing the ladder is what
+   keeps the ring from drifting when density moves.
+
+   THE STROKE COMES DOWN WITH THE BOX, and not in proportion. It is stated in
+   viewBox units, so it already scales with the box: 3 of 20 stays 15% at every
+   size, and 15% of 20px is a doughnut rather than a ring. 2 is where the arc
+   still reads as an arc and the track behind it is still a track.
+
+   THE SMALLEST RUNG IS NOT A CONTROL HEIGHT. In a row of controls the ring
+   does not stand where a button stands — it stands where a GLYPH stands, at
+   the end of a session bar beside the model and the effort. So it takes
+   --icon-size, the same variable every icon in that row reads, and it moves
+   when the row moves. Given the control height instead it came out 22px
+   against 14px glyphs and read as a third object between them.
+
+   The stroke follows the same argument. An icon is drawn at 1.5 on a grid of
+   16, or 9.4%; the ring's grid is 20, so 2 is the same optical weight and the
+   ring sits in the row as one more glyph rather than as a doughnut.
+
+   The label does not come down with it: --text-2xs is the floor of the type
+   scale, and it does not fit inside 22px, let alone 14. Below --control-h-lg
+   the number goes BESIDE the ring, or into a tooltip — the accessibility table
+   on the ring's page names both, because an arc with no number anywhere is
+   read by its length and its colour alone.                                 */
+.inst-ring--sm { --ring-size: var(--control-h-sm); --ring-stroke: 2.5; }
+.inst-ring--xs { --ring-size: var(--icon-size, var(--size-icon)); --ring-stroke: 2; }
 
 .inst-ring-wrap { position: relative; display: inline-flex; align-self: var(--flow-self, center); }
 .inst-ring-label {
@@ -7528,6 +7576,23 @@ hr {
   text-align: start;
 }
 
+/* THE PLATE IS CENTRED OVER ITS TRIGGER, AND ON THE LAST CONTROL IN A ROW THAT
+   RUNS OFF THE EDGE. A tooltip is `nowrap` and can be several times wider than
+   the glyph it annotates, so half of it hangs past the container and the half
+   that is clipped is the half that was being read.
+
+   The kit does not reach for anchor positioning here. That would put the
+   browser in charge of the flip, and the browsers do not yet agree on it; this
+   is one declaration and it is the caller who knows their control is last.
+
+   Trailing edge to trailing edge, in logical properties, so it is the RIGHT
+   edge in LTR and the LEFT one in RTL without a second rule. */
+.inst-tooltip-text--end {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  translate: 0 0;
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    Modal
 
@@ -8030,8 +8095,18 @@ html:has(dialog:modal) { overflow: hidden; }
    ────────────────────────────────────────────────────────────────────────── */
 
 .inst-composer {
-  display: flex;
-  flex-direction: column;
+  /* A GRID RATHER THAN A COLUMN, so the bar has two places to stand.
+
+     Under the field it spans both tracks and the composer is what it was. At
+     the field's trailing edge it takes the second track and the first row, and
+     an empty composer is then ONE LINE TALL — which is the shape the field
+     actually has. A column could not do that: it puts the bar on its own line
+     whether or not there is anything on the line to justify it. */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  /* The bar sinks to the bottom of its row. On one line that reads as centred;
+     on ten it stays with the last one, where the text is. */
+  align-items: end;
   border: var(--hairline) solid var(--border-control);
   border-radius: var(--radius-lg);
   background: var(--surface-field);
@@ -8051,13 +8126,49 @@ html:has(dialog:modal) { overflow: hidden; }
   /* The field gives up its frame, and its resize grip with it: a corner grip
      inside a frame that also holds a bar tears the object in half. */
   & > .inst-textarea {
+    grid-column: 1 / -1;
     border: none;
     border-radius: 0;
     background: transparent;
     resize: none;
 
+    /* AN EMPTY FIELD IS ONE LINE TALL, and this is a correction rather than a
+       preference. A textarea is two and a half controls tall by definition,
+       and that definition is right for a form: the field says how much answer
+       is expected. A composer says something else. Empty, it was drawing three
+       rows of nothing and promising a paragraph nobody had typed — the shape
+       of the object lied about its content, which is the one thing this kit
+       exists not to do.
+
+       So the floor goes and the content sets the height. `field-sizing:
+       content` is what makes it grow while it is typed into; the cap is eight
+       controls, after which it scrolls rather than eating the thread above it.
+
+       Where `field-sizing` is not implemented the field does not grow — it
+       takes the height of its `rows` and scrolls. That is a smaller field, not
+       a broken one, and the alternative is a script. The kit has none. */
+    field-sizing: content;
+    min-block-size: 0;
+    max-block-size: calc(var(--control-h-md) * 8);
+
+    /* THE AIR IS A TEXT SURFACE'S, NOT A CONTROL'S. --space-3 is what a field
+       in a form takes, and there it is right: the field is one control in a
+       column of them and its padding has to match theirs. A composer is the
+       only thing on its line and the largest thing on the screen after the
+       thread itself; at 6px a single line came out 35px tall and read as a
+       search box that had wandered in. --space-5 puts one line at 46 — the
+       proportion the reference draws, and the one this field has when it is
+       the subject rather than a row in a form. */
+    padding-block: var(--space-5);
+
     &:focus-visible { outline: none; border-color: transparent; }
   }
+
+  & > .inst-composer-bar { grid-column: 1 / -1; }
+
+  /* The trailing slot: second track, first row, beside the field. */
+  & > .inst-composer-bar--edge { grid-column: 2; grid-row: 1; }
+  &:has(> .inst-composer-bar--edge) > .inst-textarea { grid-column: 1; grid-row: 1; }
 }
 
 /* The controls of the composer: attachments and the model at the leading edge,
@@ -8083,6 +8194,11 @@ html:has(dialog:modal) { overflow: hidden; }
      annotates the field rather than competing with it. */
   --icon-size: var(--size-icon-sm);
 }
+
+/* Against the field there is no edge to clear, so the inset on that side goes:
+   the send affordance would otherwise sit a full field-padding away from text
+   it belongs to. */
+.inst-composer-bar--edge { padding-inline-start: 0; }
 
 /* THE ROW STANDS INSIDE THE FRAME OR UNDER IT, and both are the composer's.
 

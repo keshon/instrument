@@ -76,3 +76,13 @@
 }
 
 .inst-icon--sm { --icon-size: var(--size-chevron); }
+
+/* THE ONE DISCLOSURE GLYPH, TURNED. The kit draws a single chevron and points
+   it along the reading direction; a dropdown affordance points down, and that
+   is the same glyph rotated rather than a second one drawn — the arrangement
+   `.inst-accordion-head` and `.inst-step-twist` already use in place.
+
+   Clockwise from inline-end, so it lands on "down" in RTL as well as LTR: a
+   physical `transform` written for one direction is wrong in the other, and
+   nothing in the markup would say so. */
+.inst-icon--down { rotate: 90deg; }

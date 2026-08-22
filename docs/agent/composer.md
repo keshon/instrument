@@ -6,6 +6,8 @@ source: src/agent.css
 api:
   - { name: "inst-composer", kind: "class", doc: "The frame. It carries the border, the background and the focus ring" }
   - { name: "inst-composer-bar", kind: "class", doc: "The controls. Inside the frame they belong to the message; standing under it they belong to the session. Anything in it that is not a control reads as metadata, and its glyphs take the small icon" }
+  - { name: "inst-composer-bar--edge", kind: "modifier", doc: "The bar in the trailing slot beside the field rather than on its own line. Sunk to the bottom, so an empty composer is one line tall" }
+  - { name: "--control-h-md", kind: "token", value: "32px", doc: "The cap on growth is eight of these" }
   - { name: "--border-control", kind: "token" }
   - { name: "--accent-border", kind: "token" }
   - { name: "--surface-field", kind: "token" }
@@ -55,6 +57,34 @@ draws a frame inside a frame.
 | The name | On the field, not on the frame: the frame is a `<div>` and takes no focus |
 | Focus | The ring goes round the whole frame, so what is highlighted is the object the keyboard is in |
 | Contrast | The border is `--border-control` at 3.46:1 — a load-bearing line, because here the border **is** the control |
+
+## Sizes
+
+An empty composer is **one line tall**. It was two and a half — the height a
+[textarea](../components/inputs/input.md) has by definition, which is right
+for a form, where the field says how much answer is expected. A composer says
+something else: three rows of nothing promise a paragraph nobody has typed, and
+the shape of the object then lies about its content.
+
+So the floor goes and the content sets the height, through `field-sizing:
+content`. The cap is eight controls, after which the field scrolls instead of
+eating the thread above it. Where `field-sizing` is not implemented the field
+takes the height of its `rows` and scrolls — a smaller field, not a broken one,
+and the alternative is a script the kit does not have.
+
+`inst-composer-bar--edge` puts the bar in the **trailing slot** rather than on
+its own line, which is what makes one line possible: sending is one control and
+does not deserve a row of its own. It sinks to the bottom of the field, so on
+one line it reads as centred and on ten it stays with the last one.
+
+```html preview
+<div class="inst-composer">
+  <textarea class="inst-textarea" rows="1" placeholder="Describe a task or ask a question" aria-label="Describe a task or ask a question"></textarea>
+  <div class="inst-composer-bar inst-composer-bar--edge">
+    <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Send"><svg class="inst-icon" aria-hidden="true"><use href="#i-enter"/></svg></button>
+  </div>
+</div>
+```
 
 ## API
 
