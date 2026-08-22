@@ -77,7 +77,7 @@ neighbour does not cut the ring off.
 
 Every variant's label holds 4.5:1 in five themes, and the `primary` fill is
 capped in lightness (0.545 for the default petrol). The target is 32px at `md`
-and 26px at `sm`; `compact` takes `sm` to 22px, **below the 24px of WCAG
+and 24px at `sm`; `compact` takes `sm` to 22px, **below the 24px of WCAG
 2.5.8** — hence `compact` is for dense tabular views, not the main navigation.
 
 ## Variants

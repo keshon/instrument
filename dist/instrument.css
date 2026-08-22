@@ -1107,7 +1107,20 @@
   /* Control heights. A token rather than a constant in a component, so that a
      button and a field standing next to it physically cannot diverge.      */
   --control-h-xs: 20px;   /* badge, chip */
-  --control-h-sm: 26px;
+  /* 24 RATHER THAN 26, and it is a measurement rather than a preference.
+     Claude Code draws its small control at 24 and its extra-small at 20 and
+     its medium at 32; the kit already matched the first and the last exactly
+     and missed only this one, by two pixels. Nothing derived it from 26 —
+     it was the value the ladder started with.
+
+     The corner falls out of the change for free: --radius-control-sm is 6, and
+     6/24 is 0.250, which is the ratio the reference holds at every rung it
+     draws and the one this kit already had at md. The rung was the only place
+     the two disagreed and now they do not.
+
+     26 was NOT wrong for the tap target — the floor is compact's 22, which
+     stands untouched below. */
+  --control-h-sm: 24px;
   --control-h-md: 32px;
   --control-h-lg: 38px;
 
@@ -1115,17 +1128,35 @@
      the padding is derived from the height: the drawing has to hold when the
      size changes.
 
-     One radius for all three sizes does not give that. 8 at a height of 26 is
-     0.31, at 32 it is 0.25, at 38 it is 0.21, and in the compact mode 8 at 22
+     One radius for all three sizes does not give that. 8 at a height of 24 is
+     0.33, at 32 it is 0.25, at 38 it is 0.21, and in the compact mode 8 at 22
      reaches 0.36: a small control reads as a pill, a large one as a
      rectangle. And a pill in this kit means "switch", so a small button has
      no right to depict one.
 
-     The numbers are taken from the radius ladder rather than derived through
-     calc: calc from the height gives a fractional pixel (26 × 0.25 = 6.5),
-     while the kit requires a radius that lands on the device grid at a
-     density of 1.5. The ratio meanwhile stays in the band 0.18–0.27 across
-     all three densities — cmd/proportion checks it.                        */
+     A QUARTER OF THE HEIGHT is the target, and it is measured rather than
+     chosen: Claude Code draws 20→5, 24→6 and 32→8 — three heights, one ratio.
+     At rest this kit now reaches it exactly at sm (6/24) and md (8/32), and
+     cmd/proportion holds those two as an equality rather than a band.
+
+     IT CANNOT REACH IT AT xs OR lg, and that is the even-radius rule above
+     rather than an oversight. A quarter of 20 is 5 and a quarter of 38 is 9.5;
+     at a device pixel ratio of 1.5 an odd radius puts the junction of arc and
+     edge half a device pixel off the grid, and the corners blur, each its own
+     way. The reference carries no such constraint — it ships one density and
+     can spend a 5. So xs holds 4/20 = 0.200 and lg 8/38 = 0.211, and the next
+     even step overshoots both: 6/20 is 0.300, a chip, and 12/38 is 0.316, a
+     pill.
+
+     THE RATIO ALSO MOVES WITH DENSITY BY DESIGN, which is why the band across
+     all fifteen cells stays wide where the equality above is narrow.
+     --radius-control-sm resolves to a different rung in each density —
+     --radius-xs when compact, --radius-sm at rest, --radius-md when
+     comfortable — because a 4px arc on a 22px control reads as the same
+     softness an 8px arc gives a 28px one. A band wide enough to admit that is
+     too wide to catch a drift, and it did not catch one: the four rungs sat at
+     0.200, 0.231, 0.250 and 0.211 with only one of them a number anybody had
+     picked.                                                                */
   --radius-control-sm: var(--radius-sm);
   --radius-control-md: var(--radius-md);
   --radius-control-lg: var(--radius-md);
@@ -1386,7 +1417,10 @@
 
 [data-density="comfortable"] {
   --control-h-xs: 22px;
-  --control-h-sm: 30px;
+  /* +4 on the default, the same step md and lg take here. Left at 30 it would
+     have been +6 — a small control gaining more from a density than the large
+     one above it, which is the wrong way round. */
+  --control-h-sm: 28px;
   --control-h-md: 36px;
   --control-h-lg: 44px;
   /* --control-pad-* are deliberately NOT here: they are derived from the
@@ -8122,10 +8156,34 @@ html:has(dialog:modal) { overflow: hidden; }
    cramped beside a reference. --leading-prose is 1.65 and the kit already had
    it for exactly this.
 
+   AND A SIZE LARGER THAN THE INTERFACE AROUND IT. --text-sm is the kit's base,
+   right for a label, a cell, a menu row — everything that is operated. An
+   agent's answer is not operated, it is read, and it is the longest continuous
+   text on the screen. Measured against Claude Code the gap was a whole step:
+   16px there against 14 here, which is to say the kit set the thing being read
+   smaller than the reference sets its own sidebar.
+
    For an answer of several paragraphs the caller puts `.inst-prose` inside:
    that brings the measure and the spacing between blocks as well. This line is
    the floor under a body that is one sentence long. */
-.inst-turn-body { line-height: var(--leading-prose); }
+.inst-turn-body {
+  font-size: var(--text-md);
+  line-height: var(--leading-prose);
+}
+
+/* THE ASK IS NOT PROSE, and it was being set as though it were.
+
+   An answer runs to paragraphs and earns 1.65. A person's turn is an
+   instruction — usually one line, rarely more than three — and at prose leading
+   a single line sits in a bubble with a third of its height empty above and
+   below it. The reference splits the two exactly here: 1.33 for the ask
+   against 1.50 for the answer, tight against loose.
+
+   --leading-ui is the kit's own name for text that is read at a glance rather
+   than settled into, and that is what an instruction is. The SIZE stays with
+   the answer: both halves of an exchange being the same size is what makes it
+   read as one conversation rather than a form and its receipt. */
+.inst-turn[data-from="user"] > .inst-turn-body { line-height: var(--leading-ui); }
 
 /* The actions of a turn — copy, retry, branch — come up UNDER THE CURSOR, and
    the kit's usual rule is the opposite one: hover may strengthen an element,
@@ -9275,9 +9333,10 @@ html:has(dialog:modal) { overflow: hidden; }
 
      But the reference composes this class onto `.inst-btn--sm.inst-btn--icon`
      — in the corner of a listing and in a row of the API — and there the box
-     is `--control-h-sm`, 26px. 4 on 26 is 0.15: under the same floor, and
-     visibly squarer than the small buttons standing next to it in the same
-     toolbar. Worse, it was squarer IN SILENCE: kit.agent comes after
+     is `--control-h-sm`, 24px. 4 on 24 is 0.167: inside the floor by a hair,
+     and two thirds of the 0.250 the small control beside it in the same
+     toolbar now holds. Visibly squarer, in other words, and it was squarer
+     IN SILENCE: kit.agent comes after
      kit.components, so this line beat `--radius-control-sm` without any
      specificity to show for it, and the raw step does not ride the scale
      ramp the way the control tier does.

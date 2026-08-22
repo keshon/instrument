@@ -49,10 +49,34 @@
    cramped beside a reference. --leading-prose is 1.65 and the kit already had
    it for exactly this.
 
+   AND A SIZE LARGER THAN THE INTERFACE AROUND IT. --text-sm is the kit's base,
+   right for a label, a cell, a menu row — everything that is operated. An
+   agent's answer is not operated, it is read, and it is the longest continuous
+   text on the screen. Measured against Claude Code the gap was a whole step:
+   16px there against 14 here, which is to say the kit set the thing being read
+   smaller than the reference sets its own sidebar.
+
    For an answer of several paragraphs the caller puts `.inst-prose` inside:
    that brings the measure and the spacing between blocks as well. This line is
    the floor under a body that is one sentence long. */
-.inst-turn-body { line-height: var(--leading-prose); }
+.inst-turn-body {
+  font-size: var(--text-md);
+  line-height: var(--leading-prose);
+}
+
+/* THE ASK IS NOT PROSE, and it was being set as though it were.
+
+   An answer runs to paragraphs and earns 1.65. A person's turn is an
+   instruction — usually one line, rarely more than three — and at prose leading
+   a single line sits in a bubble with a third of its height empty above and
+   below it. The reference splits the two exactly here: 1.33 for the ask
+   against 1.50 for the answer, tight against loose.
+
+   --leading-ui is the kit's own name for text that is read at a glance rather
+   than settled into, and that is what an instruction is. The SIZE stays with
+   the answer: both halves of an exchange being the same size is what makes it
+   read as one conversation rather than a form and its receipt. */
+.inst-turn[data-from="user"] > .inst-turn-body { line-height: var(--leading-ui); }
 
 /* The actions of a turn — copy, retry, branch — come up UNDER THE CURSOR, and
    the kit's usual rule is the opposite one: hover may strengthen an element,
@@ -1202,9 +1226,10 @@
 
      But the reference composes this class onto `.inst-btn--sm.inst-btn--icon`
      — in the corner of a listing and in a row of the API — and there the box
-     is `--control-h-sm`, 26px. 4 on 26 is 0.15: under the same floor, and
-     visibly squarer than the small buttons standing next to it in the same
-     toolbar. Worse, it was squarer IN SILENCE: kit.agent comes after
+     is `--control-h-sm`, 24px. 4 on 24 is 0.167: inside the floor by a hair,
+     and two thirds of the 0.250 the small control beside it in the same
+     toolbar now holds. Visibly squarer, in other words, and it was squarer
+     IN SILENCE: kit.agent comes after
      kit.components, so this line beat `--radius-control-sm` without any
      specificity to show for it, and the raw step does not ride the scale
      ramp the way the control tier does.

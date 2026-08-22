@@ -178,6 +178,14 @@ var mutations = []mutation{
 		"--control-h-xs: 20px;   /* badge, chip */",
 		"--control-h-xs: 12px;   /* badge, chip */",
 		"below sm the corner reads as a pill, and a chip stops being a chip"},
+	// The corner-is-a-quarter law, which is held as an EQUALITY at rest rather
+	// than a band. The band that used to be its only guard admits 26 without a
+	// murmur — that is how the rung sat two pixels off the reference for as
+	// long as it did.
+	{"the sm rung slid back off the quarter", "proportion", "src/tokens.css",
+		"--control-h-sm: 24px;",
+		"--control-h-sm: 26px;",
+		"a control's corner is a quarter of its height, and a band cannot hold that"},
 
 	// ── dist: the "Forbidden" section ──────────────────────────────────────
 	{"!important in a component", "dist", "src/actions.css",

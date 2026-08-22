@@ -98,7 +98,7 @@ WCAG 2.5.8 (AA) требует цель нажатия не меньше 24×24 
 | Токен | `compact` | по умолчанию | `comfortable` |
 |---|---|---|---|
 | `--control-h-xs` | 18px | 20px | 22px |
-| `--control-h-sm` | 22px | 26px | 30px |
+| `--control-h-sm` | 22px | 24px | 28px |
 | `--control-h-md` | 26px | 32px | 36px |
 | `--control-h-lg` | 32px | 38px | 44px |
 | `--control-pad-sm` | `--space-3` | `--space-4` | `--space-5` |

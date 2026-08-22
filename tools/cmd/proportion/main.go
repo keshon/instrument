@@ -39,6 +39,12 @@ type rule struct {
 	min, max float64 // allowed ratio band
 	why      string  // what happens when it leaves the band
 	perDens  bool    // check at each density
+	// baseOnly narrows a rule to the ROOT cell — base scale, default density.
+	// For a law that is stated at one place and deliberately not held
+	// everywhere: the corner-is-a-quarter rules below hold at rest, where the
+	// reference was measured, and are meaningless in a cell whose radius rung
+	// or height was tuned for a different reason.
+	baseOnly bool
 }
 
 var rules = []rule{
@@ -176,6 +182,26 @@ var rules = []rule{
 		why: "the smallest button reads as a pill or loses its rounding entirely"},
 	{label: "sm control rounding", a: "--radius-control-sm", b: "--control-h-sm", min: 0.16, max: 0.30, perDens: true,
 		why: "small control reads as a pill or loses its rounding entirely"},
+
+	// A CONTROL'S CORNER IS A QUARTER OF ITS HEIGHT — as an equality, not a band.
+	//
+	// The bands above have to be wide: --radius-control-sm resolves to a
+	// different rung of the radius ladder in each density, because a tighter
+	// screen gets a tighter corner on purpose. A band wide enough to admit
+	// that is also wide enough to hide a drift, and it did — the four rungs
+	// sat at 0.200, 0.231, 0.250 and 0.211, and nothing noticed that only one
+	// of them was a number anybody had chosen.
+	//
+	// So the exact ratio is held AT REST, where the reference was measured and
+	// where the law is meant to apply. Only sm and md appear: a quarter of 20
+	// is 5 and a quarter of 38 is 9.5, and the even-radius rule in tokens.css
+	// says at length why an odd radius is refused. Those two rungs keep their
+	// reasoning beside the tier; what this rule prevents is these two sliding
+	// quietly back off the number.
+	{label: "sm corner is a quarter of the height", a: "--radius-control-sm", b: "--control-h-sm", min: 0.249, max: 0.251, baseOnly: true,
+		why: "the ratio the reference holds at every rung it draws"},
+	{label: "md corner is a quarter of the height", a: "--radius-control-md", b: "--control-h-md", min: 0.249, max: 0.251, baseOnly: true,
+		why: "the ratio the reference holds at every rung it draws"},
 	{label: "md control rounding", a: "--radius-control-md", b: "--control-h-md", min: 0.16, max: 0.30, perDens: true,
 		why: "control reads as a pill or loses its rounding entirely"},
 	{label: "lg control rounding", a: "--radius-control-lg", b: "--control-h-lg", min: 0.16, max: 0.30, perDens: true,
@@ -442,6 +468,9 @@ func main() {
 			// not at d.perDens: with the latter, scale ladders disappear from
 			// the check entirely, and the gate turns green undeservedly.
 			if d.dens != "" && !r.perDens {
+				continue
+			}
+			if r.baseOnly && (d.dens != "" || d.scale != "") {
 				continue
 			}
 			total++
