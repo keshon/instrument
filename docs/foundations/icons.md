@@ -116,6 +116,31 @@ already parted from the library by four symbols once.
 | `inst-icon` | 18px | `--size-icon` | The default: a button, a menu item, a note, a header |
 | `inst-icon--sm` | 10px | `--size-chevron` | The chevron of a select, the cross of a tag — a utility glyph |
 | `inst-icon--down` | — | rotate `90deg` | The one chevron, turned: a dropdown affordance on a button |
+
+### Which size a chevron takes
+
+`--size-chevron` is 10px against `--size-icon`'s 18, and the two are not
+interchangeable — the token answers **three different jobs**, and only two of
+them are its own.
+
+| The job | Size | Why | Where |
+|---|---|---|---|
+| A separator between words | `--size-chevron` | It stands inside a line of text and is measured against the type | Breadcrumbs, the cascader's path |
+| Furniture of a frame — a disclosure that opens what it sits on | `--size-chevron` | Measured against the **label** beside it. The band is 0.62…0.86 of the type size: larger and the arrow competes with the words | The select's arrow, the accordion twist, the tree twist, the sort arrow |
+| A glyph in a **column of trailing glyphs** | `--icon-size` | Measured against its actual neighbour, which is another glyph and not a label | The cascader's branch arrow, standing at the same edge as a menu's check mark |
+
+The third row is the one that is easy to get wrong. A `.inst-cascader-item`
+wears `.inst-menu-item`, whose selection mark is `--size-icon`; ten against
+eighteen in one column read as two vocabularies rather than as one list.
+
+**A chevron that is its own target is a different question again**, and the
+answer is not a smaller glyph but a bigger box. `.inst-tab-close` states it:
+a square from the control ladder with the utilitarian glyph inside, because a
+10px cross is a 10px target and a hover fill the size of the sign. Where the
+target is real, use a real [`inst-btn--xs`](../components/actions/button.md) —
+a pseudo-element drawn to look like a button is a promise the markup does not
+keep.
+
 | `--icon-size: var(--size-icon-sm)` | 14px | `--size-icon-sm` | A reading in [the status bar](../layout/statusbar.md): the type size there is `--text-2xs` |
 | `--icon-size: var(--size-icon-lg)` | 24px | `--size-icon-lg` | An icon in [the rail](../layout/rail.md), where there is no label at all |
 

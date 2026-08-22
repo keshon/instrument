@@ -359,15 +359,31 @@
    than a class: the attribute is what a screen reader reads, and a class
    beside it would be the same fact written twice. An item with no attribute is
    a leaf and gets nothing — the absence of a chevron is what tells the end of
-   the road. */
+   the road.
+
+   --icon-size RATHER THAN --size-chevron, and this is the one place in the kit
+   where that is true. The chevron token is measured against the LABEL it
+   stands beside — the band on it is 0.62…0.86 of the type size, and the reason
+   written there is that a disclosure arrow otherwise competes with the words.
+
+   Here the neighbour is not the label. This item is worn together with
+   `.inst-menu-item`, whose selection mark stands at the same edge of the very
+   next row at --size-icon. Ten against eighteen in one column: the arrow read
+   as a scratch beside the check, and the column read as two vocabularies.
+   Measured against its actual neighbour, the arrow is an icon.
+
+   THE MASK MOVES TO A GRID OF 16 with it. A stroke of 1.5 on a grid of 12
+   scaled to 18px comes out at 2.25 — half again as heavy as every icon around
+   it. On 16 the same 1.5 lands where `.inst-icon` lands, because it IS
+   `.inst-icon`: the path is the sprite's own `i-chevron`. */
 .inst-cascader-item[aria-expanded]::after {
   content: "";
   flex: none;
   margin-inline-start: auto;
-  inline-size: var(--size-chevron);
-  block-size: var(--size-chevron);
+  inline-size: var(--icon-size, var(--size-icon));
+  block-size: var(--icon-size, var(--size-icon));
   background: var(--text-faint);
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.2 3.6 10.6 8l-4.4 4.4' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 /* WHAT LIES ON THE PATH IS MARKED BY A SURFACE, not by colour: the same
