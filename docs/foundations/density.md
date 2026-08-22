@@ -56,7 +56,7 @@ with a different value overrides the outer one.
 |---|---|
 | no attribute | The default. A panel tool, a dashboard, most screens |
 | `data-density="compact"` | A dense tabular view: an agent queue, a log, a tree, a property inspector |
-| `data-density="comfortable"` | Forms, settings, wizards — where there are few decisions and each wants attention |
+| `data-density="comfortable"` | Forms, settings, wizards — where there are few decisions and each wants attention. Also a **conversation**: a chat is read rather than scanned, and the taller control is the one that matches it |
 
 ### Accessibility
 

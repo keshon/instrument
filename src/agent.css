@@ -43,7 +43,16 @@
 
 .inst-turn-who { font-weight: var(--weight-medium); color: var(--text-secondary); }
 
-.inst-turn-body { line-height: var(--leading-ui); }
+/* READ, NOT SCANNED, so the leading is prose's rather than the interface's.
+   --leading-ui is 1.4 and is tuned for a wrapping label and a table cell; a
+   sentence set in it comes out tight, which is what made the whole thread feel
+   cramped beside a reference. --leading-prose is 1.65 and the kit already had
+   it for exactly this.
+
+   For an answer of several paragraphs the caller puts `.inst-prose` inside:
+   that brings the measure and the spacing between blocks as well. This line is
+   the floor under a body that is one sentence long. */
+.inst-turn-body { line-height: var(--leading-prose); }
 
 /* The actions of a turn — copy, retry, branch — are ALWAYS VISIBLE and merely
    quiet, never revealed by hover.
@@ -97,7 +106,9 @@
 
 .inst-thinking {
   font-size: var(--text-xs);
-  line-height: var(--leading-ui);
+  /* Reasoning is read through rather than skimmed — the leading of prose, for
+     the same reason as a turn's body. */
+  line-height: var(--leading-prose);
   color: var(--text-muted);
 }
 
