@@ -9,7 +9,8 @@
     "related": [
       "tabs",
       "panel",
-      "step"
+      "step",
+      "thinking"
     ]
   },
   "approval": {
@@ -28,7 +29,8 @@
       "dialog",
       "failure",
       "diff",
-      "banner"
+      "banner",
+      "turn"
     ]
   },
   "avatar": {
@@ -122,7 +124,8 @@
       "segmented",
       "menu",
       "toolbar",
-      "chip"
+      "chip",
+      "composer"
     ]
   },
   "button-group": {
@@ -255,6 +258,18 @@
       "diff"
     ]
   },
+  "composer": {
+    "axes": {
+      "flow": "block",
+      "print": "hide",
+      "page": "flow",
+      "forced": "border"
+    },
+    "related": [
+      "turn", "input", "form",
+      "toolbar", "button"
+    ]
+  },
   "container": {
     "axes": {
       "flow": "block",
@@ -372,7 +387,8 @@
       "select",
       "cascader",
       "toggles",
-      "file"
+      "file",
+      "composer"
     ]
   },
   "history": {
@@ -410,7 +426,8 @@
       "form",
       "file",
       "inserts",
-      "slider"
+      "slider",
+      "composer"
     ]
   },
   "inserts": {
@@ -495,7 +512,9 @@
       "pagination",
       "code",
       "timeline",
-      "step"
+      "step",
+      "turn",
+      "thinking"
     ]
   },
   "menu": {
@@ -722,7 +741,8 @@
     "related": [
       "task",
       "meter",
-      "history"
+      "history",
+      "thinking"
     ]
   },
   "search": {
@@ -978,7 +998,9 @@
       "steps",
       "accordion",
       "task",
-      "log"
+      "log",
+      "turn",
+      "thinking"
     ]
   },
   "steps": {
@@ -1009,6 +1031,18 @@
       "task",
       "timeline",
       "tree"
+    ]
+  },
+  "turn": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "related": [
+      "thinking", "composer", "step",
+      "approval", "log", "task"
     ]
   },
   "tabs": {
@@ -1069,7 +1103,20 @@
       "step",
       "tree",
       "run",
-      "lane"
+      "lane",
+      "turn"
+    ]
+  },
+  "thinking": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "related": [
+      "step", "turn", "log",
+      "run", "accordion"
     ]
   },
   "timeline": {
@@ -1140,7 +1187,8 @@
       "page-header",
       "menu",
       "section",
-      "statusbar"
+      "statusbar",
+      "composer"
     ]
   },
   "tooltip": {

@@ -56,11 +56,12 @@ var sections = []struct {
 	}},
 	{"agent", []string{
 		"index",
-		"run", "task", "step", "approval", "failure", "diff",
+		"run", "turn", "thinking", "composer",
+		"task", "step", "approval", "failure", "diff",
 		"log", "lane", "history", "budget", "tree",
 	}},
 
-	{"blocks", []string{"console", "monitor"}},
+	{"blocks", []string{"console", "monitor", "chat"}},
 
 	{"about", nil},
 }

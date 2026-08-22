@@ -53,6 +53,7 @@
   .inst-skip-link,
   .inst-pager,
   .inst-copy,
+  .inst-composer,
   .inst-segmented { display: none; }
 
   /* The shell unfolds into ordinary flow: three independently scrollable

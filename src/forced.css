@@ -26,7 +26,7 @@
 @media (forced-colors: active) {
   .inst-panel, .inst-card, .inst-input, .inst-textarea, .inst-select, .inst-num-field, .inst-btn,
   .inst-badge, .inst-approval, .inst-failure, .inst-diff, .inst-meter, .inst-lane-track,
-  .inst-share {
+  .inst-share, .inst-composer {
     border: var(--stroke) solid CanvasText;
   }
 

@@ -4,7 +4,7 @@ group: Agent layer
 layout: index
 ---
 
-Twelve components, and all of them are about one thing: **showing a human the
+Fifteen components, and all of them are about one thing: **showing a human the
 work of a machine that is going on right now.** Hence the differences — not in
 the look but in what exactly is shown: the unit of work, its output, its time
 or its price.
@@ -24,7 +24,7 @@ or its price.
 | [The failure](./failure.md) | a breakdown | a reason and a retry |
 
 The comparison stands here rather than on the pages: "take instead" is a
-statement about NEIGHBOURS, and repeated twelve times it parts from them by one
+statement about NEIGHBOURS, and repeated fifteen times it parts from them by one
 line per edit.
 
 ## What to show
@@ -40,6 +40,9 @@ line per edit.
 | Spending against an explicit limit | [The budget](./budget.md) | A metric has no ceiling, a meter has no forecast of exhaustion |
 | Countable units of work: phases, shards | [The run](./run.md) | Fifty dots are not counted by eye — there a meter with a number is wanted |
 | A hierarchy of unknown depth | [The tree](./tree.md) | A tree of one level is a list with superfluous roles |
+| One step of an exchange, holding everything above | [The turn](./turn.md) | A queue row is flat and a step is one call: neither holds an answer |
+| The working the machine did before answering | [Thinking](./thinking.md) | A step is a call with a result that can fail; this has no status at all |
+| The field the next turn is written in | [The composer](./composer.md) | A field beside a toolbar is two objects, and focus lights up half of one |
 
 ## What to do when the work has stopped
 
@@ -60,7 +63,7 @@ line per edit.
 | Comparing records by fields | [a table](../components/display/table.md) | A tree is about structure rather than about comparison |
 | The properties of one object | [a property list](../components/display/kv.md) | The nodes of a tree expand, and properties have nothing to expand |
 
-## Common to all twelve
+## Common to all fifteen
 
 **The state lives in `data-state` rather than in a class.** The vocabulary is
 closed: a value outside it gives an error nowhere — it simply does nothing, and

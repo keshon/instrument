@@ -7762,6 +7762,184 @@ html:has(dialog:modal) { overflow: hidden; }
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
+   Turn — one step of an exchange
+
+   Everything else in this layer shows WORK. A turn is what the work happens
+   inside: a person asks, a machine answers, and the answer is not a paragraph
+   but a container — steps, a diff, an approval and a budget all live in one.
+   So a turn styles almost nothing; its whole job is to say where one answer
+   ends and the next begins.
+
+   Not a card, not a panel and not a note, and all three were tried. A card is
+   a raised plate and reads as an object rather than as speech; a panel puts a
+   header bar over a sentence; a note carries a glyph and a tone and means "the
+   system is telling you something", which is a different statement.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-turn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* WHO SPOKE IS A LINE, NOT A PLATE. A name and a time in the quiet type of
+   metadata: the content of the turn is what is being read, and an attribution
+   heavier than the text would compete with it. */
+.inst-turn-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.inst-turn-who { font-weight: var(--weight-medium); color: var(--text-secondary); }
+
+.inst-turn-body { line-height: var(--leading-ui); }
+
+/* The actions of a turn — copy, retry, branch — are ALWAYS VISIBLE and merely
+   quiet, never revealed by hover.
+
+   That is the rule the copy button already states: hover may strengthen an
+   element, but it may not bring one into being. A row that appears under the
+   cursor does not exist for a touchscreen or for anyone who does not know it
+   is there; a row hidden but laid out reserves its height under every turn in
+   the thread for the sake of one of them. Ghost buttons in the muted tone cost
+   neither. */
+.inst-turn-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* THE PERSON'S TURN IS RECESSED, THE MACHINE'S IS BARE.
+
+   A recess is the device the default button uses, and for the same reason: it
+   is relative, so the step down is equal on a page, in a panel and in a modal.
+   It gives the question a body without giving it a border, an edge or a
+   shadow — the answer below has to be the loud one.
+
+   The machine's turn gets no surface at all. It is the one that holds steps,
+   diffs and approvals, and every one of those brings its own frame: a surface
+   under them would put a plate inside a plate at every answer.
+
+   Full measure rather than a bubble pushed to one side. A bubble is a shape
+   the kit has nowhere else, and on a wide screen it spends half the column
+   proving which of two speakers said something the label already names.
+
+   ONLY THE PERSON IS MARKED. There is no `data-from="agent"`, because there
+   would be nothing for it to declare, and an attribute with an empty rule is
+   an attribute the gate cannot check. The machine's turn is the default;
+   who spoke is carried by the name in the head, which is where a screen
+   reader gets it either way. */
+.inst-turn[data-from="user"] {
+  padding: var(--pad-panel);
+  border-radius: var(--radius-lg);
+  background: var(--surface-recessed);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Thinking — what the machine worked out before it answered
+
+   NOT a step, and that difference is the whole reason it exists. A step is a
+   CALL: a name, arguments, a result, an outcome, and a dot reporting how it
+   ended. Thinking has none of those — no name, no result, nothing that can
+   fail. Dressed as a step it would promise a status it does not have.
+
+   So it is quieter than anything else in the layer: metadata type, the muted
+   colour, and a rule down the side marking it as an aside rather than as the
+   answer. Collapsed by default: the answer is what was asked for.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-thinking {
+  font-size: var(--text-xs);
+  line-height: var(--leading-ui);
+  color: var(--text-muted);
+}
+
+.inst-thinking-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker { display: none; }
+  &:hover { color: var(--text-secondary); }
+}
+
+/* The chevron is `.inst-step-twist` rather than a twist of its own: the kit
+   has one disclosure glyph and it already has a name. */
+.inst-thinking[open] > .inst-thinking-head > .inst-step-twist { rotate: 90deg; }
+
+.inst-thinking-body {
+  margin-block-start: var(--space-3);
+  border-inline-start: var(--hairline) solid var(--border);
+  padding-inline-start: var(--pad-panel);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Composer — the field a turn is written in
+
+   ONE FRAME, not two, and the parts already here do not give it: a textarea
+   beside a toolbar leaves two borders with a gap between them, an input group
+   stretches the send button to the full height of the field, and a panel
+   wrapped round both draws a frame inside a frame.
+
+   So the border lives on the COMPOSER and the field hands its own outwards —
+   the arrangement `.inst-input-group` uses, for the reason stated there:
+   otherwise the join gives two lines and focus lights up half the control.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-composer {
+  display: flex;
+  flex-direction: column;
+  border: var(--hairline) solid var(--border-control);
+  border-radius: var(--radius-lg);
+  background: var(--surface-field);
+  /* The corners hold over the field and the bar alike. */
+  overflow: hidden;
+
+  &:hover { border-color: var(--text-muted); }
+  &:focus-within { border-color: var(--accent-border); }
+
+  /* The keyboard ring goes round the WHOLE frame rather than the field inside
+     it, or focus draws a rectangle through the middle of one object. */
+  &:has(> .inst-textarea:focus-visible) {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 1px;
+  }
+
+  /* The field gives up its frame, and its resize grip with it: a corner grip
+     inside a frame that also holds a bar tears the object in half. */
+  & > .inst-textarea {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    resize: none;
+
+    &:focus-visible { outline: none; border-color: transparent; }
+  }
+}
+
+/* The controls of the composer: attachments and the model at the leading edge,
+   sending at the trailing one. Inside the frame rather than under it, because
+   they belong to the field.
+
+   The inline padding is the FIELD'S, so the bar's edge and the text's edge are
+   one line. A button standing in the bar is then inset by its own padding on
+   top of that — aligning its label with the text instead would mean the bar
+   subtracting the button's padding from its own, and that holds only as long
+   as every item in the bar is a button of one size.
+
+   Anything in the bar that is not a control reads as metadata, so the type is
+   set here once rather than at each call site. */
+.inst-composer-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--control-pad-sm);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    Approval request
 
    The defining interaction of agent systems: the agent stops and asks for
@@ -8735,7 +8913,7 @@ html:has(dialog:modal) { overflow: hidden; }
 @media (forced-colors: active) {
   .inst-panel, .inst-card, .inst-input, .inst-textarea, .inst-select, .inst-num-field, .inst-btn,
   .inst-badge, .inst-approval, .inst-failure, .inst-diff, .inst-meter, .inst-lane-track,
-  .inst-share {
+  .inst-share, .inst-composer {
     border: var(--stroke) solid CanvasText;
   }
 
@@ -8921,6 +9099,7 @@ html:has(dialog:modal) { overflow: hidden; }
   .inst-skip-link,
   .inst-pager,
   .inst-copy,
+  .inst-composer,
   .inst-segmented { display: none; }
 
   /* The shell unfolds into ordinary flow: three independently scrollable
