@@ -500,10 +500,20 @@
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   }
 
-  /* A link needs no reset of its own here: inheriting the colour and
-     underlining under the cursor is the base.css default now. Breadcrumbs are
-     the one piece of chrome in the kit where a link stands AMONG TEXT, so a
-     hover underline suits it rather than getting in the way.              */
+  /* A CRUMB CARRIES ITS OWN COLOUR, and this used to be left to base.css.
+
+     The reasoning was that inheriting the colour and underlining under the
+     cursor IS the base default, so a reset would be a duplicate. It held only
+     while nothing stood between: `.inst-prose a` is accent-coloured and
+     underlined, breadcrumbs sit in a page header above prose often enough, and
+     there the crumb stopped being chrome and became a link in a sentence — the
+     one thing a breadcrumb must not read as, because every crumb is a link and
+     an underline on all of them is noise.
+
+     Declared here rather than fixed in the page that showed it: a component
+     that only looks right outside somebody else's text is not finished. The
+     hover underline stays — that is the affordance, and it costs nothing while
+     the cursor is elsewhere.                                              */
   /* A crumb is a real tap target. Without a height of its own it is 18px,
      and together with the gap to its neighbour that gives 21.5 against a norm
      of 24: measured on somebody else's interface. The AREA grows, not the
@@ -514,6 +524,8 @@
     align-items: center;
     gap: var(--space-2);
     min-block-size: var(--tap-min);
+    color: inherit;
+    text-decoration-line: none;
   }
 
   & a:hover { color: var(--text-primary); }

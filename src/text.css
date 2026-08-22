@@ -173,15 +173,54 @@
 
 .inst-tree-item + .inst-tree-item { margin-block-start: var(--space-1); }
 
+/* THE AREA GROWS, THE SHAPE DOES NOT — the device `.inst-tag-remove`,
+   `.inst-tab-close` and `.inst-copy` already use, and the twist was the one
+   pressable thing in the kit without it.
+
+   It matters more here than anywhere else it is used. The twist is the ONLY
+   way to open a node with a mouse — the row selects, it does not expand, and
+   that separation is deliberate — so a ten-pixel target is the whole of the
+   tree's mouse affordance. Ten against a norm of twenty-four is not a near
+   miss; it is why a tree feels clickable on its icons and nowhere else.
+
+   Absolutely positioned, so the row's layout does not move: only an absolutely
+   positioned pseudo-element counts as the target's area, and only an
+   absolutely positioned one leaves the label's column where it was. */
 .inst-tree-twist {
+  position: relative;
   flex: none;
   inline-size: var(--size-chevron);
   block-size: var(--size-chevron);
-  background: var(--text-muted);
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   transition: rotate var(--dur-1) var(--ease-out);
+
+  /* The tap area up to the WCAG 2.2 AA norm, stated explicitly rather than as
+     a negative inset — that one counts from the padding box and misses by the
+     border. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+    inline-size: var(--tap-min);
+    block-size: var(--tap-min);
+  }
+
+  /* THE CHEVRON IS DRAWN BY ::after RATHER THAN BY THE SPAN, and the reason is
+     already written out on `.inst-tag-remove`, where it was found by hitting
+     the thing: a mask on an element clips ALL of its content, pseudo-elements
+     included. With the mask where it used to be, the invisible tap area above
+     would be cut back to the ten pixels of the arrow and catch nothing beyond
+     it — the area would exist in the stylesheet and not on the screen. */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--text-muted);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
 }
 
 /* A leaf keeps the room for its twist, so the labels hold their column. */
-.inst-tree-item:not([aria-expanded]) > .inst-tree-twist { background: none; }
+.inst-tree-item:not([aria-expanded]) > .inst-tree-twist::after { background: none; }
 .inst-tree-item[aria-expanded="true"] > .inst-tree-twist { rotate: 90deg; }

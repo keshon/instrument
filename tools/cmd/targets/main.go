@@ -105,6 +105,16 @@ var targets = []target{
 	// beside it and the neighbouring tag stands flush against it, so the
 	// distance exception does not apply.
 	{label: "tag remove", where: "data.css .inst-tag-remove", w: "--size-chevron", h: "--size-chevron", hit: "--tap-min", alone: true},
+
+	// The tree's twist, and it was NOT on this list — which is why it stood at
+	// ten pixels with a click handler on it for as long as the tree has
+	// existed. It is the only way to open a node with a mouse, so ten pixels
+	// was the whole of the tree's mouse affordance.
+	//
+	// Alone, like the tag's cross: the label starts one --space-3 away, and
+	// that is 6 — far too little for the distance exception to carry the
+	// difference. The area is the pseudo-element's, the shape stays a chevron.
+	{label: "tree twist", where: "text.css .inst-tree-twist", w: "--size-chevron", h: "--size-chevron", hit: "--tap-min", alone: true},
 }
 
 var densities = []struct{ id, label string }{

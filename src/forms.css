@@ -293,13 +293,16 @@
   block-size: var(--size-switch-h);
   margin: 0;
   border-radius: var(--radius-full);
-  background: var(--track);
-  /* A ring of load-bearing border: on a switch the boundary IS the control.
-     Without it an off switch lives at a contrast of 1.25 — "off" cannot be
-     told from "there is no element here".                                 */
-  box-shadow: inset 0 0 0 var(--stroke) var(--border-control);
+  /* ONE SHAPE, NOT A SHAPE INSIDE A RING. An off switch has to clear 3:1
+     against its ground or it cannot be told from an empty patch of panel, and
+     that used to be delivered by an inset --border-control ring over the quiet
+     --track. It met the norm and drew an outlined capsule — two edges and a
+     pale middle. --switch-track carries the same guarantee in the fill, so the
+     control is one solid object; the reasoning and the second token are in
+     tokens.css. */
+  background: var(--switch-track);
   cursor: pointer;
-  transition: background var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  transition: background var(--dur-2) var(--ease-out);
 
   &::after {
     content: "";
@@ -318,7 +321,6 @@
 
   &:checked {
     background: var(--accent-solid);
-    box-shadow: inset 0 0 0 var(--stroke) var(--accent-solid);
     &::after { inset-inline-start: calc(100% - var(--size-switch-h) + 2px); }
   }
 }
@@ -789,7 +791,7 @@
 
   &:has(> input:focus-visible) {
     outline: 2px solid var(--focus-ring);
-    outline-offset: 1px;
+    outline-offset: 2px;
   }
 
   &:has(> input:disabled) { opacity: 0.5; cursor: not-allowed; }
@@ -850,7 +852,7 @@
   cursor: pointer;
 
   &:hover { border-color: var(--accent-border); background: var(--accent-bg); }
-  &:has(> input:focus-visible) { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+  &:has(> input:focus-visible) { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
   &:has(> input:disabled) { opacity: 0.5; cursor: not-allowed; }
 
   & > input[type="file"] {

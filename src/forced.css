@@ -72,8 +72,9 @@
 
   /* Masked glyphs lose their background colour under forced-colors, so they
      move to the system text colour.                                       */
-  .inst-tree-twist, .inst-step-twist, .inst-select-wrap::after,
-  .inst-cascader-item[aria-expanded]::after, .inst-cascader-path > * + *::before,
+  .inst-tree-twist::after, .inst-step-twist, .inst-select-wrap::after,
+  .inst-cascader-item[aria-expanded]::after, .inst-menu-item[aria-haspopup]::after,
+  .inst-cascader-path > * + *::before,
   .inst-note::before, .inst-approval-head::before, .inst-failure-head::before {
     background: CanvasText;
   }

@@ -23,14 +23,19 @@ api:
 отправляют.
 
 ```html preview
-<div class="inst-composer">
-  <textarea class="inst-textarea" rows="3" placeholder="Опишите задачу" aria-label="Опишите задачу"></textarea>
+<div class="inst-stack inst-stack--tight">
+  <div class="inst-composer">
+    <textarea class="inst-textarea" rows="1" placeholder="Опишите задачу или задайте вопрос" aria-label="Опишите задачу или задайте вопрос"></textarea>
+    <div class="inst-composer-bar inst-composer-bar--edge">
+      <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Отправить"><svg class="inst-icon" aria-hidden="true"><use href="#i-enter"/></svg></button>
+    </div>
+  </div>
   <div class="inst-composer-bar">
-    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Приложить</button>
-    <span class="inst-badge">opus</span>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Авто</button>
+    <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Добавить контекст"><svg class="inst-icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
     <span class="inst-cluster-spacer"></span>
-    12 480 / 200 000
-    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Отправить</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
+    <span class="inst-badge" data-tone="warn">контекст 90%</span>
   </div>
 </div>
 ```
@@ -40,7 +45,7 @@ api:
 | Что | Обязательно | Почему |
 |---|---|---|
 | `aria-label` или `<label>` у поля | да | Плейсхолдер — не имя: он исчезает на первом же символе |
-| Полоса контролов **внутри** рамки | да | Контролы принадлежат полю. Под рамкой они второй объект, и кольцо фокуса подсвечивает половину контрола |
+| Контролы **сообщения** внутри рамки | да | Вложение и отправка принадлежат полю. Снаружи они второй объект, и кольцо фокуса подсвечивает половину контрола. То, что переживает сообщение, — режим, модель, контекст — стоит **под** рамкой отдельной полосой, и быть вторым объектом там как раз и требуется |
 | `<button type="button">` для отправки | да | Внутри формы кнопка без типа её отправляет |
 | Отправка по `Enter` | нет | Кит оформляет; отправляет ли `Enter` или переносит строку — решение приложения, и обоснованы оба |
 
@@ -56,6 +61,26 @@ api:
 | Имя | На поле, а не на рамке: рамка это `<div>` и фокуса не берёт |
 | Фокус | Кольцо охватывает рамку целиком, поэтому подсвечен тот объект, в котором находится клавиатура |
 | Контраст | Граница — `--border-control`, 3.46:1: линия несущая, потому что здесь граница **и есть** контрол |
+
+## Варианты
+
+Строка может занимать **всю ширину внутри рамки**, а не хвостовой слот. Это
+форма для композера, у которого контролов больше, чем отправка: вложение,
+модель, счётчик остатка. Цена — пустое поле теряет свою одну строку, и это
+размен.
+
+```html preview
+<div class="inst-composer">
+  <textarea class="inst-textarea" rows="3" placeholder="Опишите задачу" aria-label="Опишите задачу"></textarea>
+  <div class="inst-composer-bar">
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Вложить</button>
+    <span class="inst-badge">opus</span>
+    <span class="inst-cluster-spacer"></span>
+    12 480 / 200 000
+    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Отправить</button>
+  </div>
+</div>
+```
 
 ## Размеры
 
@@ -78,7 +103,7 @@ api:
 
 ```html preview
 <div class="inst-composer">
-  <textarea class="inst-textarea" rows="1" placeholder="Опишите задачу или задайте вопрос" aria-label="Опишите задачу или задайте вопрос"></textarea>
+  <textarea class="inst-textarea" rows="1" aria-label="Выросшее поле">Поле растёт вместе с тем, что в него набирают, а отправка остаётся у последней строки, а не висит посреди пустой рамки.</textarea>
   <div class="inst-composer-bar inst-composer-bar--edge">
     <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Отправить"><svg class="inst-icon" aria-hidden="true"><use href="#i-enter"/></svg></button>
   </div>

@@ -9,7 +9,7 @@ api:
   - { name: "inst-turn-head", kind: "class", doc: "Who and when, in the type of metadata" }
   - { name: "inst-turn-who", kind: "class", doc: "The name inside that line" }
   - { name: "inst-turn-body", kind: "class", doc: "What was said. It may hold any component of this layer" }
-  - { name: "inst-turn-actions", kind: "class", doc: "Copy, retry, branch. Always visible, never revealed on hover" }
+  - { name: "inst-turn-actions", kind: "class", doc: "Copy, retry, branch. The row always holds its space; the buttons come up under the cursor, and stand at full strength wherever there is no cursor" }
   - { name: "--surface-recessed", kind: "token" }
   - { name: "--radius-lg", kind: "token" }
   - { name: "--pad-panel", kind: "token" }
@@ -35,8 +35,9 @@ for steps, a diff, an approval, a budget.
     <div class="inst-turn-head"><span class="inst-turn-who">Agent</span><span>14:02</span></div>
     <div class="inst-turn-body">I'll put it above the strip and let one legend key both.</div>
     <div class="inst-turn-actions">
-      <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Copy</button>
-      <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Retry</button>
+      <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Copy"><svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg></button>
+      <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Retry"><svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+      <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="More"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
     </div>
   </div>
 </div>
@@ -49,7 +50,7 @@ for steps, a diff, an approval, a budget.
 | `data-from="user"` on the person's turn | yes | The machine's turn is the default. Marking both would mean an attribute value with nothing to declare |
 | A name in `inst-turn-who` | yes | Colour and indent are not carriers: the recess is the same film in every theme, and a screen reader gets neither |
 | A time | no | Useful in a long thread, noise in a short one |
-| `inst-turn-actions` **visible** | yes, if present | Hover may strengthen an element, but it may not bring one into being — a row revealed on hover does not exist on a touchscreen |
+| `inst-turn-actions` keeps its **space** | yes, if present | Hover may strengthen an element, but it may not bring one into being. The row is laid out either way, so nothing moves under the cursor; the buttons fade in, and `@media (hover: none)` gives them at full strength where there is no cursor to reveal them with. A row that is not laid out at all does not exist on a touchscreen |
 | A thread as a list | no | Turns are siblings in an `inst-stack--loose`; the kit does not add a second name for a column |
 
 The person's turn is **recessed**, the machine's has no surface at all: the

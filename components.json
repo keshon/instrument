@@ -524,6 +524,9 @@
       "page": "flow",
       "forced": "none"
     },
+    "parts": {
+      "inst-menu-item": { "forced": "glyph" }
+    },
     "aria": {
       "role": "menu",
       "roving": "js",

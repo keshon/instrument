@@ -529,22 +529,33 @@
 
   /* The focus ring is NOT a mark but an outline around one, and it has a
      requirement of its own: to part both from every surface and from every
-     FILL the kit can lay under it. That is why the step here differs from
-     --accent-mark — this is not a third blue by oversight but the one step of
-     the ramp that is never a fill.
+     FILL the kit can lay under it.
 
-     On light-dark(--a-4, --a-3) it fails: in the light themes --a-4 is
-     EXACTLY --accent-solid, so the ring around a solid button is the colour
-     of the button, contrast 1.00, with only a 1px gap between them. The
-     weakest focus in the kit would sit on the main action of the screen. The
-     text gate does not see this: its list has the ring against a page, a
-     panel and a recess, but not against the fill the ring outlines.
+     IT USED TO MEET THAT REQUIREMENT WITH COLOUR, and paid for it. Around a
+     solid button the ring and the button are both the accent, contrast 1.00,
+     so the ring was pushed down the ramp to --a-6 until it cleared the fill by
+     2.51. Two things followed. The number never reached 3.0 — 2.51 is below
+     the norm the kit asks of every other non-text pair, so the guarantee was
+     always partial. And --a-6 is nearly black at four hues: the strongest
+     visual event on the screen was the outline of whatever the keyboard
+     happened to be resting on.
 
-     The values here are checked across all five themes and four accents.
-     Against the fill: 2.51 in the light themes, 2.49 in the dark ones (1.00
-     and 1.75 before). Against the surfaces the worst case is 8.54 against a
-     norm of 3.0.                                                           */
-  --focus-ring: light-dark(var(--a-6), var(--a-2));
+     SO THE SEPARATION MOVES FROM COLOUR TO GEOMETRY. The ring is the ordinary
+     accent, and what parts it from the fill is the gap: outline-offset shows
+     the SURFACE between the two, and surface against accent is already gated
+     at 3:1 in three places, because a primary button has to be visible on a
+     page, a panel and a recess. The guarantee is therefore stronger than the
+     one it replaces — 3.0 rather than 2.51 — and it holds by construction
+     rather than by a colour chosen to dodge one case.
+
+     The offset is 2px rather than 1 for the same reason: at a device pixel
+     ratio of 1.25 a one-pixel gap rounds to one device pixel and can be
+     swallowed by antialiasing on a rounded corner. Two survives every ratio
+     the kit is used at.
+
+     A ring on a surface it does not outline is unaffected: the same three
+     pairs the gate already holds at 3:1 are what it stands on.            */
+  --focus-ring: light-dark(var(--a-4), var(--a-3));
 
   /* The empty track of a meter and a slider. Deliberately quiet: its job is
      to let the fill part from it, not to part from anything itself. The
@@ -555,6 +566,26 @@
      it. Of a switch it is asked, and there the --border-control ring is added
      to it, because on a switch the boundary IS the control.                */
   --track: light-dark(oklch(0 0 0 / 0.10), oklch(1 0 0 / 0.16));
+
+  /* THE SWITCH GETS A TRACK OF ITS OWN, and the reason is the sentence above:
+     of a switch, 3:1 IS asked, because there the boundary is the control and
+     "off" has to be told from "there is no element here".
+
+     It used to be asked of the border instead — --track at 1.25 with an inset
+     --border-control ring laid over it. That met the norm and drew an outlined
+     capsule: two edges and a pale middle where the reference has one solid
+     shape. The ring is the kind of chrome the kit spends its budget removing
+     everywhere else.
+
+     So the capsule carries its own contrast and the ring goes. This is a
+     SECOND token rather than a darker --track because a meter and a slider
+     want the quiet one: their job is to let the fill part from them, not to
+     part from the surface, and darkening the shared token would repaint every
+     bar in the kit to fix a switch.
+
+     The numbers are held by the gate against a page, a panel and a recess —
+     the three grounds a switch can stand on.                              */
+  --switch-track: light-dark(oklch(0 0 0 / 0.45), oklch(1 0 0 / 0.36));
 
   /* The ground under a modal. In the dark theme it is denser: on a light page
      a dimming creates contrast by itself, on a dark one it has to be added.
@@ -2144,7 +2175,7 @@ hr {
 
 :focus-visible {
   outline: 2px solid var(--focus-ring);
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
 
 ::selection {
@@ -2730,10 +2761,20 @@ hr {
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   }
 
-  /* A link needs no reset of its own here: inheriting the colour and
-     underlining under the cursor is the base.css default now. Breadcrumbs are
-     the one piece of chrome in the kit where a link stands AMONG TEXT, so a
-     hover underline suits it rather than getting in the way.              */
+  /* A CRUMB CARRIES ITS OWN COLOUR, and this used to be left to base.css.
+
+     The reasoning was that inheriting the colour and underlining under the
+     cursor IS the base default, so a reset would be a duplicate. It held only
+     while nothing stood between: `.inst-prose a` is accent-coloured and
+     underlined, breadcrumbs sit in a page header above prose often enough, and
+     there the crumb stopped being chrome and became a link in a sentence — the
+     one thing a breadcrumb must not read as, because every crumb is a link and
+     an underline on all of them is noise.
+
+     Declared here rather than fixed in the page that showed it: a component
+     that only looks right outside somebody else's text is not finished. The
+     hover underline stays — that is the affordance, and it costs nothing while
+     the cursor is elsewhere.                                              */
   /* A crumb is a real tap target. Without a height of its own it is 18px,
      and together with the gap to its neighbour that gives 21.5 against a norm
      of 24: measured on somebody else's interface. The AREA grows, not the
@@ -2744,6 +2785,8 @@ hr {
     align-items: center;
     gap: var(--space-2);
     min-block-size: var(--tap-min);
+    color: inherit;
+    text-decoration-line: none;
   }
 
   & a:hover { color: var(--text-primary); }
@@ -5395,17 +5438,56 @@ hr {
 
 .inst-tree-item + .inst-tree-item { margin-block-start: var(--space-1); }
 
+/* THE AREA GROWS, THE SHAPE DOES NOT — the device `.inst-tag-remove`,
+   `.inst-tab-close` and `.inst-copy` already use, and the twist was the one
+   pressable thing in the kit without it.
+
+   It matters more here than anywhere else it is used. The twist is the ONLY
+   way to open a node with a mouse — the row selects, it does not expand, and
+   that separation is deliberate — so a ten-pixel target is the whole of the
+   tree's mouse affordance. Ten against a norm of twenty-four is not a near
+   miss; it is why a tree feels clickable on its icons and nowhere else.
+
+   Absolutely positioned, so the row's layout does not move: only an absolutely
+   positioned pseudo-element counts as the target's area, and only an
+   absolutely positioned one leaves the label's column where it was. */
 .inst-tree-twist {
+  position: relative;
   flex: none;
   inline-size: var(--size-chevron);
   block-size: var(--size-chevron);
-  background: var(--text-muted);
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   transition: rotate var(--dur-1) var(--ease-out);
+
+  /* The tap area up to the WCAG 2.2 AA norm, stated explicitly rather than as
+     a negative inset — that one counts from the padding box and misses by the
+     border. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+    inline-size: var(--tap-min);
+    block-size: var(--tap-min);
+  }
+
+  /* THE CHEVRON IS DRAWN BY ::after RATHER THAN BY THE SPAN, and the reason is
+     already written out on `.inst-tag-remove`, where it was found by hitting
+     the thing: a mask on an element clips ALL of its content, pseudo-elements
+     included. With the mask where it used to be, the invisible tap area above
+     would be cut back to the ten pixels of the arrow and catch nothing beyond
+     it — the area would exist in the stylesheet and not on the screen. */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--text-muted);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.75 3 7.75 6 4.75 9' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
 }
 
 /* A leaf keeps the room for its twist, so the labels hold their column. */
-.inst-tree-item:not([aria-expanded]) > .inst-tree-twist { background: none; }
+.inst-tree-item:not([aria-expanded]) > .inst-tree-twist::after { background: none; }
 .inst-tree-item[aria-expanded="true"] > .inst-tree-twist { rotate: 90deg; }
 
 }
@@ -5915,13 +5997,16 @@ hr {
   block-size: var(--size-switch-h);
   margin: 0;
   border-radius: var(--radius-full);
-  background: var(--track);
-  /* A ring of load-bearing border: on a switch the boundary IS the control.
-     Without it an off switch lives at a contrast of 1.25 — "off" cannot be
-     told from "there is no element here".                                 */
-  box-shadow: inset 0 0 0 var(--stroke) var(--border-control);
+  /* ONE SHAPE, NOT A SHAPE INSIDE A RING. An off switch has to clear 3:1
+     against its ground or it cannot be told from an empty patch of panel, and
+     that used to be delivered by an inset --border-control ring over the quiet
+     --track. It met the norm and drew an outlined capsule — two edges and a
+     pale middle. --switch-track carries the same guarantee in the fill, so the
+     control is one solid object; the reasoning and the second token are in
+     tokens.css. */
+  background: var(--switch-track);
   cursor: pointer;
-  transition: background var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  transition: background var(--dur-2) var(--ease-out);
 
   &::after {
     content: "";
@@ -5940,7 +6025,6 @@ hr {
 
   &:checked {
     background: var(--accent-solid);
-    box-shadow: inset 0 0 0 var(--stroke) var(--accent-solid);
     &::after { inset-inline-start: calc(100% - var(--size-switch-h) + 2px); }
   }
 }
@@ -6411,7 +6495,7 @@ hr {
 
   &:has(> input:focus-visible) {
     outline: 2px solid var(--focus-ring);
-    outline-offset: 1px;
+    outline-offset: 2px;
   }
 
   &:has(> input:disabled) { opacity: 0.5; cursor: not-allowed; }
@@ -6472,7 +6556,7 @@ hr {
   cursor: pointer;
 
   &:hover { border-color: var(--accent-border); background: var(--accent-bg); }
-  &:has(> input:focus-visible) { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+  &:has(> input:focus-visible) { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
   &:has(> input:disabled) { opacity: 0.5; cursor: not-allowed; }
 
   & > input[type="file"] {
@@ -7251,8 +7335,22 @@ hr {
   inline-size: 100%;
   min-block-size: var(--control-h-sm);
   padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
   flex-direction: row-reverse;
   justify-content: space-between;
+
+  /* A ROW OF A MENU ANSWERS THE CURSOR, and this one did not.
+
+     The hover surface was written on `.inst-menu-item`, so everything that is
+     a row of the menu WITHOUT being that class had none: the switch was the
+     only such thing in the kit, and it was the last row of the menu it stood
+     in — the one place a dead row is most visible, because the cursor arrives
+     there travelling down a column of live ones.
+
+     The radius comes with it. A fill with no corner inside a rounded popover
+     is a rectangle in a rounded box, and it only shows once something is
+     painted. */
+  &:hover { background: var(--surface-hover); }
 }
 
 .inst-menu-item {
@@ -7295,8 +7393,38 @@ hr {
   }
   /* A shortcut is already pushed to the far edge by its own margin: where one
      exists, the mark's auto margin would swallow it. The edge goes to the
-     shortcut and the mark stands behind it. */
-  &:has(> .inst-menu-shortcut)::after { margin-inline-start: var(--gap-inline); }
+     shortcut and the mark stands behind it.
+
+     ZERO RATHER THAN --gap-inline. The row is a flex container with
+     `gap: var(--gap-inline)` already between every pair of children, and a
+     margin of the same size on top of it made the distance TWICE the kit's
+     spacing — twenty-four pixels between a shortcut and the check beside it,
+     for no reason a reader could see. What this declaration has to undo is the
+     `auto`, and nothing else. */
+  &:has(> .inst-menu-shortcut)::after { margin-inline-start: 0; }
+
+  /* A SUBMENU CARRIES A CHEVRON, and the kit draws it rather than the markup.
+
+     It used to be typed as a character — `&rsaquo;` inside the shortcut slot —
+     and that is the one thing the icons page forbids by name: a text glyph has
+     different metrics in every font and can be substituted by an emoji. It
+     rendered at the type size of a shortcut, in the colour of a shortcut, and
+     read as punctuation somebody had left behind.
+
+     The rule follows `aria-haspopup` for the same reason the cascader's
+     follows `aria-expanded`: the attribute is what a screen reader reads, and
+     a class beside it would be the same fact written twice. The size and the
+     grid are the branch arrow's, and the argument is there — at this edge the
+     neighbour is the selection mark at --size-icon, not a label. */
+  &[aria-haspopup]::after {
+    content: "";
+    flex: none;
+    margin-inline-start: auto;
+    inline-size: var(--icon-size, var(--size-icon));
+    block-size: var(--icon-size, var(--size-icon));
+    background: var(--text-faint);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.2 3.6 10.6 8l-4.4 4.4' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
 
   &[data-tone="error"] { color: var(--err-text); }
   &[data-tone="error"]:hover { background: var(--err-bg); }
@@ -8136,7 +8264,7 @@ html:has(dialog:modal) { overflow: hidden; }
      it, or focus draws a rectangle through the middle of one object. */
   &:has(> .inst-textarea:focus-visible) {
     outline: 2px solid var(--focus-ring);
-    outline-offset: 1px;
+    outline-offset: 2px;
   }
 
   /* The field gives up its frame, and its resize grip with it: a corner grip
@@ -8299,7 +8427,19 @@ html:has(dialog:modal) { overflow: hidden; }
   overflow-wrap: anywhere;
 }
 
-.inst-approval-effects {
+/* ONE LIST FOR THE TWO BLOCKS. An approval lists what will happen, a failure
+   lists what was already tried, and both are a quiet column of short lines
+   inside a bordered block — the same object with two contents. Only one of
+   them used to be built: the other was a bare <ul>, so it arrived with the
+   browser's bullets and the browser's indent, which is the first thing a kit
+   is for.
+
+   The COLOUR stays apart, and that is a difference with a reason. Effects are
+   consequences of the decision being asked for and are read before pressing;
+   tried is a log of what already failed, read only if the first two lines did
+   not explain it. --text-secondary against --text-muted is exactly that
+   ordering, and it is set on each below.                                   */
+.inst-approval-effects, .inst-failure-tried {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -8307,7 +8447,6 @@ html:has(dialog:modal) { overflow: hidden; }
   padding: 0;
   list-style: none;
   font-size: var(--text-xs);
-  color: var(--text-secondary);
 
   & > li { display: flex; align-items: flex-start; gap: var(--space-3); }
   & > li::before {
@@ -8328,6 +8467,8 @@ html:has(dialog:modal) { overflow: hidden; }
     rotate: 45deg;
   }
 }
+
+.inst-approval-effects { color: var(--text-secondary); }
 
 .inst-approval-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
@@ -8959,10 +9100,23 @@ html:has(dialog:modal) { overflow: hidden; }
    is left with the text of an error and no move to make.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* AN APPROVAL AND A FAILURE ARE ONE FAMILY, and until now they only looked
+   like it. Both are a bordered block that stops the eye, with an icon head, a
+   machine string under it, a list, and a decision in one press — and the two
+   had drifted on every measurement that was not the padding: twelve pixels of
+   internal gap against six, the path in a recessed plate against a bare line,
+   and an extra margin above one set of actions and not the other. Three
+   differences with no reason between them, on two blocks that stand in the
+   same thread minutes apart.
+
+   What legitimately differs is the TONE and the edge marker: an approval is
+   the one place the kit puts an accent on a border, because it is the point
+   where the system waits for a human. A failure has already happened and needs
+   no bar to be noticed — its whole ground is the error surface.          */
 .inst-failure {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--gap-inline);
   padding: var(--pad-card);
   border: var(--hairline) solid color-mix(in oklab, var(--err-text) 35%, transparent);
   border-radius: var(--radius-lg);
@@ -8987,15 +9141,29 @@ html:has(dialog:modal) { overflow: hidden; }
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
+/* THE SAME PLATE AS `.inst-approval-what`, and for the same reason: this is a
+   machine string — an error text, a code, a path — read character by
+   character, and a plate is what says "this is quoted, not written".
+
+   The colour is NOT --surface-recessed here. That token is a film of black
+   over whatever it lies on, and over --err-bg it gives a dirty pink. A film of
+   the error tone over the error ground keeps the block one colour and still
+   drops the step the plate needs. */
 .inst-failure-reason {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   line-height: var(--leading-code);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, var(--err-text) 8%, transparent);
   overflow-wrap: anywhere;
 }
 
-.inst-failure-tried { font-size: var(--text-xs); color: var(--text-muted); }
-.inst-failure-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-2); }
+.inst-failure-tried { color: var(--text-muted); }
+/* No margin of its own: the block's gap already stands between the rows, and a
+   margin on top of it made the distance above the buttons differ from the one
+   above every other row — and from the approval's, which never had it. */
+.inst-failure-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Lanes of parallel runs
@@ -9257,8 +9425,9 @@ html:has(dialog:modal) { overflow: hidden; }
 
   /* Masked glyphs lose their background colour under forced-colors, so they
      move to the system text colour.                                       */
-  .inst-tree-twist, .inst-step-twist, .inst-select-wrap::after,
-  .inst-cascader-item[aria-expanded]::after, .inst-cascader-path > * + *::before,
+  .inst-tree-twist::after, .inst-step-twist, .inst-select-wrap::after,
+  .inst-cascader-item[aria-expanded]::after, .inst-menu-item[aria-haspopup]::after,
+  .inst-cascader-path > * + *::before,
   .inst-note::before, .inst-approval-head::before, .inst-failure-head::before {
     background: CanvasText;
   }

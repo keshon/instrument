@@ -23,14 +23,19 @@ The field a turn is written in: one frame holding the text and the controls
 that send it.
 
 ```html preview
-<div class="inst-composer">
-  <textarea class="inst-textarea" rows="3" placeholder="Describe a task" aria-label="Describe a task"></textarea>
+<div class="inst-stack inst-stack--tight">
+  <div class="inst-composer">
+    <textarea class="inst-textarea" rows="1" placeholder="Describe a task or ask a question" aria-label="Describe a task or ask a question"></textarea>
+    <div class="inst-composer-bar inst-composer-bar--edge">
+      <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Send"><svg class="inst-icon" aria-hidden="true"><use href="#i-enter"/></svg></button>
+    </div>
+  </div>
   <div class="inst-composer-bar">
-    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Attach</button>
-    <span class="inst-badge">opus</span>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Auto</button>
+    <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Add context"><svg class="inst-icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
     <span class="inst-cluster-spacer"></span>
-    12 480 / 200 000
-    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Send</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
+    <span class="inst-badge" data-tone="warn">context 90%</span>
   </div>
 </div>
 ```
@@ -40,7 +45,7 @@ that send it.
 | What | Required | Why |
 |---|---|---|
 | An `aria-label` or a `<label>` on the field | yes | A placeholder is not a name: it goes as soon as a character is typed |
-| The bar **inside** the frame | yes | The controls belong to the field. Under it they are a second object, and the focus ring then lights up half the control |
+| The **message's** controls inside the frame | yes | Attaching and sending belong to the field. Outside they are a second object, and the focus ring then lights up half the control. What outlives the message — the mode, the model, the context — stands **under** the frame in a bar of its own, and being a second object is the point |
 | A `<button type="button">` for sending | yes | Inside a form an unnamed type submits it |
 | Sending on `Enter` | no | The kit styles; whether `Enter` sends or breaks the line is the application's decision, and both are defensible |
 
@@ -57,6 +62,26 @@ draws a frame inside a frame.
 | The name | On the field, not on the frame: the frame is a `<div>` and takes no focus |
 | Focus | The ring goes round the whole frame, so what is highlighted is the object the keyboard is in |
 | Contrast | The border is `--border-control` at 3.46:1 — a load-bearing line, because here the border **is** the control |
+
+## Variants
+
+The bar can take the **whole width inside the frame** instead of the trailing
+slot. That is the shape for a composer whose controls are more than sending —
+an attachment, a model, a count of what is left — and it costs the empty field
+its single line, which is the trade.
+
+```html preview
+<div class="inst-composer">
+  <textarea class="inst-textarea" rows="3" placeholder="Describe a task" aria-label="Describe a task"></textarea>
+  <div class="inst-composer-bar">
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Attach</button>
+    <span class="inst-badge">opus</span>
+    <span class="inst-cluster-spacer"></span>
+    12 480 / 200 000
+    <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Send</button>
+  </div>
+</div>
+```
 
 ## Sizes
 
@@ -79,7 +104,7 @@ one line it reads as centred and on ten it stays with the last one.
 
 ```html preview
 <div class="inst-composer">
-  <textarea class="inst-textarea" rows="1" placeholder="Describe a task or ask a question" aria-label="Describe a task or ask a question"></textarea>
+  <textarea class="inst-textarea" rows="1" aria-label="A grown composer">The field grows with what is typed into it, and the send affordance stays with the last line rather than floating in the middle of an empty box.</textarea>
   <div class="inst-composer-bar inst-composer-bar--edge">
     <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Send"><svg class="inst-icon" aria-hidden="true"><use href="#i-enter"/></svg></button>
   </div>

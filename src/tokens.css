@@ -523,22 +523,33 @@
 
   /* The focus ring is NOT a mark but an outline around one, and it has a
      requirement of its own: to part both from every surface and from every
-     FILL the kit can lay under it. That is why the step here differs from
-     --accent-mark — this is not a third blue by oversight but the one step of
-     the ramp that is never a fill.
+     FILL the kit can lay under it.
 
-     On light-dark(--a-4, --a-3) it fails: in the light themes --a-4 is
-     EXACTLY --accent-solid, so the ring around a solid button is the colour
-     of the button, contrast 1.00, with only a 1px gap between them. The
-     weakest focus in the kit would sit on the main action of the screen. The
-     text gate does not see this: its list has the ring against a page, a
-     panel and a recess, but not against the fill the ring outlines.
+     IT USED TO MEET THAT REQUIREMENT WITH COLOUR, and paid for it. Around a
+     solid button the ring and the button are both the accent, contrast 1.00,
+     so the ring was pushed down the ramp to --a-6 until it cleared the fill by
+     2.51. Two things followed. The number never reached 3.0 — 2.51 is below
+     the norm the kit asks of every other non-text pair, so the guarantee was
+     always partial. And --a-6 is nearly black at four hues: the strongest
+     visual event on the screen was the outline of whatever the keyboard
+     happened to be resting on.
 
-     The values here are checked across all five themes and four accents.
-     Against the fill: 2.51 in the light themes, 2.49 in the dark ones (1.00
-     and 1.75 before). Against the surfaces the worst case is 8.54 against a
-     norm of 3.0.                                                           */
-  --focus-ring: light-dark(var(--a-6), var(--a-2));
+     SO THE SEPARATION MOVES FROM COLOUR TO GEOMETRY. The ring is the ordinary
+     accent, and what parts it from the fill is the gap: outline-offset shows
+     the SURFACE between the two, and surface against accent is already gated
+     at 3:1 in three places, because a primary button has to be visible on a
+     page, a panel and a recess. The guarantee is therefore stronger than the
+     one it replaces — 3.0 rather than 2.51 — and it holds by construction
+     rather than by a colour chosen to dodge one case.
+
+     The offset is 2px rather than 1 for the same reason: at a device pixel
+     ratio of 1.25 a one-pixel gap rounds to one device pixel and can be
+     swallowed by antialiasing on a rounded corner. Two survives every ratio
+     the kit is used at.
+
+     A ring on a surface it does not outline is unaffected: the same three
+     pairs the gate already holds at 3:1 are what it stands on.            */
+  --focus-ring: light-dark(var(--a-4), var(--a-3));
 
   /* The empty track of a meter and a slider. Deliberately quiet: its job is
      to let the fill part from it, not to part from anything itself. The
@@ -549,6 +560,26 @@
      it. Of a switch it is asked, and there the --border-control ring is added
      to it, because on a switch the boundary IS the control.                */
   --track: light-dark(oklch(0 0 0 / 0.10), oklch(1 0 0 / 0.16));
+
+  /* THE SWITCH GETS A TRACK OF ITS OWN, and the reason is the sentence above:
+     of a switch, 3:1 IS asked, because there the boundary is the control and
+     "off" has to be told from "there is no element here".
+
+     It used to be asked of the border instead — --track at 1.25 with an inset
+     --border-control ring laid over it. That met the norm and drew an outlined
+     capsule: two edges and a pale middle where the reference has one solid
+     shape. The ring is the kind of chrome the kit spends its budget removing
+     everywhere else.
+
+     So the capsule carries its own contrast and the ring goes. This is a
+     SECOND token rather than a darker --track because a meter and a slider
+     want the quiet one: their job is to let the fill part from them, not to
+     part from the surface, and darkening the shared token would repaint every
+     bar in the kit to fix a switch.
+
+     The numbers are held by the gate against a page, a panel and a recess —
+     the three grounds a switch can stand on.                              */
+  --switch-track: light-dark(oklch(0 0 0 / 0.45), oklch(1 0 0 / 0.36));
 
   /* The ground under a modal. In the dark theme it is denser: on a light page
      a dimming creates contrast by itself, on a dark one it has to be added.

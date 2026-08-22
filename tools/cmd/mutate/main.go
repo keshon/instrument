@@ -273,8 +273,8 @@ var mutations = []mutation{
 	// pays for a new invariant: both rows were already written down and already
 	// wrong, and nobody was reading them.
 	{"a value lied in a table with a fourth column", "docscheck", "docs/foundations/tokens.md",
-		"| `--focus-ring` | `--a-6` | `--a-2` |",
-		"| `--focus-ring` | `--a-5` | `--a-2` |",
+		"| `--focus-ring` | `--a-4` | `--a-3` |",
+		"| `--focus-ring` | `--a-5` | `--a-3` |",
 		"a column of prose after the values used to take the whole row out of the check"},
 	{"a lightness of the ramp lied", "docscheck", "docs/foundations/colors.md",
 		"| `--n-8` | 0.500 |",

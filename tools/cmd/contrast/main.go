@@ -181,6 +181,16 @@ var cases = []kase{
 	{label: "caret on panel", fg: "--accent-mark", bg: []string{"--surface-raised"}, min: large},
 	{label: "slider on track", fg: "--accent-mark", bg: []string{"--surface-raised", "--track"}, min: large},
 
+	// A SWITCH IS ITS OWN CASE among the tracks. The others only have to let
+	// their fill part from them; this one has to be visible while EMPTY, or
+	// "off" cannot be told from "no control here". It used to clear the norm
+	// with an inset border over the quiet track; the fill carries it now, and
+	// these three lines are what makes that a promise rather than a choice of
+	// colour that happened to look right on one theme.
+	{label: "switch: off track on page", fg: "--switch-track", bg: []string{"--surface-page"}, min: large},
+	{label: "switch: off track on panel", fg: "--switch-track", bg: []string{"--surface-raised"}, min: large},
+	{label: "switch: off track in inset", fg: "--switch-track", bg: []string{"--surface-sunken"}, min: large},
+
 	// Non-decorative borders: the border IS the control.
 	{label: "control border on panel", fg: "--border-control", bg: []string{"--surface-raised"}, min: large},
 	{label: "control border on page", fg: "--border-control", bg: []string{"--surface-page"}, min: large},
@@ -254,11 +264,27 @@ var cases = []kase{
 	{label: "focus: ring on page", fg: "--focus-ring", bg: []string{"--surface-page"}, min: large},
 	{label: "focus: ring on panel", fg: "--focus-ring", bg: []string{"--surface-raised"}, min: large},
 	{label: "focus: ring in inset", fg: "--focus-ring", bg: []string{"--surface-sunken"}, min: large},
-	// ...and against what it OUTLINES. This pair was not here, so the gate
-	// stayed green for years while in light themes --focus-ring and
-	// --accent-solid were the same color: contrast 1.00 on the main
-	// screen button. The threshold is distinguishability; see the constant.
-	{label: "focus: ring around primary fill", fg: "--focus-ring", bg: []string{"--accent-solid"}, min: distinct},
+	// ...and against what it OUTLINES.
+	//
+	// This used to be a pair: --focus-ring against --accent-solid, at a
+	// threshold of mere distinguishability, because a ring the colour of the
+	// button it circles is contrast 1.00 and the gate had not noticed for
+	// years. The fix at the time was to push the ring down the ramp until it
+	// cleared the fill by 2.51 — below the 3.0 asked of every other non-text
+	// pair, and nearly black at four hues.
+	//
+	// The ring is now the ordinary accent, and the fill is no longer what it
+	// has to part from: outline-offset puts a gap of the SURFACE between them.
+	// So the pair that guards it is the surface against the accent, and those
+	// three lines are the same ones a primary button already stands on — the
+	// guarantee is 3.0 instead of 2.51, and it is one the kit was making
+	// anyway rather than a number chosen to dodge a case.
+	//
+	// The gap only works because it is wide enough to survive fractional
+	// device pixel ratios; that is 2px, and it is stated in base.css.
+	{label: "focus: gap around the ring, on page", fg: "--accent-solid", bg: []string{"--surface-page"}, min: large},
+	{label: "focus: gap around the ring, on panel", fg: "--accent-solid", bg: []string{"--surface-raised"}, min: large},
+	{label: "focus: gap around the ring, in inset", fg: "--accent-solid", bg: []string{"--surface-sunken"}, min: large},
 
 	// ── SURFACE STACK STEPS ─────────────────────────────────────────────────
 	//

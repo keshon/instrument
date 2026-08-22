@@ -167,13 +167,13 @@ template: splash
 ## Выбор среди именованного
 
 ```html preview
-<div class="inst-popover" style="inline-size:20rem">
+<div class="inst-popover">
   <div class="inst-menu" role="menu" aria-label="Модели">
     <span class="inst-menu-label">Модели</span>
     <button class="inst-menu-item" role="menuitemradio" aria-checked="false" type="button">Fable 5<span class="inst-menu-shortcut">1</span></button>
     <button class="inst-menu-item" role="menuitemradio" aria-checked="true" type="button">Opus 5<span class="inst-menu-shortcut">2</span></button>
     <button class="inst-menu-item" role="menuitemradio" aria-checked="false" type="button">Sonnet 5<span class="inst-menu-shortcut">3</span></button>
-    <button class="inst-menu-item" type="button" role="menuitem" aria-haspopup="menu">Ещё модели<span class="inst-menu-shortcut">&rsaquo;</span></button>
+    <button class="inst-menu-item" type="button" role="menuitem" aria-haspopup="menu">Ещё модели</button>
     <hr class="inst-menu-sep">
     <span class="inst-menu-label">Быстрый режим</span>
     <label class="inst-switch"><input type="checkbox">Включить быстрый режим</label>

@@ -222,7 +222,7 @@
      it, or focus draws a rectangle through the middle of one object. */
   &:has(> .inst-textarea:focus-visible) {
     outline: 2px solid var(--focus-ring);
-    outline-offset: 1px;
+    outline-offset: 2px;
   }
 
   /* The field gives up its frame, and its resize grip with it: a corner grip
@@ -385,7 +385,19 @@
   overflow-wrap: anywhere;
 }
 
-.inst-approval-effects {
+/* ONE LIST FOR THE TWO BLOCKS. An approval lists what will happen, a failure
+   lists what was already tried, and both are a quiet column of short lines
+   inside a bordered block — the same object with two contents. Only one of
+   them used to be built: the other was a bare <ul>, so it arrived with the
+   browser's bullets and the browser's indent, which is the first thing a kit
+   is for.
+
+   The COLOUR stays apart, and that is a difference with a reason. Effects are
+   consequences of the decision being asked for and are read before pressing;
+   tried is a log of what already failed, read only if the first two lines did
+   not explain it. --text-secondary against --text-muted is exactly that
+   ordering, and it is set on each below.                                   */
+.inst-approval-effects, .inst-failure-tried {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -393,7 +405,6 @@
   padding: 0;
   list-style: none;
   font-size: var(--text-xs);
-  color: var(--text-secondary);
 
   & > li { display: flex; align-items: flex-start; gap: var(--space-3); }
   & > li::before {
@@ -414,6 +425,8 @@
     rotate: 45deg;
   }
 }
+
+.inst-approval-effects { color: var(--text-secondary); }
 
 .inst-approval-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
@@ -1045,10 +1058,23 @@
    is left with the text of an error and no move to make.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* AN APPROVAL AND A FAILURE ARE ONE FAMILY, and until now they only looked
+   like it. Both are a bordered block that stops the eye, with an icon head, a
+   machine string under it, a list, and a decision in one press — and the two
+   had drifted on every measurement that was not the padding: twelve pixels of
+   internal gap against six, the path in a recessed plate against a bare line,
+   and an extra margin above one set of actions and not the other. Three
+   differences with no reason between them, on two blocks that stand in the
+   same thread minutes apart.
+
+   What legitimately differs is the TONE and the edge marker: an approval is
+   the one place the kit puts an accent on a border, because it is the point
+   where the system waits for a human. A failure has already happened and needs
+   no bar to be noticed — its whole ground is the error surface.          */
 .inst-failure {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--gap-inline);
   padding: var(--pad-card);
   border: var(--hairline) solid color-mix(in oklab, var(--err-text) 35%, transparent);
   border-radius: var(--radius-lg);
@@ -1073,15 +1099,29 @@
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
+/* THE SAME PLATE AS `.inst-approval-what`, and for the same reason: this is a
+   machine string — an error text, a code, a path — read character by
+   character, and a plate is what says "this is quoted, not written".
+
+   The colour is NOT --surface-recessed here. That token is a film of black
+   over whatever it lies on, and over --err-bg it gives a dirty pink. A film of
+   the error tone over the error ground keeps the block one colour and still
+   drops the step the plate needs. */
 .inst-failure-reason {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   line-height: var(--leading-code);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, var(--err-text) 8%, transparent);
   overflow-wrap: anywhere;
 }
 
-.inst-failure-tried { font-size: var(--text-xs); color: var(--text-muted); }
-.inst-failure-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-2); }
+.inst-failure-tried { color: var(--text-muted); }
+/* No margin of its own: the block's gap already stands between the rows, and a
+   margin on top of it made the distance above the buttons differ from the one
+   above every other row — and from the approval's, which never had it. */
+.inst-failure-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Lanes of parallel runs

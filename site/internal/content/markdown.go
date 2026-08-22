@@ -504,7 +504,7 @@ func (r *codeRenderer) render(w util.BufWriter, source []byte, n ast.Node, enter
 		fmt.Fprintf(w, `<figure class="demo%s" data-demo>`+
 			`<figcaption class="demo-label">%s</figcaption>`+
 			`<div class="demo-frame demo-stage inst-theme">`+
-			`<div class="demo-root%s" data-density="comfortable">%s</div></div>`,
+			`<div class="demo-root%s">%s</div></div>`,
 			hero, label, ctxClass(ctx), raw)
 		writeTargets(w, targets, lg)
 		w.WriteString(`</figure>`)

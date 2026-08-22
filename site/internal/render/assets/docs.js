@@ -85,20 +85,6 @@
       if (v === 'default') { delete root.dataset[attr]; localStorage.removeItem(key); }
       else { root.dataset[attr] = v; localStorage.setItem(key, v); }
 
-      /* A DEMO STAGE SHOWS ITSELF AT COMFORTABLE, and the page around it does
-         not. The kit's default is the denser one and stays so — but an example
-         is the component being looked at rather than chrome being operated,
-         and the comfortable geometry is what it wants.
-
-         The moment a visitor picks a density, that choice has to reach the
-         examples too, or the picker would move the page and leave the very
-         thing it exists to demonstrate alone. So the stage carries the pinned
-         value only while the choice is the default. */
-      if (attr !== 'density') return;
-      for (const stage of document.querySelectorAll('.demo-root')) {
-        if (v === 'default') stage.dataset.density = 'comfortable';
-        else delete stage.dataset.density;
-      }
     };
 
     /* The initial state is set by the site: it alone knows what lies in

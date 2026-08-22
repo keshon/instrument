@@ -169,7 +169,7 @@ against a page" and "the ladder: soft against default".
 | `--accent-on` | `--n-0`, in both themes | | The label on a fill |
 | `--accent-hover` | `--a-5`, in both themes | | It moves **away** from the colour of the label rather than towards it |
 | `--accent-border` | `--a-4` | `--a-3` | The border of an accented control |
-| `--focus-ring` | `--a-6` | `--a-2` | The focus ring. The one step of the ramp that is never a fill, so it outlines one without merging into it |
+| `--focus-ring` | `--a-4` | `--a-3` | The focus ring — the ordinary accent. What parts it from the fill it outlines is the 2px gap of `outline-offset`, not a colour chosen to dodge that one case |
 
 ### Statuses
 
@@ -215,6 +215,7 @@ else about the tone.
 | Token | Light | Dark |
 |---|---|---|
 | `--track` | black 10% | white 16% |
+| `--switch-track` | black 45% | white 36% | A switch alone must be visible while **empty**, so its track is load-bearing at 3:1 and the ring it used to need is gone |
 | `--scrim` | black 32% | black 58% |
 | `--shadow-color-near` | black 6% | black 30% |
 | `--shadow-color-far` | black 10% | black 45% |

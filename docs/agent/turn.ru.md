@@ -9,7 +9,7 @@ api:
   - { name: "inst-turn-head", kind: "класс", doc: "Кто и когда, кеглем метаданных" }
   - { name: "inst-turn-who", kind: "класс", doc: "Имя в этой строке" }
   - { name: "inst-turn-body", kind: "класс", doc: "Что сказано. Может держать любой компонент этого слоя" }
-  - { name: "inst-turn-actions", kind: "класс", doc: "Копировать, повторить, ветвить. Видны всегда, а не по наведению" }
+  - { name: "inst-turn-actions", kind: "класс", doc: "Копировать, повторить, ветвить. Ряд всегда занимает своё место; кнопки проявляются под курсором и стоят в полную силу там, где курсора нет" }
   - { name: "--surface-recessed", kind: "токен" }
   - { name: "--radius-lg", kind: "токен" }
   - { name: "--pad-panel", kind: "токен" }
@@ -28,15 +28,16 @@ api:
 ```html preview
 <div class="inst-stack inst-stack--loose">
   <div class="inst-turn" data-from="user">
-    <div class="inst-turn-head"><span class="inst-turn-who">You</span><span>14:02</span></div>
-    <div class="inst-turn-body">Добавь полосу состава над историей проверок.</div>
+    <div class="inst-turn-head"><span class="inst-turn-who">Вы</span><span>14:02</span></div>
+    <div class="inst-turn-body">Добавь полосу долей над лентой истории.</div>
   </div>
   <div class="inst-turn">
     <div class="inst-turn-head"><span class="inst-turn-who">Агент</span><span>14:02</span></div>
-    <div class="inst-turn-body">Поставлю её над полосой, легенда будет общая.</div>
+    <div class="inst-turn-body">Поставлю её над лентой и дам одной легенде ключевать обе.</div>
     <div class="inst-turn-actions">
-      <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Копировать</button>
-      <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Повторить</button>
+      <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Копировать"><svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg></button>
+      <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Повторить"><svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+      <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Ещё"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
     </div>
   </div>
 </div>
@@ -49,7 +50,7 @@ api:
 | `data-from="user"` у реплики человека | да | Реплика машины — умолчание. Помечать обе значило бы завести значение атрибута, которому нечего объявлять |
 | Имя в `inst-turn-who` | да | Цвет и отступ не носители: утопление — одна и та же плёнка в любой теме, а скринридер не получает ни того ни другого |
 | Время | нет | Полезно в длинной ветке, шум в короткой |
-| Видимые `inst-turn-actions` | да, если они есть | Наведение может усилить элемент, но не может вызвать его к жизни: ряд, появляющийся под курсором, на сенсорном экране не существует |
+| `inst-turn-actions` держит **место** | да, если они есть | Наведение может усилить элемент, но не может вызвать его к жизни. Ряд размечен в любом случае, поэтому под курсором ничто не сдвигается: кнопки проявляются, а `@media (hover: none)` отдаёт их в полную силу там, где курсора нет. Ряд, которого нет в разметке вовсе, на сенсорном экране не существует |
 | Ветка как список | нет | Реплики — соседи в `inst-stack--loose`; второго имени для колонки кит не заводит |
 
 Реплика человека **утоплена**, у реплики машины поверхности нет вовсе: именно

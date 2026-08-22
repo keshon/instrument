@@ -156,8 +156,22 @@
   inline-size: 100%;
   min-block-size: var(--control-h-sm);
   padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
   flex-direction: row-reverse;
   justify-content: space-between;
+
+  /* A ROW OF A MENU ANSWERS THE CURSOR, and this one did not.
+
+     The hover surface was written on `.inst-menu-item`, so everything that is
+     a row of the menu WITHOUT being that class had none: the switch was the
+     only such thing in the kit, and it was the last row of the menu it stood
+     in — the one place a dead row is most visible, because the cursor arrives
+     there travelling down a column of live ones.
+
+     The radius comes with it. A fill with no corner inside a rounded popover
+     is a rectangle in a rounded box, and it only shows once something is
+     painted. */
+  &:hover { background: var(--surface-hover); }
 }
 
 .inst-menu-item {
@@ -200,8 +214,38 @@
   }
   /* A shortcut is already pushed to the far edge by its own margin: where one
      exists, the mark's auto margin would swallow it. The edge goes to the
-     shortcut and the mark stands behind it. */
-  &:has(> .inst-menu-shortcut)::after { margin-inline-start: var(--gap-inline); }
+     shortcut and the mark stands behind it.
+
+     ZERO RATHER THAN --gap-inline. The row is a flex container with
+     `gap: var(--gap-inline)` already between every pair of children, and a
+     margin of the same size on top of it made the distance TWICE the kit's
+     spacing — twenty-four pixels between a shortcut and the check beside it,
+     for no reason a reader could see. What this declaration has to undo is the
+     `auto`, and nothing else. */
+  &:has(> .inst-menu-shortcut)::after { margin-inline-start: 0; }
+
+  /* A SUBMENU CARRIES A CHEVRON, and the kit draws it rather than the markup.
+
+     It used to be typed as a character — `&rsaquo;` inside the shortcut slot —
+     and that is the one thing the icons page forbids by name: a text glyph has
+     different metrics in every font and can be substituted by an emoji. It
+     rendered at the type size of a shortcut, in the colour of a shortcut, and
+     read as punctuation somebody had left behind.
+
+     The rule follows `aria-haspopup` for the same reason the cascader's
+     follows `aria-expanded`: the attribute is what a screen reader reads, and
+     a class beside it would be the same fact written twice. The size and the
+     grid are the branch arrow's, and the argument is there — at this edge the
+     neighbour is the selection mark at --size-icon, not a label. */
+  &[aria-haspopup]::after {
+    content: "";
+    flex: none;
+    margin-inline-start: auto;
+    inline-size: var(--icon-size, var(--size-icon));
+    block-size: var(--icon-size, var(--size-icon));
+    background: var(--text-faint);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.2 3.6 10.6 8l-4.4 4.4' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
 
   &[data-tone="error"] { color: var(--err-text); }
   &[data-tone="error"]:hover { background: var(--err-bg); }
