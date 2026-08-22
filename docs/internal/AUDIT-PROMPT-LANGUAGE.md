@@ -175,38 +175,45 @@ not agree on the rungs:
 Sixty-four other components have no rung at all. A panel, a card, a menu, a
 table, a step, a turn are one size each.
 
-**The competing mechanism, which already works.** `[data-density]` and
-`[data-scale]` NEST: a panel carrying `data-density="compact"` inside a
-comfortable page recomputes its own control heights and paddings from its own
-attribute. That is a per-subtree size dimension the kit already ships, and it is
-how a tighter panel can be asked for today without a single line of app CSS.
+**THE TWO MECHANISMS ARE ORTHOGONAL, and the button already proves it.** It
+carries four rungs AND it responds to density: `--control-h-sm` is 26px at
+default and 30 at comfortable, so `.inst-btn--sm` means "smaller than its
+neighbours" at whatever tightness the region is set to. There is no conflict to
+resolve and no mechanism to choose between. Density sets the register of a
+region; a rung places one instance inside that register. They multiply.
 
-So the audit's job here is not "add ladders everywhere". It is to decide **which
-of the two mechanisms owns which job**, and to say why nine families chose the
-modifier while the rest, in effect, chose nesting.
+`[data-density]` and `[data-scale]` also NEST — a panel carrying
+`data-density="compact"` inside a comfortable page recomputes its own control
+heights and paddings from its own attribute. Useful, and a different thing:
+it retunes a whole subtree, not one object against its siblings.
+
+So the question is NOT which mechanism wins. It is narrower and answerable:
+
+**which components need a rung, and which rungs.**
 
 Questions to answer with evidence:
 
-- For each of the two mechanisms: what can it express that the other cannot?
-  A modifier changes ONE component; a nested attribute changes a subtree.
-  Which of the reference's variations are one and which are the other?
-- Is `[data-density]` on a single panel a legitimate authoring move or a misuse
-  of a page-level axis? It works — but does it *mean* what a reader will think
-  it means, and does it stay legible in markup?
+- Which of the sixty-four unladdered components does the reference actually vary
+  in size, in the same screen, against its own neighbours? Rank by evidence from
+  the screenshots, not by symmetry — a ladder nobody needs is API weight, and
+  the kit deleted two classes this month for being weight.
 - Where a ladder exists, are its rungs the right ones? `inst-icon` has only
   `sm`, `inst-share` only `lg`, `inst-ring` has no `md`. Are those absences
   decisions or gaps?
-- Which of the sixty-four unladdered components does the reference actually vary
-  in size? Rank by evidence from the screenshots, not by symmetry — a ladder
-  nobody needs is API weight, and the kit already deleted two classes this month
-  for being weight.
-- Is there a THIRD answer? A component that inherits its rung from context —
-  the way `.inst-btn--xs` reads `--icon-size` and the status bar sets the
-  register for whatever stands in it — costs no API at all. How much of the
-  theory does that already cover?
+- Do the existing rungs MEAN the same thing across families? `--sm` on a button
+  is one step down the control ladder; `--sm` on a history strip is a different
+  quantity entirely. If the word does not name a consistent amount, a caller
+  cannot combine two `--sm` things and expect them to agree.
+- Is there a THIRD answer for some of them? A component that inherits its rung
+  from context — the way `.inst-btn--xs` reads `--icon-size` and the status bar
+  sets the register for whatever stands in it — costs no API at all. How much of
+  the theory does that already cover?
 - What would a ladder have to guarantee to be worth adding? Name the invariant
   and say whether `cmd/proportion` can hold it. A rung whose ratios nothing
   checks will drift the first time the type scale moves.
+- Where the reference varies a PADDING rather than a size — the panel that is
+  tighter in one place than another — is that a rung on the panel, or is it the
+  nested density attribute doing exactly its job? Answer per instance.
 
 **The failure mode to watch for.** Four rungs on seventy-three components is two
 hundred and ninety-two states, and the kit's matrix is already 300 combinations
