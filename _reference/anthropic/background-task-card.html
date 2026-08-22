@@ -1,0 +1,35 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Background task card — Anthropic reference capture</title>
+<style>
+  html { background: rgb(252,252,251); }
+  body { margin: 0; padding: 40px;
+    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: rgb(11,11,11); }
+  .note { max-width: 62ch; margin: 0 0 28px; padding: 12px 14px;
+    border-radius: 8px; background: rgba(11,11,11,0.04);
+    font-size: 12px; line-height: 1.55; color: rgb(82,81,78); }
+  .note code { font-family: ui-monospace, Consolas, monospace; }
+  dl { margin: 20px 0 0; max-width: 62ch; font-size: 12px; color: rgb(82,81,78); line-height: 1.6; }
+  dt { font-weight: 600; margin-top: 8px; }
+  dd { margin: 0 0 0 0; }
+</style>
+
+<div class="note">
+  <strong>Background task card</strong> — captured 2026-08-22 from a Claude Code
+  session running parallel subagents, Background tasks panel open.
+  Computed styles inlined, framework classes stripped. Icons in the original are
+  an icon font, so glyph spans come across empty.
+</div>
+
+<div style="display:flex;flex-direction:column;border-radius:8px;background-color:rgba(11, 11, 11, 0.04);font-size:13px;line-height:19px;width:393.562px;height:78px"><div style="display:flex;position:relative;flex-direction:column;gap:5px;padding:8px;font-size:13px;line-height:19px"><div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:19px"><div style="display:flex;flex:1 1 0%;font-size:13px;line-height:19px"><span style="display:flex;flex:1 1 0%;align-items:flex-start;gap:3px;color:rgb(137, 135, 129);font-size:13px;line-height:19px"><span style="display:block;color:rgb(137, 135, 129);font-size:13px;line-height:19px">Demo agent B</span></span></div></div><span style="display:flex;flex-direction:column;gap:5px;padding:0px 0px 3px;color:rgb(137, 135, 129);font-size:12px;line-height:15px"><span style="display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 8px;color:rgb(137, 135, 129);font-size:12px;line-height:15px"><span style="display:block;color:rgb(137, 135, 129);font-size:12px;line-height:15px">Agent</span><span style="display:block;color:rgb(137, 135, 129);font-size:12px;line-height:15px">Completed</span><span style="display:block;color:rgb(137, 135, 129);font-size:12px;line-height:15px">02s</span></span><span style="display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 8px;color:rgb(137, 135, 129);font-size:12px;line-height:15px"><span style="display:block;color:rgb(137, 135, 129);font-size:12px;line-height:15px">34.9k tokens</span><span style="display:block;color:rgb(137, 135, 129);font-size:12px;line-height:15px">0 tool uses</span><button type="button" aria-label="View transcript for Demo agent B" style="display:block;border-radius:3px;color:rgb(24, 79, 149);font-size:12px;line-height:15px">View transcript</button></span></span></div></div>
+
+<dl>
+  <dt>Fill</dt><dd><code>rgba(11,11,11,0.04)</code> — a 4% black film. No border at all.</dd>
+  <dt>Corner</dt><dd>8px on the card, 3px on the inline link button.</dd>
+  <dt>Padding</dt><dd>8px, with a 5px column gap between the three registers.</dd>
+  <dt>Type</dt><dd>Name 13px/19px. Everything else 12px/15px (1.25).</dd>
+  <dt>Weight</dt><dd>400 throughout — <strong>including the name</strong>. Hierarchy is carried by colour, not weight.</dd>
+  <dt>Colour</dt><dd>All text <code>rgb(137,135,129)</code>; only the link departs, at <code>rgb(24,79,149)</code>.</dd>
+  <dt>Structure</dt><dd>Three registers stacked — <em>what it is</em> (name), <em>how it went</em> (kind · state · duration), <em>what it cost</em> (tokens · tool uses · transcript link). Rows 2 and 3 are <code>flex-wrap</code> with <code>align-items: baseline</code> and a <code>3px 8px</code> gap.</dd>
+</dl>

@@ -1,0 +1,70 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Composer — Anthropic reference capture</title>
+<style>
+  html { background: rgb(252,252,251); }
+  body { margin: 0; padding: 40px;
+    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: rgb(11,11,11); }
+  .note { max-width: 62ch; margin: 0 0 28px; padding: 12px 14px;
+    border-radius: 8px; background: rgba(11,11,11,0.04);
+    font-size: 12px; line-height: 1.55; color: rgb(82,81,78); }
+  .note code { font-family: ui-monospace, Consolas, monospace; }
+  dl { margin: 28px 0 0; max-width: 62ch; font-size: 12px; color: rgb(82,81,78); line-height: 1.6; }
+  dt { font-weight: 600; margin-top: 8px; }
+  dd { margin: 0; }
+  pre { max-width: 62ch; padding: 10px 12px; border-radius: 8px;
+    background: rgba(11,11,11,0.04); font-size: 11px; line-height: 1.5;
+    font-family: ui-monospace, Consolas, monospace; overflow-x: auto; }
+</style>
+
+<div class="note">
+  <strong>Composer</strong> — captured 2026-08-22 from a Claude Code session.
+  The field plus its session row. Computed styles inlined, framework classes
+  stripped. The <code>Auto</code>, add, mic and settings glyphs are an icon font
+  in the original and come across as empty spans; the <strong>context ring is
+  real SVG</strong> and renders.
+</div>
+
+<div style="display:flex;position:relative;flex-direction:column;flex:0 0 auto;gap:6px;padding:0px 28px 0px 32px;font-size:13px;line-height:19px;width:328.438px;height:78px;max-width:828px"><div style="position:relative;border-radius:10px;font-size:13px;line-height:19px"><div aria-hidden="true" style="position:absolute;inset:0;border-radius:10px;background-color:color(srgb 1 1 1 / 0.8);font-size:13px;line-height:19px;box-shadow:rgba(11, 11, 11, 0) 0px 0px 0px 0px inset, color(srgb 0.0431373 0.0431373 0.0431373 / 0.1) 0px 0px 0px 1px, color(srgb 0.043137 0.043137 0.043137 / 0.04) 0px 2px 8px 0px"></div><div style="display:flex;position:relative;font-size:13px;line-height:19px"><div style="flex:1 1 0%;font-size:14px;line-height:18px"><div contenteditable="true" role="textbox" dir="auto" aria-multiline="true" aria-label="Prompt" tabindex="0" style="position:relative;padding:13px 4px 13px 10px;font-size:14px;line-height:18px;white-space:break-spaces"><p style="font-size:14px;line-height:18px;white-space:break-spaces"><br></p></div></div><span aria-hidden="true" style="display:block;position:absolute;padding:13px 0px 0px 10px;color:rgba(11, 11, 11, 0.25);font-size:14px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">run three agents this time</span><div style="display:flex;align-items:center;align-self:flex-end;gap:5px;padding:10px 10px 10px 4px;font-size:13px;line-height:19px"><span style="display:flex;font-size:13px;line-height:19px"><button type="button" disabled="" aria-label="Send" style="display:flex;position:relative;align-items:center;justify-content:center;padding:0px 4px;border-radius:6px;color:color(srgb 0.0431373 0.0431373 0.0431373 / 0.35);font-size:13px;line-height:19px;white-space:nowrap;opacity:0.6;cursor:default"><span aria-hidden="true" style="display:flex;align-items:center;justify-content:center;color:color(srgb 0.0431373 0.0431373 0.0431373 / 0.35);font-weight:533.25;line-height:16px;text-align:center;white-space:nowrap;cursor:default">&#x21B5;</span></button></span></div></div></div><div style="display:flex;align-items:center;gap:6px;padding:4px 0px;font-size:13px;line-height:19px"><div style="display:flex;align-items:center;gap:6px;font-size:13px;line-height:19px"><span style="display:flex;font-size:13px;line-height:19px"><button type="button" tabindex="0" aria-haspopup="menu" aria-expanded="false" style="display:flex;position:relative;align-items:center;justify-content:center;gap:6px;padding:0px 6px;border-radius:5px;font-size:12px;line-height:17px;white-space:nowrap;cursor:default"><span style="display:flex;align-items:center;gap:4px;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;cursor:default"><span style="display:block;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;overflow:clip visible;text-overflow:ellipsis;cursor:default">Auto</span></span></button></span><button type="button" aria-label="Add" tabindex="0" aria-haspopup="menu" aria-expanded="false" style="display:flex;position:relative;flex:0 0 auto;align-items:center;justify-content:center;gap:6px;border-radius:5px;font-size:12px;line-height:17px;white-space:nowrap;cursor:default"><span style="display:flex;align-items:center;gap:4px;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;cursor:default"><span aria-hidden="true" style="display:flex;flex:0 0 auto;align-items:center;justify-content:center;color:rgb(82, 81, 78);font-weight:533.25;line-height:16px;text-align:center;white-space:nowrap;cursor:default">+</span></span></button><div role="group" aria-label="Press and hold to record" style="display:flex;position:relative;flex:0 0 auto;align-items:stretch;border-radius:5px;font-size:13px;line-height:19px"><button type="button" aria-pressed="false" aria-label="Press and hold to record" style="display:flex;position:relative;flex:0 0 auto;align-items:center;justify-content:center;gap:6px;border-radius:5px;font-size:12px;line-height:17px;white-space:nowrap;cursor:default"><span style="display:flex;align-items:center;gap:4px;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;cursor:default"><span aria-hidden="true" style="display:flex;flex:0 0 auto;align-items:center;justify-content:center;color:rgb(82, 81, 78);font-weight:533.25;line-height:16px;text-align:center;white-space:nowrap;cursor:default">&#x1F3A4;</span></span></button><button type="button" aria-label="Dictation settings" tabindex="0" aria-haspopup="menu" aria-expanded="false" style="display:flex;position:relative;flex:0 0 auto;align-items:center;justify-content:center;gap:6px;margin:0px 0px 0px -2px;padding:0px 4px;border-radius:5px;font-size:12px;line-height:17px;white-space:nowrap;cursor:default"><span style="display:flex;align-items:center;gap:4px;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;cursor:default"><span aria-hidden="true" style="display:flex;flex:0 0 auto;align-items:center;justify-content:center;color:rgb(137, 135, 129);font-size:12px;font-weight:577.75;line-height:12px;text-align:center;white-space:nowrap;cursor:default">&#x2304;</span></span></button></div></div><div style="display:flex;align-items:center;gap:5px;margin:0px 0px 0px 25.0938px;font-size:13px;line-height:19px"><button type="button" tabindex="0" aria-haspopup="menu" aria-expanded="false" style="display:flex;position:relative;align-items:center;justify-content:center;gap:6px;padding:0px 6px;border-radius:5px;font-size:12px;line-height:17px;white-space:nowrap;cursor:default"><span style="display:flex;align-items:center;gap:4px;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;cursor:default"><span style="display:block;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;overflow:clip visible;text-overflow:ellipsis;cursor:default">Sonnet 5</span></span></button><button type="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" style="display:flex;position:relative;flex:0 0 auto;align-items:center;justify-content:center;gap:6px;padding:0px 6px;border-radius:5px;font-size:12px;line-height:17px;white-space:nowrap;cursor:default"><span style="display:flex;align-items:center;gap:4px;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;cursor:default"><span style="display:block;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;overflow:clip visible;text-overflow:ellipsis;cursor:default">Low</span></span></button><button type="button" aria-label="Usage: context 8%, plan 10%" tabindex="0" aria-haspopup="dialog" aria-expanded="false" style="display:flex;position:relative;flex:0 0 auto;align-items:center;justify-content:center;gap:6px;border-radius:5px;font-size:12px;line-height:17px;white-space:nowrap;cursor:default"><span style="display:flex;align-items:center;gap:4px;font-size:12px;line-height:17px;text-align:center;white-space:nowrap;cursor:default"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="width:12px;height:12px"><circle cx="6" cy="6" r="5" fill="none" style="stroke:rgba(11, 11, 11, 0.1);stroke-width:2px"></circle><circle cx="6" cy="6" r="5" fill="none" stroke-dasharray="31.41592653589793" stroke-dashoffset="28.902652413026097" stroke-linecap="round" style="stroke:rgb(42, 120, 214);stroke-width:2px"></circle></svg></span></button></div></div></div>
+
+<dl>
+  <dt>The frame is a shadow, not a border</dt>
+  <dd>An absolutely positioned <code>aria-hidden</code> layer carries
+    <code>border-radius: 10px</code>, <code>background: rgb(255 255 255 / 0.8)</code>
+    and <code>box-shadow: 0 0 0 1px rgba(11,11,11,0.1), 0 2px 8px rgba(11,11,11,0.04)</code>.
+    The 1px outline is a spread shadow — no layout box, sub-pixel control.</dd>
+
+  <dt>Field</dt>
+  <dd>14px / 18px leading, padding <code>13px 4px 13px 10px</code>. One line of
+    text makes the frame 44px tall.</dd>
+
+  <dt>Send</dt>
+  <dd>At the field's trailing edge via <code>align-self: flex-end</code> on a
+    wrapper padded <code>10px 10px 10px 4px</code>. Corner <strong>6px</strong>
+    — the 24px rung, not the 20px one the session row uses.</dd>
+
+  <dt>Session row</dt>
+  <dd>Every control: 12px / 17px type, <strong>5px corner</strong>, padding
+    <code>0 6px</code> (labelled) or none (icon-only) — the 20px rung.
+    Left group gap 6px, right group gap 5px.</dd>
+
+  <dt>The context ring, exactly</dt>
+  <dd><code>12&times;12</code> box, <code>viewBox="0 0 12 12"</code>,
+    <code>r="5"</code>, <code>stroke-width: 2</code> — so the stroke is
+    <strong>16.7%</strong> of the viewBox. Track
+    <code>rgba(11,11,11,0.1)</code>, arc <code>rgb(42,120,214)</code>.
+    Driven by <code>stroke-dasharray: 31.4159</code> (= 2&pi;r) with
+    <code>stroke-dashoffset</code>, <code>stroke-linecap: round</code>, and
+    <strong>no rotation</strong> — the arc starts at 3 o'clock.</dd>
+</dl>
+
+<pre>&lt;svg width="12" height="12" viewBox="0 0 12 12"&gt;
+  &lt;circle cx="6" cy="6" r="5" fill="none"
+          stroke="rgba(11,11,11,0.1)" stroke-width="2"/&gt;
+  &lt;circle cx="6" cy="6" r="5" fill="none"
+          stroke="rgb(42,120,214)" stroke-width="2"
+          stroke-dasharray="31.41592653589793"
+          stroke-dashoffset="28.902652413026097"
+          stroke-linecap="round"/&gt;
+&lt;/svg&gt;</pre>
