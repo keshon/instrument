@@ -4,9 +4,8 @@ group: Layout
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-statusbar", kind: "class", doc: "The strip at the bottom edge. One line in height" }
-  - { name: "inst-statusbar-item", kind: "class", doc: "A reading. A `<span>` if it is not pressed, a `<button>` or an `<a>` if it is" }
-  - { name: "inst-statusbar-end", kind: "class", doc: "The right group: everything after it goes to the far edge" }
+  - { name: "inst-statusbar", kind: "class", doc: "The strip at the bottom edge. One line in height. It styles its own readings — a `<span>`, an `<a>` or a `<button>` placed in it becomes one, and there is no class to remember" }
+  - { name: "inst-cluster-spacer", kind: "class", doc: "Everything after it goes to the far edge. The strip's own gap holds that group together, so it needs nothing of its own" }
   - { name: "data-tone", kind: "attribute", value: "ok · warn · error · running · neutral", doc: "The tone of a reading. It takes `--tone-ink`" }
   - { name: "--control-h-xs", kind: "token", doc: "The area of a reading. The shape does not thicken by it" }
   - { name: "--text-2xs", kind: "token", value: "11px", doc: "The type size of the strip" }
@@ -21,17 +20,22 @@ at the left, the mode and the encoding at the right. What stands here are
 **readings** rather than controls — they are read, though almost every one of
 them can be pressed.
 
+The strip is a **context**, not a vocabulary: it sets the type size, the colour
+and the glyph size, and whatever stands inside inherits them. A `<span>` is a
+reading that is only read, a `<button>` or an `<a>` one that answers, and a
+[`inst-btn--xs`](../components/actions/button.md) is a control — all three
+without a class of their own.
+
 ```html preview
 <div class="inst-statusbar">
-  <button class="inst-statusbar-item" type="button">master</button>
-  <span class="inst-statusbar-item" data-tone="error">
+  <button type="button">master</button>
+  <span data-tone="error">
     <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>2 errors</span>
-  <span class="inst-statusbar-item" data-tone="warn">7 remarks</span>
-  <span class="inst-statusbar-end">
-    <span class="inst-statusbar-item">Ln 1, Col 1</span>
-    <span class="inst-statusbar-item">UTF-8</span>
-    <button class="inst-statusbar-item" type="button">Go</button>
-  </span>
+  <span data-tone="warn">7 remarks</span>
+  <span class="inst-cluster-spacer"></span>
+  <span>Ln 1, Col 1</span>
+  <span>UTF-8</span>
+  <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Go</button>
 </div>
 ```
 

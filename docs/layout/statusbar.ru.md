@@ -4,9 +4,8 @@ group: Раскладка
 layout: component
 source: src/layout.css
 api:
-  - { name: "inst-statusbar", kind: "класс", doc: "Полоса у нижнего края. Высота в одну строку" }
-  - { name: "inst-statusbar-item", kind: "класс", doc: "Показание. `<span>`, если не нажимается, `<button>` или `<a>`, если нажимается" }
-  - { name: "inst-statusbar-end", kind: "класс", doc: "Правая группа: всё после неё уходит к дальнему краю" }
+  - { name: "inst-statusbar", kind: "класс", doc: "Полоса у нижнего края. Высота в одну строку. Показания она оформляет сама: `<span>`, `<a>` или `<button>` внутри становится показанием, и запоминать класс не нужно" }
+  - { name: "inst-cluster-spacer", kind: "класс", doc: "Всё после него уходит к дальнему краю. Группу держит собственный зазор полосы, поэтому своего ей не нужно" }
   - { name: "data-tone", kind: "атрибут", value: "ok · warn · error · running · neutral", doc: "Тон показания. Берёт `--tone-ink`" }
   - { name: "--control-h-xs", kind: "токен", doc: "Область показания. Форма при этом не толстеет" }
   - { name: "--text-2xs", kind: "токен", value: "11px", doc: "Кегль полосы" }
@@ -20,17 +19,22 @@ api:
 кодировка справа. Здесь стоят **показания**, а не контролы, — их читают, хотя
 нажать почти каждое можно.
 
+Полоса — это **контекст**, а не словарь: она задаёт кегль, цвет и размер
+значка, а всё, что стоит внутри, их наследует. `<span>` — показание, которое
+только читают, `<button>` или `<a>` — то, которое отвечает,
+[`inst-btn--xs`](../components/actions/button.md) — контрол. Все три без
+собственного класса.
+
 ```html preview
 <div class="inst-statusbar">
-  <button class="inst-statusbar-item" type="button">master</button>
-  <span class="inst-statusbar-item" data-tone="error">
+  <button type="button">master</button>
+  <span data-tone="error">
     <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>2 ошибки</span>
-  <span class="inst-statusbar-item" data-tone="warn">7 замечаний</span>
-  <span class="inst-statusbar-end">
-    <span class="inst-statusbar-item">Стр. 1, кол. 1</span>
-    <span class="inst-statusbar-item">UTF-8</span>
-    <button class="inst-statusbar-item" type="button">Go</button>
-  </span>
+  <span data-tone="warn">7 замечаний</span>
+  <span class="inst-cluster-spacer"></span>
+  <span>Стр. 1, кол. 1</span>
+  <span>UTF-8</span>
+  <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Go</button>
 </div>
 ```
 

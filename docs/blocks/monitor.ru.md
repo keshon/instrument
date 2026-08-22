@@ -38,7 +38,7 @@ template: splash
       </ol>
     </nav>
     <span class="inst-cluster-spacer"></span>
-    <span class="inst-statusbar-item"><span class="inst-dot" data-tone="ok"></span>проверено 12 с назад</span>
+    <span class="inst-cluster inst-cluster--tight"><span class="inst-dot" data-tone="ok"></span>проверено 12 с назад</span>
   </header>
 
   <main class="inst-shell-main">

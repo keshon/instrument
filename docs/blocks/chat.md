@@ -31,7 +31,7 @@ class except the library's own, and not a single line of script.
       </ol>
     </nav>
     <span class="inst-cluster-spacer"></span>
-    <span class="inst-statusbar-item"><span class="inst-dot" data-tone="running"></span>working</span>
+    <span class="inst-cluster inst-cluster--tight"><span class="inst-dot" data-tone="running"></span>working</span>
   </header>
 
   <main class="inst-shell-main">

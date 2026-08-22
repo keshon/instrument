@@ -38,7 +38,7 @@ the library's own, and not a single line of script.
       </ol>
     </nav>
     <span class="inst-cluster-spacer"></span>
-    <span class="inst-statusbar-item"><span class="inst-dot" data-tone="ok"></span>checked 12 s ago</span>
+    <span class="inst-cluster inst-cluster--tight"><span class="inst-dot" data-tone="ok"></span>checked 12 s ago</span>
   </header>
 
   <main class="inst-shell-main">
