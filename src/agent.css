@@ -160,7 +160,13 @@
    who spoke is carried by the name in the head, which is where a screen
    reader gets it either way. */
 .inst-turn[data-from="user"] {
-  padding: var(--pad-panel);
+  /* WIDER THAN IT IS TALL, and that is the bubble's own proportion rather than
+     a panel's. A square inset reads correctly on a block of several lines and
+     wrongly on the one line an instruction usually is: with 12 on every side
+     the text meets the corner arc, because a 12px radius eats most of a 12px
+     inset before the first letter. The reference sets 12 and 16 for the same
+     reason, and the horizontal step is the one that has room to give. */
+  padding: var(--pad-panel) var(--pad-card);
   border-radius: var(--radius-lg);
   background: var(--surface-recessed);
 }

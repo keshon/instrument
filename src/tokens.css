@@ -1116,6 +1116,21 @@
      stands untouched below. */
   --control-h-sm: 24px;
   --control-h-md: 32px;
+  /* 38 IS THE RAIL'S BUTTON, and that is where the number comes from — it had
+     no derivation written anywhere until it was gone looking for.
+
+     lg is not "a big button" in search of a use. Its case is a control with a
+     glyph and NO LABEL: the navigation rail, an icon button standing alone, an
+     avatar at the head of a card. There the glyph is --size-icon-lg, 24px, and
+     what has to be got right is the ink against the box rather than the ink
+     against a word — cmd/proportion bands that pair at 0.50…0.76, because
+     below half the glyph is lost in an empty target and above three quarters
+     it hits the edges. 24/38 is 0.63, the middle of the band.
+
+     It has no counterpart in the reference, which is why this comment exists
+     rather than a change: Claude Code's largest control is 32, but Claude Code
+     has no icon rail and never sets a 24px glyph alone in a button. The rung
+     answers a case the reference does not have.                             */
   --control-h-lg: 38px;
 
   /* THE ROUNDING of a control is its own for each size, for the same reason

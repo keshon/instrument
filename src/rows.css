@@ -63,6 +63,34 @@
    read as a single block.                                               */
 .inst-task + .inst-task { margin-block-start: var(--space-1); }
 
+/* AND THE SAME LAW WHERE THE NEIGHBOUR IS NOT A ROW, which the line above did
+   not cover because only rows were in view when it was written.
+
+   A list of rows is rarely only rows. A failing peer puts an `.inst-failure`
+   under the row it belongs to, a warning puts an `.inst-note` there — the
+   block explains the row above it and has to stand directly under it. With no
+   rule for that pair the two touch at zero, and the row's hover fill runs
+   straight into the block's border. Measured on an assembled screen: the
+   highlight met the top edge of the failure and the two read as one object,
+   which is the very thing the rule above exists to prevent.
+
+   THE GAP IS --gap-row RATHER THAN --space-1, and larger on purpose. Two rows
+   are the same kind of thing and want the smallest gap that keeps their
+   highlights apart. A row and a block are different kinds, and the step
+   between them has to say so — otherwise the block reads as one more row that
+   happens to be red.
+
+   Scoped to the two list bodies rather than declared globally: there the rows
+   are laid out with margins and this margin adds to nothing. In an
+   `.inst-stack` the spacing is a `gap`, and a margin on a flex child is added
+   to it — the same breath would arrive twice.                             */
+:is(.inst-panel-body--list, .inst-panel-body--flush) > :is(
+  .inst-task + :not(.inst-task),
+  :not(.inst-task) + .inst-task
+) {
+  margin-block-start: var(--gap-row);
+}
+
 .inst-task-gutter { display: flex; justify-content: center; }
 .inst-task-main { min-inline-size: 0; }
 .inst-task-meta { font-size: var(--text-xs); line-height: var(--leading-ui); color: var(--text-muted); white-space: nowrap; }
