@@ -169,6 +169,11 @@ var rules = []rule{
 	// bound: below 0.16 the control stops being rounded and competes with the
 	// card around it. Upper bound: above 0.30 it reads as a pill, and a pill in
 	// the kit means "toggle".
+	// The xs button takes the badge's corner rather than the control tier's:
+	// at 20–22px the control radius reaches 0.36 and reads as a pill. Same
+	// band, different numerator — the shape is guarded either way.
+	{label: "xs control rounding", a: "--radius-xs", b: "--control-h-xs", min: 0.16, max: 0.30, perDens: true,
+		why: "the smallest button reads as a pill or loses its rounding entirely"},
 	{label: "sm control rounding", a: "--radius-control-sm", b: "--control-h-sm", min: 0.16, max: 0.30, perDens: true,
 		why: "small control reads as a pill or loses its rounding entirely"},
 	{label: "md control rounding", a: "--radius-control-md", b: "--control-h-md", min: 0.16, max: 0.30, perDens: true,

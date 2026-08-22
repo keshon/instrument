@@ -5,7 +5,7 @@ layout: component
 source: src/agent.css
 api:
   - { name: "inst-composer", kind: "класс", doc: "Рамка. Несёт границу, фон и кольцо фокуса" }
-  - { name: "inst-composer-bar", kind: "класс", doc: "Контролы внутри рамки. Всё, что в ней не контрол, читается метаданными" }
+  - { name: "inst-composer-bar", kind: "класс", doc: "Контролы. Внутри рамки они принадлежат сообщению, под ней — сессии. Всё, что не контрол, читается метаданными, а глифы берут мелкую иконку" }
   - { name: "--border-control", kind: "токен" }
   - { name: "--accent-border", kind: "токен" }
   - { name: "--surface-field", kind: "токен" }
@@ -24,7 +24,7 @@ api:
 <div class="inst-composer">
   <textarea class="inst-textarea" rows="3" placeholder="Опишите задачу" aria-label="Опишите задачу"></textarea>
   <div class="inst-composer-bar">
-    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Приложить</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Приложить</button>
     <span class="inst-badge">opus</span>
     <span class="inst-cluster-spacer"></span>
     12 480 / 200 000

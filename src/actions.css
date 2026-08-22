@@ -472,6 +472,58 @@
 .inst-btn--sm { --btn-pad: var(--control-pad-sm); min-block-size: var(--control-h-sm); border-radius: var(--radius-control-sm); font-size: var(--text-xs); }
 .inst-btn--lg { --btn-pad: var(--control-pad-lg); min-block-size: var(--control-h-lg); border-radius: var(--radius-control-lg); font-size: var(--text-md); }
 
+/* A FOURTH SIZE, for a control SUBORDINATE to what it sits on.
+
+   The ladder stopped at `sm` on purpose: 26px is the smallest box that is a
+   tap target on its own, and a button below it needs an argument. The argument
+   is a row of controls belonging to something else — the icons under an
+   answer, the session controls under a composer, the send arrow at a field's
+   trailing edge. There a button the size of a toolbar button outweighs its
+   owner: on a thread of twenty turns, sixty 30px boxes read as the subject and
+   the answers as their caption.
+
+   The test is ownership, not importance. A primary that stands on its own
+   stays `sm` even when its label is short — it is the act, not an annotation
+   on one.
+
+   THE BOX IS THE BADGE'S, exactly: --control-h-xs, --space-3, --radius-xs. At
+   this size the neighbour is a badge rather than a button, and the kit already
+   drew a chip that holds one word at this height — there is no second answer
+   to find. Taking the control tier instead would put --radius-control-sm on a
+   22px box, which is 0.36, which the kit's own band for a control shape calls
+   a pill.
+
+   THE TAP AREA IS NOT SHRUNK WITH IT. An invisible ::before grows to
+   --tap-min, the same device `.inst-copy`, `.inst-tag-remove` and
+   `.inst-tab-close` already use: the AREA is the target's, the box is the
+   drawing's. Without it a 20px button would rest on the distance exception of
+   WCAG 2.5.8 and hold only while the caller's gap stayed wide enough — a
+   promise the kit cannot keep on the caller's behalf.
+
+   THE ROW OWES IT --space-3. Enlarged areas can overlap, and where they do a
+   tap near the seam lands on whichever pseudo-element is on top rather than on
+   the button under the finger. The box is 18px at compact, so 18 + 6 = 24 is
+   the first gap that clears; --space-2 leaves a two-pixel overlap. Both rows
+   in the kit that use this size are set accordingly. */
+.inst-btn--xs {
+  position: relative;
+  --btn-pad: var(--space-3);
+  min-block-size: var(--control-h-xs);
+  border-radius: var(--radius-xs);
+  font-size: var(--text-2xs);
+  --icon-size: var(--size-icon-sm);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+    inline-size: var(--tap-min);
+    block-size: var(--tap-min);
+  }
+}
+
 /* An OPTICAL correction for a glyph at the edge.
 
    Measured: the box of a glyph starts exactly at the content edge, but the
@@ -527,6 +579,7 @@
    commonest mark of a home-made kit.                                       */
 .inst-btn--icon { inline-size: var(--control-h-md); padding-inline: 0; }
 .inst-btn--sm.inst-btn--icon { inline-size: var(--control-h-sm); }
+.inst-btn--xs.inst-btn--icon { inline-size: var(--control-h-xs); }
 .inst-btn--lg.inst-btn--icon { inline-size: var(--control-h-lg); }
 
 /* The seam of a group is a border removed from a neighbour, not a negative

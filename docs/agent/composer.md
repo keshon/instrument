@@ -5,7 +5,7 @@ layout: component
 source: src/agent.css
 api:
   - { name: "inst-composer", kind: "class", doc: "The frame. It carries the border, the background and the focus ring" }
-  - { name: "inst-composer-bar", kind: "class", doc: "The controls, inside the frame. Anything in it that is not a control reads as metadata" }
+  - { name: "inst-composer-bar", kind: "class", doc: "The controls. Inside the frame they belong to the message; standing under it they belong to the session. Anything in it that is not a control reads as metadata, and its glyphs take the small icon" }
   - { name: "--border-control", kind: "token" }
   - { name: "--accent-border", kind: "token" }
   - { name: "--surface-field", kind: "token" }
@@ -24,7 +24,7 @@ that send it.
 <div class="inst-composer">
   <textarea class="inst-textarea" rows="3" placeholder="Describe a task" aria-label="Describe a task"></textarea>
   <div class="inst-composer-bar">
-    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Attach</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Attach</button>
     <span class="inst-badge">opus</span>
     <span class="inst-cluster-spacer"></span>
     12 480 / 200 000

@@ -80,9 +80,9 @@ template: splash
             </details>
 
             <div class="inst-turn-actions">
-              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Копировать"><svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg></button>
-              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Повторить"><svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
-              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Ещё"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
+              <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Копировать"><svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg></button>
+              <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Повторить"><svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+              <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Ещё"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
             </div>
           </div>
 
@@ -116,16 +116,16 @@ template: splash
             <textarea class="inst-textarea" rows="2" placeholder="Опишите задачу" aria-label="Опишите задачу"></textarea>
             <div class="inst-composer-bar">
               <span class="inst-cluster-spacer"></span>
-              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Отправить"><svg class="inst-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+              <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-label="Отправить"><svg class="inst-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
             </div>
           </div>
 
-          <div class="inst-cluster inst-cluster--tight">
-            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Авто</button>
-            <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-haspopup="menu" aria-label="Добавить"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
+          <div class="inst-composer-bar">
+            <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Авто</button>
+            <button class="inst-btn inst-btn--xs inst-btn--icon inst-btn--ghost" type="button" aria-haspopup="menu" aria-label="Добавить"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
             <span class="inst-cluster-spacer"></span>
-            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
-            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Высокое</button>
+            <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
+            <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Высокое</button>
             <span class="inst-badge" data-tone="warn">контекст 90%</span>
           </div>
         </div>
@@ -140,15 +140,17 @@ template: splash
 
 Строка под полем держит то, что переживает одну реплику: режим разрешений,
 модель, усилие, сколько осталось контекста. Это **не** контролы поля, поэтому
-они стоят снаружи его рамки обычным [кластером](../layout/flow.md). Отправка
-принадлежит сообщению и остаётся внутри рамки, у заднего края поля.
+они стоят снаружи его рамки — тем же
+[`inst-composer-bar`](../agent/composer.md), который может стоять внутри рамки
+и под ней. Отправка принадлежит сообщению и остаётся внутри, у заднего края
+поля.
 
 ```html preview
-<div class="inst-cluster inst-cluster--tight">
-    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Авто</button>
+<div class="inst-composer-bar">
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Авто</button>
     <span class="inst-cluster-spacer"></span>
-    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
-    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Высокое</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button" aria-haspopup="menu">Высокое</button>
     <span class="inst-badge" data-tone="warn">контекст 90%</span>
   </div>
 ```

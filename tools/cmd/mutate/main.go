@@ -170,6 +170,14 @@ var mutations = []mutation{
 		"--radius-mark: var(--radius-2xs);",
 		"--radius-mark: var(--radius-xs);",
 		"at half the box a mark stops being rounded and becomes a circle or a pill"},
+	// The smallest button borrows the badge's box, so its corner is guarded
+	// against that box rather than the control tier's. Shrink the box and the
+	// 4px corner reaches a third of the height, which is the pill the band
+	// refuses everywhere else.
+	{"the smallest button shrank past its corner", "proportion", "src/tokens.css",
+		"--control-h-xs: 20px;   /* badge, chip */",
+		"--control-h-xs: 12px;   /* badge, chip */",
+		"below sm the corner reads as a pill, and a chip stops being a chip"},
 
 	// ── dist: the "Forbidden" section ──────────────────────────────────────
 	{"!important in a component", "dist", "src/actions.css",

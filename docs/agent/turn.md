@@ -35,8 +35,8 @@ for steps, a diff, an approval, a budget.
     <div class="inst-turn-head"><span class="inst-turn-who">Agent</span><span>14:02</span></div>
     <div class="inst-turn-body">I'll put it above the strip and let one legend key both.</div>
     <div class="inst-turn-actions">
-      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Copy</button>
-      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Retry</button>
+      <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Copy</button>
+      <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Retry</button>
     </div>
   </div>
 </div>
@@ -85,8 +85,8 @@ brings its own frame. A surface under them would put a plate inside a plate.
     </div>
   </details>
   <div class="inst-turn-actions">
-    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Copy</button>
-    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Retry</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Copy</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Retry</button>
   </div>
 </div>
 ```

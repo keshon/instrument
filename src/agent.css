@@ -80,9 +80,27 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
+  /* --space-3 RATHER THAN --space-2, and the reason is arithmetic rather than
+     rhythm. These are `.inst-btn--xs`, whose box is the badge's — 18px at
+     compact — and which grows an invisible 24px tap area to keep the promise
+     the box no longer keeps on its own. Two such areas must not overlap, or a
+     tap near the seam lands on whichever pseudo-element happens to be on top
+     rather than on the button under the finger. 18 + 4 = 22 overlaps by two
+     pixels; 18 + 6 = 24 exactly clears, and every larger density clears by
+     more. The composer bar arrived at the same number from the same
+     constraint. */
+  gap: var(--space-3);
   font-size: var(--text-xs);
   color: var(--text-muted);
+  /* THE INK SHRINKS, THE TARGET DOES NOT — the copy button's rule, applied to
+     a row of them. 18px is the glyph of a control that owns its field; these
+     stand under an answer and annotate it, and at the toolbar size they
+     outweigh the text they belong to. 14 is what the kit uses for a glyph
+     beside a value, in the status bar and on `.inst-copy` alike.
+
+     The size is stated here as well as on the button: the row also holds a
+     time and may hold a plain glyph, and neither of those is a button. */
+  --icon-size: var(--size-icon-sm);
 }
 
 .inst-turn-actions > .inst-btn {
@@ -228,7 +246,31 @@
   padding: var(--space-3) var(--control-pad-sm);
   font-size: var(--text-xs);
   color: var(--text-muted);
+  /* The same small glyph as a turn's actions, for the same reason: this row
+     annotates the field rather than competing with it. */
+  --icon-size: var(--size-icon-sm);
 }
+
+/* THE ROW STANDS INSIDE THE FRAME OR UNDER IT, and both are the composer's.
+
+   Inside are the controls of the MESSAGE — attaching to it, sending it. Under
+   it go the ones that outlive the message: the permission mode, the model, the
+   effort, what is left of the context. A session is not a message, and a frame
+   drawn round both would say it was.
+
+   UNDER THE FRAME THE PADDING GOES. Inside, it is the field's own inset and
+   the row is chrome on a surface. Outside, the row is one item in a stack and
+   the padding is counted twice: the inline half pushed the first control 10px
+   clear of an edge it should have started at, and the block half stacked on
+   top of the caller's gap, so 8px of air arrived as 14. A ghost button already
+   carries its own --space-3, which is what puts its LABEL a little inside the
+   frame while its BOX starts where the frame starts — the alignment the inline
+   padding was reaching for, arrived at by the control rather than by the row.
+
+   The vertical distance is left to the stack. That is where it belongs: the
+   caller chose --tight or --loose for a reason, and a row that adds its own
+   air overrules the choice without saying so. */
+.inst-composer + .inst-composer-bar { padding: 0; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Approval request

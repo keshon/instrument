@@ -3800,6 +3800,58 @@ hr {
 .inst-btn--sm { --btn-pad: var(--control-pad-sm); min-block-size: var(--control-h-sm); border-radius: var(--radius-control-sm); font-size: var(--text-xs); }
 .inst-btn--lg { --btn-pad: var(--control-pad-lg); min-block-size: var(--control-h-lg); border-radius: var(--radius-control-lg); font-size: var(--text-md); }
 
+/* A FOURTH SIZE, for a control SUBORDINATE to what it sits on.
+
+   The ladder stopped at `sm` on purpose: 26px is the smallest box that is a
+   tap target on its own, and a button below it needs an argument. The argument
+   is a row of controls belonging to something else — the icons under an
+   answer, the session controls under a composer, the send arrow at a field's
+   trailing edge. There a button the size of a toolbar button outweighs its
+   owner: on a thread of twenty turns, sixty 30px boxes read as the subject and
+   the answers as their caption.
+
+   The test is ownership, not importance. A primary that stands on its own
+   stays `sm` even when its label is short — it is the act, not an annotation
+   on one.
+
+   THE BOX IS THE BADGE'S, exactly: --control-h-xs, --space-3, --radius-xs. At
+   this size the neighbour is a badge rather than a button, and the kit already
+   drew a chip that holds one word at this height — there is no second answer
+   to find. Taking the control tier instead would put --radius-control-sm on a
+   22px box, which is 0.36, which the kit's own band for a control shape calls
+   a pill.
+
+   THE TAP AREA IS NOT SHRUNK WITH IT. An invisible ::before grows to
+   --tap-min, the same device `.inst-copy`, `.inst-tag-remove` and
+   `.inst-tab-close` already use: the AREA is the target's, the box is the
+   drawing's. Without it a 20px button would rest on the distance exception of
+   WCAG 2.5.8 and hold only while the caller's gap stayed wide enough — a
+   promise the kit cannot keep on the caller's behalf.
+
+   THE ROW OWES IT --space-3. Enlarged areas can overlap, and where they do a
+   tap near the seam lands on whichever pseudo-element is on top rather than on
+   the button under the finger. The box is 18px at compact, so 18 + 6 = 24 is
+   the first gap that clears; --space-2 leaves a two-pixel overlap. Both rows
+   in the kit that use this size are set accordingly. */
+.inst-btn--xs {
+  position: relative;
+  --btn-pad: var(--space-3);
+  min-block-size: var(--control-h-xs);
+  border-radius: var(--radius-xs);
+  font-size: var(--text-2xs);
+  --icon-size: var(--size-icon-sm);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+    inline-size: var(--tap-min);
+    block-size: var(--tap-min);
+  }
+}
+
 /* An OPTICAL correction for a glyph at the edge.
 
    Measured: the box of a glyph starts exactly at the content edge, but the
@@ -3855,6 +3907,7 @@ hr {
    commonest mark of a home-made kit.                                       */
 .inst-btn--icon { inline-size: var(--control-h-md); padding-inline: 0; }
 .inst-btn--sm.inst-btn--icon { inline-size: var(--control-h-sm); }
+.inst-btn--xs.inst-btn--icon { inline-size: var(--control-h-xs); }
 .inst-btn--lg.inst-btn--icon { inline-size: var(--control-h-lg); }
 
 /* The seam of a group is a border removed from a neighbour, not a negative
@@ -7860,9 +7913,27 @@ html:has(dialog:modal) { overflow: hidden; }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
+  /* --space-3 RATHER THAN --space-2, and the reason is arithmetic rather than
+     rhythm. These are `.inst-btn--xs`, whose box is the badge's — 18px at
+     compact — and which grows an invisible 24px tap area to keep the promise
+     the box no longer keeps on its own. Two such areas must not overlap, or a
+     tap near the seam lands on whichever pseudo-element happens to be on top
+     rather than on the button under the finger. 18 + 4 = 22 overlaps by two
+     pixels; 18 + 6 = 24 exactly clears, and every larger density clears by
+     more. The composer bar arrived at the same number from the same
+     constraint. */
+  gap: var(--space-3);
   font-size: var(--text-xs);
   color: var(--text-muted);
+  /* THE INK SHRINKS, THE TARGET DOES NOT — the copy button's rule, applied to
+     a row of them. 18px is the glyph of a control that owns its field; these
+     stand under an answer and annotate it, and at the toolbar size they
+     outweigh the text they belong to. 14 is what the kit uses for a glyph
+     beside a value, in the status bar and on `.inst-copy` alike.
+
+     The size is stated here as well as on the button: the row also holds a
+     time and may hold a plain glyph, and neither of those is a button. */
+  --icon-size: var(--size-icon-sm);
 }
 
 .inst-turn-actions > .inst-btn {
@@ -8008,7 +8079,31 @@ html:has(dialog:modal) { overflow: hidden; }
   padding: var(--space-3) var(--control-pad-sm);
   font-size: var(--text-xs);
   color: var(--text-muted);
+  /* The same small glyph as a turn's actions, for the same reason: this row
+     annotates the field rather than competing with it. */
+  --icon-size: var(--size-icon-sm);
 }
+
+/* THE ROW STANDS INSIDE THE FRAME OR UNDER IT, and both are the composer's.
+
+   Inside are the controls of the MESSAGE — attaching to it, sending it. Under
+   it go the ones that outlive the message: the permission mode, the model, the
+   effort, what is left of the context. A session is not a message, and a frame
+   drawn round both would say it was.
+
+   UNDER THE FRAME THE PADDING GOES. Inside, it is the field's own inset and
+   the row is chrome on a surface. Outside, the row is one item in a stack and
+   the padding is counted twice: the inline half pushed the first control 10px
+   clear of an edge it should have started at, and the block half stacked on
+   top of the caller's gap, so 8px of air arrived as 14. A ghost button already
+   carries its own --space-3, which is what puts its LABEL a little inside the
+   frame while its BOX starts where the frame starts — the alignment the inline
+   padding was reaching for, arrived at by the control rather than by the row.
+
+   The vertical distance is left to the stack. That is where it belongs: the
+   caller chose --tight or --loose for a reason, and a row that adds its own
+   air overrules the choice without saying so. */
+.inst-composer + .inst-composer-bar { padding: 0; }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Approval request

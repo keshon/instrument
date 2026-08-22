@@ -35,8 +35,8 @@ api:
     <div class="inst-turn-head"><span class="inst-turn-who">Агент</span><span>14:02</span></div>
     <div class="inst-turn-body">Поставлю её над полосой, легенда будет общая.</div>
     <div class="inst-turn-actions">
-      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Копировать</button>
-      <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Повторить</button>
+      <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Копировать</button>
+      <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Повторить</button>
     </div>
   </div>
 </div>
@@ -85,8 +85,8 @@ api:
     </div>
   </details>
   <div class="inst-turn-actions">
-    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Копировать</button>
-    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Повторить</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Копировать</button>
+    <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">Повторить</button>
   </div>
 </div>
 ```

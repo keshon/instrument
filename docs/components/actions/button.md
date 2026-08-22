@@ -16,6 +16,7 @@ api:
   - { name: "inst-btn-value",    kind: "class",     doc: "The value inside `.inst-btn-stack`. A long one is truncated: this is an identifier, and wrapping it is not allowed" }
   - { name: "inst-btn--ghost",   kind: "modifier", doc: "No border and no fill. For secondary actions in a dense row" }
   - { name: "inst-btn--danger",  kind: "modifier", doc: "A destructive action: the tone of an error in the label. This is a TONE over a weight rather than a fifth weight — it combines with any of them" }
+  - { name: "inst-btn--xs",      kind: "modifier", doc: "The badge's box: `--control-h-xs`, `--space-3`, `--radius-xs`. For a control belonging to something else. The tap area stays `--tap-min` through a `::before`" }
   - { name: "inst-btn--sm",      kind: "modifier", doc: "The height from `--control-h-sm`, the size `--text-xs`" }
   - { name: "inst-btn--lg",      kind: "modifier", doc: "The height from `--control-h-lg`, the size `--text-md`" }
   - { name: "inst-btn--icon",    kind: "modifier", doc: "Square, an icon only. It calls for an `aria-label`" }
@@ -194,6 +195,7 @@ The class on an `<a>` gives exactly the same button, with no underline.
 ## Sizes
 
 ```html preview
+<button class="inst-btn inst-btn--xs" type="button">xs</button>
 <button class="inst-btn inst-btn--sm" type="button">sm</button>
 <button class="inst-btn" type="button">md</button>
 <button class="inst-btn inst-btn--lg" type="button">lg</button>
@@ -205,9 +207,19 @@ three at once.
 
 | Size | Height | Padding | Type size |
 |---|---|---|---|
+| `inst-btn--xs` | `--control-h-xs` | `--space-3` | `--text-2xs` |
 | `inst-btn--sm` | `--control-h-sm` | `--control-pad-sm` | `--text-xs` |
 | default | `--control-h-md` | `--control-pad-md` | `--text-sm` |
 | `inst-btn--lg` | `--control-h-lg` | `--control-pad-lg` | `--text-md` |
+
+`xs` is the odd one: its box is the [badge](../display/badge.md)'s rather than the
+control tier's, because below `sm` the neighbour in a row is a chip and not a
+button. It is for a control that belongs to something else — the icons under an
+answer, the session controls under a [composer](../../agent/composer.md). Its
+tap area stays `--tap-min` through a pseudo-element, so the drawing shrinks and
+the target does not — which means the row owes it `--space-3`: at `compact` the
+box is 18px, and a narrower gap makes two enlarged areas overlap. A primary
+standing on its own stays `sm`.
 
 ## States
 

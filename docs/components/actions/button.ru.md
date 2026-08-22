@@ -16,6 +16,7 @@ api:
   - { name: "inst-btn-value",    kind: "класс",       doc: "Значение внутри `.inst-btn-stack`. Длинное обрезается: это идентификатор, переносить его нельзя" }
   - { name: "inst-btn--ghost",   kind: "модификатор", doc: "Без рамки и без заливки. Для второстепенных действий в плотном ряду" }
   - { name: "inst-btn--danger",  kind: "модификатор", doc: "Разрушительное действие: тон ошибки в подписи. Это ТОН поверх веса, а не пятый вес — сочетается с любым" }
+  - { name: "inst-btn--xs",      kind: "модификатор", doc: "Бокс бейджа: `--control-h-xs`, `--space-3`, `--radius-xs`. Для контрола, принадлежащего чему-то другому. Цель нажатия остаётся `--tap-min` через `::before`" }
   - { name: "inst-btn--sm",      kind: "модификатор", doc: "Высота из `--control-h-sm`, кегль `--text-xs`" }
   - { name: "inst-btn--lg",      kind: "модификатор", doc: "Высота из `--control-h-lg`, кегль `--text-md`" }
   - { name: "inst-btn--icon",    kind: "модификатор", doc: "Квадратная, только иконка. Требует `aria-label`" }
@@ -199,6 +200,7 @@ api:
 ## Размеры
 
 ```html preview
+<button class="inst-btn inst-btn--xs" type="button">xs</button>
 <button class="inst-btn inst-btn--sm" type="button">sm</button>
 <button class="inst-btn" type="button">md</button>
 <button class="inst-btn inst-btn--lg" type="button">lg</button>
@@ -210,9 +212,19 @@ api:
 
 | Размер | Высота | Отступ | Кегль |
 |---|---|---|---|
+| `inst-btn--xs` | `--control-h-xs` | `--space-3` | `--text-2xs` |
 | `inst-btn--sm` | `--control-h-sm` | `--control-pad-sm` | `--text-xs` |
 | по умолчанию | `--control-h-md` | `--control-pad-md` | `--text-sm` |
 | `inst-btn--lg` | `--control-h-lg` | `--control-pad-lg` | `--text-md` |
+
+`xs` стоит особняком: бокс у неё от [бейджа](../display/badge.md), а не из яруса
+контролов, — ниже `sm` соседом в строке оказывается чип, а не кнопка. Она для
+контрола, который принадлежит чему-то другому: значки под ответом, настройки
+сессии под [полем ввода](../../agent/composer.md). Цель нажатия остаётся
+`--tap-min` через псевдоэлемент — рисунок уменьшается, цель нет. Отсюда
+требование к строке: зазор не меньше `--space-3`. При `compact` бокс равен
+18px, и на меньшем зазоре увеличенные цели перекрываются. Главная кнопка,
+стоящая сама по себе, остаётся `sm`.
 
 ## Состояния
 
