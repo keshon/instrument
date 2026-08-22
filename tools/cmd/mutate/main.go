@@ -186,6 +186,14 @@ var mutations = []mutation{
 		"--control-h-sm: 24px;",
 		"--control-h-sm: 26px;",
 		"a control's corner is a quarter of its height, and a band cannot hold that"},
+	// The label-less glyph at the bottom of the ladder. It sat at --size-icon-sm
+	// for as long as the token was missing, and 14/20 = 0.70 is inside the band
+	// — so nothing was red while the number was underived. This mutation holds
+	// the pair rather than the value: push the glyph up and it hits the edges.
+	{"the smallest glyph outgrew its button", "proportion", "src/tokens.css",
+		"--size-icon-xs:  12px;",
+		"--size-icon-xs:  16px;",
+		"a glyph with no label is measured against its box, not against a cap height"},
 
 	// ── dist: the "Forbidden" section ──────────────────────────────────────
 	{"!important in a component", "dist", "src/actions.css",

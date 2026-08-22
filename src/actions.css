@@ -511,7 +511,12 @@
   min-block-size: var(--control-h-xs);
   border-radius: var(--radius-xs);
   font-size: var(--text-2xs);
-  --icon-size: var(--size-icon-sm);
+  /* The LABEL-LESS glyph size, not the labelled one. This box is most often an
+     icon on its own — add, dictate, a disclosure — and a glyph alone is
+     measured against its box. --size-icon-sm is fitted to the cap height of
+     the text it stands beside, which is a different question and gave two
+     pixels too many here. The derivation is in tokens.css.                */
+  --icon-size: var(--size-icon-xs);
 
   &::before {
     content: "";

@@ -436,6 +436,7 @@ window.kitAudit = (function () {
        every deviation from the ordinary size is written by pointing
        --icon-size at ANOTHER NAMED TOKEN: --size-icon-lg for the rail
        glyph that replaces a word rather than accompanying one,
+       --size-icon-xs for that same job in the smallest control,
        --size-chevron for a pointer at disclosure. So there are two
        questions, and both are asked below. Did the painted box come out
        equal to what the property carries? And is what the property carries
@@ -464,7 +465,8 @@ window.kitAudit = (function () {
          already applied: comparing against tokens read at the root would
          report every cell but the base one. */
       var named = {};
-      var names = ['--size-icon', '--size-icon-lg', '--size-icon-sm', '--size-chevron'];
+      var names = ['--size-icon', '--size-icon-lg', '--size-icon-sm',
+                   '--size-icon-xs', '--size-chevron'];
       for (var t = 0; t < names.length; t++) {
         var v = parseFloat(ics.getPropertyValue(names[t]));
         if (v) named[names[t]] = v;

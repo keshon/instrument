@@ -28,7 +28,7 @@ without a class of their own.
 
 ```html preview
 <div class="inst-statusbar">
-  <button type="button">master</button>
+  <button class="inst-btn inst-btn--xs inst-btn--ghost" type="button">master</button>
   <span data-tone="error">
     <svg class="inst-icon" aria-hidden="true"><use href="#i-close"/></svg>2 errors</span>
   <span data-tone="warn">7 remarks</span>

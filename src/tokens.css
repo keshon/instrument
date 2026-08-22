@@ -1332,6 +1332,25 @@
      `cap` unit. The 0.71 that stood in this comment was a model, and three
      rungs of this ladder were once moved to satisfy a ruler cruder still.  */
   --size-icon-sm:  14px;
+  /* AN ICON WITH NO LABEL, in the SMALLEST control — the third glyph in the
+     tier, and the last one to be noticed.
+
+     --size-icon-lg already states the rule: a glyph with no word beside it is
+     measured against its BOX rather than against a cap height, because there
+     is nothing to compare it against. cmd/proportion bands that at 0.50…0.76,
+     and the reason is written there — under half the glyph is lost in an empty
+     target, over three quarters it hits the edges.
+
+     The rule was never applied at the bottom of the ladder. An icon-only
+     --xs button reached for --size-icon-sm, which is the LABELLED size, fitted
+     to the cap height of eleven-pixel text in a status bar. It landed at
+     14/20 = 0.70 — inside the band by luck rather than by derivation, and two
+     pixels heavier than the reference, which draws 12 in a 20px box.
+
+     12/20 is 0.600, the middle of the band, and the same number Claude Code
+     draws. Both facts arrived independently, which is the only kind of
+     agreement worth having.                                                */
+  --size-icon-xs:  12px;
   --size-chevron:  10px;
   /* The tap-target norm, WCAG 2.2 AA (2.5.8). A token rather than a constant,
      because the tap areas of several components depend on it and changing
@@ -1535,6 +1554,7 @@
      refuses every one-pixel error. At 16 the span was 1.2727…1.3913 — wider
      than a pixel, and no band could have separated the ladder from a defect. */
   --size-icon-sm:  14px;
+  --size-icon-xs:  13px;
   --size-chevron:  11px;
   --size-tick:     3px;
   --size-marker:   2px;
@@ -1607,6 +1627,7 @@
      narrow BECAUSE this ladder is tight, not despite it — see cmd/proportion,
      where it is derived rung by rung.                                      */
   --size-icon-sm:  16px;
+  --size-icon-xs:  14px;
   --size-chevron:  11px;
   --size-tick:     4px;
   --size-marker:   2px;
@@ -1671,6 +1692,7 @@
 
      Against the type gate 16/13 = 1.231.                                   */
   --size-icon-sm:  16px;
+  --size-icon-xs:  15px;
   --size-chevron:  12px;
   --size-tick:     4px;
   --size-marker:   2px;
@@ -1729,6 +1751,7 @@
   --size-icon:     24px;
   --size-icon-lg:  32px;
   --size-icon-sm:  18px;
+  --size-icon-xs:  16px;
   --size-chevron:  12px;
   --size-tick:     4px;
   --size-marker:   3px;

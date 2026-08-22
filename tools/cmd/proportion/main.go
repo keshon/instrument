@@ -128,6 +128,14 @@ var rules = []rule{
 	{label: "rail icon to its button", a: "--size-icon-lg", b: "--control-h-lg", min: 0.5, max: 0.76, perDens: true,
 		why: "glyph gets lost in an empty button or hits its edges"},
 
+	// The same rule at the bottom of the ladder, and it went unwritten for as
+	// long as the token did. An icon-only --xs button used to take
+	// --size-icon-sm — the LABELLED size, fitted to a cap height — and landed
+	// at 0.70 by luck rather than by derivation. 12/20 is 0.600, the middle of
+	// the band and the number the reference draws.
+	{label: "xs icon to its button", a: "--size-icon-xs", b: "--control-h-xs", min: 0.5, max: 0.76, perDens: true,
+		why: "glyph gets lost in an empty button or hits its edges"},
+
 	// ── Rhythm ──────────────────────────────────────────────────────────────
 	// A DIFFERENT KIND OF RULE from the others here. The other bands are
 	// perceptual: "the ratio must land in a range, otherwise the difference is

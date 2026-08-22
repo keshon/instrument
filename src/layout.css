@@ -712,63 +712,58 @@
   border-block-start: var(--hairline) solid var(--border-subtle);
   font-size: var(--text-2xs);
   color: var(--text-secondary);
-}
-
-/* THE STRIP STYLES ITS OWN READINGS, and there is no class for one.
-
-   A status bar is a CONTEXT rather than a vocabulary. Everything standing in
-   it is set in --text-2xs, coloured --text-secondary, and carries a 14px
-   glyph — not because each reading declares so, but because the strip is the
-   register and its contents inherit it. Give the reading a class of its own
-   and every one of those facts has to be repeated on it; give the strip the
-   rule and a <span> dropped inside is already a reading.
-
-   A NAMED PART WOULD HAVE TO EARN ITS NAME, and at this size there is nothing
-   left for it to hold. Inside this strip a `.inst-btn--xs.inst-btn--ghost`
-   measures 20px tall, 11px type, a 4px corner, --text-secondary, a 14px
-   glyph. A reading class would restate all five and differ by two pixels of
-   padding — and those two are the button's, which every other extra-small
-   control in the kit already has. A part whose whole content is a two-pixel
-   disagreement with its neighbour is a name, not a component.
-
-   The far group needs nothing either: `.inst-cluster-spacer` is an auto
-   margin, and what holds the group after it together is this strip's own gap.
-
-   THE TAG LIST IS THE WHOLE RULE — a <span> for a reading that is only read, a
-   <button> or an <a> for one that answers. The distinction stays honest
-   because hover hangs off the tag: a class could be put on anything, an
-   element that is not pressable cannot be pressed.
-
-   The spacer is excluded by name. It is a zero-width pusher, and a reading's
-   padding would give it eight pixels of width and shove the far group off the
-   edge it was sent to.
-
-   A `.inst-btn` in the strip stays a button: actions.css is a later layer than
-   this one, so its own box wins and only what it does not set — the glyph
-   size, the nowrap — arrives from here. "A control in the bar" therefore needs
-   no rule to arrange.                                                      */
-.inst-statusbar > :where(span, a, button):not(.inst-cluster-spacer) {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding-inline: var(--space-2);
-  /* The area up to the norm, the shape unchanged — the bar does not fatten
-     for accessibility. */
-  min-block-size: var(--control-h-xs);
-  border-radius: var(--radius-xs);
-  color: inherit;
   white-space: nowrap;
-  text-decoration: none;
-
-  /* A glyph in the bar is smaller than usual: the type size here is
-     --text-2xs, and the glyph is measured against ITS capital rather than
-     against the base one. */
+  /* The one child-facing declaration left, and it is inherited rather than
+     matched: --size-icon-sm is fitted to the cap height of eleven-pixel text,
+     which is exactly the text this strip sets. See below. */
   --icon-size: var(--size-icon-sm);
 }
 
-/* A pressable reading answers, an unpressable one stays silent: a <span> has
-   no hover. */
-.inst-statusbar > :where(a, button):hover { background: var(--surface-hover); color: var(--text-primary); }
+/* WHAT THE STRIP ACTUALLY CONTRIBUTES IS SMALL TEXT.
+
+   That is the whole of it, and saying so is the point. Everything else this
+   rule used to declare on its children — a 20px box, a 4px corner, a hover
+   surface, an 11px type size — is `.inst-btn--xs.inst-btn--ghost` to the pixel.
+   Measured side by side: 11px type, 20px box, 4px corner, the same colour, the
+   same glyph. Two names for one register.
+
+   So the strip stops restating them. It sets the things that ARE its own — the
+   sunken ground, the rule along its top edge, a height that stays one line,
+   and --text-2xs — and lets its contents be what they already are. A pressable
+   reading is a `.inst-btn--xs.inst-btn--ghost`, which brings its own box and
+   its own hover. A reading that is only read is a bare <span>, which needs no
+   box at all: with nothing to hover, a corner and a fill are a shape nobody
+   ever sees.
+
+   THE GLYPH SIZE STAYS HERE, and it is the one child-facing declaration left.
+   --size-icon-sm is fitted to the cap height of eleven-pixel text, which is
+   exactly the text this strip sets; a glyph standing beside a reading is
+   measured against that. An icon-only BUTTON in the bar overrides it with
+   --size-icon-xs from its own class, because a glyph with no word beside it is
+   measured against its box instead — the two rules are different questions and
+   both are right.
+
+   WHAT DOES NOT COME FREE is the layout of a reading that is not a control.
+   A `.inst-btn` is already a flex row with a gap and a padding of its own; a
+   bare <span> holding a glyph and two words is not, and stripped of this rule
+   the glyph fell out of line and the words landed under it. The readings also
+   lost the air between them: the strip's own gap is --space-2, and what used
+   to separate one reading from the next was that gap PLUS the inset on each
+   side of both.
+
+   So the rule survives, narrowed to the case that has nothing else — a
+   reading, not a control. `.inst-btn` is excluded by name rather than by
+   layer, because layer order would let it win the box and still lose the
+   padding, which is the half of this that is not redundant.
+
+   The tone is the other. `data-tone` sets --tone-ink and something has to read
+   it; a reading is not a control and has no other rule that would.          */
+.inst-statusbar > :where(span, a):not(.inst-cluster-spacer, .inst-btn) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline: var(--space-2);
+}
 
 .inst-statusbar > [data-tone] { color: var(--tone-ink); }
 
