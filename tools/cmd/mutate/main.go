@@ -633,7 +633,10 @@ func main() {
 // seed lays out in a temporary directory the minimal tree every gate needs:
 // the sources, the documentation, the registry, the version and the manifest.
 func seed(repo, tree string) error {
-	for _, d := range []string{"src", "docs"} {
+	// .claude carries the repo's own skill, and CONTRIBUTING links to it: a
+	// snapshot without it fails the link check on an UNTOUCHED copy, which the
+	// control pass reports as a hole that is really a gap in the stand.
+	for _, d := range []string{"src", "docs", ".claude"} {
 		if err := copyTree(filepath.Join(repo, d), filepath.Join(tree, d)); err != nil {
 			return err
 		}

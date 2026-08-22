@@ -77,7 +77,7 @@
      five positions: a preset would hide that the axes do not intersect, and
      the combination "large and compact" — the most useful one on a big monitor
      — would become inexpressible. */
-  const picker = (sel, attr, key) => {
+  const picker = (sel, attr, key, initial = 'default') => {
     const group = document.querySelector(sel);
     if (!group) return;
     const items = [...group.querySelectorAll('[role="radio"]')];
@@ -88,7 +88,7 @@
 
     /* The initial state is set by the site: it alone knows what lies in
        localStorage. After that the kit leads the choice. */
-    const saved = localStorage.getItem(key) || 'default';
+    const saved = localStorage.getItem(key) || initial;
     const start = items.find((x) => x.dataset.v === saved)
       || items.find((x) => x.dataset.v === 'default') || items[0];
     for (const x of items) {
@@ -107,7 +107,15 @@
     group.addEventListener('inst:select', (e) => apply(e.target.dataset.v));
   };
 
-  picker('[data-density-picker]', 'density', 'instrument-density');
+  /* THE REFERENCE SHOWS ITSELF AT COMFORTABLE, and the kit's own default stays
+     the denser one. A documentation page is read rather than operated, and the
+     comfortable geometry is the one named for that case.
+
+     The same fallback is written into the head of the page, where it runs
+     before this file to keep the geometry from flashing. Two places, one
+     constant, and that is the price of not flashing: the inline script cannot
+     see this module, and this module runs too late to prevent it. */
+  picker('[data-density-picker]', 'density', 'instrument-density', 'comfortable');
 
   /* ── Search ─────────────────────────────────────────────────────────────
      The index is one JSON for the whole site, loaded on the first request. A

@@ -110,14 +110,22 @@ template: splash
 
         </div>
 
-        <div class="inst-composer">
-          <textarea class="inst-textarea" rows="3" placeholder="Опишите задачу" aria-label="Опишите задачу"></textarea>
-          <div class="inst-composer-bar">
-            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Приложить</button>
-            <span class="inst-badge">opus</span>
+        <div class="inst-stack inst-stack--tight">
+          <div class="inst-composer">
+            <textarea class="inst-textarea" rows="2" placeholder="Опишите задачу" aria-label="Опишите задачу"></textarea>
+            <div class="inst-composer-bar">
+              <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Приложить</button>
+              <span class="inst-cluster-spacer"></span>
+              <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Отправить</button>
+            </div>
+          </div>
+
+          <div class="inst-cluster inst-cluster--tight">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Авто</button>
             <span class="inst-cluster-spacer"></span>
-            12 480 / 200 000
-            <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Отправить</button>
+            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
+            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Высокое</button>
+            <span class="inst-badge" data-tone="warn">контекст 90%</span>
           </div>
         </div>
 
@@ -126,6 +134,80 @@ template: splash
   </main>
 </div>
 ```
+
+## Сессия, а не сообщение
+
+Строка под полем держит то, что переживает одну реплику: режим разрешений,
+модель, усилие, сколько осталось контекста. Это **не** контролы поля, поэтому
+они стоят снаружи его рамки обычным [кластером](../layout/flow.md); приложить и
+отправить принадлежат сообщению и остаются внутри.
+
+```html preview
+<div class="inst-cluster inst-cluster--tight">
+    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Авто</button>
+    <span class="inst-cluster-spacer"></span>
+    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
+    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Высокое</button>
+    <span class="inst-badge" data-tone="warn">контекст 90%</span>
+  </div>
+```
+
+## Выбор среди именованного
+
+```html preview
+<div class="inst-popover" style="inline-size:20rem">
+  <div class="inst-menu" role="menu" aria-label="Модели">
+    <span class="inst-menu-label">Модели</span>
+    <button class="inst-menu-item" role="menuitemradio" aria-checked="false" type="button">Fable 5<span class="inst-menu-shortcut">1</span></button>
+    <button class="inst-menu-item" role="menuitemradio" aria-checked="true" type="button">Opus 5<span class="inst-menu-shortcut">2</span></button>
+    <button class="inst-menu-item" role="menuitemradio" aria-checked="false" type="button">Sonnet 5<span class="inst-menu-shortcut">3</span></button>
+    <button class="inst-menu-item" type="button" role="menuitem" aria-haspopup="menu">Ещё модели<span class="inst-menu-shortcut">&rsaquo;</span></button>
+    <hr class="inst-menu-sep">
+    <span class="inst-menu-label">Быстрый режим</span>
+    <label class="inst-switch"><input type="checkbox">Включить быстрый режим</label>
+  </div>
+</div>
+```
+
+У [меню](../components/overlays/menu.md) уже есть все нужные части: подпись
+группы, имя с пояснением под ним, хоткей у дальнего края, `aria-checked` у
+действующего и линейка между разделами. Переключатель, положенный в меню,
+читается его строкой: имя впереди, состояние у заднего края.
+
+## Что осталось от бюджета
+
+```html preview
+<div class="inst-panel" style="max-inline-size:24rem">
+  <div class="inst-panel-body inst-stack inst-stack--tight">
+    <div>
+      <div class="inst-meter-row"><span>Окно контекста</span><span class="inst-meter-value">904.2k / 1M</span></div>
+      <div class="inst-share" role="img" aria-label="Окно контекста: занято 90%">
+        <span class="inst-share-part" data-tone="running" style="--share:0.62"></span>
+        <span class="inst-share-part" data-tone="warn" style="--share:0.14"></span>
+        <span class="inst-share-part" data-tone="error" style="--share:0.06"></span>
+        <span class="inst-share-part" data-tone="neutral" style="--share:0.08"></span>
+      </div>
+    </div>
+    <div>
+      <div class="inst-meter-row"><span>Лимит на 5 часов</span><span class="inst-meter-value">сброс через 4 ч · 10%</span></div>
+      <div class="inst-meter" role="progressbar" aria-label="Лимит на 5 часов" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+        <div class="inst-meter-fill" style="inline-size:10%"></div>
+      </div>
+    </div>
+    <div>
+      <div class="inst-meter-row"><span>Недельный</span><span class="inst-meter-value">сброс в пятницу · 8%</span></div>
+      <div class="inst-meter" role="progressbar" aria-label="Недельный" aria-valuenow="8" aria-valuemin="0" aria-valuemax="100">
+        <div class="inst-meter-fill" style="inline-size:8%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Окно контекста — [полоса состава](../components/charts/share.md): по части на
+род занимающего, а неучтённое остаётся дорожкой. Каждый лимит под ней —
+[мера](../components/charts/meter.md): одна величина против собственного
+потолка, для чего мера и есть, а полоса состава — нет.
 
 ## Из чего собрано
 

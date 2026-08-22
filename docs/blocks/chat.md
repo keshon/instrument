@@ -110,14 +110,22 @@ class except the library's own, and not a single line of script.
 
         </div>
 
-        <div class="inst-composer">
-          <textarea class="inst-textarea" rows="3" placeholder="Describe a task" aria-label="Describe a task"></textarea>
-          <div class="inst-composer-bar">
-            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Attach</button>
-            <span class="inst-badge">opus</span>
+        <div class="inst-stack inst-stack--tight">
+          <div class="inst-composer">
+            <textarea class="inst-textarea" rows="2" placeholder="Describe a task" aria-label="Describe a task"></textarea>
+            <div class="inst-composer-bar">
+              <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Attach</button>
+              <span class="inst-cluster-spacer"></span>
+              <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Send</button>
+            </div>
+          </div>
+
+          <div class="inst-cluster inst-cluster--tight">
+            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Auto</button>
             <span class="inst-cluster-spacer"></span>
-            12 480 / 200 000
-            <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Send</button>
+            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
+            <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">High</button>
+            <span class="inst-badge" data-tone="warn">context 90%</span>
           </div>
         </div>
 
@@ -126,6 +134,81 @@ class except the library's own, and not a single line of script.
   </main>
 </div>
 ```
+
+## The session, not the message
+
+The row under the composer holds what outlives one turn — the permission mode,
+the model, the effort, how much context is left. Those are **not** the field's
+controls, so they stand outside its frame in an ordinary
+[cluster](../layout/flow.md); attach and send belong to the message and stay
+inside it.
+
+```html preview
+<div class="inst-cluster inst-cluster--tight">
+    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Auto</button>
+    <span class="inst-cluster-spacer"></span>
+    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
+    <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">High</button>
+    <span class="inst-badge" data-tone="warn">context 90%</span>
+  </div>
+```
+
+## Choosing among named things
+
+```html preview
+<div class="inst-popover" style="inline-size:20rem">
+  <div class="inst-menu" role="menu" aria-label="Models">
+    <span class="inst-menu-label">Models</span>
+    <button class="inst-menu-item" role="menuitemradio" aria-checked="false" type="button">Fable 5<span class="inst-menu-shortcut">1</span></button>
+    <button class="inst-menu-item" role="menuitemradio" aria-checked="true" type="button">Opus 5<span class="inst-menu-shortcut">2</span></button>
+    <button class="inst-menu-item" role="menuitemradio" aria-checked="false" type="button">Sonnet 5<span class="inst-menu-shortcut">3</span></button>
+    <button class="inst-menu-item" type="button" role="menuitem" aria-haspopup="menu">More models<span class="inst-menu-shortcut">&rsaquo;</span></button>
+    <hr class="inst-menu-sep">
+    <span class="inst-menu-label">Fast mode</span>
+    <label class="inst-switch"><input type="checkbox">Enable fast mode</label>
+  </div>
+</div>
+```
+
+A [menu](../components/overlays/menu.md) already carries every part this needs:
+a group label, a name with an explanation under it, a shortcut at the far edge,
+`aria-checked` for the one in force, and a rule between sections. A switch put
+in a menu reads as a row of it — name first, state at the trailing edge.
+
+## What is left of the budget
+
+```html preview
+<div class="inst-panel" style="max-inline-size:24rem">
+  <div class="inst-panel-body inst-stack inst-stack--tight">
+    <div>
+      <div class="inst-meter-row"><span>Context window</span><span class="inst-meter-value">904.2k / 1M</span></div>
+      <div class="inst-share" role="img" aria-label="Context window: 90% used">
+        <span class="inst-share-part" data-tone="running" style="--share:0.62"></span>
+        <span class="inst-share-part" data-tone="warn" style="--share:0.14"></span>
+        <span class="inst-share-part" data-tone="error" style="--share:0.06"></span>
+        <span class="inst-share-part" data-tone="neutral" style="--share:0.08"></span>
+      </div>
+    </div>
+    <div>
+      <div class="inst-meter-row"><span>5-hour limit</span><span class="inst-meter-value">resets in 4 hr · 10%</span></div>
+      <div class="inst-meter" role="progressbar" aria-label="5-hour limit" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+        <div class="inst-meter-fill" style="inline-size:10%"></div>
+      </div>
+    </div>
+    <div>
+      <div class="inst-meter-row"><span>Weekly</span><span class="inst-meter-value">resets Fri · 8%</span></div>
+      <div class="inst-meter" role="progressbar" aria-label="Weekly" aria-valuenow="8" aria-valuemin="0" aria-valuemax="100">
+        <div class="inst-meter-fill" style="inline-size:8%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+The context window is a [share bar](../components/charts/share.md): one part per
+kind of occupant, and what is unaccounted for stays track. Each limit under it
+is a [meter](../components/charts/meter.md) — one quantity against its own
+ceiling, which is what a meter is for and what a share bar is not.
 
 ## What it is assembled from
 

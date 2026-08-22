@@ -7134,6 +7134,26 @@ hr {
   line-height: var(--leading-ui);
 }
 
+/* A TOGGLE IS A ROW OF THE MENU, not a control dropped into one.
+
+   `.inst-switch` puts its box first and its text after, like the checkbox and
+   the radio it shares a rule with — right in a form, wrong in a menu, where
+   every other row reads name-first and carries its state at the trailing edge.
+   Left alone it sat indented by its own inset with the toggle leading, and the
+   column of names broke on it.
+
+   Row order rather than a second component: the same box as an item, and the
+   direction reversed so the name leads and the switch lands where a shortcut
+   would. `row-reverse` is safe here because the input is always the first
+   child — that is the markup the toggle rule requires. */
+.inst-menu > .inst-switch {
+  inline-size: 100%;
+  min-block-size: var(--control-h-sm);
+  padding-inline: var(--space-3);
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+
 .inst-menu-item {
   display: flex;
   align-items: center;
