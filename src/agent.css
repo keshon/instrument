@@ -54,16 +54,48 @@
    the floor under a body that is one sentence long. */
 .inst-turn-body { line-height: var(--leading-prose); }
 
-/* The actions of a turn — copy, retry, branch — are ALWAYS VISIBLE and merely
-   quiet, never revealed by hover.
+/* The actions of a turn — copy, retry, branch — come up UNDER THE CURSOR, and
+   the kit's usual rule is the opposite one: hover may strengthen an element,
+   but it may not bring one into being.
 
-   That is the rule the copy button already states: hover may strengthen an
-   element, but it may not bring one into being. A row that appears under the
-   cursor does not exist for a touchscreen or for anyone who does not know it
-   is there; a row hidden but laid out reserves its height under every turn in
-   the thread for the sake of one of them. Ghost buttons in the muted tone cost
-   neither. */
-.inst-turn-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+   The exception is earned by what the rule is protecting against. Its two
+   costs are a control that does not exist on a touchscreen, and a row that
+   reserves height for something nobody asked for. Neither is paid here.
+
+   THE ROW IS ALWAYS LAID OUT and only the buttons fade, so the thread does not
+   jump by a row-height as the cursor travels down it — which is the whole
+   reason the usual rule exists. A strip of reserved space under an answer is
+   not a control that fails to exist; it is spacing, and the thread has that
+   anyway. And where there is no hover at all the buttons simply stay: a coarse
+   pointer gets the row it would otherwise never find.
+
+   Keyboard reaches them the same way. `:focus-within` shows the row, so a
+   button that has taken focus is visible by the time it can be pressed —
+   nothing is ever clickable while invisible.
+
+   What the exception buys is a thread that reads as prose instead of as a
+   list of controls: on a screen of twenty turns, forty buttons standing at
+   once outweigh the answers they belong to.                                */
+.inst-turn-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.inst-turn-actions > .inst-btn {
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease-out);
+}
+
+.inst-turn:hover > .inst-turn-actions > .inst-btn,
+.inst-turn-actions:focus-within > .inst-btn { opacity: 1; }
+
+@media (hover: none) {
+  .inst-turn-actions > .inst-btn { opacity: 1; }
+}
 
 /* THE PERSON'S TURN IS RECESSED, THE MACHINE'S IS BARE.
 

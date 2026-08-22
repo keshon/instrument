@@ -80,8 +80,9 @@ template: splash
             </details>
 
             <div class="inst-turn-actions">
-              <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Копировать</button>
-              <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Повторить</button>
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Копировать"><svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg></button>
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Повторить"><svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Ещё"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
             </div>
           </div>
 
@@ -114,14 +115,14 @@ template: splash
           <div class="inst-composer">
             <textarea class="inst-textarea" rows="2" placeholder="Опишите задачу" aria-label="Опишите задачу"></textarea>
             <div class="inst-composer-bar">
-              <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Приложить</button>
               <span class="inst-cluster-spacer"></span>
-              <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Отправить</button>
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Отправить"><svg class="inst-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
             </div>
           </div>
 
           <div class="inst-cluster inst-cluster--tight">
             <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Авто</button>
+            <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-haspopup="menu" aria-label="Добавить"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
             <span class="inst-cluster-spacer"></span>
             <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
             <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Высокое</button>
@@ -139,8 +140,8 @@ template: splash
 
 Строка под полем держит то, что переживает одну реплику: режим разрешений,
 модель, усилие, сколько осталось контекста. Это **не** контролы поля, поэтому
-они стоят снаружи его рамки обычным [кластером](../layout/flow.md); приложить и
-отправить принадлежат сообщению и остаются внутри.
+они стоят снаружи его рамки обычным [кластером](../layout/flow.md). Отправка
+принадлежит сообщению и остаётся внутри рамки, у заднего края поля.
 
 ```html preview
 <div class="inst-cluster inst-cluster--tight">

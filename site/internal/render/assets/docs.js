@@ -77,18 +77,33 @@
      five positions: a preset would hide that the axes do not intersect, and
      the combination "large and compact" — the most useful one on a big monitor
      — would become inexpressible. */
-  const picker = (sel, attr, key, initial = 'default') => {
+  const picker = (sel, attr, key) => {
     const group = document.querySelector(sel);
     if (!group) return;
     const items = [...group.querySelectorAll('[role="radio"]')];
     const apply = (v) => {
       if (v === 'default') { delete root.dataset[attr]; localStorage.removeItem(key); }
       else { root.dataset[attr] = v; localStorage.setItem(key, v); }
+
+      /* A DEMO STAGE SHOWS ITSELF AT COMFORTABLE, and the page around it does
+         not. The kit's default is the denser one and stays so — but an example
+         is the component being looked at rather than chrome being operated,
+         and the comfortable geometry is what it wants.
+
+         The moment a visitor picks a density, that choice has to reach the
+         examples too, or the picker would move the page and leave the very
+         thing it exists to demonstrate alone. So the stage carries the pinned
+         value only while the choice is the default. */
+      if (attr !== 'density') return;
+      for (const stage of document.querySelectorAll('.demo-root')) {
+        if (v === 'default') stage.dataset.density = 'comfortable';
+        else delete stage.dataset.density;
+      }
     };
 
     /* The initial state is set by the site: it alone knows what lies in
        localStorage. After that the kit leads the choice. */
-    const saved = localStorage.getItem(key) || initial;
+    const saved = localStorage.getItem(key) || 'default';
     const start = items.find((x) => x.dataset.v === saved)
       || items.find((x) => x.dataset.v === 'default') || items[0];
     for (const x of items) {
@@ -107,15 +122,7 @@
     group.addEventListener('inst:select', (e) => apply(e.target.dataset.v));
   };
 
-  /* THE REFERENCE SHOWS ITSELF AT COMFORTABLE, and the kit's own default stays
-     the denser one. A documentation page is read rather than operated, and the
-     comfortable geometry is the one named for that case.
-
-     The same fallback is written into the head of the page, where it runs
-     before this file to keep the geometry from flashing. Two places, one
-     constant, and that is the price of not flashing: the inline script cannot
-     see this module, and this module runs too late to prevent it. */
-  picker('[data-density-picker]', 'density', 'instrument-density', 'comfortable');
+  picker('[data-density-picker]', 'density', 'instrument-density');
 
   /* ── Search ─────────────────────────────────────────────────────────────
      The index is one JSON for the whole site, loaded on the first request. A

@@ -13,11 +13,8 @@
     if (t) document.documentElement.dataset.theme = t;
     var a = localStorage.getItem('instrument-accent');
     if (a) document.documentElement.dataset.accent = a;
-    /* The reference shows itself at COMFORTABLE. The kit's default is the
-       denser one and stays so for applications; the documentation is read
-       rather than operated, and a page of prose and examples is the case the
-       comfortable geometry is named for. A visitor's own choice still wins. */
-    document.documentElement.dataset.density = localStorage.getItem('instrument-density') || 'comfortable';
+    var d = localStorage.getItem('instrument-density');
+    if (d) document.documentElement.dataset.density = d;
     var s = localStorage.getItem('instrument-scale');
     if (s) document.documentElement.dataset.scale = s;
   } catch (e) {}

@@ -80,8 +80,9 @@ class except the library's own, and not a single line of script.
             </details>
 
             <div class="inst-turn-actions">
-              <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Copy</button>
-              <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Retry</button>
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Copy"><svg class="inst-icon" aria-hidden="true"><use href="#i-copy"/></svg></button>
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Retry"><svg class="inst-icon" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="More"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
             </div>
           </div>
 
@@ -114,14 +115,14 @@ class except the library's own, and not a single line of script.
           <div class="inst-composer">
             <textarea class="inst-textarea" rows="2" placeholder="Describe a task" aria-label="Describe a task"></textarea>
             <div class="inst-composer-bar">
-              <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button">Attach</button>
               <span class="inst-cluster-spacer"></span>
-              <button class="inst-btn inst-btn--sm inst-btn--primary" type="button">Send</button>
+              <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-label="Send"><svg class="inst-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
             </div>
           </div>
 
           <div class="inst-cluster inst-cluster--tight">
             <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Auto</button>
+            <button class="inst-btn inst-btn--sm inst-btn--icon inst-btn--ghost" type="button" aria-haspopup="menu" aria-label="Add"><svg class="inst-icon" aria-hidden="true"><use href="#i-more"/></svg></button>
             <span class="inst-cluster-spacer"></span>
             <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">Opus 5</button>
             <button class="inst-btn inst-btn--sm inst-btn--ghost" type="button" aria-haspopup="menu">High</button>
@@ -140,8 +141,8 @@ class except the library's own, and not a single line of script.
 The row under the composer holds what outlives one turn — the permission mode,
 the model, the effort, how much context is left. Those are **not** the field's
 controls, so they stand outside its frame in an ordinary
-[cluster](../layout/flow.md); attach and send belong to the message and stay
-inside it.
+[cluster](../layout/flow.md). Sending belongs to the message, so it stays
+inside the frame at the field's trailing edge.
 
 ```html preview
 <div class="inst-cluster inst-cluster--tight">
