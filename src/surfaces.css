@@ -200,28 +200,36 @@
 .inst-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
 .inst-card-sub   { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
 
-/* ONE INSET, NOT A ROW'S TWO.
+/* A PANEL'S REGIONS SHARE ONE INLINE INSET. The block padding is theirs alone.
 
-   This carried `--row-pad-y --pad-cell-x`, the pairing every row in the kit
-   wears — a table row, a task row, a step head. It is right for those: their
-   content is text on a baseline, and text wants more room beside it than
-   above.
+   That is the kit's existing rule and this strip was the one place breaking
+   it. The header, the body, a log, a code block, a note and a banner all set
+   their inline padding from --pad-panel and vary only the block; the toolbar
+   set --pad-cell-x, which is a table cell's measure and two steps short. Its
+   contents therefore began 8.67px from the panel's edge while the body's began
+   at 12.67, and nothing in a panel lined up with anything above it.
 
-   A toolbar holds CONTROLS, and a control brings its own box. The pairing then
-   shows as a corner: a segmented control sat 6.67px below the panel's edge and
-   8.67px inside it, and 4px apart at comfortable, where both insets are seen
-   at once and read as a control hung crooked.
+   THE CORNER IS ALLOWED TO BE UNEVEN, and the reference settles it: in its
+   dashboard card the segmented control sits 8px below the top edge and 13.33px
+   inside it, while the tiles, the heatmap and the footnote all start at 12.
+   Uneven by 4, and every region agreeing — measured in AUDIT-2026-08-27.
 
-   --row-pad-y on both axes rather than --pad-cell-x on both: the strip keeps
-   its height exactly, and the inset matches the status bar, the kit's other
-   strip of controls. The panel BODY stays wider on purpose — it holds content,
-   not controls, and that is a different inset for a different job.         */
+   So an earlier pass here was wrong in direction. It read the crooked corner
+   and pulled the inline padding DOWN to --row-pad-y to match the block, which
+   evened the corner and moved the strip further from the body it stands on:
+   6.67 against 12.67. The corner was the symptom; the disagreement was the
+   defect.
+
+   --pad-block-y, not --row-pad-y, for the block: it makes this strip and the
+   panel header identical, which they should be — both are strips of controls
+   in a panel — and it lands the pair on 8 and 12, the reference's own two
+   numbers.                                                                 */
 .inst-toolbar {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   flex: none;
-  padding: var(--row-pad-y);
+  padding: var(--pad-block-y) var(--pad-panel);
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 
