@@ -3137,6 +3137,15 @@ hr {
   gap: var(--space-1);
   padding: var(--space-2);
   border-block-end: none;
+  /* THE ROW IS A TRACK, and that is what lets the selected chip be raised.
+     The note below rejected a raised chip because the row lay on the raised
+     surface and one step of lightness is almost nothing — true, and the answer
+     is to move the row rather than the chip. Recessed under, raised on top:
+     two steps apart, and depth carried by the order of lightness, which is the
+     kit's own rule for it. The reference draws exactly this — a tab of
+     rgb(255,255,255) on a bar of rgb(252,252,251). */
+  background: var(--surface-recessed);
+  border-radius: var(--radius-md);
 
   & > .inst-tab {
     /* A CHIP ALL ROUND, not something glued to the bottom. Top corners
@@ -3152,7 +3161,20 @@ hr {
     position: relative;
     min-block-size: var(--control-h-sm);
     padding-block: 0;
-    padding-inline: var(--pad-panel);
+    /* --control-pad-sm, because the line above says a chip IS a control and
+       this is the measure every other control in the row already uses: the
+       small button, the field, the search. --pad-panel is a PANEL's inset and
+       spent 12 where the reference draws 6 — twice the room, on the element
+       whose whole job is to be narrow enough that twenty fit. It is derived
+       from --control-h-sm, so it follows the ladder instead of the page. */
+    padding-inline: var(--control-pad-sm);
+    /* The glyph a chip carries is a FILE'S MARK, not a control's icon: it
+       identifies the document rather than naming an action, and it is read at
+       a glance beside the name. The usual 18 fills three quarters of a 24px
+       chip and turns the row into a strip of icons with captions; the
+       reference draws 12. The cross keeps its own --icon-size and is not
+       touched by this. */
+    --icon-size: var(--size-icon-sm);
     margin-block-end: 0;
     border-block-end: none;
     border-radius: var(--radius-control-md);
@@ -3165,11 +3187,14 @@ hr {
 
   & > .inst-tab:hover { background: var(--surface-hover); }
 
-  /* The selected chip takes a SOFT inverse surface: dark in a light theme,
-     light in a dark one. A raised one does not work — the row lies on that
-     same raised surface, and the selected chip would differ by one step of
-     lightness, that is by almost nothing. A full inversion works too well:
-     that is for a hint that flashed by, and a tab stands there all the time.
+  /* The selected chip is RAISED, on the track declared above.
+
+     It used to take a soft inverse surface — dark in a light theme — because a
+     raised chip on a raised row differs by one step of lightness and that is
+     almost nothing. The premise was right and the conclusion was one move
+     short: recess the row and the two steps are there. What the inverse fill
+     bought in legibility it paid for in register, a black lozenge in a kit
+     whose only other inverse surface is a tooltip.
 
      There are still two carriers and neither is colour: surface and weight. */
   /* The weight comes back to THE CHIP specifically. On a bar tab it was taken
@@ -3184,9 +3209,9 @@ hr {
   & > .inst-tab[aria-selected="true"],
   & > .inst-tab[aria-current]:not([aria-current="false"]) {
     font-weight: var(--weight-medium);
-    --tab-bg: var(--surface-inverse-soft);
+    --tab-bg: var(--surface-raised);
     background: var(--tab-bg);
-    color: var(--text-on-inverse);
+    color: var(--text-primary);
   }
 
   /* ── The close cross as an overlay ──────────────────────────────────────
@@ -3238,12 +3263,21 @@ hr {
      the cursor that is intended, because there it is an overlay and it leaves
      with the cursor, but a permanent state has no right to permanently eat
      the file name the tab exists for. */
-  & > .inst-tab[data-state="modified"] {
-    padding-inline-end: calc(var(--pad-panel) + var(--control-h-xs));
+  /* THE SELECTED TAB KEEPS ITS CROSS, for the same reason the unsaved one
+     does: on the selected tab closing is not a hover-time afterthought but the
+     action reached for most, and a control that appears only under the cursor
+     cannot be aimed at from across the screen. The reference draws it on the
+     resting active tab. Room is reserved by the same rule, so the cross never
+     stands over the last letters of the name. */
+  & > .inst-tab[data-state="modified"],
+  & > .inst-tab[aria-selected="true"],
+  & > .inst-tab[aria-current]:not([aria-current="false"]) {
+    padding-inline-end: calc(var(--control-pad-sm) + var(--control-h-xs));
   }
 
   & > .inst-tab[aria-selected="true"] > .inst-tab-close,
   & > .inst-tab[aria-current]:not([aria-current="false"]) > .inst-tab-close {
+    opacity: 1;
     color: inherit;
     &:hover { background: var(--surface-hover); }
   }
@@ -4497,28 +4531,36 @@ hr {
 .inst-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
 .inst-card-sub   { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
 
-/* ONE INSET, NOT A ROW'S TWO.
+/* A PANEL'S REGIONS SHARE ONE INLINE INSET. The block padding is theirs alone.
 
-   This carried `--row-pad-y --pad-cell-x`, the pairing every row in the kit
-   wears — a table row, a task row, a step head. It is right for those: their
-   content is text on a baseline, and text wants more room beside it than
-   above.
+   That is the kit's existing rule and this strip was the one place breaking
+   it. The header, the body, a log, a code block, a note and a banner all set
+   their inline padding from --pad-panel and vary only the block; the toolbar
+   set --pad-cell-x, which is a table cell's measure and two steps short. Its
+   contents therefore began 8.67px from the panel's edge while the body's began
+   at 12.67, and nothing in a panel lined up with anything above it.
 
-   A toolbar holds CONTROLS, and a control brings its own box. The pairing then
-   shows as a corner: a segmented control sat 6.67px below the panel's edge and
-   8.67px inside it, and 4px apart at comfortable, where both insets are seen
-   at once and read as a control hung crooked.
+   THE CORNER IS ALLOWED TO BE UNEVEN, and the reference settles it: in its
+   dashboard card the segmented control sits 8px below the top edge and 13.33px
+   inside it, while the tiles, the heatmap and the footnote all start at 12.
+   Uneven by 4, and every region agreeing — measured in AUDIT-2026-08-27.
 
-   --row-pad-y on both axes rather than --pad-cell-x on both: the strip keeps
-   its height exactly, and the inset matches the status bar, the kit's other
-   strip of controls. The panel BODY stays wider on purpose — it holds content,
-   not controls, and that is a different inset for a different job.         */
+   So an earlier pass here was wrong in direction. It read the crooked corner
+   and pulled the inline padding DOWN to --row-pad-y to match the block, which
+   evened the corner and moved the strip further from the body it stands on:
+   6.67 against 12.67. The corner was the symptom; the disagreement was the
+   defect.
+
+   --pad-block-y, not --row-pad-y, for the block: it makes this strip and the
+   panel header identical, which they should be — both are strips of controls
+   in a panel — and it lands the pair on 8 and 12, the reference's own two
+   numbers.                                                                 */
 .inst-toolbar {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   flex: none;
-  padding: var(--row-pad-y);
+  padding: var(--pad-block-y) var(--pad-panel);
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 

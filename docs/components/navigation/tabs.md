@@ -18,10 +18,12 @@ api:
   - { name: "--size-marker", kind: "token" }
   - { name: "--hairline", kind: "token" }
   - { name: "--border", kind: "token" }
-  - { name: "--surface-inverse-soft", kind: "token", doc: "The surface of a chosen chip: dark in a light theme, light in a dark one. Soft — a permanent selection does not take the full inversion" }
+  - { name: "--surface-recessed", kind: "token", doc: "The track the row of chips lies on. It is what lets the chosen chip be raised" }
   - { name: "--control-h-sm", kind: "token", doc: "The height of a chip. Setting it by padding gave a row taller than the button beside it" }
+  - { name: "--size-icon-sm", kind: "token", doc: "The glyph a chip carries: a file's mark, smaller than a control's icon" }
+  - { name: "--control-pad-sm", kind: "token", doc: "The inline padding of a chip. A chip is a control and takes a control's measure" }
   - { name: "--control-h-xs", kind: "token", doc: "The box of the cross. A square with a field around the glyph" }
-  - { name: "--text-on-inverse", kind: "token", doc: "The label of a chosen chip" }
+  - { name: "--surface-raised", kind: "token", doc: "The surface of a chosen chip, two steps above the track" }
   - { name: "--accent-solid", kind: "token" }
   - { name: "--text-primary", kind: "token" }
   - { name: "--text-secondary", kind: "token" }
@@ -198,11 +200,12 @@ A bar under such a row stops working: it draws one line under all of them, and
 at twenty tabs the chosen one has to be searched for. A fill reads at once and
 at any length of row.
 
-A chosen chip takes a **soft inverted surface** — dark in a light theme, light
-in a dark one. Raised is too close: the row already lies on a raised surface. A
-full inversion is too loud for something that stands there all the time. The
-height comes from the control ladder (`--control-h-sm`) rather than from
-padding.
+The row is a **recessed track** and a chosen chip is **raised** on it. Raised
+alone is too close when the row lies on a raised surface — one step of
+lightness is almost nothing — so the row moves down rather than the chip up,
+and the two sit two steps apart. Depth is carried by the order of lightness,
+as everywhere else in the kit. The height comes from the control ladder
+(`--control-h-sm`) rather than from padding.
 
 **The cross is an overlay at the far edge rather than a place in the line** — a
 name is read all the time and a tab is closed once. It appears from the

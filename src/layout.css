@@ -804,6 +804,15 @@
   gap: var(--space-1);
   padding: var(--space-2);
   border-block-end: none;
+  /* THE ROW IS A TRACK, and that is what lets the selected chip be raised.
+     The note below rejected a raised chip because the row lay on the raised
+     surface and one step of lightness is almost nothing — true, and the answer
+     is to move the row rather than the chip. Recessed under, raised on top:
+     two steps apart, and depth carried by the order of lightness, which is the
+     kit's own rule for it. The reference draws exactly this — a tab of
+     rgb(255,255,255) on a bar of rgb(252,252,251). */
+  background: var(--surface-recessed);
+  border-radius: var(--radius-md);
 
   & > .inst-tab {
     /* A CHIP ALL ROUND, not something glued to the bottom. Top corners
@@ -819,7 +828,20 @@
     position: relative;
     min-block-size: var(--control-h-sm);
     padding-block: 0;
-    padding-inline: var(--pad-panel);
+    /* --control-pad-sm, because the line above says a chip IS a control and
+       this is the measure every other control in the row already uses: the
+       small button, the field, the search. --pad-panel is a PANEL's inset and
+       spent 12 where the reference draws 6 — twice the room, on the element
+       whose whole job is to be narrow enough that twenty fit. It is derived
+       from --control-h-sm, so it follows the ladder instead of the page. */
+    padding-inline: var(--control-pad-sm);
+    /* The glyph a chip carries is a FILE'S MARK, not a control's icon: it
+       identifies the document rather than naming an action, and it is read at
+       a glance beside the name. The usual 18 fills three quarters of a 24px
+       chip and turns the row into a strip of icons with captions; the
+       reference draws 12. The cross keeps its own --icon-size and is not
+       touched by this. */
+    --icon-size: var(--size-icon-sm);
     margin-block-end: 0;
     border-block-end: none;
     border-radius: var(--radius-control-md);
@@ -832,11 +854,14 @@
 
   & > .inst-tab:hover { background: var(--surface-hover); }
 
-  /* The selected chip takes a SOFT inverse surface: dark in a light theme,
-     light in a dark one. A raised one does not work — the row lies on that
-     same raised surface, and the selected chip would differ by one step of
-     lightness, that is by almost nothing. A full inversion works too well:
-     that is for a hint that flashed by, and a tab stands there all the time.
+  /* The selected chip is RAISED, on the track declared above.
+
+     It used to take a soft inverse surface — dark in a light theme — because a
+     raised chip on a raised row differs by one step of lightness and that is
+     almost nothing. The premise was right and the conclusion was one move
+     short: recess the row and the two steps are there. What the inverse fill
+     bought in legibility it paid for in register, a black lozenge in a kit
+     whose only other inverse surface is a tooltip.
 
      There are still two carriers and neither is colour: surface and weight. */
   /* The weight comes back to THE CHIP specifically. On a bar tab it was taken
@@ -851,9 +876,9 @@
   & > .inst-tab[aria-selected="true"],
   & > .inst-tab[aria-current]:not([aria-current="false"]) {
     font-weight: var(--weight-medium);
-    --tab-bg: var(--surface-inverse-soft);
+    --tab-bg: var(--surface-raised);
     background: var(--tab-bg);
-    color: var(--text-on-inverse);
+    color: var(--text-primary);
   }
 
   /* ── The close cross as an overlay ──────────────────────────────────────
@@ -905,12 +930,21 @@
      the cursor that is intended, because there it is an overlay and it leaves
      with the cursor, but a permanent state has no right to permanently eat
      the file name the tab exists for. */
-  & > .inst-tab[data-state="modified"] {
-    padding-inline-end: calc(var(--pad-panel) + var(--control-h-xs));
+  /* THE SELECTED TAB KEEPS ITS CROSS, for the same reason the unsaved one
+     does: on the selected tab closing is not a hover-time afterthought but the
+     action reached for most, and a control that appears only under the cursor
+     cannot be aimed at from across the screen. The reference draws it on the
+     resting active tab. Room is reserved by the same rule, so the cross never
+     stands over the last letters of the name. */
+  & > .inst-tab[data-state="modified"],
+  & > .inst-tab[aria-selected="true"],
+  & > .inst-tab[aria-current]:not([aria-current="false"]) {
+    padding-inline-end: calc(var(--control-pad-sm) + var(--control-h-xs));
   }
 
   & > .inst-tab[aria-selected="true"] > .inst-tab-close,
   & > .inst-tab[aria-current]:not([aria-current="false"]) > .inst-tab-close {
+    opacity: 1;
     color: inherit;
     &:hover { background: var(--surface-hover); }
   }
