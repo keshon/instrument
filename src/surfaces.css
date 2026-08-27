@@ -233,6 +233,15 @@
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 
+/* A TRACK BRINGS ITS OWN BLOCK PADDING, so the strip around it gives up its
+   own. A chip row is a track with an inset of its own; inside a toolbar the
+   two stacked to 8 + 4 above a 24px chip and made a 49px row where the
+   reference draws 28. The inline inset stays — that is what keeps the track's
+   edge on the same vertical as the panel body, and it is the whole point of
+   the rule above. Only the block padding goes, and the row is then as tall as
+   the track: 4 + 24 + 4.                                                    */
+.inst-toolbar:has(> .inst-tabs--chips) { padding-block: 0; }
+
 .inst-toolbar-sep {
   inline-size: var(--hairline);
   align-self: stretch;
