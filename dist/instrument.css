@@ -3046,6 +3046,24 @@ hr {
   font-size: var(--text-2xs);
   color: var(--text-secondary);
   white-space: nowrap;
+  /* THE STRIP GIVES UP ITS OWN EDGE RATHER THAN LOSING WHAT STANDS AT IT.
+
+     One line is the law above, and nothing here changes that. But a strip that
+     cannot wrap and cannot scroll simply runs past its box, and the panel —
+     `overflow-x: hidden` — cuts the tail off in silence. Measured at a 260px
+     container: 304px of readings in a 235px strip, and 69.1px of a 100.9px
+     "Commit changes" went missing with no scrollbar anywhere and no page
+     overflow to show for it. The thing that disappeared was the only control
+     on the strip, which is the worst of the candidates.
+
+     The device is the tab strip's, one screen up: pan, and hide the bar. A
+     reading is not lost, it is reached. Nothing shrinks into a sliver on the
+     way — `white-space: nowrap` puts a floor under every child's min-content
+     width, so they keep their size and the strip scrolls instead. */
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { block-size: 0; }
   /* The one child-facing declaration left, and it is inherited rather than
      matched: --size-icon-sm is fitted to the cap height of eleven-pixel text,
      which is exactly the text this strip sets. See below. */
@@ -4479,12 +4497,28 @@ hr {
 .inst-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
 .inst-card-sub   { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
 
+/* ONE INSET, NOT A ROW'S TWO.
+
+   This carried `--row-pad-y --pad-cell-x`, the pairing every row in the kit
+   wears — a table row, a task row, a step head. It is right for those: their
+   content is text on a baseline, and text wants more room beside it than
+   above.
+
+   A toolbar holds CONTROLS, and a control brings its own box. The pairing then
+   shows as a corner: a segmented control sat 6.67px below the panel's edge and
+   8.67px inside it, and 4px apart at comfortable, where both insets are seen
+   at once and read as a control hung crooked.
+
+   --row-pad-y on both axes rather than --pad-cell-x on both: the strip keeps
+   its height exactly, and the inset matches the status bar, the kit's other
+   strip of controls. The panel BODY stays wider on purpose — it holds content,
+   not controls, and that is a different inset for a different job.         */
 .inst-toolbar {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   flex: none;
-  padding: var(--row-pad-y) var(--pad-cell-x);
+  padding: var(--row-pad-y);
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 
@@ -7549,18 +7583,6 @@ hr {
     background: var(--accent-mark);
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5 6.5 11.5 12.5 5' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   }
-  /* A shortcut is already pushed to the far edge by its own margin: where one
-     exists, the mark's auto margin would swallow it. The edge goes to the
-     shortcut and the mark stands behind it.
-
-     ZERO RATHER THAN --gap-inline. The row is a flex container with
-     `gap: var(--gap-inline)` already between every pair of children, and a
-     margin of the same size on top of it made the distance TWICE the kit's
-     spacing — twenty-four pixels between a shortcut and the check beside it,
-     for no reason a reader could see. What this declaration has to undo is the
-     `auto`, and nothing else. */
-  &:has(> .inst-menu-shortcut)::after { margin-inline-start: 0; }
-
   /* A SUBMENU CARRIES A CHEVRON, and the kit draws it rather than the markup.
 
      It used to be typed as a character — `&rsaquo;` inside the shortcut slot —
@@ -7583,6 +7605,27 @@ hr {
     background: var(--text-faint);
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.2 3.6 10.6 8l-4.4 4.4' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   }
+
+  /* A shortcut is already pushed to the far edge by its own margin: where one
+     exists, the mark's auto margin would swallow it. The edge goes to the
+     shortcut and the mark stands behind it.
+
+     ZERO RATHER THAN --gap-inline. The row is a flex container with
+     `gap: var(--gap-inline)` already between every pair of children, and a
+     margin of the same size on top of it made the distance TWICE the kit's
+     spacing — twenty-four pixels between a shortcut and the check beside it,
+     for no reason a reader could see. What this declaration has to undo is the
+     `auto`, and nothing else.
+
+     IT MUST STAND LAST. Both rules above end in `margin-inline-start: auto`,
+     and `:has()` takes the specificity of its argument — a class — so this
+     selector ties with `&[aria-haspopup]` at (0,2,1) and order alone decides.
+     Written before it, the reset lost, and an item carrying BOTH a value and a
+     submenu got two auto margins that split the slack between them: the four
+     rows of a filter menu ended 46.7 / 37.3 / 8.0 / 37.1 px from their
+     chevrons instead of forming one column. The value floated mid-row and read
+     as centred. Measured in AUDIT-2026-08-27; all five rows now land on 8. */
+  &:has(> .inst-menu-shortcut)::after { margin-inline-start: 0; }
 
   &[data-tone="error"] { color: var(--err-text); }
   &[data-tone="error"]:hover { background: var(--err-bg); }

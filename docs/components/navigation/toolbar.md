@@ -9,7 +9,7 @@ api:
   - { name: "inst-toolbar-spacer", kind: "class", doc: "Pushes the tail of the strip to the far edge" }
   - { name: "--space-2", kind: "token" }
   - { name: "--space-3", kind: "token" }
-  - { name: "--pad-cell-x", kind: "token" }
+  - { name: "--row-pad-y", kind: "token" }
   - { name: "--hairline", kind: "token" }
   - { name: "--border-subtle", kind: "token" }
   - { name: "--border", kind: "token" }

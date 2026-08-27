@@ -200,12 +200,28 @@
 .inst-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
 .inst-card-sub   { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
 
+/* ONE INSET, NOT A ROW'S TWO.
+
+   This carried `--row-pad-y --pad-cell-x`, the pairing every row in the kit
+   wears — a table row, a task row, a step head. It is right for those: their
+   content is text on a baseline, and text wants more room beside it than
+   above.
+
+   A toolbar holds CONTROLS, and a control brings its own box. The pairing then
+   shows as a corner: a segmented control sat 6.67px below the panel's edge and
+   8.67px inside it, and 4px apart at comfortable, where both insets are seen
+   at once and read as a control hung crooked.
+
+   --row-pad-y on both axes rather than --pad-cell-x on both: the strip keeps
+   its height exactly, and the inset matches the status bar, the kit's other
+   strip of controls. The panel BODY stays wider on purpose — it holds content,
+   not controls, and that is a different inset for a different job.         */
 .inst-toolbar {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   flex: none;
-  padding: var(--row-pad-y) var(--pad-cell-x);
+  padding: var(--row-pad-y);
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 

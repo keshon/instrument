@@ -9,7 +9,7 @@ api:
   - { name: "inst-toolbar-spacer", kind: "класс", doc: "Прижать хвост полосы к дальнему краю" }
   - { name: "--space-2", kind: "токен" }
   - { name: "--space-3", kind: "токен" }
-  - { name: "--pad-cell-x", kind: "токен" }
+  - { name: "--row-pad-y", kind: "токен" }
   - { name: "--hairline", kind: "токен" }
   - { name: "--border-subtle", kind: "токен" }
   - { name: "--border", kind: "токен" }
