@@ -713,6 +713,24 @@
   font-size: var(--text-2xs);
   color: var(--text-secondary);
   white-space: nowrap;
+  /* THE STRIP GIVES UP ITS OWN EDGE RATHER THAN LOSING WHAT STANDS AT IT.
+
+     One line is the law above, and nothing here changes that. But a strip that
+     cannot wrap and cannot scroll simply runs past its box, and the panel —
+     `overflow-x: hidden` — cuts the tail off in silence. Measured at a 260px
+     container: 304px of readings in a 235px strip, and 69.1px of a 100.9px
+     "Commit changes" went missing with no scrollbar anywhere and no page
+     overflow to show for it. The thing that disappeared was the only control
+     on the strip, which is the worst of the candidates.
+
+     The device is the tab strip's, one screen up: pan, and hide the bar. A
+     reading is not lost, it is reached. Nothing shrinks into a sliver on the
+     way — `white-space: nowrap` puts a floor under every child's min-content
+     width, so they keep their size and the strip scrolls instead. */
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { block-size: 0; }
   /* The one child-facing declaration left, and it is inherited rather than
      matched: --size-icon-sm is fitted to the cap height of eleven-pixel text,
      which is exactly the text this strip sets. See below. */
