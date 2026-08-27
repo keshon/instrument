@@ -151,7 +151,8 @@
     },
     "related": [
       "timeline",
-      "lane"
+      "lane",
+      "heatmap"
     ]
   },
   "card": {
@@ -254,7 +255,9 @@
       }
     },
     "related": [
-      "log", "table", "kv",
+      "log",
+      "table",
+      "kv",
       "diff"
     ]
   },
@@ -266,8 +269,11 @@
       "forced": "border"
     },
     "related": [
-      "turn", "input", "form",
-      "toolbar", "button"
+      "turn",
+      "input",
+      "form",
+      "toolbar",
+      "button"
     ]
   },
   "container": {
@@ -391,6 +397,21 @@
       "composer"
     ]
   },
+  "heatmap": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "related": [
+      "history",
+      "calendar",
+      "sparkline",
+      "legend",
+      "metric"
+    ]
+  },
   "history": {
     "axes": {
       "flow": "block",
@@ -403,7 +424,8 @@
       "lane",
       "meter",
       "run",
-      "share"
+      "share",
+      "heatmap"
     ]
   },
   "input": {
@@ -455,7 +477,8 @@
       }
     },
     "related": [
-      "table", "code",
+      "table",
+      "code",
       "metric",
       "tree"
     ]
@@ -493,7 +516,8 @@
     "related": [
       "meter",
       "sparkline",
-      "share"
+      "share",
+      "heatmap"
     ]
   },
   "log": {
@@ -525,7 +549,9 @@
       "forced": "none"
     },
     "parts": {
-      "inst-menu-item": { "forced": "glyph" }
+      "inst-menu-item": {
+        "forced": "glyph"
+      }
     },
     "aria": {
       "role": "menu",
@@ -599,7 +625,8 @@
       "sparkline",
       "kv",
       "card",
-      "budget"
+      "budget",
+      "heatmap"
     ]
   },
   "nav": {
@@ -842,8 +869,12 @@
       }
     },
     "related": [
-      "meter", "history", "legend",
-      "ring", "sparkline", "lane"
+      "meter",
+      "history",
+      "legend",
+      "ring",
+      "sparkline",
+      "lane"
     ]
   },
   "sheet": {
@@ -921,7 +952,8 @@
       "metric",
       "legend",
       "history",
-      "share"
+      "share",
+      "heatmap"
     ]
   },
   "spinner": {
@@ -1029,23 +1061,12 @@
     },
     "related": [
       "pagination",
-      "kv", "code",
+      "kv",
+      "code",
       "card",
       "task",
       "timeline",
       "tree"
-    ]
-  },
-  "turn": {
-    "axes": {
-      "flow": "block",
-      "print": "keep",
-      "page": "flow",
-      "forced": "none"
-    },
-    "related": [
-      "thinking", "composer", "step",
-      "approval", "log", "task"
     ]
   },
   "tabs": {
@@ -1118,8 +1139,11 @@
       "forced": "none"
     },
     "related": [
-      "step", "turn", "log",
-      "run", "accordion"
+      "step",
+      "turn",
+      "log",
+      "run",
+      "accordion"
     ]
   },
   "timeline": {
@@ -1249,6 +1273,22 @@
       "cascader",
       "kv",
       "table"
+    ]
+  },
+  "turn": {
+    "axes": {
+      "flow": "block",
+      "print": "keep",
+      "page": "flow",
+      "forced": "none"
+    },
+    "related": [
+      "thinking",
+      "composer",
+      "step",
+      "approval",
+      "log",
+      "task"
     ]
   }
 }

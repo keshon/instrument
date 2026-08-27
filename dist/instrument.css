@@ -4564,6 +4564,15 @@ hr {
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 
+/* A TRACK BRINGS ITS OWN BLOCK PADDING, so the strip around it gives up its
+   own. A chip row is a track with an inset of its own; inside a toolbar the
+   two stacked to 8 + 4 above a 24px chip and made a 49px row where the
+   reference draws 28. The inline inset stays — that is what keeps the track's
+   edge on the same vertical as the panel body, and it is the whole point of
+   the rule above. Only the block padding goes, and the row is then as tall as
+   the track: 4 + 24 + 4.                                                    */
+.inst-toolbar:has(> .inst-tabs--chips) { padding-block: 0; }
+
 .inst-toolbar-sep {
   inline-size: var(--hairline);
   align-self: stretch;
@@ -7406,6 +7415,79 @@ hr {
    right and a categorical one would be a lie. The sign is painted too: a
    warning has to be noticeable, and --warn-text is a text colour. */
 .inst-change[data-change="conflict"] { --change-ink: var(--warn-text); color: var(--warn-text); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Heatmap — HOW MUCH, per day, over weeks
+
+   The one reading in the kit whose axis is INTENSITY rather than category or
+   outcome, and the reason it had to be built rather than assembled.
+
+   Two neighbours were tried on a real screen first and both failed, which is
+   what earned this component its place.
+
+   A row of check histories, one per weekday. The tick is 3px wide against a
+   14px cell, so seven of them read as a barcode rather than a field; worse,
+   `data-tone` is the OUTCOME vocabulary — ok, warn, error — and seven strips
+   of it read as pass and fail, which is a different question entirely. A
+   heatmap has no failures in it.
+
+   A calendar with a tone on each day. Its grid is seven fixed columns and its
+   cells stretch to the width — measured at 91px each — so thirteen weeks
+   cannot be laid out at all, and the tonal fills give TWO distinct
+   backgrounds across the whole grid. No intensity axis of any kind.
+
+   THE RAMP IS MIXED, NOT DECLARED. --chart-1..6 are categorical: they are
+   chosen to be told APART, which is the opposite of what a ramp needs. Five
+   new tokens across fifteen cells and four accents would be the alternative,
+   and they would have to be re-tuned every time the accent moved. A mix from
+   --accent-solid down into the empty cell follows all four accents and every
+   theme for free, and the empty cell is --surface-recessed — the same fill a
+   metric tile takes, which is what the reference does too.
+
+   COLOUR IS THE ONLY CARRIER HERE, and unusually that is honest: intensity
+   has no shape to fall back on. So the accessible name does the work, exactly
+   as the check history's does — `role="img"` and an aria-label that says the
+   quantity in words. There is no forced-colours rule for the same reason
+   there is none on the history: one fill is left there, and a grid of
+   identical squares would claim to mean something it no longer does.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-heatmap {
+  /* Seven rows because a week has seven days, and the weeks run along the
+     inline axis: time goes to the right here as it does in the history. */
+  display: grid;
+  grid-template-rows: repeat(7, var(--cell-size));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--cell-size);
+  gap: var(--space-1);
+  /* The small-glyph rung is 14 and the reference's cell measures 14.7. It
+     rides the ladder, so the field grows with the type rather than staying a
+     fixed square while everything round it moves. */
+  --cell-size: var(--size-icon-sm);
+  inline-size: max-content;
+  max-inline-size: 100%;
+  /* A year is fifty-two columns and will not fit a narrow panel. It pans,
+     with the bar hidden — the device the tab strip and the status bar use. */
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { block-size: 0; }
+}
+
+.inst-heatmap-cell {
+  border-radius: var(--radius-mark);
+  background: var(--surface-recessed);
+}
+
+.inst-heatmap-cell[data-level="1"] { background: color-mix(in oklab, var(--accent-solid) 25%, var(--surface-recessed)); }
+.inst-heatmap-cell[data-level="2"] { background: color-mix(in oklab, var(--accent-solid) 50%, var(--surface-recessed)); }
+.inst-heatmap-cell[data-level="3"] { background: color-mix(in oklab, var(--accent-solid) 75%, var(--surface-recessed)); }
+.inst-heatmap-cell[data-level="4"] { background: var(--accent-solid); }
+
+/* No day here: the range began on a Wednesday, or ends mid-week. The room
+   stays so the columns keep their weeks; the mark does not. The same
+   arrangement as the history's data-empty. */
+.inst-heatmap-cell[data-empty] { background: none; }
 
 }
 
