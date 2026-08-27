@@ -243,7 +243,12 @@
    is not wanted.                                                          */
 
 .inst-metric {
-  padding: var(--pad-panel);
+  /* --pad-block-y, not --pad-panel: a tile is not a panel and was never owed a
+     panel's inset. --pad-panel spends 12/16 where this needs 8, and the extra
+     is a third of the tile's height. --space-4 would have hit the number but
+     is a fixed step, and a tile deaf to density is a bug the gates cannot see:
+     this token steps 6 · 8 · 12 and keeps the tile answering. */
+  padding: var(--pad-block-y);
   border-radius: var(--radius-md);
   /* Relative: a tile lies on a page, in a panel and in a grid inside a card
      alike. An absolute step knows one depth only and sinks twice as deep on a
@@ -251,19 +256,37 @@
   background: var(--surface-recessed);
 }
 
-.inst-metric-label { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-ui); }
+.inst-metric-label { font-size: var(--text-xs); color: var(--text-secondary); line-height: var(--leading-ui); }
 
+/* A METRIC MAY NOT OUTRANK THE NAME OF THE SCREEN.
+
+   The value used to be --text-2xl, whose only other user is `h1`. A page
+   title is --text-xl, so a number in a tile was set 28 against a heading of
+   22: the loudest type on the screen was a metric rather than the name of the
+   screen it stood on. The tile came to 80.4px tall against a reference that
+   draws the same fact in 44.7 — measured in AUDIT-2026-08-27.
+
+   --text-lg rather than the reference's own step. The reference sets its
+   value barely above its label, told apart by weight and colour alone, and
+   the kit cannot follow it that far: at parity with the label a metric stops
+   being a figure and becomes .inst-kv, which already exists and is the right
+   component for a labelled value. --text-lg keeps the value/label ratio at
+   1.44 — a figure, still under the page title at every rung of the ladder,
+   because both are roles in the one type scale and the ordering travels with
+   it.                                                                     */
 .inst-metric-value {
-  margin-block-start: var(--space-3);
-  font-size: var(--text-2xl);
+  margin-block-start: var(--space-2);
+  font-size: var(--text-lg);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-tight);
   line-height: 1.1;
 }
 
-/* The unit is part of the number, so it has no right to compete with it. */
+/* The unit is part of the number, so it has no right to compete with it. It
+   followed the value down: --text-md against --text-lg is 0.89 and reads as
+   part of the figure, where the old pair sat at 0.57. */
 .inst-metric-unit {
-  font-size: var(--text-md);
+  font-size: var(--text-xs);
   color: var(--text-secondary);
   margin-inline-start: 2px;
   letter-spacing: var(--tracking-normal);
@@ -311,5 +334,9 @@
 .inst-metric-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--pad-panel);
+  /* Air between tiles, not a panel's inset. --pad-panel put 12px between
+     neighbours that already carry 8 of their own, so a row of four read as
+     four cards with a corridor each. The reference draws 5.3. --gap-row steps
+     4 · 6 · 8 with the density, as the gap between neighbours should. */
+  gap: var(--gap-row);
 }

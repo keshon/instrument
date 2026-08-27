@@ -12,10 +12,11 @@ api:
   - { name: "inst-metric-delta", kind: "класс", doc: "Изменение к прошлому периоду" }
   - { name: "data-dir", kind: "атрибут", value: "up · down", doc: "на `inst-metric-delta`" }
   - { name: "data-tone", kind: "атрибут", value: "neutral · running · ok · warn · error", doc: "там же" }
-  - { name: "--surface-sunken", kind: "токен" }
+  - { name: "--surface-recessed", kind: "токен" }
   - { name: "--radius-md", kind: "токен" }
-  - { name: "--pad-panel", kind: "токен" }
-  - { name: "--text-2xl", kind: "токен" }
+  - { name: "--pad-block-y", kind: "токен" }
+  - { name: "--gap-row", kind: "токен" }
+  - { name: "--text-lg", kind: "токен" }
   - { name: "--text-xs", kind: "токен" }
   - { name: "--tracking-tight", kind: "токен" }
   - { name: "--tone-ink", kind: "токен" }

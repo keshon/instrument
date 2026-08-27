@@ -12,10 +12,11 @@ api:
   - { name: "inst-metric-delta", kind: "class", doc: "The change against the previous period" }
   - { name: "data-dir", kind: "attribute", value: "up · down", doc: "on `inst-metric-delta`" }
   - { name: "data-tone", kind: "attribute", value: "neutral · running · ok · warn · error", doc: "in the same place" }
-  - { name: "--surface-sunken", kind: "token" }
+  - { name: "--surface-recessed", kind: "token" }
   - { name: "--radius-md", kind: "token" }
-  - { name: "--pad-panel", kind: "token" }
-  - { name: "--text-2xl", kind: "token" }
+  - { name: "--pad-block-y", kind: "token" }
+  - { name: "--gap-row", kind: "token" }
+  - { name: "--text-lg", kind: "token" }
   - { name: "--text-xs", kind: "token" }
   - { name: "--tracking-tight", kind: "token" }
   - { name: "--tone-ink", kind: "token" }
