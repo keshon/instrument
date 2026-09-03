@@ -125,7 +125,20 @@ one fill.
 **A region takes at most one film.** A `support` region asks for the same film,
 and one that is already nested still paints one — so rank's ground lever bites
 at depth 0 only, and a support region deeper in shows its rank in its title and
-its missing edge. See [rank](../about/design-principles.md#state-and-variant).
+its missing edge. See [rank](./rank.md).
+
+**The corner steps with the ground.** A nested region takes `--radius-md` where a
+free-standing one takes `--radius-lg`, because nested radii have to decrease or
+the inner shape reads as bulging out of the outer one. One rung and not one per
+level: at a third nesting the next step down would be a control's corner on a
+full-width block. After the first step the ground carries depth on its own.
+
+The corner belongs to **depth and not to rank**, and that is a collision rather
+than a preference. Rank is a screen-level choice, so a lead card can sit inside a
+support panel — and were the corner rank's to set, that card would carry the
+larger radius inside a container carrying the smaller one and bulge out of it.
+Depth cannot collide with itself: a nested region is inside its container by
+definition, so a step down is always available and always right.
 
 In a dark theme the distance between neighbouring steps is **wider** than in a
 light one: the dark end of the ramp is harder to tell apart, and a mirrored

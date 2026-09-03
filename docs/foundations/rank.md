@@ -70,11 +70,18 @@ is the material: the values, what each resolves to, and how to choose.
 
 Three values, and the list is closed.
 
-| Value | The name of the region | Ink | Ground | Edge |
-|---|---|---|---|---|
-| `lead` | `--text-sm` | unchanged | unchanged | unchanged |
-| `default` | `--text-xs` | unchanged | unchanged | unchanged |
-| `support` | `--text-2xs` | `--text-muted` | one recess film | none |
+| Value | The name | Ink | Ground | Edge | Inset |
+|---|---|---|---|---|---|
+| `lead` | `--text-sm` | unchanged | unchanged | unchanged | unchanged |
+| `default` | `--text-xs` | unchanged | unchanged | unchanged | unchanged |
+| `support` | `--text-2xs` | `--text-muted` | one recess film | none | one step tighter |
+
+A quiet region is physically smaller, not merely labelled in smaller type. The
+inset costs no token of its own: `--pad-block-y` is exactly one step under
+`--pad-panel` in all fifteen scale and density cells, and `--row-pad-y` one step
+under that, so `support` steps down by pointing at roles that already answer to
+density. A panel's header, body and toolbar move together — they share one
+inline inset, and a tightened one is still one.
 
 **The whole ladder sits below the base,** and nothing grows to signal
 importance. A lead region's name reaches `--text-sm`, the size of ordinary

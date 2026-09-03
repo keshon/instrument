@@ -56,6 +56,48 @@
   --region-edge:       var(--border);
 }
 
+/* THE INSET IS PART OF RANK, and leaving it out was the axis half-built.
+
+   A quiet region was the same size as a loud one with a smaller name on it.
+   AUDIT-2026-08-22 had already said where this goes -- "the one exception the
+   session screen argues for is the PANEL, and even there what varies is the
+   PADDING, not the size" -- and rank shipped moving type and nothing physical.
+
+   It costs no new token. --pad-block-y is exactly one step under --pad-panel in
+   every one of the fifteen scale and density cells, and --row-pad-y one step
+   under that, so a support region steps down by pointing at roles that already
+   exist and already answer to density.
+
+   The pair is declared PER COMPONENT rather than once, because the defaults are
+   per component: a panel insets 12/8, a card 16 all round. This is the same
+   reason the section's reset stands apart below, and the same lesson the ink
+   ladder taught -- one value set for every region inverts wherever a region's
+   default differs from the one it was chosen against. */
+:where(.inst-panel, .inst-card) {
+  /* THE CORNER BELONGS TO DEPTH, NOT TO RANK, and the reason is a collision
+     rather than a preference.
+
+     Rank is a screen-level choice, so a lead card can sit inside a support
+     panel. Were the corner rank's to set, that card would carry 12 inside a
+     container carrying 8 and bulge out of it — the exact figure the kit's
+     nesting rule forbids: "an inner element with the same radius as its
+     container looks as if it bulges out", and a LARGER one is worse.
+
+     Depth cannot collide with itself. A nested region is inside its container
+     by definition, so a step down is always available and always correct. This
+     is the nesting rule finally drawn rather than only written down. */
+  --region-radius: var(--radius-lg);
+}
+
+:where(.inst-panel) {
+  --region-pad:       var(--pad-panel);
+  --region-pad-block: var(--pad-block-y);
+}
+:where(.inst-card) {
+  --region-pad:       var(--pad-card);
+  --region-pad-block: var(--pad-card);
+}
+
 /* The section's defaults differ because a section DRAWS NOTHING — it is a
    layout primitive, and a primitive that painted could not be nested inside
    something that paints otherwise. Rank moves its title and stops there. */
@@ -111,6 +153,20 @@
   --region-edge:       var(--region-edge-support);
 }
 
+/* One step down the ladder of insets, and these two carry a component in the
+   selector where the block above does not. The four properties above resolve to
+   one value for every region and can be set once; an inset cannot, because a
+   panel and a card start from different rungs. Set once, a support card would
+   have taken a panel's inset and grown tighter than a support panel. */
+.inst-panel[data-rank="support"] {
+  --region-pad:       var(--pad-block-y);
+  --region-pad-block: var(--row-pad-y);
+}
+.inst-card[data-rank="support"] {
+  --region-pad:       var(--pad-panel);
+  --region-pad-block: var(--pad-panel);
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    Surfaces: panel and card
 
@@ -130,7 +186,7 @@
      tone and the panel body already wear. */
   background: var(--region-ground, var(--surface-raised));
   border: var(--hairline) solid var(--region-edge, var(--border));
-  border-radius: var(--radius-lg);
+  border-radius: var(--region-radius, var(--radius-lg));
   /* A panel is the unit that reflows: the components inside answer to ITS
      width, not to the width of the window. A panel always receives its width
      from outside, so an inline-size container is safe here.              */
@@ -146,12 +202,28 @@
   align-items: center;
   gap: var(--gap-inline);
   flex: none;
-  padding: var(--pad-block-y) var(--pad-panel);
-  border-block-end: var(--hairline) solid var(--border-subtle);
+  /* NO RULE UNDER THE HEADER, and no bottom inset either.
 
-  /* A toolbar directly under the header brings its own bottom line — a
-     second one would be a double rule across 30 pixels.                  */
-  &:has(+ .inst-toolbar) { border-block-end: none; }
+     The rule was the panel enclosing itself twice: an outline around the whole
+     object and a line across it thirty pixels in. The reference draws neither —
+     its panel has no border, no rule, a 4px header inset and a 13/400 title,
+     and separates a header from a body by position and quietness alone. The
+     kit's title is a rung under its data and set in medium, so it is already
+     recognisable as a header without a line drawn under it.
+
+     THE INSET GOES WITH THE RULE, and that is not tidiness. With the line gone
+     the header's own bottom padding and the body's top padding stacked into
+     20px of empty band — a gap wide enough to read as a separation of its own,
+     which is the thing the rule was removed for. At zero the title stands one
+     --region-pad above the content, the same single unit every other gap in the
+     panel is measured in, and the header is a label on the content rather than
+     a compartment above it.
+
+     The one case that keeps a line is a toolbar directly under the header: the
+     toolbar is a strip of controls and its own bottom edge is what parts it
+     from the data. The header's inset stays at zero there too, so title and
+     toolbar sit one of the toolbar's own insets apart.                       */
+  padding: var(--region-pad-block, var(--pad-block-y)) var(--region-pad, var(--pad-panel)) 0;
 }
 
 .inst-panel-title {
@@ -209,7 +281,7 @@
   flex: 1;
   min-block-size: 0;
   overflow: auto;
-  padding: var(--panel-body-pad, var(--pad-panel));
+  padding: var(--panel-body-pad, var(--region-pad, var(--pad-panel)));
 }
 
 .inst-panel-body--flush { --panel-body-pad: 0; }
@@ -253,8 +325,8 @@
      to the same channel now. */
   background: var(--region-ground, var(--surface-raised));
   border: var(--hairline) solid var(--region-edge, var(--border));
-  border-radius: var(--radius-lg);
-  padding: var(--pad-card);
+  border-radius: var(--region-radius, var(--radius-lg));
+  padding: var(--region-pad, var(--pad-card));
 }
 
 /* A REGION INSIDE A REGION RECEDES, IT DOES NOT RISE.
@@ -294,6 +366,13 @@
    object standing on empty ground has to be above it.                       */
 :is(.inst-panel, .inst-card, .inst-section) :is(.inst-panel, .inst-card) {
   --region-ground: var(--surface-recessed);
+  /* And the corner steps with it, one rung. Nested radii have to decrease or
+     the inner shape reads as bulging out of the outer one; the kit has said so
+     since the radius ladder was written and nothing drew it until here. One
+     rung and not one per level: at the third nesting --radius-sm would be a
+     6px corner on a full-width block, which reads as a control rather than a
+     region. The ground keeps carrying depth after the first step. */
+  --region-radius: var(--radius-md);
 }
 
 .inst-card--interactive {
@@ -379,7 +458,10 @@
   align-items: center;
   gap: var(--space-3);
   flex: none;
-  padding: var(--pad-block-y) var(--pad-panel);
+  /* The panel's regions share one inline inset, and that now includes a
+     tightened one: a support panel's toolbar moves with its header and body
+     rather than staying at the ordinary rung and breaking the line they keep. */
+  padding: var(--region-pad-block, var(--pad-block-y)) var(--region-pad, var(--pad-panel));
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 

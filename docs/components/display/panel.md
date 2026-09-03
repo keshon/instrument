@@ -29,6 +29,13 @@ A region of an application: it stands on the screen permanently and has a name
 of its own. A panel is not a card: it cannot be dragged, because it IS the
 place.
 
+**The header draws no rule under itself.** A panel already encloses its contents
+once, with its own edge; a line across it thirty pixels in is a second
+enclosure of the same object. The title is a rung under its data and set in
+medium, which is what makes it read as a header. The one exception is a toolbar
+directly under the header — a strip of controls, whose own bottom edge is what
+parts it from the data.
+
 ```html preview
 <div class="inst-panel">
   <div class="inst-panel-header">
