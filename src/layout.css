@@ -429,7 +429,27 @@
    whole panel, and a panel name differs from the data by weight. Neither of
    them takes a step UP in size: six panels would give six points of
    attraction instead of the data.                                         */
-.inst-section-title { font-size: var(--text-xs); font-weight: var(--weight-normal); color: var(--text-muted); }
+/* A group label, and now one that can say how much it matters.
+
+   The register comment above still holds for an ORDINARY section: quieter and
+   smaller than a panel's name, because it serves what stands under it. What it
+   could not say was which section is the point of the screen — the label had one
+   setting, and a settings page reaching for a real heading got the document
+   ladder instead: 22/600/primary against 12.5/400/muted, with nothing between.
+
+   The rung arrives through the channel. Default resolves --region-title-default,
+   which moves this label from --text-xs to --text-sm; the INK stays muted, so it
+   is still quieter than the data by colour while being findable by size. Support
+   returns it to --text-xs and takes the ink down a tier; lead lifts it to
+   --text-md, one step under a panel's lead name and two under the page title.
+
+   The weight stays normal. Weight is binary in this kit and already spent on
+   labels, which is exactly why size had to become sayable. */
+.inst-section-title {
+  font-size: var(--region-title-size, var(--region-title-default));
+  font-weight: var(--weight-normal);
+  color: var(--region-title-ink, var(--text-muted));
+}
 .inst-section-actions { margin-inline-start: auto; }
 
 /* ──────────────────────────────────────────────────────────────────────────
