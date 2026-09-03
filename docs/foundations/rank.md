@@ -63,7 +63,7 @@ is the material: the values, what each resolves to, and how to choose.
 |---|---|
 | Rank is not a state | It carries no meaning and is announced by nothing. What a region MEANS is [tone](./colors.md), and a status always travels with a word |
 | Contrast at every rank | Every rung is measured against every ground it can stand on, across five themes and four accents. `support` takes `--text-muted`, the quietest tier text may be read in — `--text-faint` is the decoration threshold and is forbidden for reading |
-| Type floor | `support` takes `--region-title-support`, which is `--text-xs`. The 11px floor is not approached at any scale |
+| Type floor | `support` takes `--region-title-support`, which is `--text-2xs` — the declared bottom of the scale, and the one place a badge-sized label is right, since a support region is a footnote by definition. Nothing goes below it |
 | Heading level | Unchanged by rank. `<h2 class="inst-section-title">` is a real `h2` whatever its rank: the tag carries the outline, rank carries the size |
 
 ## Scale
@@ -72,16 +72,30 @@ Three values, and the list is closed.
 
 | Value | The name of the region | Ink | Ground | Edge |
 |---|---|---|---|---|
-| `lead` | `--text-md` | unchanged | unchanged | unchanged |
-| `default` | `--text-sm` | unchanged | unchanged | unchanged |
-| `support` | `--text-xs` | `--text-muted` | one recess film | none |
+| `lead` | `--text-sm` | unchanged | unchanged | unchanged |
+| `default` | `--text-xs` | unchanged | unchanged | unchanged |
+| `support` | `--text-2xs` | `--text-muted` | one recess film | none |
 
-**Lead moves one thing.** Its name takes one rung up the ladder and nothing
-else. There is nowhere to lift a region to — `--surface-raised` is the top of the
-ramp in every light theme — so a lead that lifted would find headroom in two
-themes of five and silently do nothing in three. Presence is spent on size, which
-the ban on heavier weights already makes the only carrier of large-scale
-hierarchy.
+**The whole ladder sits below the base,** and nothing grows to signal
+importance. A lead region's name reaches `--text-sm`, the size of ordinary
+interface text; an ordinary region's name sits a rung under that, and a quiet
+one two rungs under.
+
+So an ordinary label is smaller than the data it labels, which the third law
+always meant and the kit used to leave to weight alone. A **lead** label is the
+one exception: it matches its data's size and is told from it by weight, the way
+every label once was. There is one lead per screen, and it is where the eye is
+meant to stop.
+
+Hierarchy is made by the surroundings getting quieter rather than by the
+important thing getting louder. That also keeps chrome clear of content:
+`--text-md` belongs to prose and to an agent's answer, and no region name
+reaches it at any rank.
+
+**Lead moves one thing** — its name, one rung. There is nowhere to lift a region
+to, since `--surface-raised` is the top of the ramp in every light theme, so a
+lead that lifted would find headroom in two themes of five and silently do
+nothing in three.
 
 **Support may spend more,** because withdrawing is the cheap direction: a rung
 down, an ink tier down, a film and no edge at all.
@@ -94,9 +108,9 @@ The rungs are references into the type ladder rather than numbers, so
 
 | Token | Value |
 |---|---|
-| `--region-title-lead` | `--text-md` |
-| `--region-title-default` | `--text-sm` |
-| `--region-title-support` | `--text-xs` |
+| `--region-title-lead` | `--text-sm` |
+| `--region-title-default` | `--text-xs` |
+| `--region-title-support` | `--text-2xs` |
 | `--region-ground-support` | `--surface-recessed` |
 | `--region-edge-support` | transparent |
 

@@ -61,7 +61,7 @@ four objects.
 | The level of the heading | Chosen by the structure of the document rather than by the look. It is not assigned automatically |
 | The landmark | If the block really is a self-standing division, put a `<section>` with an `aria-labelledby` on the heading; a `<div>` gives no landmark, and that is fine for grouping |
 | Contrast | The label is `--text-muted`, 4.5:1 in five themes. It is quieter than the data by colour, but not below the floor of reading |
-| Type size | The rung its rank asks for; `--text-sm` by default, the same as the base of the document, so the label is not larger than the contents |
+| Type size | The rung its rank asks for; `--text-xs` by default, a rung under the base of the document, so the label is smaller than the contents it labels |
 | Order | The actions stand after the heading in the markup and are traversed after it |
 
 ## Anatomy
@@ -93,7 +93,7 @@ heights to one another.
 ### The heading
 
 `inst-section-title` is `--weight-normal` and `--text-muted`, and its size comes
-from [rank](../about/design-principles.md#state-and-variant): `--text-sm` by
+from [rank](../about/design-principles.md#state-and-variant): `--text-xs` by
 default, a rung up for `lead`, a rung down for `support`. The weight stays
 normal at every rank — weight is binary in this kit and already spent on labels,
 which is why size had to become sayable at all.

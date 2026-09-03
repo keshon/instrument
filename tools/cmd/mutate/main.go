@@ -188,18 +188,18 @@ var mutations = []mutation{
 	// would stay green through all three of these: the rungs are untouched and
 	// only the axis pointing at them moves.
 	{"rank: lead levelled with default", "proportion", "src/tokens.css",
-		"--region-title-lead:    var(--text-md);",
 		"--region-title-lead:    var(--text-sm);",
+		"--region-title-lead:    var(--text-xs);",
 		"two ranks produce one look, and the ladder loses its top step"},
 	{"rank: support levelled with default", "proportion", "src/tokens.css",
+		"--region-title-support: var(--text-2xs);",
 		"--region-title-support: var(--text-xs);",
-		"--region-title-support: var(--text-sm);",
 		"de-emphasis stops existing and every region reads at one level"},
 	// Direction, and the band does the work: an inverted ratio falls below the
 	// lower bound, so no separate sign test is wanted — the same arrangement the
 	// button weight ladder relies on.
 	{"rank: the ladder inverted", "proportion", "src/tokens.css",
-		"--region-title-lead:    var(--text-md);",
+		"--region-title-lead:    var(--text-sm);",
 		"--region-title-lead:    var(--text-2xs);",
 		"the principal region's name comes out smaller than an ordinary one"},
 	// The mutation that would have caught the whole mark story before it was a

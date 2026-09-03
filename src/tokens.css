@@ -1292,9 +1292,41 @@
      spent on labels. De-emphasis may spend more, because withdrawing chrome is
      the cheap direction: support drops a rung, drops an ink tier, takes a film
      and gives up its edge.                                                   */
-  --region-title-lead:    var(--text-md);
-  --region-title-default: var(--text-sm);
-  --region-title-support: var(--text-xs);
+  /* THE LADDER SITS BELOW THE BASE, and that is the correction the reference
+     forced.
+
+     It read --text-md / --text-sm / --text-xs at first: a lead region's name at
+     16px. Measured against the reference, that is the size it sets its agent's
+     ANSWER in, while it sets a panel name at 13 and a task name at 13, both at
+     weight 400. Its largest type is the thing being READ; its labels sit a rung
+     or two below the base. The kit had the loudest chrome on a screen landing
+     on exactly the size of its own content — --text-md is what .inst-turn-body
+     and .inst-prose take — so a label and a paragraph were set alike.
+
+     The whole ladder therefore moves down one rung rather than the lead moving
+     up. Hierarchy is made by everything else getting quieter, which is the
+     mechanism the reference actually uses: nothing there grows to signal
+     importance, the surroundings shrink.
+
+     What it costs and what it buys: an ordinary panel name goes 14 -> 12.5,
+     landing beside the reference's 13, and a lead one returns to 14, which is
+     todays ordinary. No region name can now reach content size at any rank.
+
+     The third law now holds on the size axis for every region but one. "Labels,
+     borders and headers serve the data and have to be quieter" was true by
+     weight and silent by size while every label matched the data it labelled.
+     An ordinary label is now a rung under its data and a quiet one two rungs
+     under. A LEAD label reaches its data's size and is told from it by weight,
+     as every label used to be — and there is exactly one lead per screen, which
+     is the one place the eye is meant to stop.
+
+     The floor is respected rather than approached by accident: support lands on
+     --text-2xs, the declared bottom of the scale, and a support region is a
+     footnote by definition — the one place a badge-sized label is the right
+     answer. */
+  --region-title-lead:    var(--text-sm);
+  --region-title-default: var(--text-xs);
+  --region-title-support: var(--text-2xs);
 
   /* THE PROPORTION of a control rather than its padding. This is the one
      place in the kit where a RATIO is declared, and the reason is that the
