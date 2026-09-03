@@ -710,6 +710,39 @@ window.kitAudit = (function () {
     });
     probe.remove();
 
+
+    /* C7 -- a tone reaches a region's ground, and stops at its boundary.
+       Same shape as C3 and the same reason: --tone-bg inherits, so a card
+       inside a toned panel receives the value and only its own reset keeps it
+       from painting with it. The contrast pairs measure the COLOURS a toned
+       region can hold; nothing but the rendered tree can say which regions are
+       holding them. */
+    regionsIn(sel).forEach(function (el) {
+      var toned = el.getAttribute('data-tone');
+      var container = el.parentElement && el.parentElement.closest('[data-tone]');
+      if (!toned && !container) return;
+      var ground = getComputedStyle(el).getPropertyValue('--region-ground').trim();
+      if (toned) {
+        checked++;
+        /* A toned region resolves the tone channel and not a surface or a film.
+           --tone-bg is what [data-tone] set on this very element, so the two
+           must agree by construction; when they do not, something outranked the
+           tone on the one property it is allowed to claim. */
+        var want = getComputedStyle(el).getPropertyValue('--tone-bg').trim();
+        if (want && ground !== want) {
+          bad.push('C7 a region with data-tone="' + toned + '" resolved its ground to ' +
+            ground + ' rather than its tone ' + want + '; something outranked the tone');
+        }
+      } else {
+        checked++;
+        var inherited = getComputedStyle(container).getPropertyValue('--tone-bg').trim();
+        if (inherited && ground === inherited) {
+          bad.push('C7 an untoned region inside [data-tone="' + container.getAttribute('data-tone') +
+            '"] took its container tone as a ground; a tone crossed a region boundary');
+        }
+      }
+    });
+
     ruler.remove();
     return { checked: checked, failed: bad.length, list: bad };
   }

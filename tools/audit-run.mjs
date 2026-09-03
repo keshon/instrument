@@ -313,6 +313,18 @@ const SUPPORT_INK_ANCHOR =
 
 const MUTATIONS = [
   {
+    /* C7. Drop the card from the selector and a toned card stops taking its
+       tone: the axis is declared in the documentation and drawn on nothing.
+       No token moves, so no Go gate can see it. */
+    name: 'a region stopped taking its tone',
+    section: 'composition',
+    file: 'surfaces.css',
+    page: '/components/display/card/',
+    from: ':where(.inst-panel, .inst-card)[data-tone] {',
+    to: ':where(.inst-panel)[data-tone] {',
+    why: 'a toned card draws an ordinary ground, and only the rendered tree can say so',
+  },
+  {
     /* C6, and it can point at any page: the ladder check builds its own probes
        rather than measuring what the document happens to hold. That is the whole
        difference from the mutation below, which had to be repointed once because

@@ -71,9 +71,19 @@ depth decides that and rank does not.
     <div class="inst-card" data-rank="support">
       <div class="inst-card-title">Support: a rung down, no edge</div>
     </div>
+    <div class="inst-card" data-tone="error">
+      <div class="inst-card-title">And one in error, nested</div>
+      <div class="inst-card-sub">The tone takes the ground; the edge stays ordinary</div>
+    </div>
   </div>
 </div>
 ```
+
+A nested card carrying a [tone](../../foundations/colors.md) takes it on its
+ground instead of the recess film. It still recedes from its container in every
+theme — a light theme's tone fill sits under the raised surface, a dark theme's
+is a translucent lift over a dark one, and the recess travels the same way in
+each — so containment is not lost to meaning.
 
 ### Interactive
 

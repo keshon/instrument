@@ -161,27 +161,31 @@ in shows its rank in its name and its missing edge. See
 
 A lead region is the principal one, not the good one, and the two axes are
 independent: rank says this is the place to look, [tone](./colors.md) says what
-it means.
+it means. They combine, and that combination is the point of keeping them apart
+— a region that owns its screen **and** is in error:
 
 ```html preview
-<div class="inst-panel" data-rank="lead">
+<div class="inst-panel" data-rank="lead" data-tone="error">
   <div class="inst-panel-header">
     <span class="inst-panel-title">Database unavailable</span>
     <span class="inst-panel-actions"><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>P1</span></span>
   </div>
-  <div class="inst-panel-body inst-stack inst-stack--tight">
-    <div class="inst-note" data-tone="error">Started 03:12. Three retries, none successful.</div>
-  </div>
+  <div class="inst-panel-body">Started 03:12. Three retries, none successful.</div>
 </div>
 ```
 
-**A region's own ground does not follow its tone — yet.** `data-tone` on a
-region sets `--tone-bg` and `--tone-ink` as it does anywhere, and today nothing
-on a panel or a card reads them: the tone is carried by the marks inside, as
-above. A [note](../components/feedback/note.md) and a
-[banner](../components/feedback/banner.md) already take a tone on their ground,
-and the region layer is meant to follow. Until it does, `data-tone` on a panel
-is inert rather than wrong — so put it on something that reads it.
+**The tone reaches the ground and not the edge,** which is what
+[a banner](../components/feedback/banner.md) already does: it keeps `--border`
+and puts the tone on its background. A toned box outlined in the tone as well
+states one fact twice.
+
+**Tone outranks rank on the ground.** A support region that is also in error is
+an error, drawn quietly: the rung, the ink and the missing edge still say
+`support`, and the ground says `error`. Meaning wins the one property they
+contend for.
+
+**It does not descend,** for the same reason rank does not. A card inside a
+toned panel shows that tone only by asking for it.
 
 ## Rules
 

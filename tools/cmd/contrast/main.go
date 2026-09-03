@@ -382,6 +382,22 @@ var cases = []kase{
 	// And the same title at depth 0, where the rank film is the only one.
 	{label: "rank: support title on page", fg: "--text-muted",
 		bg: []string{"--surface-page", "--region-ground-support"}, min: text},
+
+	// ── TONE ON A REGION'S GROUND ───────────────────────────────────────────
+	//
+	// The banner pairs above measure a tone fill on the PAGE. A region carrying
+	// a tone stands on the raised surface as often as on the page — a toned card
+	// inside a panel, a toned panel in a shell — and that stack was never asked.
+	// The tone fill is opaque in the light themes and translucent in the dark
+	// ones, so the layer beneath genuinely changes the answer.
+	{label: "region tone: text on ok ground", fg: "--text-primary", bg: []string{"--surface-raised", "--ok-bg"}, min: text},
+	{label: "region tone: text on warn ground", fg: "--text-primary", bg: []string{"--surface-raised", "--warn-bg"}, min: text},
+	{label: "region tone: text on error ground", fg: "--text-primary", bg: []string{"--surface-raised", "--err-bg"}, min: text},
+	{label: "region tone: text on running ground", fg: "--text-primary", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
+	// A region's NAME on its own toned ground: quieter than the data, and still
+	// read. This is the pair that would fail first if the tone fills moved.
+	{label: "region tone: name on error ground", fg: "--text-muted", bg: []string{"--surface-raised", "--err-bg"}, min: text},
+	{label: "region tone: name on warn ground", fg: "--text-muted", bg: []string{"--surface-raised", "--warn-bg"}, min: text},
 }
 
 var themes = []*css.Theme{

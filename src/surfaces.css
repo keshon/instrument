@@ -167,6 +167,34 @@
   --region-pad-block: var(--pad-panel);
 }
 
+/* ── Tone on a region's ground ────────────────────────────────────────────
+
+   A tone already reaches a ground on .inst-note and .inst-banner; this is the
+   same move one level up, so a danger zone, a firing incident and a failed run
+   can be a REGION in that tone rather than a message component standing in for
+   a container.
+
+   THE GROUND ONLY, and the edge is left alone — exactly what .inst-banner does,
+   which keeps --border and puts the tone on its background. A toned box outlined
+   in the tone as well is two statements of one fact, and the kit is spending its
+   budget the other way.
+
+   AFTER RANK, so meaning beats presence: a support region that is also in error
+   is an error, drawn quietly. Both selectors are (0,1,0), so this is source
+   order doing the work and the order is the decision.
+
+   IT DOES NOT LEAK, and for the same reason rank does not. --tone-bg inherits,
+   so a card inside a toned panel receives it — and the card's own reset declares
+   --region-ground on the card itself, and an element's own declaration beats an
+   inherited value whatever the ancestor's specificity. A nested region shows its
+   container's tone only by asking for it.
+
+   On anything that is not a region this is inert: nothing else reads
+   --region-ground.                                                          */
+:where(.inst-panel, .inst-card)[data-tone] {
+  --region-ground: var(--tone-bg);
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    Surfaces: panel and card
 
@@ -364,7 +392,43 @@
    inner one does not, because a section draws nothing and has no ground to
    recede. On a PAGE a region is still raised: there the ceiling is free, and an
    object standing on empty ground has to be above it.                       */
-:is(.inst-panel, .inst-card, .inst-section) :is(.inst-panel, .inst-card) {
+/* The inset steps with the rest, and per component for the reason the rank
+   override above is per component: a panel starts at 12/8 and a card at 16, so
+   one value for both would put a nested card on a panel's inset and make it
+   tighter than a nested panel.
+
+   It closes a figure that was always slightly wrong and never named: a card
+   inside a panel insets 16 where the panel insets 12, so the child was roomier
+   than its parent. Nested content recedes, and an inset that grows on the way
+   in is the one place the kit said otherwise.
+
+   ONE STEP, from depth or from rank or from both. These land on the same values
+   the rank overrides use, so a nested support region steps once and not twice —
+   the same arrangement the film already has, and the same reason: two rules may
+   ask, one paints. */
+:where(:is(.inst-panel, .inst-card, .inst-section) .inst-panel) {
+  --region-pad:       var(--pad-block-y);
+  --region-pad-block: var(--row-pad-y);
+}
+:where(:is(.inst-panel, .inst-card, .inst-section) .inst-card) {
+  --region-pad:       var(--pad-panel);
+  --region-pad-block: var(--pad-panel);
+}
+
+/* ZERO SPECIFICITY, and the values are unchanged — only who wins moves.
+
+   At (0,2,0) this rule beat every attribute axis: a nested region could not be
+   given a tone, because containment had already claimed its ground and the
+   cascade picks one in silence. At (0,0,0) it is a default like the reset above
+   it, ordered after so it wins where nothing else speaks, and yielding to rank
+   at (0,1,0) and to tone after that.
+
+   Where rank and containment both speak they say the same thing — one film, one
+   rung of corner — so nothing depends on which of them the cascade takes. That
+   equality is not a coincidence to lean on quietly: it is the one-film rule,
+   and if the two ever want different values the cascade will drop one without a
+   word. */
+:where(:is(.inst-panel, .inst-card, .inst-section) :is(.inst-panel, .inst-card)) {
   --region-ground: var(--surface-recessed);
   /* And the corner steps with it, one rung. Nested radii have to decrease or
      the inner shape reads as bulging out of the outer one; the kit has said so
