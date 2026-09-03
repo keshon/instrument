@@ -633,6 +633,19 @@ func checkInkCoverage(dir string, cases []kase) ([]string, int, error) {
 	return bad, len(ink), nil
 }
 
-// Intermediary names: component variable and tone. Semantics sits behind them,
-// which is measured separately under its own name.
-var indirect = regexp.MustCompile(`^--(btn|tone|level|change|chart)-`)
+// Intermediary names: component variable, tone and the rank channel. Semantics
+// sits behind them, which is measured separately under its own name.
+//
+// --region-* joined the list when the rank channel started painting a region's
+// title. It qualifies on the same terms tone does rather than by exception: the
+// channel never holds a colour of its own, only one of three that already have
+// pairs — --text-primary for lead and default, --text-secondary for support,
+// --text-muted for a section's default. All three are foregrounds in the table
+// above, and the support case is measured ON ITS OWN GROUND by the rank rows,
+// which is the composition the channel introduces and the one thing the
+// existing rows could not have covered.
+//
+// The test for adding a name here is the one this comment answers: can the
+// intermediary hold a value that no pair measures? If yes it is not an
+// intermediary, it is an unchecked colour wearing a channel's name.
+var indirect = regexp.MustCompile(`^--(btn|tone|level|change|chart|region)-`)

@@ -141,8 +141,26 @@
      --weight-medium stays, and it is enough: 600 against 400 is a bigger
      difference than one step of size, and it takes no room from the data. The
      kit's size steps work higher up — on a section heading and on a page,
-     where the hierarchy really is between blocks rather than inside one.  */
-  font-size: var(--text-sm);
+     where the hierarchy really is between blocks rather than inside one.
+
+     ALL OF THAT REMAINS TRUE OF AN ORDINARY PANEL, and rank is what finally
+     makes the exception sayable. The paragraph above argues against giving
+     EVERY panel a step up, and the argument is a count: six panels one step
+     larger give six places the eye is pulled to. It was never an argument that
+     no panel may ever be the point of its screen — the kit simply had no way to
+     say which one was, so the safe answer was applied to all of them and became
+     a law by default.
+
+     The rung now arrives through the channel. A panel with no rank resolves
+     --region-title-default, which is --text-sm: this line draws exactly what it
+     drew before. A screen that names one lead region gets one step up in one
+     place, which is the count the paragraph above was protecting.
+
+     The WEIGHT is deliberately not part of the ladder. It is binary and already
+     spent, and the kit's own ban on 700 leaves size as the only carrier of
+     large-scale hierarchy — so rank moves size and ink and lets weight alone. */
+  font-size: var(--region-title-size, var(--region-title-default));
+  color: var(--region-title-ink, var(--text-primary));
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-normal);
   /* The line height is its OWN, not inherited, and the height of the header
