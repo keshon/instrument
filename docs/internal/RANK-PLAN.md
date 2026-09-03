@@ -1,5 +1,42 @@
 # Rank — implementation plan
 
+**SUPERSEDED. Implemented on 2026-09-03; kept as the record of what was decided
+before the code existed, not as a description of the code.**
+
+Where each part of it now lives:
+
+| | |
+|---|---|
+| The contract — vocabulary, four laws, where rank is legal | [design principles](../about/design-principles.md#state-and-variant) |
+| Containment, and why it is a film | [elevation](../foundations/elevation.md) |
+| What rank does to a panel, and to a card | [panel](../components/display/panel.md) · [card](../components/display/card.md) |
+| Where the heading ladder went | [typography](../foundations/typography.md) |
+| The derivations behind the choices | [DECISIONS](./DECISIONS.md) |
+| The invariants themselves | `cmd/contrast`, `cmd/proportion`, `cmd/registry`, `cmd/mutate`, `kitAudit.composition()` |
+
+**Four things below turned out to be wrong, and each is marked in place.** They
+are left standing rather than edited out, on the precedent of the audits in this
+directory: a plan that quietly rewrites itself teaches nothing about how much of
+a plan survives contact with a browser.
+
+1. `@property { inherits: false }` cannot carry the channel — a region's title
+   is its grandchild, and the value stops one element short. The mechanism is a
+   `:where()` reset at every region boundary.
+2. The five tokens do not all belong in the role tier. Two of them are colours
+   and belong in the semantics, which is also the only tier `cmd/contrast` can
+   see.
+3. A region takes at most ONE film. The two rules collide on specificity, and
+   films stack in the paint rather than in the value.
+4. Moving the heading ladder into `.inst-prose` leaves a bare heading at the
+   USER AGENT's size, not the body size. `font-size: inherit` is the line the
+   plan meant.
+
+A fifth was found by the gates rather than by measurement: the composition
+mutation pointed at a page with no card inside a ranked region, so it was missed
+on its first run and guarded nothing.
+
+---
+
 Turning the accepted conclusions of the 2026-09-03 audit into work.
 Written against commit `d39cba0`, instrument 0.8.0.
 
