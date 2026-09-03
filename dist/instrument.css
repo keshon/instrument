@@ -4735,7 +4735,16 @@ hr {
   }
 }
 
-.inst-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
+/* The same channel the panel's name reads, and for the same reason: a card is a
+   region too. --region-title-ink rather than the inherited colour, so a support
+   card's name recedes with the rest of it while the card's CONTENT does not —
+   rank touches a region's chrome and never its data. */
+.inst-card-title {
+  font-size: var(--region-title-size, var(--region-title-default));
+  color: var(--region-title-ink, var(--text-primary));
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-ui);
+}
 .inst-card-sub   { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
 
 /* A PANEL'S REGIONS SHARE ONE INLINE INSET. The block padding is theirs alone.

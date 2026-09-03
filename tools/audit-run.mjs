@@ -285,7 +285,7 @@ const EXPR = (auditSrc) => `(async () => {
   const r = await window.kitAudit.run();
   const pack = o => Object.fromEntries(Object.entries(o).map(([k, v]) =>
     [k, { failed: v.failed, checked: v.checked, list: v.list.slice(0, 6) }]));
-  return { contrast: pack(r.contrast), targets: pack(r.targets), proportion: pack(r.proportion || {}), total: r.total };
+  return { contrast: pack(r.contrast), targets: pack(r.targets), proportion: pack(r.proportion || {}), composition: pack(r.composition || {}), total: r.total };
 })()`;
 
 /* Every mutation breaks exactly one thing and names the section that has to
@@ -301,6 +301,20 @@ const EXPR = (auditSrc) => `(async () => {
    at once. A check the harness cannot turn red is the thing this harness
    exists to forbid, so the harness learned to serve any file of the kit. */
 const MUTATIONS = [
+  {
+    /* The one law no Go gate can reach. Rank must not cross a region boundary,
+       and what holds it is a :where() reset any later edit could quietly drop.
+       Remove .inst-card from the list and a card inside a lead panel starts
+       carrying the lead rung: the defect the model exists to prevent, invisible
+       to every check that reads tokens. */
+    name: 'a region stopped resetting its container rank',
+    section: 'composition',
+    file: 'surfaces.css',
+    page: '/blocks/console/',
+    from: ':where(.inst-panel, .inst-card) {',
+    to: ':where(.inst-panel) {',
+    why: 'a card inside a lead panel becomes lead, and only the rendered tree can say so',
+  },
   {
     name: 'an icon size typed as a number',
     section: 'proportion',
