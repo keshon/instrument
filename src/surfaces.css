@@ -9,6 +9,84 @@
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
+   Rank — the channel
+
+   `data-rank` on a region resolves into four variables its own rules read. The
+   vocabulary is closed at three: lead · default · support. The tokens the
+   values point at live in the role tier; see tokens.css for why the rungs are
+   declared there and why lead has no ground of its own.
+
+   ── The reset IS the default, and @property is NOT the mechanism ──────────
+
+   The obvious device is `@property { inherits: false }`, the way --flow-self
+   stops a column's intent reaching a grandchild. It was tried and it does not
+   work here, and the reason the analogy hides is one element deep.
+
+   --flow-self is declared on `> *` and read BY THAT SAME ELEMENT. Rank is
+   declared on the REGION and read by its TITLE, which is a grandchild:
+
+     .inst-panel[data-rank="lead"]     --region-title-size: 16px   declared
+       > .inst-panel-header            (empty)                     stopped
+           > .inst-panel-title         (empty)                     never arrives
+
+   Measured on the rendered tree, all three values off getComputedStyle. With
+   inherits:false the title resolves its fallback in every case, so a lead
+   panel's name draws at the ordinary rung and the axis is inert for the one
+   carrier it has.
+
+   So the channel inherits ordinarily, and every REGION resets it at its own
+   boundary. That is the kit's existing law for defaults — ":where(), because a
+   default with the same specificity as an override is not a default" — doing
+   the work a registration could not: zero specificity, so any [data-rank]
+   block at (0,1,0) beats it, and a nested region stops its container's rank
+   dead by declaring its own.
+
+   Measured after the change: a lead panel's title 16px, an UNRANKED card's
+   title inside that same panel 14px, a support card's 12.5px. The leak stops
+   at the boundary, which is the whole of the fourth law.
+
+   Nothing outside the three region components reads these four names, so a
+   badge or a paragraph inheriting them is inert.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:where(.inst-panel, .inst-card) {
+  --region-title-size: var(--region-title-default);
+  --region-title-ink:  var(--text-primary);
+  --region-ground:     var(--surface-raised);
+  --region-edge:       var(--border);
+}
+
+/* The section's defaults differ because a section DRAWS NOTHING — it is a
+   layout primitive, and a primitive that painted could not be nested inside
+   something that paints otherwise. Rank moves its title and stops there. */
+:where(.inst-section) {
+  --region-title-size: var(--region-title-default);
+  --region-title-ink:  var(--text-muted);
+  --region-ground:     transparent;
+  --region-edge:       transparent;
+}
+
+/* Bare attribute selectors rather than `.inst-panel[data-rank]`: the channel is
+   inert on anything that does not read it, and three per-component copies of
+   one rule would be three places to forget.
+
+   Two blocks and not three. Lead differs from default in one property, so it
+   sets one. There is no [data-rank="default"] block at all — the reset above
+   already is it, and a block would restate it at a higher specificity. The
+   value stays spellable in markup all the same, the way data-state="queued" is:
+   an absent attribute is not read, and a typo looks like the base. */
+[data-rank="lead"] {
+  --region-title-size: var(--region-title-lead);
+}
+
+[data-rank="support"] {
+  --region-title-size: var(--region-title-support);
+  --region-title-ink:  var(--text-secondary);
+  --region-ground:     var(--region-ground-support);
+  --region-edge:       var(--region-edge-support);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    Surfaces: panel and card
 
    A panel is a REGION of the application (it has a header and holds its

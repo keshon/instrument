@@ -389,6 +389,52 @@
      fill. */
   --surface-selected: color-mix(in oklab, var(--a-4) 14%, transparent);
 
+  /* THE GROUND AND THE EDGE OF A QUIET REGION — the colour half of `data-rank`.
+
+     They stand in the SEMANTICS tier and not among the roles, and the split is
+     the kit's own definition rather than a convenience: tier 2 answers "what is
+     this colour for", tier 3 holds paddings, glyph sizes and gutters. A ground
+     is a colour. The rank RUNGS are sizes and stay below with the roles.
+
+     The tools agree with the tier split, which is the sign it is the right one:
+     cmd/contrast reads this block and cannot see the roles, cmd/proportion
+     reads the roles. Each half of the axis is guarded by the gate built for
+     what it is.
+
+     ── The film ────────────────────────────────────────────────────────────
+
+     The same film a control recesses by, under a name of its own. Not a
+     duplicate: the arrangement --surface-field has against --surface-raised,
+     and for the same reason. "How far does a control step off its ground" and
+     "how far does a quiet region step off its ground" are different questions
+     whose answers coincide today — and a region is a large area where a control
+     is a small one, so the day they part, they part in one line here.
+
+     It also earns its own mutation: repointing this turns the five rank pairs
+     in cmd/contrast red and leaves the button pairs alone, which is what proves
+     the rank pairs measure rank.
+
+     A REGION TAKES AT MOST ONE FILM. Depth requests it and rank requests it,
+     and a region receiving both requests still paints one — the depth of a
+     nesting shows through the stack of painted elements rather than through the
+     strength of a single fill. Measured: three nested films on white give
+     232.2 · 218.2 · 205.2, so the stacking is already there, and asking for it
+     twice on one box would be asking twice for what one box can give once.
+
+     The consequence to hold on to: rank's ground lever bites at depth 0 only. A
+     support panel on the page recedes; a support card already inside a panel
+     has spent the film on depth, and its rank shows in its title and its
+     missing edge instead. Symmetrical with lead, which never touches ground.
+
+     ── The edge ────────────────────────────────────────────────────────────
+
+     Support gives up its edge entirely. Chrome is the first thing to withdraw
+     and the cheapest one: an assembled kit screen carries about two and a half
+     times the drawn edges the reference does, so the quiet direction here is
+     also the direction the kit owed anyway. */
+  --region-ground-support: var(--surface-recessed);
+  --region-edge-support:   transparent;
+
   /* Four tiers of text.
      IMPORTANT: --text-faint is not applied to text that gets read. It is the
      threshold of decoration (≥3:1), not of reading (≥4.5:1). A log timestamp
@@ -1202,6 +1248,53 @@
      read as a shape rather than measured against a type size, and at these
      sizes one step is the whole difference between a square and a circle. */
   --radius-mark: var(--radius-2xs);
+
+  /* ── Rank ─────────────────────────────────────────────────────────────────
+
+     How much attention a REGION asks for on the screen it stands on. A fifth
+     attribute vocabulary — lead · default · support — beside tone, state, kind
+     and when, and the axis the kit had for a button and for nothing else.
+
+     A button has four weights, each one answer to "how loudly does this ask to
+     be pressed". A panel had one appearance and no question, so two panels of
+     wholly different importance came out with identical computed styles and
+     nothing in the markup could tell them apart. These tokens are the ladder
+     the region layer was missing.
+
+     ── Why the rungs are declared HERE and not in the [data-rank] blocks ────
+
+     cmd/proportion resolves names out of tokens.css and out of nothing else. A
+     rung written as `font-size: var(--text-md)` inside surfaces.css is
+     invisible to the gate, and the mapping from rank onto the ladder would go
+     unguarded — while the ladder itself stayed green, because the ladder is not
+     what such a mistake breaks.
+
+     They are REFERENCES into the type ladder rather than numbers, so scale
+     carries them along with everything else it moves. Density does not: it does
+     not touch the type size, by the law that separates the two axes. Hence no
+     entry in any of the fifteen cells.
+
+     ── Only where a rank DIFFERS from default ──────────────────────────────
+
+     There is no --region-ground-lead and no --region-edge-lead, and their
+     absence is the model rather than an omission. Lead does not lift.
+
+     --surface-raised is --n-0 at the light end — the ceiling of the ramp, the
+     same fact that made a card inside a panel recede rather than rise (see
+     surfaces.css). A lead region that lifted would find headroom in the dark
+     themes and none in the light ones: it would work on two themes out of five
+     and silently do nothing on three. That is the divergence light-dark() is
+     built to make impossible, and a rank that behaved differently per theme
+     would be the same defect wearing another name.
+
+     So lead is carried by ONE type rung and by nothing else — which is what the
+     kit's third law already asks for, weight 700 being banned and 600 already
+     spent on labels. De-emphasis may spend more, because withdrawing chrome is
+     the cheap direction: support drops a rung, drops an ink tier, takes a film
+     and gives up its edge.                                                   */
+  --region-title-lead:    var(--text-md);
+  --region-title-default: var(--text-sm);
+  --region-title-support: var(--text-xs);
 
   /* THE PROPORTION of a control rather than its padding. This is the one
      place in the kit where a RATIO is declared, and the reason is that the
