@@ -15,7 +15,7 @@ CSS-библиотека для интерфейсов, которые пока�
 
 ## Установка
 
-Сборки и зависимостей нет. Один файл — 110 КБ, 17 КБ в gzip: токены, пять тем,
+Сборки и зависимостей нет. Один файл — 120 КБ, 19 КБ в gzip: токены, пять тем,
 пять масштабов, три плотности, все компоненты.
 
 ```bash
@@ -23,7 +23,7 @@ npm i @keshon/instrument
 ```
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.8.0/dist/instrument.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.9.0/dist/instrument.min.css">
 ```
 
 Версию в адресе указывайте точно: `@latest` кэшируется на неделю и может

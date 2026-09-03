@@ -28,7 +28,7 @@ import '@keshon/instrument/js';         // поведение, по желани
 **CDN**
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.8.0/dist/instrument.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.9.0/dist/instrument.min.css">
 ```
 
 Версия в адресе указывается точно. `@latest` кэшируется на неделю и может
@@ -40,7 +40,7 @@ import '@keshon/instrument/js';         // поведение, по желани
 <link rel="stylesheet" href="instrument.min.css">
 ```
 
-Возьмите `dist/instrument.min.css` — 108 КБ, 17 КБ в gzip. Это вся библиотека:
+Возьмите `dist/instrument.min.css` — 120 КБ, 19 КБ в gzip. Это вся библиотека:
 токены, пять тем, пять масштабов, три плотности, все компоненты. `dist/instrument.css` — то же
 самое без сжатия и с комментариями.
 

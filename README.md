@@ -16,7 +16,7 @@ right thing.
 
 ## Install
 
-There is no build step and there are no dependencies. One file — 110 KB, 17 KB
+There is no build step and there are no dependencies. One file — 120 KB, 19 KB
 gzipped: the tokens, five themes, five scales, three densities, every
 component.
 
@@ -25,7 +25,7 @@ npm i @keshon/instrument
 ```
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.8.0/dist/instrument.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.9.0/dist/instrument.min.css">
 ```
 
 Name the version exactly: `@latest` is cached for a week and can change at an
