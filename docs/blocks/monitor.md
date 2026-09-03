@@ -57,7 +57,7 @@ the library's own, and not a single line of script.
         </div>
       </div>
 
-      <div class="inst-panel">
+      <div class="inst-panel" data-rank="lead">
         <div class="inst-panel-header">
           <span class="inst-panel-title">The last 24 hours</span>
           <span class="inst-cluster-spacer"></span>
@@ -137,7 +137,7 @@ the library's own, and not a single line of script.
 
       <div class="inst-split">
         <div class="inst-split-main">
-          <div class="inst-panel">
+          <div class="inst-panel" data-rank="default">
             <div class="inst-panel-header"><span class="inst-panel-title">Incidents</span></div>
             <table class="inst-table">
               <thead>
@@ -165,7 +165,7 @@ the library's own, and not a single line of script.
         </div>
 
         <div class="inst-split-side">
-          <div class="inst-panel">
+          <div class="inst-panel" data-rank="support">
             <div class="inst-panel-header"><span class="inst-panel-title">Availability</span></div>
             <div class="inst-panel-body inst-stack inst-stack--tight">
               <div>

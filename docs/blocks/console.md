@@ -47,7 +47,7 @@ except the library's own, and not a single line of script.
     <div class="inst-container inst-container--full">
       <div class="inst-split">
 
-        <div class="inst-split-side inst-panel">
+        <div class="inst-split-side inst-panel" data-rank="default">
           <div class="inst-toolbar">
             <div class="inst-segmented" role="radiogroup" aria-label="Filter by state">
               <button type="button" role="radio" aria-checked="true"  tabindex="0">All</button>
@@ -121,7 +121,7 @@ except the library's own, and not a single line of script.
             </div>
           </div>
 
-          <div class="inst-panel">
+          <div class="inst-panel" data-rank="lead">
             <div class="inst-panel-header">
               <span class="inst-panel-title">Phases</span>
               <span class="inst-panel-actions">

@@ -310,7 +310,13 @@ const MUTATIONS = [
     name: 'a region stopped resetting its container rank',
     section: 'composition',
     file: 'surfaces.css',
-    page: '/blocks/console/',
+    /* The PANEL page and not a block, and the reason is a hole this mutation
+       found in itself. It pointed at /blocks/console/ first, where the lead
+       panel holds steps and the default panel holds task rows -- and C3 only
+       has a question to ask where a REGION sits inside a ranked one. No card,
+       no case, mutation missed. The panel page carries the nesting deliberately,
+       because it is the law that is easiest to get wrong. */
+    page: '/components/display/panel/',
     from: ':where(.inst-panel, .inst-card) {',
     to: ':where(.inst-panel) {',
     why: 'a card inside a lead panel becomes lead, and only the rendered tree can say so',
