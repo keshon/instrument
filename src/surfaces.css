@@ -9,6 +9,193 @@
    ========================================================================== */
 
 /* ──────────────────────────────────────────────────────────────────────────
+   Rank — the channel
+
+   `data-rank` on a region resolves into four variables its own rules read. The
+   vocabulary is closed at three: lead · default · support. The tokens the
+   values point at live in the role tier; see tokens.css for why the rungs are
+   declared there and why lead has no ground of its own.
+
+   ── The reset IS the default, and @property is NOT the mechanism ──────────
+
+   The obvious device is `@property { inherits: false }`, the way --flow-self
+   stops a column's intent reaching a grandchild. It was tried and it does not
+   work here, and the reason the analogy hides is one element deep.
+
+   --flow-self is declared on `> *` and read BY THAT SAME ELEMENT. Rank is
+   declared on the REGION and read by its TITLE, which is a grandchild:
+
+     .inst-panel[data-rank="lead"]     --region-title-size: 16px   declared
+       > .inst-panel-header            (empty)                     stopped
+           > .inst-panel-title         (empty)                     never arrives
+
+   Measured on the rendered tree, all three values off getComputedStyle. With
+   inherits:false the title resolves its fallback in every case, so a lead
+   panel's name draws at the ordinary rung and the axis is inert for the one
+   carrier it has.
+
+   So the channel inherits ordinarily, and every REGION resets it at its own
+   boundary. That is the kit's existing law for defaults — ":where(), because a
+   default with the same specificity as an override is not a default" — doing
+   the work a registration could not: zero specificity, so any [data-rank]
+   block at (0,1,0) beats it, and a nested region stops its container's rank
+   dead by declaring its own.
+
+   Measured after the change: a lead panel's title 16px, an UNRANKED card's
+   title inside that same panel 14px, a support card's 12.5px. The leak stops
+   at the boundary, which is the whole of the fourth law.
+
+   Nothing outside the three region components reads these four names, so a
+   badge or a paragraph inheriting them is inert.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:where(.inst-panel, .inst-card) {
+  --region-title-size: var(--region-title-default);
+  --region-title-ink:  var(--text-primary);
+  --region-ground:     var(--surface-raised);
+  --region-edge:       var(--border);
+}
+
+/* THE INSET IS PART OF RANK, and leaving it out was the axis half-built.
+
+   A quiet region was the same size as a loud one with a smaller name on it.
+   AUDIT-2026-08-22 had already said where this goes -- "the one exception the
+   session screen argues for is the PANEL, and even there what varies is the
+   PADDING, not the size" -- and rank shipped moving type and nothing physical.
+
+   It costs no new token. --pad-block-y is exactly one step under --pad-panel in
+   every one of the fifteen scale and density cells, and --row-pad-y one step
+   under that, so a support region steps down by pointing at roles that already
+   exist and already answer to density.
+
+   The pair is declared PER COMPONENT rather than once, because the defaults are
+   per component: a panel insets 12/8, a card 16 all round. This is the same
+   reason the section's reset stands apart below, and the same lesson the ink
+   ladder taught -- one value set for every region inverts wherever a region's
+   default differs from the one it was chosen against. */
+:where(.inst-panel, .inst-card) {
+  /* THE CORNER BELONGS TO DEPTH, NOT TO RANK, and the reason is a collision
+     rather than a preference.
+
+     Rank is a screen-level choice, so a lead card can sit inside a support
+     panel. Were the corner rank's to set, that card would carry 12 inside a
+     container carrying 8 and bulge out of it — the exact figure the kit's
+     nesting rule forbids: "an inner element with the same radius as its
+     container looks as if it bulges out", and a LARGER one is worse.
+
+     Depth cannot collide with itself. A nested region is inside its container
+     by definition, so a step down is always available and always correct. This
+     is the nesting rule finally drawn rather than only written down. */
+  --region-radius: var(--radius-lg);
+}
+
+:where(.inst-panel) {
+  --region-pad:       var(--pad-panel);
+  --region-pad-block: var(--pad-block-y);
+}
+:where(.inst-card) {
+  --region-pad:       var(--pad-card);
+  --region-pad-block: var(--pad-card);
+}
+
+/* The section's defaults differ because a section DRAWS NOTHING — it is a
+   layout primitive, and a primitive that painted could not be nested inside
+   something that paints otherwise. Rank moves its title and stops there. */
+:where(.inst-section) {
+  --region-title-size: var(--region-title-default);
+  --region-title-ink:  var(--text-muted);
+  --region-ground:     transparent;
+  --region-edge:       transparent;
+}
+
+/* Bare attribute selectors rather than `.inst-panel[data-rank]`: the channel is
+   inert on anything that does not read it, and three per-component copies of
+   one rule would be three places to forget.
+
+   Two blocks and not three. Lead differs from default in one property, so it
+   sets one. There is no [data-rank="default"] block at all — the reset above
+   already is it, and a block would restate it at a higher specificity. The
+   value stays spellable in markup all the same, the way data-state="queued" is:
+   an absent attribute is not read, and a typo looks like the base. */
+[data-rank="lead"] {
+  --region-title-size: var(--region-title-lead);
+}
+
+/* THE SUPPORT INK IS --text-muted AND NOT --text-secondary, and the difference
+   is a defect this shipped with for one commit.
+
+   Rank sets ONE ink for every region, while each region's default differs: a
+   panel's name is primary, a section's label is muted. --text-secondary is one
+   tier down from primary and one tier UP from muted, so the same declaration
+   quietened a panel and made a SECTION LOUDER — 12.5px in 0.400 against 14px in
+   0.500. The size receded and the ink advanced.
+
+   Nothing caught it, and the reason is worth keeping. cmd/contrast measures
+   thresholds rather than order; its one directional instrument is `alt`, and
+   `alt` was deliberately not used for rank's GROUND — correctly, since default
+   rank has no film to compare — after which nobody asked the same question of
+   the ink. An invariant nobody states is an invariant nobody guards.
+
+   --text-muted is the quietest tier text may be READ in (--text-faint is the
+   decoration threshold and is banned for reading), so it sits below every
+   region default the kit has and the ladder cannot invert whatever a region's
+   default turns out to be. On a panel that is a bigger step than before, which
+   is right: withdrawing is the cheap direction. On a section default and
+   support meet, and the rung carries the whole difference — a section has no
+   ground and no edge to spend either, so that is the same answer three times.
+
+   Guarded by C6 in kitAudit.composition(), which builds its own ladder and
+   refuses one that is not monotone. */
+[data-rank="support"] {
+  --region-title-size: var(--region-title-support);
+  --region-title-ink:  var(--text-muted);
+  --region-ground:     var(--region-ground-support);
+  --region-edge:       var(--region-edge-support);
+}
+
+/* One step down the ladder of insets, and these two carry a component in the
+   selector where the block above does not. The four properties above resolve to
+   one value for every region and can be set once; an inset cannot, because a
+   panel and a card start from different rungs. Set once, a support card would
+   have taken a panel's inset and grown tighter than a support panel. */
+.inst-panel[data-rank="support"] {
+  --region-pad:       var(--pad-block-y);
+  --region-pad-block: var(--row-pad-y);
+}
+.inst-card[data-rank="support"] {
+  --region-pad:       var(--pad-panel);
+  --region-pad-block: var(--pad-panel);
+}
+
+/* ── Tone on a region's ground ────────────────────────────────────────────
+
+   A tone already reaches a ground on .inst-note and .inst-banner; this is the
+   same move one level up, so a danger zone, a firing incident and a failed run
+   can be a REGION in that tone rather than a message component standing in for
+   a container.
+
+   THE GROUND ONLY, and the edge is left alone — exactly what .inst-banner does,
+   which keeps --border and puts the tone on its background. A toned box outlined
+   in the tone as well is two statements of one fact, and the kit is spending its
+   budget the other way.
+
+   AFTER RANK, so meaning beats presence: a support region that is also in error
+   is an error, drawn quietly. Both selectors are (0,1,0), so this is source
+   order doing the work and the order is the decision.
+
+   IT DOES NOT LEAK, and for the same reason rank does not. --tone-bg inherits,
+   so a card inside a toned panel receives it — and the card's own reset declares
+   --region-ground on the card itself, and an element's own declaration beats an
+   inherited value whatever the ancestor's specificity. A nested region shows its
+   container's tone only by asking for it.
+
+   On anything that is not a region this is inert: nothing else reads
+   --region-ground.                                                          */
+:where(.inst-panel, .inst-card)[data-tone] {
+  --region-ground: var(--tone-bg);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
    Surfaces: panel and card
 
    A panel is a REGION of the application (it has a header and holds its
@@ -20,9 +207,14 @@
   display: flex;
   flex-direction: column;
   min-block-size: 0;
-  background: var(--surface-raised);
-  border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-lg);
+  /* The ground and the edge arrive through the rank channel, with today's
+     values as the fallback: a panel with no rank draws exactly as it always
+     did. The fallback is written here as well as in the :where() reset above,
+     for the case of a panel outside any region — the same belt the icon, the
+     tone and the panel body already wear. */
+  background: var(--region-ground, var(--surface-raised));
+  border: var(--hairline) solid var(--region-edge, var(--border));
+  border-radius: var(--region-radius, var(--radius-lg));
   /* A panel is the unit that reflows: the components inside answer to ITS
      width, not to the width of the window. A panel always receives its width
      from outside, so an inline-size container is safe here.              */
@@ -38,12 +230,28 @@
   align-items: center;
   gap: var(--gap-inline);
   flex: none;
-  padding: var(--pad-block-y) var(--pad-panel);
-  border-block-end: var(--hairline) solid var(--border-subtle);
+  /* NO RULE UNDER THE HEADER, and no bottom inset either.
 
-  /* A toolbar directly under the header brings its own bottom line — a
-     second one would be a double rule across 30 pixels.                  */
-  &:has(+ .inst-toolbar) { border-block-end: none; }
+     The rule was the panel enclosing itself twice: an outline around the whole
+     object and a line across it thirty pixels in. The reference draws neither —
+     its panel has no border, no rule, a 4px header inset and a 13/400 title,
+     and separates a header from a body by position and quietness alone. The
+     kit's title is a rung under its data and set in medium, so it is already
+     recognisable as a header without a line drawn under it.
+
+     THE INSET GOES WITH THE RULE, and that is not tidiness. With the line gone
+     the header's own bottom padding and the body's top padding stacked into
+     20px of empty band — a gap wide enough to read as a separation of its own,
+     which is the thing the rule was removed for. At zero the title stands one
+     --region-pad above the content, the same single unit every other gap in the
+     panel is measured in, and the header is a label on the content rather than
+     a compartment above it.
+
+     The one case that keeps a line is a toolbar directly under the header: the
+     toolbar is a strip of controls and its own bottom edge is what parts it
+     from the data. The header's inset stays at zero there too, so title and
+     toolbar sit one of the toolbar's own insets apart.                       */
+  padding: var(--region-pad-block, var(--pad-block-y)) var(--region-pad, var(--pad-panel)) 0;
 }
 
 .inst-panel-title {
@@ -58,8 +266,28 @@
      --weight-medium stays, and it is enough: 600 against 400 is a bigger
      difference than one step of size, and it takes no room from the data. The
      kit's size steps work higher up — on a section heading and on a page,
-     where the hierarchy really is between blocks rather than inside one.  */
-  font-size: var(--text-sm);
+     where the hierarchy really is between blocks rather than inside one.
+
+     THE ARGUMENT ABOVE WAS RIGHT AND ITS CONCLUSION WAS A RUNG TOO HIGH.
+
+     A count is what it rests on: six panels one step larger give six places the
+     eye is pulled to. True — and it never followed that a panel name should sit
+     AT the base either. Measured against the reference, a panel name there is
+     13px at weight 400 while the answer being read is 16: the label is a rung
+     below its data, not level with it. The kit set both at 14 and told them
+     apart by weight alone.
+
+     So the rung arrives through the channel and the whole ladder sits below the
+     base. An ordinary panel resolves --region-title-default, now --text-xs, and
+     a lead one resolves --text-sm — today's ordinary. Nothing grows to signal
+     importance; the surroundings shrink, which is the mechanism the reference
+     uses and the one the third law describes.
+
+     The WEIGHT is deliberately not part of the ladder. It is binary and already
+     spent, and the kit's own ban on 700 leaves size as the only carrier of
+     large-scale hierarchy — so rank moves size and ink and lets weight alone. */
+  font-size: var(--region-title-size, var(--region-title-default));
+  color: var(--region-title-ink, var(--text-primary));
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-normal);
   /* The line height is its OWN, not inherited, and the height of the header
@@ -81,7 +309,7 @@
   flex: 1;
   min-block-size: 0;
   overflow: auto;
-  padding: var(--panel-body-pad, var(--pad-panel));
+  padding: var(--panel-body-pad, var(--region-pad, var(--pad-panel)));
 }
 
 .inst-panel-body--flush { --panel-body-pad: 0; }
@@ -120,40 +348,96 @@
   display: flex;
   flex-direction: column;
   gap: var(--gap-row);
-  background: var(--card-surface, var(--surface-raised));
-  border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--pad-card);
+  /* --card-surface is gone: it was this variable under a name that only one
+     component could use. A card and a panel are both regions and both answer
+     to the same channel now. */
+  background: var(--region-ground, var(--surface-raised));
+  border: var(--hairline) solid var(--region-edge, var(--border));
+  border-radius: var(--region-radius, var(--radius-lg));
+  padding: var(--region-pad, var(--pad-card));
 }
 
-/* A CARD INSIDE A PANEL RECEDES, IT DOES NOT RISE.
+/* A REGION INSIDE A REGION RECEDES, IT DOES NOT RISE.
 
-   The first law of surfaces: depth is carried by the order of lightness. On
-   --surface-raised for both, panel and card sit at a step of EXACTLY 1.00
-   apart, and a single hairline at 1.31:1 is all that tells them apart. On the
-   page "Elevation and surfaces", which explains that very order, a card
-   inside a panel would not read at all — the kit refuting its own page.
+   The first law of surfaces: depth is carried by the order of lightness. This
+   rule used to name one pair — a card inside a panel — and every other nesting
+   went unanswered. Measured on the rendered tree: a card inside a card and a
+   panel inside a panel both sat at a step of EXACTLY 0.000, with a single
+   hairline at 1.31:1 to tell them apart. The kit's own agent layer nests five
+   deep — run, phase, step, call, output — against a stack that delivered two.
 
-   That hides behind general flatness: at a page↔panel step of 1.05 the whole
-   stack looks flat, and one flat pair in it does not stand out. Spreading the
-   surfaces apart leaves exactly one place with no order of lightness left in
-   it.
+   There is nowhere to raise a nested region to: --surface-raised is pure
+   white, the ceiling of the ramp. So there is one direction, down. And that is
+   not a concession but the right description: a panel is a REGION of the
+   application, a card inside it is a bounded object IN that region, and nested
+   content recedes from the region that holds it. The input well is built the
+   same way, and nested blocks behave the same way in any editor: on a white
+   page the selected piece is grey, not whiter than white.
 
-   There is nowhere to raise the card to: --surface-raised is pure white, the
-   ceiling of the ramp. So there is one direction, down. And that is not a
-   concession but the right description: a panel is a REGION of the
-   application, a card inside it is a bounded object IN that region, and
-   nested content recedes from the region that holds it. The input well is
-   built the same way, and nested blocks behave the same way in any editor: on
-   a white page the selected piece is grey, not whiter than white.
+   A FILM, NOT A STEP OF THE RAMP, and that is what makes it general. An
+   absolute step knows one depth and runs out at the second: --surface-sunken
+   was the honest answer for one nesting and had no answer for the next. A
+   translucent film is counted from whatever is underneath, and films composite
+   in PAINT — three of them on white measure 232.2 · 218.2 · 205.2 — so depth
+   composes down the element tree by itself, with no counter and no second
+   selector.
 
-   On a PAGE the card is still raised: there the ceiling is free, and an
-   object standing on empty ground has to be above it.
+   ONE FILM PER REGION. Rank asks for the same film for a support region, and a
+   region receiving both requests still paints one: the two rules assign the
+   identical value, so the collision is harmless. They must never be allowed to
+   want DIFFERENT values — this selector is (0,2,0) and [data-rank] is (0,1,0),
+   so the cascade would pick one in silence and no text gate could see it.
 
-   Through a variable rather than by overriding background: the base rule
-   reads --card-surface, so the variant stays one line and does not argue with
-   .inst-card--link and the rest.                                            */
-.inst-panel .inst-card { --card-surface: var(--surface-sunken); }
+   The outer list holds .inst-section because a section groups regions; the
+   inner one does not, because a section draws nothing and has no ground to
+   recede. On a PAGE a region is still raised: there the ceiling is free, and an
+   object standing on empty ground has to be above it.                       */
+/* The inset steps with the rest, and per component for the reason the rank
+   override above is per component: a panel starts at 12/8 and a card at 16, so
+   one value for both would put a nested card on a panel's inset and make it
+   tighter than a nested panel.
+
+   It closes a figure that was always slightly wrong and never named: a card
+   inside a panel insets 16 where the panel insets 12, so the child was roomier
+   than its parent. Nested content recedes, and an inset that grows on the way
+   in is the one place the kit said otherwise.
+
+   ONE STEP, from depth or from rank or from both. These land on the same values
+   the rank overrides use, so a nested support region steps once and not twice —
+   the same arrangement the film already has, and the same reason: two rules may
+   ask, one paints. */
+:where(:is(.inst-panel, .inst-card, .inst-section) .inst-panel) {
+  --region-pad:       var(--pad-block-y);
+  --region-pad-block: var(--row-pad-y);
+}
+:where(:is(.inst-panel, .inst-card, .inst-section) .inst-card) {
+  --region-pad:       var(--pad-panel);
+  --region-pad-block: var(--pad-panel);
+}
+
+/* ZERO SPECIFICITY, and the values are unchanged — only who wins moves.
+
+   At (0,2,0) this rule beat every attribute axis: a nested region could not be
+   given a tone, because containment had already claimed its ground and the
+   cascade picks one in silence. At (0,0,0) it is a default like the reset above
+   it, ordered after so it wins where nothing else speaks, and yielding to rank
+   at (0,1,0) and to tone after that.
+
+   Where rank and containment both speak they say the same thing — one film, one
+   rung of corner — so nothing depends on which of them the cascade takes. That
+   equality is not a coincidence to lean on quietly: it is the one-film rule,
+   and if the two ever want different values the cascade will drop one without a
+   word. */
+:where(:is(.inst-panel, .inst-card, .inst-section) :is(.inst-panel, .inst-card)) {
+  --region-ground: var(--surface-recessed);
+  /* And the corner steps with it, one rung. Nested radii have to decrease or
+     the inner shape reads as bulging out of the outer one; the kit has said so
+     since the radius ladder was written and nothing drew it until here. One
+     rung and not one per level: at the third nesting --radius-sm would be a
+     6px corner on a full-width block, which reads as a control rather than a
+     region. The ground keeps carrying depth after the first step. */
+  --region-radius: var(--radius-md);
+}
 
 .inst-card--interactive {
   cursor: pointer;
@@ -197,7 +481,16 @@
   }
 }
 
-.inst-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: var(--leading-ui); }
+/* The same channel the panel's name reads, and for the same reason: a card is a
+   region too. --region-title-ink rather than the inherited colour, so a support
+   card's name recedes with the rest of it while the card's CONTENT does not —
+   rank touches a region's chrome and never its data. */
+.inst-card-title {
+  font-size: var(--region-title-size, var(--region-title-default));
+  color: var(--region-title-ink, var(--text-primary));
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-ui);
+}
 .inst-card-sub   { font-size: var(--text-xs); color: var(--text-muted); line-height: var(--leading-ui); margin-block-start: var(--space-1); }
 
 /* A PANEL'S REGIONS SHARE ONE INLINE INSET. The block padding is theirs alone.
@@ -229,7 +522,10 @@
   align-items: center;
   gap: var(--space-3);
   flex: none;
-  padding: var(--pad-block-y) var(--pad-panel);
+  /* The panel's regions share one inline inset, and that now includes a
+     tightened one: a support panel's toolbar moves with its header and body
+     rather than staying at the ordinary rung and breaking the line they keep. */
+  padding: var(--region-pad-block, var(--pad-block-y)) var(--region-pad, var(--pad-panel));
   border-block-end: var(--hairline) solid var(--border-subtle);
 }
 

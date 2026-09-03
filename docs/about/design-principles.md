@@ -437,6 +437,66 @@ its header.
 `:user-invalid`; the same block with no attribute is shown by the application,
 from a server's reply, for instance.
 
+**5. `data-rank` — how much attention this place asks for. One vocabulary for
+the whole library.**
+
+`lead` · `default` · `support`
+
+It is set on a REGION and answers a question about the SCREEN rather than about
+the component: the same panel is the point of one screen and a footnote on
+another. That is why it is an attribute and not a modifier — a modifier
+would say "there exists a special kind of panel", and there does not.
+
+The kit had this axis for a button and for nothing else. A button has four
+weights, each one answer to "how loudly does this ask to be pressed"; a panel
+had one appearance and no question, so two panels of wholly different importance
+came out with identical computed styles and no markup could tell them apart.
+
+| | what it changes |
+|---|---|
+| `lead` | the region's name takes one rung up the type ladder. Nothing else |
+| `default` | today's appearance, exactly. The absence of the attribute resolves to it |
+| `support` | a rung down, an ink tier down, one recess film, and no edge |
+
+**Four laws, and they are what keep the axis from becoming a dimmer.**
+
+- **Depth owns direction.** A region inside a region recedes, always, without
+  consulting rank. See [elevation](../foundations/elevation.md).
+- **Rank owns presence** and may modulate the ground by at most one recess step,
+  in the receding direction only. **Rank never lifts** — `--surface-raised` is
+  the top of the ramp in every light theme, so a lead that lifted would work on
+  two themes of five and silently do nothing on three.
+- **Rank touches a region's chrome, never its data.** The title, the edge, the
+  ground. Not the body text, not the numbers, not the rows.
+- **Rank does not descend.** A region inside a lead region, carrying no rank of
+  its own, is `default`. What a lead region leads is the screen, not its
+  contents.
+
+**Where it is legal.** `.inst-panel`, `.inst-card`, `.inst-section` — and
+nowhere else. It is inert elsewhere rather than forbidden, which is the failure
+mode every closed vocabulary here has, so the list is guarded from both sides by
+`cmd/registry` against the `region` field in
+[`components.json`](../../components.json).
+
+A layout primitive does not take rank: a primitive does not draw, and one that
+painted could not be nested inside something that paints otherwise. The panel
+inside a split half takes the rank, not the half.
+
+A button, a badge, a tag and a field do not take rank either. They have
+emphasis, which is a different question with an answer of its own, and two axes
+for one question are one axis with two names.
+
+**Rank is not tone, and they combine.** A lead region is the principal one, not
+the good one: rank says where to look, tone says what a thing means, and neither
+implies the other. `data-rank="lead" data-tone="error"` is a region that owns its
+screen and is in error. A region's tone reaches its GROUND and not its edge, as
+a banner's does, and on the ground tone outranks rank — a quiet region in error
+is an error, drawn quietly. See [rank](../foundations/rank.md).
+
+**A screen has at most one lead.** Two leads is no lead. It is checked on the
+rendered tree by `kitAudit.composition()` rather than by a text gate, because it
+is a fact about a page and not about a token.
+
 **Busyness is on `aria-busy` rather than in these vocabularies.** A button has
 no phase of life, it has a transient flag.
 

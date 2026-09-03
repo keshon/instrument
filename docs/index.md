@@ -9,7 +9,7 @@ queues, runs, logs, inspectors, states and uncertainty.
 No build step, no dependencies, one link tag.
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.8.0/dist/instrument.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.9.0/dist/instrument.min.css">
 ```
 
 Or from npm: `npm i @keshon/instrument`.
@@ -54,7 +54,7 @@ work has halted.
 <link rel="stylesheet" href="dist/instrument.min.css">
 ```
 
-106 KB, one request, 17 KB gzipped. Keyboard behaviour is a separate file and
+120 KB, one request, 19 KB gzipped. Keyboard behaviour is a separate file and
 optional:
 
 ```html

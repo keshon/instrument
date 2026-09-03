@@ -565,9 +565,13 @@
 .inst-panel-body > .inst-form-actions,
 .inst-panel-body > .inst-form > .inst-form-actions {
   --form-actions-bg: var(--surface-raised);
-  margin-inline: calc(var(--panel-body-pad, var(--pad-panel)) * -1);
-  margin-block-end: calc(var(--panel-body-pad, var(--pad-panel)) * -1);
-  padding-inline: var(--panel-body-pad, var(--pad-panel));
+  /* The chain has to match .inst-panel-body's exactly, --region-pad included:
+     the bar bleeds to the panel's edge by negating the body's inset, and rank
+     can now tighten that inset. Read as --pad-panel instead, the bar would
+     overhang a support panel by four pixels on three sides. */
+  margin-inline: calc(var(--panel-body-pad, var(--region-pad, var(--pad-panel))) * -1);
+  margin-block-end: calc(var(--panel-body-pad, var(--region-pad, var(--pad-panel))) * -1);
+  padding-inline: var(--panel-body-pad, var(--region-pad, var(--pad-panel)));
 }
 
 .inst-form-actions--end { justify-content: flex-end; }

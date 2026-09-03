@@ -47,7 +47,7 @@ except the library's own, and not a single line of script.
     <div class="inst-container inst-container--full">
       <div class="inst-split">
 
-        <div class="inst-split-side inst-panel">
+        <div class="inst-split-side inst-panel" data-rank="default">
           <div class="inst-toolbar">
             <div class="inst-segmented" role="radiogroup" aria-label="Filter by state">
               <button type="button" role="radio" aria-checked="true"  tabindex="0">All</button>
@@ -121,7 +121,7 @@ except the library's own, and not a single line of script.
             </div>
           </div>
 
-          <div class="inst-panel">
+          <div class="inst-panel" data-rank="lead">
             <div class="inst-panel-header">
               <span class="inst-panel-title">Phases</span>
               <span class="inst-panel-actions">
@@ -327,6 +327,13 @@ sight.
   </form>
 </dialog>
 ```
+
+**The detail leads and the list stays ordinary.** A master/detail screen has one
+point and it is the thing you selected; the list is how you got there, not what
+you came for. `data-rank` says so — `lead` on the phases panel, `default` on the
+run list — and the whole difference on screen is one rung of type on one name.
+The lower the rank goes the more it may spend: see
+[rank](../about/design-principles.md#state-and-variant).
 
 **There is no "Cancel / Save" bar here.** It reports that nothing has happened
 until it is pressed, whereas the switch has already fired and the field has

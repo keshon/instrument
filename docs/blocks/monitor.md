@@ -57,7 +57,7 @@ the library's own, and not a single line of script.
         </div>
       </div>
 
-      <div class="inst-panel">
+      <div class="inst-panel" data-rank="lead">
         <div class="inst-panel-header">
           <span class="inst-panel-title">The last 24 hours</span>
           <span class="inst-cluster-spacer"></span>
@@ -137,7 +137,7 @@ the library's own, and not a single line of script.
 
       <div class="inst-split">
         <div class="inst-split-main">
-          <div class="inst-panel">
+          <div class="inst-panel" data-rank="default">
             <div class="inst-panel-header"><span class="inst-panel-title">Incidents</span></div>
             <table class="inst-table">
               <thead>
@@ -165,7 +165,7 @@ the library's own, and not a single line of script.
         </div>
 
         <div class="inst-split-side">
-          <div class="inst-panel">
+          <div class="inst-panel" data-rank="support">
             <div class="inst-panel-header"><span class="inst-panel-title">Availability</span></div>
             <div class="inst-panel-body inst-stack inst-stack--tight">
               <div>
@@ -211,6 +211,12 @@ the library's own, and not a single line of script.
 | The incidents | [A table](../components/display/table.md) with a badge in the reason |
 
 ## What is seen here
+
+**One panel leads, and the two below it divide.** The strip and the share bar
+answer the question the screen exists for, so that panel is `lead`; the incident
+table is ordinary; the availability meters are `support` — the same numbers said
+again, in a slower way, for whoever wants them. Three panels, three ranks, and no
+class beyond the library's own.
 
 **The two bars answer different questions.** The strip is ordered and the share
 bar is totalled: the same 3.1% is one long outage or ninety scattered ones, and

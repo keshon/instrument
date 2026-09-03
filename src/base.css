@@ -41,6 +41,21 @@ body {
 body { font-variant-numeric: tabular-nums; }
 
 h1, h2, h3, h4, h5, h6 {
+  /* THE SIZE IS INHERITED, and this line is the whole of the change. Removing
+     the ladder from document scope was not enough by itself: measured
+     afterwards, a bare <h2> did not fall to the body size but to the USER
+     AGENT's 1.5em — 21px against the ladder's 22 — so the kit had merely handed
+     the second ladder to the browser and kept the defect.
+
+     An interface heading has no size of its own until a class gives it one.
+     That is the same reset base.css already applies to hr, kbd, code and the
+     form controls: an element default the kit does not want is turned off here
+     rather than fought everywhere.
+
+     The TAG still carries the outline, which is the part that matters and the
+     part that does not move. .inst-prose puts the ladder back for prose, where
+     a heading's level really is its size. */
+  font-size: inherit;
   font-weight: var(--weight-medium);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
@@ -48,10 +63,25 @@ h1, h2, h3, h4, h5, h6 {
   text-wrap: balance;
 }
 
-h1 { font-size: var(--text-2xl); }
-h2 { font-size: var(--text-xl); }
-h3 { font-size: var(--text-lg); }
-h4, h5, h6 { font-size: var(--text-md); }
+/* THE SIZES ARE NOT HERE, and their absence is the point.
+
+   They used to stand at document scope: 28 · 22 · 18 · 16, all at
+   --weight-medium and all primary. The components meanwhile put every label at
+   12.5–14, muted. So one and the same <h2> was 22/600/primary bare and
+   12.5/400/muted with .inst-section-title on it — two ladders, nine and a half
+   pixels and two ink tiers apart, and nothing mediating between them. An
+   application writing a real heading got the first; one reaching for the kit
+   class got the second; a screen mixing them was incoherent and no gate said a
+   word.
+
+   So the element ladder moves into .inst-prose, where a heading really is a
+   heading in a document, and interface headings take a kit class whose rung
+   comes from rank. The TAG still carries the outline — that is the contract on
+   the section page, and it does not move: <h2 class="inst-section-title"> is a
+   real h2 for a screen reader and a group label for the eye.
+
+   Everything else in the rule above stays global: weight, leading, tracking,
+   colour and text-wrap are harmless at any size and wanted everywhere. */
 
 /* The one door a banned weight walks through onto the screen. The rule:
    "Weight 700. The font has it, this kit does not." The platform gives
@@ -70,6 +100,14 @@ strong, b { font-weight: var(--weight-medium); }
   line-height: var(--leading-prose);
   font-variant-numeric: proportional-nums;
   max-inline-size: var(--measure);
+
+  /* The element ladder, at home. In prose a heading is a heading in a document
+     and the level IS the size; in an interface the level is the outline and the
+     size is a matter of rank. See the note where these used to stand. */
+  & h1 { font-size: var(--text-2xl); }
+  & h2 { font-size: var(--text-xl); }
+  & h3 { font-size: var(--text-lg); }
+  & h4, & h5, & h6 { font-size: var(--text-md); }
 
   & p { text-wrap: pretty; }
   & > * + * { margin-block-start: var(--space-5); }

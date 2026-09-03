@@ -197,7 +197,11 @@
      accordion sets its head off like a list row (--pad-cell-x), but inside a
      frame that is the wrong measure: the panel title sits on --pad-panel, and
      the handle below has to stand on the same vertical. Otherwise one frame
-     has two different edges — 8 and 6 in compact, 16 and 12 in comfortable. */
+     has two different edges — 8 and 6 in compact, 16 and 12 in comfortable.
+
+     --region-pad and not --pad-panel, for the same sentence: the panel title
+     sits on the REGION's inset, and rank can tighten it. The two must move
+     together or a quiet panel gets its two edges back. */
   & > .inst-accordion-head,
-  & > .inst-accordion-body { padding-inline: var(--pad-panel); }
+  & > .inst-accordion-body { padding-inline: var(--region-pad, var(--pad-panel)); }
 }

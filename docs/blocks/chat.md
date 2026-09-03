@@ -235,6 +235,12 @@ ceiling, which is what a meter is for and what a share bar is not.
 
 ## What is seen here
 
+**No region here carries a rank, and that is the finding.** A conversation has
+no principal panel: the turn is the unit and every turn is equal, so
+[rank](../about/design-principles.md#state-and-variant) has nothing to say about
+this screen. An axis that applied everywhere would be a decoration; one that
+declines a case is doing its job.
+
 **An answer is a container, not a paragraph.** Everything the machine did is
 inside the turn that answers, in the order it happened. Nothing floats in a
 side panel, so there is no question of which run a step belonged to.

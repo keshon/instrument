@@ -29,7 +29,7 @@ sprite (`@keshon/instrument/sprite.svg`) and the sources
 **CDN**
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.8.0/dist/instrument.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@keshon/instrument@0.9.0/dist/instrument.min.css">
 ```
 
 Name the version exactly. `@latest` is cached for a week and may update at an
@@ -41,7 +41,7 @@ arbitrary moment.
 <link rel="stylesheet" href="instrument.min.css">
 ```
 
-Take `dist/instrument.min.css` — 108 KB, 17 KB gzipped. That is the whole
+Take `dist/instrument.min.css` — 120 KB, 19 KB gzipped. That is the whole
 library: the tokens, five themes, five scales, three densities, every
 component. `dist/instrument.css` is the same thing uncompressed and with the
 comments.

@@ -349,6 +349,55 @@ var cases = []kase{
 	// step from the field would mean requiring depth where the kit intentionally
 	// does not provide it.
 
+	// ── RANK ────────────────────────────────────────────────────────────────
+	//
+	// A support region recedes from an ordinary one AT THE SAME DEPTH. Default's
+	// ground IS its container, so "support differs from default" is exactly "the
+	// support film clears a step against the container".
+	//
+	// `alt` is deliberately NOT the instrument here. alt compares two
+	// ALTERNATIVES that both sit on a ground — the soft button weight against
+	// the default weight — and asks which is quieter. Default rank has no film
+	// to compare: it is the container. The plain step is the whole question.
+	//
+	// The pairs read --region-ground-support rather than --surface-recessed,
+	// though the two resolve to one value today. Same value, different question:
+	// the same arrangement --surface-field has against --surface-raised, and for
+	// the same reason — "what colour is a field" and "what colour is a panel"
+	// are different questions whose answers may one day part. It also earns the
+	// mutation: repointing the rank token must turn THESE rows red and leave the
+	// button pairs above alone.
+	{label: "rank: support region on page", fg: "--region-ground-support", bg: []string{"--surface-page"}, min: step},
+	{label: "rank: support region on panel", fg: "--region-ground-support", bg: []string{"--surface-raised"}, min: step},
+
+	// The COMPOSED case, which nothing above asks. A support region nested one
+	// level deep carries two films — its container's depth and its own rank —
+	// and the text on it still has to be read. Films composite in paint, so the
+	// stack is written out layer by layer, as the recessed pairs above are.
+	{label: "rank: text in a nested support region", fg: "--text-primary",
+		bg: []string{"--surface-raised", "--surface-recessed", "--region-ground-support"}, min: text},
+	{label: "rank: support title in a nested support region", fg: "--text-muted",
+		bg: []string{"--surface-raised", "--surface-recessed", "--region-ground-support"}, min: text},
+
+	// And the same title at depth 0, where the rank film is the only one.
+	{label: "rank: support title on page", fg: "--text-muted",
+		bg: []string{"--surface-page", "--region-ground-support"}, min: text},
+
+	// ── TONE ON A REGION'S GROUND ───────────────────────────────────────────
+	//
+	// The banner pairs above measure a tone fill on the PAGE. A region carrying
+	// a tone stands on the raised surface as often as on the page — a toned card
+	// inside a panel, a toned panel in a shell — and that stack was never asked.
+	// The tone fill is opaque in the light themes and translucent in the dark
+	// ones, so the layer beneath genuinely changes the answer.
+	{label: "region tone: text on ok ground", fg: "--text-primary", bg: []string{"--surface-raised", "--ok-bg"}, min: text},
+	{label: "region tone: text on warn ground", fg: "--text-primary", bg: []string{"--surface-raised", "--warn-bg"}, min: text},
+	{label: "region tone: text on error ground", fg: "--text-primary", bg: []string{"--surface-raised", "--err-bg"}, min: text},
+	{label: "region tone: text on running ground", fg: "--text-primary", bg: []string{"--surface-raised", "--accent-bg"}, min: text},
+	// A region's NAME on its own toned ground: quieter than the data, and still
+	// read. This is the pair that would fail first if the tone fills moved.
+	{label: "region tone: name on error ground", fg: "--text-muted", bg: []string{"--surface-raised", "--err-bg"}, min: text},
+	{label: "region tone: name on warn ground", fg: "--text-muted", bg: []string{"--surface-raised", "--warn-bg"}, min: text},
 }
 
 var themes = []*css.Theme{
@@ -600,6 +649,19 @@ func checkInkCoverage(dir string, cases []kase) ([]string, int, error) {
 	return bad, len(ink), nil
 }
 
-// Intermediary names: component variable and tone. Semantics sits behind them,
-// which is measured separately under its own name.
-var indirect = regexp.MustCompile(`^--(btn|tone|level|change|chart)-`)
+// Intermediary names: component variable, tone and the rank channel. Semantics
+// sits behind them, which is measured separately under its own name.
+//
+// --region-* joined the list when the rank channel started painting a region's
+// title. It qualifies on the same terms tone does rather than by exception: the
+// channel never holds a colour of its own, only one of three that already have
+// pairs — --text-primary for lead and default, --text-secondary for support,
+// --text-muted for a section's default. All three are foregrounds in the table
+// above, and the support case is measured ON ITS OWN GROUND by the rank rows,
+// which is the composition the channel introduces and the one thing the
+// existing rows could not have covered.
+//
+// The test for adding a name here is the one this comment answers: can the
+// intermediary hold a value that no pair measures? If yes it is not an
+// intermediary, it is an unchecked colour wearing a channel's name.
+var indirect = regexp.MustCompile(`^--(btn|tone|level|change|chart|region)-`)

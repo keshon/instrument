@@ -497,6 +497,256 @@ window.kitAudit = (function () {
     return { checked: checked, failed: bad.length, list: bad };
   }
 
+
+  /* -- Composition: what rank does, measured rather than asserted ----------
+   *
+   * The fourth section, and the only one that asks about the RELATION between
+   * two elements rather than about one element's colour or box. It exists
+   * because the laws rank is held to are cascade facts, and a cascade fact
+   * cannot be seen by a gate that reads tokens.
+   *
+   * The one that matters is C3. Rank must not cross a region boundary: a card
+   * inside a lead panel, carrying no rank of its own, is an ORDINARY card. The
+   * whole model turns on it -- a rank that inherited would be a global dimmer
+   * with a nicer name -- and it is held by a :where() reset that any later edit
+   * could quietly drop. cmd/mutate cannot reach it: the defect lives in the
+   * rendered tree rather than in a token.
+   */
+  var RANKS = { lead: 1, 'default': 1, support: 1 };
+  var REGION = '.inst-panel, .inst-card, .inst-section';
+
+  function regionsIn(sel) {
+    var root = sel ? document.querySelector(sel) : document.body;
+    return root ? [].slice.call(root.querySelectorAll(REGION)) : [];
+  }
+
+  /* A region's OWN name, not a nested region's. querySelector descends through
+     everything, so a panel would otherwise claim the title of the first card
+     inside it and every measurement below would compare a thing with itself. */
+  function titleOf(el) {
+    var t = el.querySelector('.inst-panel-title, .inst-card-title, .inst-section-title');
+    if (!t) return null;
+    return t.closest(REGION) === el ? t : null;
+  }
+
+  /* OKLab lightness of an opaque sRGB colour. The kit measures surface steps in
+     oklch L rather than in a contrast ratio, and cmd/contrast sets out at
+     length why: the WCAG formula compresses every step at the dark end of the
+     ramp, so one threshold cannot serve both ends. Same axis here, so the two
+     gates speak about the stack in one language. */
+  function lstar(c) {
+    function lin(v) { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+    var r = lin(c[0]), g = lin(c[1]), b = lin(c[2]);
+    var l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+    var m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+    var s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+    return 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+  }
+
+  function composition(sel) {
+    var bad = [], checked = 0;
+    var root = sel ? document.querySelector(sel) : document.body;
+    if (!root) return { checked: 0, failed: 0, list: [] };
+
+    /* Rungs are declared in rem and read back in rem; a title reports px.
+       Resolve through a throwaway element rather than multiplying by a root
+       size we would have to assume. */
+    var cs = getComputedStyle(document.documentElement);
+    var ruler = document.createElement('span');
+    ruler.style.cssText = 'position:absolute;visibility:hidden';
+    document.body.appendChild(ruler);
+    function px(name) {
+      ruler.style.fontSize = cs.getPropertyValue(name).trim();
+      return getComputedStyle(ruler).fontSize;
+    }
+    var defaultChan = cs.getPropertyValue('--region-title-default').trim();
+    var defaultRung = px('--region-title-default');
+
+    var ranked = [].slice.call(root.querySelectorAll('[data-rank]'));
+
+    /* C2 -- the vocabulary is closed, and a value outside it does nothing at
+       all. That silence is the failure mode of every closed vocabulary in this
+       kit, which is what makes it worth a line here. */
+    ranked.forEach(function (el) {
+      checked++;
+      var v = el.getAttribute('data-rank');
+      if (!RANKS[v]) bad.push('C2 rank "' + v + '" is outside the vocabulary (lead / default / support)');
+    });
+
+    /* C1 -- one lead per screen. Two leads is no lead. */
+    checked++;
+    var leads = root.querySelectorAll('[data-rank="lead"]').length;
+    if (leads > 1) bad.push('C1 ' + leads + ' lead regions on one screen; a screen has at most one');
+
+    /* C3 -- THE NESTING TEST. */
+    regionsIn(sel).forEach(function (el) {
+      if (el.hasAttribute('data-rank')) return;
+      var container = el.parentElement && el.parentElement.closest('[data-rank]');
+      if (!container) return;
+      var t = titleOf(el);
+      if (!t) return;
+
+      /* TWO comparisons, and the second is not redundant.
+         The CHANNEL says whether the reset held: a region that stopped
+         resetting hands its title the container's rung as a value. The
+         RENDERED SIZE says whether anything overrode it afterwards. Either
+         alone leaves a hole -- a right channel with a wrong size is a component
+         reaching past the axis, and a right size over a leaked channel is a
+         coincidence waiting to stop coinciding. */
+      checked++;
+      var chan = getComputedStyle(t).getPropertyValue('--region-title-size').trim();
+      if (chan && chan !== defaultChan) {
+        bad.push('C3 an unranked region inside [data-rank="' + container.getAttribute('data-rank') +
+          '"] carries the channel value ' + chan + ' rather than the default ' + defaultChan +
+          '; rank crossed a region boundary');
+      }
+      checked++;
+      var got = getComputedStyle(t).fontSize;
+      if (got !== defaultRung) {
+        bad.push('C3 an unranked region inside [data-rank="' + container.getAttribute('data-rank') +
+          '"] draws its title at ' + got + ' rather than the default rung ' + defaultRung);
+      }
+    });
+
+    /* C4 -- half a screen cannot have declared its composition. If anything
+       here is ranked, every region standing beside a ranked one is too. */
+    ranked.forEach(function (el) {
+      var p = el.parentElement;
+      if (!p) return;
+      [].slice.call(p.children).forEach(function (sib) {
+        if (sib === el || !sib.matches || !sib.matches(REGION)) return;
+        checked++;
+        if (!sib.hasAttribute('data-rank')) {
+          bad.push('C4 a region stands beside a ranked one with no rank of its own; ' +
+            'half the composition is declared and half is not');
+        }
+      });
+    });
+
+    /* C5 -- depth owns direction. A region inside a region is never lighter
+       than its container in a light theme, nor darker in a dark one. The sign
+       is taken from the PAGE rather than from the theme attribute: a theme can
+       be declared on any subtree. */
+    var pageL = lstar(bgOf(document.body));
+    regionsIn(sel).forEach(function (el) {
+      var outer = el.parentElement && el.parentElement.closest('.inst-panel, .inst-card');
+      if (!outer) return;
+      checked++;
+      var a = lstar(bgOf(outer)), b = lstar(bgOf(el));
+      var recedes = pageL > 0.5 ? b < a : b > a;
+      if (!recedes || Math.abs(a - b) < 0.022) {
+        bad.push('C5 a nested region did not recede from its container: ' +
+          a.toFixed(4) + ' -> ' + b.toFixed(4) + ' (0.022 wanted, in the receding direction)');
+      }
+    });
+
+
+    /* C6 -- THE LADDER IS MONOTONE, and it builds its own probes rather than
+       asking what the page happens to contain.
+
+       Every other check here measures the document. This one measures the KIT:
+       three ranks of one region kind, side by side, asking whether loudness
+       actually decreases from lead to support. A page that has no support
+       section cannot answer that, and the invariant is true or false regardless
+       of which page you are on.
+
+       It exists because the ladder inverted once and shipped. Rank sets ONE ink
+       for every region while each region's default differs -- a panel's name is
+       primary, a section's label is muted -- so --text-secondary quietened the
+       panel and made the SECTION LOUDER: the size receded and the ink advanced.
+       cmd/contrast could not see it, because it measures thresholds rather than
+       order.
+
+       Loudness is size AND ink together, and neither may rise as rank falls.
+       Ink loudness is distance from the ground: a title further from what it
+       sits on is louder, whichever end of the ramp the theme lives at, so the
+       same comparison works in light and dark without a sign. */
+    var ladder = [
+      { cls: 'inst-panel', title: 'inst-panel-title', head: 'inst-panel-header' },
+      { cls: 'inst-card', title: 'inst-card-title', head: null },
+      { cls: 'inst-section', title: 'inst-section-title', head: 'inst-section-head' }
+    ];
+    var probe = document.createElement('div');
+    probe.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden';
+    document.body.appendChild(probe);
+    ladder.forEach(function (kind) {
+      var seen = [];
+      ['lead', 'default', 'support'].forEach(function (rank) {
+        var region = document.createElement('div');
+        region.className = kind.cls;
+        region.setAttribute('data-rank', rank);
+        var host = region;
+        if (kind.head) {
+          host = document.createElement('div');
+          host.className = kind.head;
+          region.appendChild(host);
+        }
+        var t = document.createElement('span');
+        t.className = kind.title;
+        t.textContent = 'x';
+        host.appendChild(t);
+        probe.appendChild(region);
+        var cs = getComputedStyle(t);
+        seen.push({
+          rank: rank,
+          size: parseFloat(cs.fontSize),
+          ink: Math.abs(lstar(rgba(cs.color)) - lstar(bgOf(region)))
+        });
+      });
+      for (var i = 1; i < seen.length; i++) {
+        var hi = seen[i - 1], lo = seen[i];
+        checked++;
+        if (lo.size > hi.size) {
+          bad.push('C6 ' + kind.cls + ': ' + lo.rank + ' is SET LARGER than ' + hi.rank +
+            ' (' + lo.size + 'px against ' + hi.size + 'px) -- the ladder inverts');
+        }
+        checked++;
+        if (lo.ink > hi.ink + 0.001) {
+          bad.push('C6 ' + kind.cls + ': ' + lo.rank + ' has LOUDER ink than ' + hi.rank +
+            ' (' + lo.ink.toFixed(3) + ' against ' + hi.ink.toFixed(3) +
+            ' from its ground) -- the ladder inverts');
+        }
+      }
+    });
+    probe.remove();
+
+
+    /* C7 -- a tone reaches a region's ground, and stops at its boundary.
+       Same shape as C3 and the same reason: --tone-bg inherits, so a card
+       inside a toned panel receives the value and only its own reset keeps it
+       from painting with it. The contrast pairs measure the COLOURS a toned
+       region can hold; nothing but the rendered tree can say which regions are
+       holding them. */
+    regionsIn(sel).forEach(function (el) {
+      var toned = el.getAttribute('data-tone');
+      var container = el.parentElement && el.parentElement.closest('[data-tone]');
+      if (!toned && !container) return;
+      var ground = getComputedStyle(el).getPropertyValue('--region-ground').trim();
+      if (toned) {
+        checked++;
+        /* A toned region resolves the tone channel and not a surface or a film.
+           --tone-bg is what [data-tone] set on this very element, so the two
+           must agree by construction; when they do not, something outranked the
+           tone on the one property it is allowed to claim. */
+        var want = getComputedStyle(el).getPropertyValue('--tone-bg').trim();
+        if (want && ground !== want) {
+          bad.push('C7 a region with data-tone="' + toned + '" resolved its ground to ' +
+            ground + ' rather than its tone ' + want + '; something outranked the tone');
+        }
+      } else {
+        checked++;
+        var inherited = getComputedStyle(container).getPropertyValue('--tone-bg').trim();
+        if (inherited && ground === inherited) {
+          bad.push('C7 an untoned region inside [data-tone="' + container.getAttribute('data-tone') +
+            '"] took its container tone as a ground; a tone crossed a region boundary');
+        }
+      }
+    });
+
+    ruler.remove();
+    return { checked: checked, failed: bad.length, list: bad };
+  }
+
   function run(sel) {
     var html = document.documentElement;
     var theme0 = html.getAttribute('data-theme');
@@ -532,7 +782,7 @@ window.kitAudit = (function () {
      * exactly this product that turned up the icon lagging behind the type
      * size at scale 15.
      */
-    var res = { contrast: {}, targets: {}, proportion: {}, total: 0 };
+    var res = { contrast: {}, targets: {}, proportion: {}, composition: {}, total: 0 };
     THEMES.forEach(function (t) {
       html.setAttribute('data-theme', t);
       ACCENTS.forEach(function (a) {
@@ -566,6 +816,22 @@ window.kitAudit = (function () {
     dens0 ? html.setAttribute('data-density', dens0) : html.removeAttribute('data-density');
     scale0 ? html.setAttribute('data-scale', scale0) : html.removeAttribute('data-scale');
     flush();
+
+    /* Composition runs by THEME and not over the whole matrix, and the split
+       follows the same rule the axes above follow: measure a quantity against
+       what it actually depends on. C3 and C4 are structure and move with
+       nothing; C5 is a surface step, and the direction it must travel in is the
+       one thing a theme decides. Scale moves the rungs and the title together,
+       so it cannot make C3 pass or fail. */
+    THEMES.forEach(function (t) {
+      html.setAttribute('data-theme', t);
+      flush();
+      var v = composition(sel);
+      res.composition[t] = v;
+      res.total += v.checked;
+    });
+    theme0 ? html.setAttribute('data-theme', theme0) : html.removeAttribute('data-theme');
+    flush();
     kill.remove();
 
     report(res);
@@ -588,6 +854,11 @@ window.kitAudit = (function () {
       var v = res.proportion[k];
       failures += v.failed;
       summary['proportion ' + k] = v.failed + ' of ' + v.checked;
+    });
+    Object.keys(res.composition || {}).forEach(function (k) {
+      var v = res.composition[k];
+      failures += v.failed;
+      summary['composition ' + k] = v.failed + ' of ' + v.checked;
     });
     console.log('%cinstrument · pixel audit', 'font-weight:bold');
     console.table(summary);
@@ -621,5 +892,5 @@ window.kitAudit = (function () {
     });
   }
 
-  return { run: run, contrast: contrast, targets: targets, proportion: proportion, rgba: rgba, ratio: ratio };
+  return { run: run, contrast: contrast, targets: targets, proportion: proportion, composition: composition, rgba: rgba, ratio: ratio };
 })();

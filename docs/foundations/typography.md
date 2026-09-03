@@ -130,15 +130,32 @@ rather than `block-size`.
 
 ### Headings
 
-Defaults of the elements; they need no class. All carry `--weight-medium`,
-`--leading-tight`, `--tracking-tight` and `text-wrap: balance`.
+The ladder lives **inside `.inst-prose`** and nowhere else. All headings carry
+`--weight-medium`, `--leading-tight`, `--tracking-tight` and `text-wrap:
+balance` everywhere; only the SIZE is confined.
 
-| Element | Size |
+| Element | Size, inside `.inst-prose` |
 |---|---|
 | `<h1>` | `--text-2xl` |
 | `<h2>` | `--text-xl` |
 | `<h3>` | `--text-lg` |
 | `<h4>` `<h5>` `<h6>` | `--text-md` |
+
+Outside prose a heading **inherits its size**, and takes one from a kit class:
+`inst-page-title`, `inst-section-title`, `inst-panel-title`, `inst-card-title`.
+
+The reason is that there used to be two ladders and nothing between them. One
+and the same `<h2>` was 22/600/primary bare and 12.5/400/muted with
+`inst-section-title` on it — nine and a half pixels and two ink tiers apart. An
+application writing a real heading got the first, one reaching for the kit class
+got the second, and a screen mixing them was incoherent with no gate to say so.
+
+In prose a heading's level really is its size. In an interface the level is the
+outline and the size is a matter of
+[rank](../about/design-principles.md#state-and-variant). The TAG carries the
+outline in both, which is the part that does not move: `<h2
+class="inst-section-title">` is a real `h2` for a screen reader and a group
+label for the eye.
 
 ```html preview
 <div class="inst-prose">

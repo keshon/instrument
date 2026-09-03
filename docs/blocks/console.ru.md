@@ -47,7 +47,7 @@ template: splash
     <div class="inst-container inst-container--full">
       <div class="inst-split">
 
-        <div class="inst-split-side inst-panel">
+        <div class="inst-split-side inst-panel" data-rank="default">
           <div class="inst-toolbar">
             <div class="inst-segmented" role="radiogroup" aria-label="Фильтр по состоянию">
               <button type="button" role="radio" aria-checked="true"  tabindex="0">Все</button>
@@ -121,7 +121,7 @@ template: splash
             </div>
           </div>
 
-          <div class="inst-panel">
+          <div class="inst-panel" data-rank="lead">
             <div class="inst-panel-header">
               <span class="inst-panel-title">Фазы</span>
               <span class="inst-panel-actions">

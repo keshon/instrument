@@ -57,7 +57,7 @@ template: splash
         </div>
       </div>
 
-      <div class="inst-panel">
+      <div class="inst-panel" data-rank="lead">
         <div class="inst-panel-header">
           <span class="inst-panel-title">Последние 24 часа</span>
           <span class="inst-cluster-spacer"></span>
@@ -137,7 +137,7 @@ template: splash
 
       <div class="inst-split">
         <div class="inst-split-main">
-          <div class="inst-panel">
+          <div class="inst-panel" data-rank="default">
             <div class="inst-panel-header"><span class="inst-panel-title">Инциденты</span></div>
             <table class="inst-table">
               <thead>
@@ -165,7 +165,7 @@ template: splash
         </div>
 
         <div class="inst-split-side">
-          <div class="inst-panel">
+          <div class="inst-panel" data-rank="support">
             <div class="inst-panel-header"><span class="inst-panel-title">Доступность</span></div>
             <div class="inst-panel-body inst-stack inst-stack--tight">
               <div>
