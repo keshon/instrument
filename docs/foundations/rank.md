@@ -70,18 +70,30 @@ is the material: the values, what each resolves to, and how to choose.
 
 Three values, and the list is closed.
 
-| Value | The name | Ink | Ground | Edge | Inset |
-|---|---|---|---|---|---|
-| `lead` | `--text-sm` | unchanged | unchanged | unchanged | unchanged |
-| `default` | `--text-xs` | unchanged | unchanged | unchanged | unchanged |
-| `support` | `--text-2xs` | `--text-muted` | one recess film | none | one step tighter |
+| Value | The name | Ink | Ground | Edge |
+|---|---|---|---|---|
+| `lead` | `--text-sm` | unchanged | unchanged | unchanged |
+| `default` | `--text-xs` | unchanged | unchanged | unchanged |
+| `support` | `--text-2xs` | `--text-muted` | one recess film | none |
 
-A quiet region is physically smaller, not merely labelled in smaller type. The
-inset costs no token of its own: `--pad-block-y` is exactly one step under
-`--pad-panel` in all fifteen scale and density cells, and `--row-pad-y` one step
-under that, so `support` steps down by pointing at roles that already answer to
-density. A panel's header, body and toolbar move together — they share one
-inline inset, and a tightened one is still one.
+**Rank changes no geometry.** Not the inset, not the corner, not the size of
+anything. That is the division between the two axes and it is worth stating
+plainly:
+
+| | owns |
+|---|---|
+| **Depth** | geometry — the inset, the corner, the direction of the ground |
+| **Rank** | register — the title's rung and ink, the edge, the ground film |
+
+Siblings share a grid. Three panels laid on a page are not nested in one
+another, so their content edges read as a column, and moving one in by a few
+pixels does not say *quieter*, it says *misaligned* — an eye catches a broken
+alignment long before it catches an inset. Nothing rank does moves an edge, so
+regions keep their grid however their ranks differ.
+
+A nested region is a different case, and [depth](./elevation.md) handles it: it
+really is inside its container, so stepping in is what inside looks like and no
+alignment was promised across the boundary.
 
 **The whole ladder sits below the base,** and nothing grows to signal
 importance. A lead region's name reaches `--text-sm`, the size of ordinary

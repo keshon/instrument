@@ -162,6 +162,8 @@
   display: grid;
   grid-template-columns: minmax(0, var(--label-col)) 1fr;
   gap: var(--space-3) var(--gap-inline);
+  /* The inset is for a FREE-STANDING list. Inside a region it is dropped below,
+     because the region has already inset it and two insets are two edges. */
   padding-inline: var(--pad-cell-x);
   font-size: var(--text-sm);
   align-items: baseline;
@@ -177,6 +179,20 @@
    no such promise and none is wanted — the rows compared are its own.     */
 .inst-kv--tight { grid-template-columns: max-content 1fr; }
 
+/* A LIST INSIDE A REGION TAKES THE REGION'S EDGE, not one of its own.
+
+   The kit's rule is that a panel's regions share one inline inset, and this list
+   was the last thing in a panel not keeping it: --pad-cell-x on top of the
+   body's own inset put the property names eight pixels inside the meters above
+   them. One panel, two left edges — measured on the uptime monitor, where "Last
+   check" stood at 16.6 from the panel edge against a meter label at 8.6.
+
+   The same arrangement the accordion already has, for the same sentence written
+   in feedback.css: the edge padding comes from the panel and not from the cell.
+   A card counts too — it insets its contents itself, and a list that added its
+   own would be inset twice there as well. */
+:is(.inst-panel-body, .inst-card) .inst-kv { padding-inline: 0; }
+
 /* ──────────────────────────────────────────────────────────────────────────
    The property row — the primitive of an inspector
 
@@ -184,6 +200,11 @@
    shared token, so rows line up whatever the depth of nesting.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* .inst-prop KEEPS --pad-cell-x and is not swept up in the rule above, because
+   its inset is a ROW's rather than a region's: it carries a hover fill, and a
+   fill has to run wider than the text it covers or the highlight reads as a
+   box drawn around a word. The same arrangement .inst-task has, and the reason
+   --panel-body-pad--list exists. */
 .inst-props { display: flex; flex-direction: column; }
 
 .inst-prop {
@@ -195,6 +216,22 @@
   min-block-size: calc(var(--control-h-sm) + var(--space-3));
 
   &:hover { background: var(--surface-hover); }
+}
+
+/* A TABLE THAT IS A REGION OF A PANEL ALIGNS ITS OUTER EDGE WITH IT.
+
+   Only the outer cells move. --pad-cell-x is the right measure BETWEEN columns
+   and the wrong one at the panel's edge, where the panel's own inset is what
+   everything else in it stands on. Measured on the uptime monitor: the
+   "Incidents" title sat 12.7 from the panel edge and the "Started" heading under
+   it at 8.7, so a panel's name and its first column disagreed by four pixels.
+
+   The rule is the panel's, not the table's, which is why it is scoped to a
+   table that is a direct region of one: a free-standing table has no edge to
+   agree with and keeps the cell measure on both sides. */
+:is(.inst-panel, .inst-panel-body) > .inst-table :is(th, td) {
+  &:first-child { padding-inline-start: var(--region-pad, var(--pad-panel)); }
+  &:last-child  { padding-inline-end: var(--region-pad, var(--pad-panel)); }
 }
 
 /* A truncated label has to carry a title: otherwise there is nothing left to

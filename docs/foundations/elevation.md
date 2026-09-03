@@ -127,6 +127,12 @@ and one that is already nested still paints one — so rank's ground lever bites
 at depth 0 only, and a support region deeper in shows its rank in its title and
 its missing edge. See [rank](./rank.md).
 
+**The inset steps with the ground too.** A nested region insets one rung tighter
+than a free-standing one, which also settles a figure that was always slightly
+wrong: a card inside a panel used to inset 16 where the panel inset 12, so the
+child was roomier than its parent. Nested content recedes, and an inset that
+grew on the way in was the one place the kit said otherwise.
+
 **The corner steps with the ground.** A nested region takes `--radius-md` where a
 free-standing one takes `--radius-lg`, because nested radii have to decrease or
 the inner shape reads as bulging out of the outer one. One rung and not one per
