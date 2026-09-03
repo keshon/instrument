@@ -239,7 +239,7 @@ export function sampleBilinear(map: Float32Array, size: number, x: number, y: nu
             <span class="inst-step-meta">1,2 с</span>
           </summary>
           <div class="inst-step-body">
-            <div class="inst-failure" role="alert">
+            <div class="inst-failure" role="alert" data-state="pending">
               <div class="inst-failure-head">Валидация путей не прошла</div>
               <div class="inst-failure-reason">PathError: unreachable nodes (18,204) (19,204) (20,205) — no navmesh link from region 7</div>
               <div class="inst-failure-tried">Попыток: 3, последняя в 19:38:16</div>

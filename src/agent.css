@@ -470,7 +470,12 @@
 .inst-approval:not([data-state="pending"]) .inst-approval-actions { display: none; }
 .inst-approval[data-state="denied"] .inst-approval-what { text-decoration: line-through; color: var(--text-muted); }
 
-.inst-approval-verdict { font-size: var(--text-xs); color: var(--text-muted); }
+/* ONE RULE FOR BOTH BLOCKS' RECORD LINE, on the same reasoning as the shared
+   list above: an approval keeps what was decided and when, a failure keeps
+   what happened and when, and both are a quiet line under a block that has
+   stepped back. See .inst-failure's own state rules, later in this file, for
+   why a failure needed the same lifecycle an approval already had. */
+.inst-approval-verdict, .inst-failure-verdict { font-size: var(--text-xs); color: var(--text-muted); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Step — a tool call
@@ -1152,6 +1157,42 @@
    margin on top of it made the distance above the buttons differ from the one
    above every other row — and from the approval's, which never had it. */
 .inst-failure-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+/* A FAILURE HAD NO LIFECYCLE, and an approval already did.
+
+   The two are one family — see the comment above this component — and the
+   asymmetry survived the pass that reconciled their box model because it was
+   never a measurement: .inst-approval carries pending/approved/denied and
+   steps back once answered, .inst-failure carried nothing and stayed a full
+   alert forever. It has exactly the same need. Retry gets pressed, the same
+   double-press race exists while the request is in flight, and once the file
+   reads or the caller gives up, "the history of decisions stays readable" —
+   the failure page's own words for why the block does not disappear — is an
+   argument this block had never been given the means to honour.
+
+   pending -> resolved | given-up, mirroring pending -> approved | denied.
+   resolved has no selector of its own, the same way approved does not: both
+   fall out of :not([data-state="pending"]) and are declared to docscheck by
+   hand, in tools/cmd/docscheck/main.go, for the same reason approved is.
+
+   EVERY PLACE --err-text OR --err-bg WAS READ NEEDS ITS OWN OVERRIDE, because
+   none of them inherits from one property: the head sets its own colour, the
+   icon its own background, the reason plate its own tint. Missing one leaves
+   a stray patch of red on a card that has otherwise gone quiet — measured by
+   trying the border-only version first and finding the icon still alert-red
+   above a neutral edge. */
+.inst-failure:not([data-state="pending"]) {
+  border-color: var(--border);
+  background: transparent;
+}
+.inst-failure:not([data-state="pending"]) .inst-failure-head { color: var(--text-primary); }
+.inst-failure:not([data-state="pending"]) .inst-failure-head::before { background: var(--text-primary); }
+.inst-failure:not([data-state="pending"]) .inst-failure-reason { background: var(--surface-recessed); }
+.inst-failure:not([data-state="pending"]) .inst-failure-actions { display: none; }
+/* given-up strikes the reason the way denied strikes the action: the machine
+   string is still there to read, and the line through it says plainly that
+   nobody is acting on it any further. */
+.inst-failure[data-state="given-up"] .inst-failure-reason { text-decoration: line-through; color: var(--text-muted); }
 
 /* ──────────────────────────────────────────────────────────────────────────
    Lanes of parallel runs

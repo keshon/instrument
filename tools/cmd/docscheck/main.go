@@ -202,7 +202,7 @@ func main() {
 	// looked like a property of `state` rather than what it is: a property of a
 	// closed vocabulary whose base carries no rules of its own.
 	for attr, vals := range map[string][]string{
-		"state": {"queued", "todo", "approved"},
+		"state": {"queued", "todo", "approved", "resolved"},
 		// The rank a region has when nobody said otherwise. It gets no
 		// selector: the :where() reset in surfaces.css already IS the default,
 		// and a [data-rank="default"] block would restate it at a higher

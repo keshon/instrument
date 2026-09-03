@@ -394,6 +394,7 @@ source: docs/about/design-principles.md
 | `.inst-task` | `queued` `running` `done` `warn` `failed` `skipped` | `queued` |
 | `.inst-step` | `running` `ok` `failed` | атрибута нет |
 | `.inst-approval` | `pending` `approved` `denied` | `pending` — единственная, где есть действия |
+| `.inst-failure` | `pending` `resolved` `given-up` | `pending` — единственная, где есть действия |
 | `.inst-stepper-item` | `todo` `current` `done` | `todo` |
 | `.inst-meter` | `indeterminate` | атрибута нет = определённая |
 

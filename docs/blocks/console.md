@@ -269,7 +269,7 @@ A refusal is [a block of refusal](../agent/failure.md) rather than a line of red
 text: it has a reason, a list of the attempts and at least one way out.
 
 ```html preview
-<div class="inst-failure" role="alert">
+<div class="inst-failure" role="alert" data-state="pending">
   <div class="inst-failure-head">audio-pass did not start</div>
   <div class="inst-failure-reason">EBUSY: could not read <code>chunks.bin</code> — the file is taken by another run.</div>
   <ul class="inst-failure-tried">

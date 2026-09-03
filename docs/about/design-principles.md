@@ -420,6 +420,7 @@ entire, the base value included — the one that has no styling of its own.
 | `.inst-task` | `queued` `running` `done` `warn` `failed` `skipped` | `queued` |
 | `.inst-step` | `running` `ok` `failed` | no attribute |
 | `.inst-approval` | `pending` `approved` `denied` | `pending` — the only one with actions |
+| `.inst-failure` | `pending` `resolved` `given-up` | `pending` — the only one with actions |
 | `.inst-stepper-item` | `todo` `current` `done` | `todo` |
 | `.inst-meter` | `indeterminate` | no attribute = determinate |
 

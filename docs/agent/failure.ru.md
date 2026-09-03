@@ -24,7 +24,7 @@ api:
 уже пробовали** и **что делать дальше**.
 
 ```html preview
-<div class="inst-failure" role="alert">
+<div class="inst-failure" role="alert" data-state="pending">
   <div class="inst-failure-head">Не удалось прочитать terrain/chunks.bin</div>
   <div class="inst-failure-reason">Файл заблокирован другим процессом (EBUSY)</div>
   <ul class="inst-failure-tried">

@@ -263,7 +263,7 @@ template: splash
 него есть причина, перечень попыток и хотя бы один выход.
 
 ```html preview
-<div class="inst-failure" role="alert">
+<div class="inst-failure" role="alert" data-state="pending">
   <div class="inst-failure-head">audio-pass не запустился</div>
   <div class="inst-failure-reason">EBUSY: не удалось прочитать <code>chunks.bin</code> — файл занят другим прогоном.</div>
   <ul class="inst-failure-tried">
