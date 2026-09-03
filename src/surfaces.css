@@ -98,8 +98,13 @@
   display: flex;
   flex-direction: column;
   min-block-size: 0;
-  background: var(--surface-raised);
-  border: var(--hairline) solid var(--border);
+  /* The ground and the edge arrive through the rank channel, with today's
+     values as the fallback: a panel with no rank draws exactly as it always
+     did. The fallback is written here as well as in the :where() reset above,
+     for the case of a panel outside any region — the same belt the icon, the
+     tone and the panel body already wear. */
+  background: var(--region-ground, var(--surface-raised));
+  border: var(--hairline) solid var(--region-edge, var(--border));
   border-radius: var(--radius-lg);
   /* A panel is the unit that reflows: the components inside answer to ITS
      width, not to the width of the window. A panel always receives its width
@@ -198,40 +203,53 @@
   display: flex;
   flex-direction: column;
   gap: var(--gap-row);
-  background: var(--card-surface, var(--surface-raised));
-  border: var(--hairline) solid var(--border);
+  /* --card-surface is gone: it was this variable under a name that only one
+     component could use. A card and a panel are both regions and both answer
+     to the same channel now. */
+  background: var(--region-ground, var(--surface-raised));
+  border: var(--hairline) solid var(--region-edge, var(--border));
   border-radius: var(--radius-lg);
   padding: var(--pad-card);
 }
 
-/* A CARD INSIDE A PANEL RECEDES, IT DOES NOT RISE.
+/* A REGION INSIDE A REGION RECEDES, IT DOES NOT RISE.
 
-   The first law of surfaces: depth is carried by the order of lightness. On
-   --surface-raised for both, panel and card sit at a step of EXACTLY 1.00
-   apart, and a single hairline at 1.31:1 is all that tells them apart. On the
-   page "Elevation and surfaces", which explains that very order, a card
-   inside a panel would not read at all — the kit refuting its own page.
+   The first law of surfaces: depth is carried by the order of lightness. This
+   rule used to name one pair — a card inside a panel — and every other nesting
+   went unanswered. Measured on the rendered tree: a card inside a card and a
+   panel inside a panel both sat at a step of EXACTLY 0.000, with a single
+   hairline at 1.31:1 to tell them apart. The kit's own agent layer nests five
+   deep — run, phase, step, call, output — against a stack that delivered two.
 
-   That hides behind general flatness: at a page↔panel step of 1.05 the whole
-   stack looks flat, and one flat pair in it does not stand out. Spreading the
-   surfaces apart leaves exactly one place with no order of lightness left in
-   it.
+   There is nowhere to raise a nested region to: --surface-raised is pure
+   white, the ceiling of the ramp. So there is one direction, down. And that is
+   not a concession but the right description: a panel is a REGION of the
+   application, a card inside it is a bounded object IN that region, and nested
+   content recedes from the region that holds it. The input well is built the
+   same way, and nested blocks behave the same way in any editor: on a white
+   page the selected piece is grey, not whiter than white.
 
-   There is nowhere to raise the card to: --surface-raised is pure white, the
-   ceiling of the ramp. So there is one direction, down. And that is not a
-   concession but the right description: a panel is a REGION of the
-   application, a card inside it is a bounded object IN that region, and
-   nested content recedes from the region that holds it. The input well is
-   built the same way, and nested blocks behave the same way in any editor: on
-   a white page the selected piece is grey, not whiter than white.
+   A FILM, NOT A STEP OF THE RAMP, and that is what makes it general. An
+   absolute step knows one depth and runs out at the second: --surface-sunken
+   was the honest answer for one nesting and had no answer for the next. A
+   translucent film is counted from whatever is underneath, and films composite
+   in PAINT — three of them on white measure 232.2 · 218.2 · 205.2 — so depth
+   composes down the element tree by itself, with no counter and no second
+   selector.
 
-   On a PAGE the card is still raised: there the ceiling is free, and an
-   object standing on empty ground has to be above it.
+   ONE FILM PER REGION. Rank asks for the same film for a support region, and a
+   region receiving both requests still paints one: the two rules assign the
+   identical value, so the collision is harmless. They must never be allowed to
+   want DIFFERENT values — this selector is (0,2,0) and [data-rank] is (0,1,0),
+   so the cascade would pick one in silence and no text gate could see it.
 
-   Through a variable rather than by overriding background: the base rule
-   reads --card-surface, so the variant stays one line and does not argue with
-   .inst-card--link and the rest.                                            */
-.inst-panel .inst-card { --card-surface: var(--surface-sunken); }
+   The outer list holds .inst-section because a section groups regions; the
+   inner one does not, because a section draws nothing and has no ground to
+   recede. On a PAGE a region is still raised: there the ceiling is free, and an
+   object standing on empty ground has to be above it.                       */
+:is(.inst-panel, .inst-card, .inst-section) :is(.inst-panel, .inst-card) {
+  --region-ground: var(--surface-recessed);
+}
 
 .inst-card--interactive {
   cursor: pointer;
