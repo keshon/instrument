@@ -128,13 +128,23 @@ var mutations = []mutation{
 		"a text colour absent from every pair is a threshold nobody measured"},
 	// The rank film, mutated at the ROLE rather than at the film it points to.
 	// "button levelled with its backdrop" above moves --surface-recessed and
-	// turns the button pairs red along with these; this one moves only the rank
+	// turns the button pairs red along with it; this one moves only the rank
 	// role, so the five rank rows go red alone. That is the proof they are wired
 	// rather than incidentally satisfied by a pair that already existed.
 	{"rank: support stopped receding", "contrast", "src/tokens.css",
 		"--region-ground-support: var(--surface-recessed);",
 		"--region-ground-support: transparent;",
 		"a support region's ground levels with its container"},
+
+	// ── registry ───────────────────────────────────────────────────────────
+	// The region list, guarded from the bookkeeping side. The pixel harness
+	// catches the same edit through the RENDERED tree, and both are wanted: this
+	// one is cheap and runs in CI without a browser, that one proves the defect
+	// is real rather than a mismatch between two files.
+	{"rank: a region left the reset list", "registry", "src/surfaces.css",
+		":where(.inst-panel, .inst-card) {",
+		":where(.inst-panel) {",
+		"a card stops blocking its container's rank, and the list stops matching the registry"},
 
 	// ── targets ────────────────────────────────────────────────────────────
 	{"control height pushed below the minimum", "targets", "src/tokens.css",

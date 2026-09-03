@@ -49,6 +49,32 @@ data.
 
 ## Variants
 
+### Rank
+
+A card takes `data-rank` like any region — `lead` · `default` · `support` — and
+the contract is in
+[design principles](../../about/design-principles.md#state-and-variant).
+
+The case worth showing is the one a card is usually in: **inside something
+else**. A card carrying no rank of its own is an ordinary card however loud the
+region holding it, and a card nested in a card recedes a second time, because
+depth decides that and rank does not.
+
+```html preview
+<div class="inst-panel" data-rank="lead">
+  <div class="inst-panel-header"><span class="inst-panel-title">Current run</span></div>
+  <div class="inst-panel-body inst-stack inst-stack--tight">
+    <div class="inst-card">
+      <div class="inst-card-title">Ordinary, inside a lead panel</div>
+      <div class="inst-card"><div class="inst-card-title">And one step deeper</div></div>
+    </div>
+    <div class="inst-card" data-rank="support">
+      <div class="inst-card-title">Support: a rung down, no edge</div>
+    </div>
+  </div>
+</div>
+```
+
 ### Interactive
 
 ```html preview

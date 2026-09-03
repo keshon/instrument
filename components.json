@@ -167,7 +167,8 @@
       "panel",
       "table",
       "metric"
-    ]
+    ],
+    "region": true
   },
   "cascader": {
     "axes": {
@@ -718,7 +719,8 @@
       "card",
       "section",
       "accordion"
-    ]
+    ],
+    "region": true
   },
   "popover": {
     "axes": {
@@ -799,7 +801,8 @@
       "toolbar",
       "panel",
       "page-header"
-    ]
+    ],
+    "region": true
   },
   "segmented": {
     "axes": {

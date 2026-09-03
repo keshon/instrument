@@ -65,6 +65,19 @@ type entry struct {
 	Aria  *aria                        `json:"aria,omitempty"`
 	Parts map[string]map[string]string `json:"parts,omitempty"`
 
+	// A REGION takes data-rank. Not an axis in the vocab map above, and the
+	// difference is what the registry is for: an axis is a policy the author
+	// chose for the component (does it print, what does forced-colors do to
+	// it), while region is a FACT about what kind of thing it is. Rank itself
+	// is per-instance and lives in markup, not here.
+	//
+	// The list it guards is the :where() reset in surfaces.css. That reset is
+	// the whole enforcement of "rank does not descend": a class missing from it
+	// stops blocking its container's rank, and a class in it that nobody
+	// declared is a region nobody decided on. Checked in both directions below,
+	// like every other list in this file.
+	Region bool `json:"region,omitempty"`
+
 	// Neighbours of the component, by registry name. The reference renders the
 	// "Related" section from this and nothing else, so a name that resolves to
 	// nothing produces a page with a link missing and no word about it.
@@ -488,6 +501,43 @@ func main() {
 						class, strings.Replace(list, ":", "=", 1), who)
 				}
 			}
+		}
+	}
+
+	// ── 3b. the region list: registry <-> the :where() reset ───────────────
+	//
+	// Same shape and same reason as the axis lists above. The reset in
+	// surfaces.css enumerates the classes that stop their container's rank; a
+	// forgotten entry causes no browser error, it just quietly lets rank
+	// through, and the pixel gate would only catch it on a page that happens to
+	// nest a region inside a ranked one.
+	resetRe := regexp.MustCompile(`:where\(([^)]*)\)\s*\{[^}]*--region-title-size`)
+	inReset := map[string]bool{}
+	for _, m := range resetRe.FindAllStringSubmatch(css["surfaces.css"], -1) {
+		for _, c := range classRe.FindAllStringSubmatch(m[1], -1) {
+			inReset[c[1]] = true
+		}
+	}
+	for name, e := range reg {
+		if !e.Region {
+			continue
+		}
+		root := ""
+		if cs := classes[name]; len(cs) > 0 {
+			root = cs[0]
+		}
+		checks++
+		if root == "" || !inReset[root] {
+			add("%s is declared a region, but .%s is not in the :where() rank reset in surfaces.css", name, root)
+		}
+	}
+	for class := range inReset {
+		checks++
+		who := owner[class]
+		if who == "" {
+			add("the rank reset holds .%s, but the class is not named on any page", class)
+		} else if !reg[who].Region {
+			add("the rank reset holds .%s, but %s does not declare \"region\": true", class, who)
 		}
 	}
 

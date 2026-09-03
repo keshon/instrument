@@ -212,6 +212,12 @@ the library's own, and not a single line of script.
 
 ## What is seen here
 
+**One panel leads, and the two below it divide.** The strip and the share bar
+answer the question the screen exists for, so that panel is `lead`; the incident
+table is ordinary; the availability meters are `support` — the same numbers said
+again, in a slower way, for whoever wants them. Three panels, three ranks, and no
+class beyond the library's own.
+
 **The two bars answer different questions.** The strip is ordered and the share
 bar is totalled: the same 3.1% is one long outage or ninety scattered ones, and
 only the strip can tell them apart. Neither replaces the other, so both stand,

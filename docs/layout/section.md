@@ -10,9 +10,11 @@ api:
   - { name: "inst-section-actions", kind: "class", doc: "The tail of the heading row, pushed to the far edge" }
   - { name: "--gap-row", kind: "token" }
   - { name: "--gap-inline", kind: "token" }
-  - { name: "--text-sm", kind: "token" }
-  - { name: "--weight-medium", kind: "token" }
-  - { name: "--text-secondary", kind: "token" }
+  - { name: "data-rank", kind: "attribute", doc: "How much attention this section asks for: `lead` / `default` / `support`" }
+  - { name: "--region-title-size", kind: "token" }
+  - { name: "--region-title-ink", kind: "token" }
+  - { name: "--weight-normal", kind: "token" }
+  - { name: "--text-muted", kind: "token" }
 ---
 
 A named block inside a screen: a label, optional actions and contents. The
@@ -58,8 +60,8 @@ four objects.
 |---|---|
 | The level of the heading | Chosen by the structure of the document rather than by the look. It is not assigned automatically |
 | The landmark | If the block really is a self-standing division, put a `<section>` with an `aria-labelledby` on the heading; a `<div>` gives no landmark, and that is fine for grouping |
-| Contrast | The label is `--text-secondary`, 4.5:1 in five themes. It is quieter than the data by colour, but not below the floor of reading |
-| Type size | `--text-sm`, the same as the base of the document: the label is not larger than the contents |
+| Contrast | The label is `--text-muted`, 4.5:1 in five themes. It is quieter than the data by colour, but not below the floor of reading |
+| Type size | The rung its rank asks for; `--text-sm` by default, the same as the base of the document, so the label is not larger than the contents |
 | Order | The actions stand after the heading in the markup and are traversed after it |
 
 ## Anatomy
@@ -90,7 +92,11 @@ heights to one another.
 
 ### The heading
 
-`inst-section-title` is `--text-sm`, `--weight-medium`, `--text-secondary`.
+`inst-section-title` is `--weight-normal` and `--text-muted`, and its size comes
+from [rank](../about/design-principles.md#state-and-variant): `--text-sm` by
+default, a rung up for `lead`, a rung down for `support`. The weight stays
+normal at every rank — weight is binary in this kit and already spent on labels,
+which is why size had to become sayable at all.
 That is, **quieter than the contents**: the label serves the data. There are no
 caps and no tracking here for the same reason as everywhere in the library, and
 a weight of 700 does not exist in the library at all.
