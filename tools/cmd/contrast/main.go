@@ -349,6 +349,39 @@ var cases = []kase{
 	// step from the field would mean requiring depth where the kit intentionally
 	// does not provide it.
 
+	// ── RANK ────────────────────────────────────────────────────────────────
+	//
+	// A support region recedes from an ordinary one AT THE SAME DEPTH. Default's
+	// ground IS its container, so "support differs from default" is exactly "the
+	// support film clears a step against the container".
+	//
+	// `alt` is deliberately NOT the instrument here. alt compares two
+	// ALTERNATIVES that both sit on a ground — the soft button weight against
+	// the default weight — and asks which is quieter. Default rank has no film
+	// to compare: it is the container. The plain step is the whole question.
+	//
+	// The pairs read --region-ground-support rather than --surface-recessed,
+	// though the two resolve to one value today. Same value, different question:
+	// the same arrangement --surface-field has against --surface-raised, and for
+	// the same reason — "what colour is a field" and "what colour is a panel"
+	// are different questions whose answers may one day part. It also earns the
+	// mutation: repointing the rank token must turn THESE rows red and leave the
+	// button pairs above alone.
+	{label: "rank: support region on page", fg: "--region-ground-support", bg: []string{"--surface-page"}, min: step},
+	{label: "rank: support region on panel", fg: "--region-ground-support", bg: []string{"--surface-raised"}, min: step},
+
+	// The COMPOSED case, which nothing above asks. A support region nested one
+	// level deep carries two films — its container's depth and its own rank —
+	// and the text on it still has to be read. Films composite in paint, so the
+	// stack is written out layer by layer, as the recessed pairs above are.
+	{label: "rank: text in a nested support region", fg: "--text-primary",
+		bg: []string{"--surface-raised", "--surface-recessed", "--region-ground-support"}, min: text},
+	{label: "rank: support title in a nested support region", fg: "--text-secondary",
+		bg: []string{"--surface-raised", "--surface-recessed", "--region-ground-support"}, min: text},
+
+	// And the same title at depth 0, where the rank film is the only one.
+	{label: "rank: support title on page", fg: "--text-secondary",
+		bg: []string{"--surface-page", "--region-ground-support"}, min: text},
 }
 
 var themes = []*css.Theme{

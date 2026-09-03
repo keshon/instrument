@@ -266,6 +266,36 @@ var rules = []rule{
 	// the opposite skew, where the row gets flattened against its own sides.
 	{label: "row vertical to horizontal", a: "--row-pad-y", b: "--pad-cell-x", min: 0.55, max: 0.95, perDens: true,
 		why: "vertical is no longer tighter than horizontal — the row expands upward even though line-height already supplied the air"},
+
+	// ── Rank ────────────────────────────────────────────────────────────────
+	//
+	// THESE ARE NOT DUPLICATES of "type: xs → sm" and "type: sm → md", and the
+	// temptation to delete them on that argument is the reason this comment is
+	// long.
+	//
+	// The ladder rules gate the LADDER: that --text-md is a visible step above
+	// --text-sm. These gate the MAPPING: that rank points at the rungs it claims
+	// to. Repoint --region-title-lead at --text-sm and the ladder rows stay
+	// green while a lead region silently stops leading. One is a property of the
+	// scale, the other of the axis built on it, and only the second can be
+	// broken without touching the first.
+	//
+	// perDens is false because density does not move the type size — that is the
+	// law separating density from scale. The rungs must hold in all five scales
+	// and are indifferent to the three densities.
+	//
+	// MARGIN WARNING, and it belongs beside these rules rather than in a
+	// document nobody opens. The default→support ratio at the base scale is
+	// 14 / 12.5 = 1.1200 against a threshold of 1.12, compared with `got < min`.
+	// Zero margin. Across the scales it runs 1.1200 · 1.1538 · 1.1429 · 1.1333 ·
+	// 1.1250, so the base cell is the tightest of the five. Anyone nudging
+	// --text-xs or --text-sm is moving the rank axis at the same time.
+	{label: "rank: lead title over default", a: "--region-title-lead", b: "--region-title-default",
+		min: stepMin, max: 1.30,
+		why: "a lead region's name stops differing from an ordinary one"},
+	{label: "rank: default title over support", a: "--region-title-default", b: "--region-title-support",
+		min: stepMin, max: 1.30,
+		why: "a support region's name stops receding"},
 }
 
 // Not everything is checked by ratio. Type floor is absolute, radii are a

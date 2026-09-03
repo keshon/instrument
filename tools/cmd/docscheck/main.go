@@ -193,14 +193,29 @@ func main() {
 		}
 	}
 
-	// Base state values have no styling, so they are not present in selectors.
-	// They are declared by the constitution — without them the check would
-	// complain about valid markup.
-	for _, v := range []string{"queued", "todo", "approved"} {
-		if vocab["state"] == nil {
-			vocab["state"] = map[string]bool{}
+	// Base values have no styling, so they are not present in selectors. They
+	// are declared by the constitution — without them the check would complain
+	// about valid markup.
+	//
+	// The map used to be a single list under "state". `rank` needs the same
+	// arrangement for the same reason, and one attribute holding this privilege
+	// looked like a property of `state` rather than what it is: a property of a
+	// closed vocabulary whose base carries no rules of its own.
+	for attr, vals := range map[string][]string{
+		"state": {"queued", "todo", "approved"},
+		// The rank a region has when nobody said otherwise. It gets no
+		// selector: the :where() reset in surfaces.css already IS the default,
+		// and a [data-rank="default"] block would restate it at a higher
+		// specificity. Spellable all the same, so that a typo like "defualt"
+		// looks like a mistake instead of looking like the base.
+		"rank": {"default"},
+	} {
+		if vocab[attr] == nil {
+			vocab[attr] = map[string]bool{}
 		}
-		vocab["state"][v] = true
+		for _, v := range vals {
+			vocab[attr][v] = true
+		}
 	}
 
 	// ── What exists in the documentation ─────────────────────────────────

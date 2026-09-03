@@ -126,6 +126,15 @@ var mutations = []mutation{
 		"body {",
 		".mut-probe { color: var(--n-7); }\nbody {",
 		"a text colour absent from every pair is a threshold nobody measured"},
+	// The rank film, mutated at the ROLE rather than at the film it points to.
+	// "button levelled with its backdrop" above moves --surface-recessed and
+	// turns the button pairs red along with these; this one moves only the rank
+	// role, so the five rank rows go red alone. That is the proof they are wired
+	// rather than incidentally satisfied by a pair that already existed.
+	{"rank: support stopped receding", "contrast", "src/tokens.css",
+		"--region-ground-support: var(--surface-recessed);",
+		"--region-ground-support: transparent;",
+		"a support region's ground levels with its container"},
 
 	// ── targets ────────────────────────────────────────────────────────────
 	{"control height pushed below the minimum", "targets", "src/tokens.css",
@@ -162,6 +171,27 @@ var mutations = []mutation{
 		"--row-pad-y:   var(--space-3);",
 		"--row-pad-y:   var(--space-6);",
 		"part of the vertical air was already delivered by the leading"},
+
+	// ── rank ───────────────────────────────────────────────────────────────
+	// Three mutations of the MAPPING from rank onto the type ladder, not of the
+	// ladder. The ladder has its own mutation above ("type steps merged") and it
+	// would stay green through all three of these: the rungs are untouched and
+	// only the axis pointing at them moves.
+	{"rank: lead levelled with default", "proportion", "src/tokens.css",
+		"--region-title-lead:    var(--text-md);",
+		"--region-title-lead:    var(--text-sm);",
+		"two ranks produce one look, and the ladder loses its top step"},
+	{"rank: support levelled with default", "proportion", "src/tokens.css",
+		"--region-title-support: var(--text-xs);",
+		"--region-title-support: var(--text-sm);",
+		"de-emphasis stops existing and every region reads at one level"},
+	// Direction, and the band does the work: an inverted ratio falls below the
+	// lower bound, so no separate sign test is wanted — the same arrangement the
+	// button weight ladder relies on.
+	{"rank: the ladder inverted", "proportion", "src/tokens.css",
+		"--region-title-lead:    var(--text-md);",
+		"--region-title-lead:    var(--text-2xs);",
+		"the principal region's name comes out smaller than an ordinary one"},
 	// The mutation that would have caught the whole mark story before it was a
 	// story: --radius-xs on a mark is the state the kit shipped in, and it is
 	// exactly one step up from the tier. On a 6px dot it clamps to 3, which is
