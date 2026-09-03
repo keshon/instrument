@@ -273,8 +273,26 @@
 .site-body .inst-note:not(.demo-stage *) { margin-block: var(--space-6); }
 
 /* The sections of the side column are parted by air rather than by lines:
-   eleven rules in one column read as a grid and argue with the content. */
-.inst-shell-aside .inst-nav-group + .inst-nav-group { margin-block-start: var(--space-6); }
+   eleven rules in one column read as a grid and argue with the content.
+
+   :not(.demo-stage *) IS LOAD-BEARING, and it was missing. The site's styles lie
+   OUTSIDE the kit's layers and therefore beat every rule in it — that is the
+   promise the layers exist to make — so a bare .inst-shell-aside here reached
+   into every block preview on the site as well as into this column.
+
+   What it cost: in the horizontal bar the kit resets exactly this margin to zero
+   (`margin-block-start: 0` beside `margin-inline-start`, in the same rule), and
+   an unlayered 16px overrode the first while the second went on applying. The
+   first group's items stretched to 48px against the second group's 32, and the
+   two groups sat on different baselines. Measured on the uptime monitor at
+   900px: group one at y=6 h=48, group two at y=22 h=32.
+
+   The preview showed the SITE rather than the kit, which is the one thing a
+   reference may not do. The same guard three lines above exists for the same
+   reason. */
+.inst-shell-aside:not(.demo-stage *) .inst-nav-group + .inst-nav-group {
+  margin-block-start: var(--space-6);
+}
 
 .site-source {
   margin-block-start: var(--space-9);

@@ -332,31 +332,50 @@
 .inst-panel-body--flush { --panel-body-pad: 0; }
 .inst-panel-body--list  { --panel-body-pad: var(--gap-row); }
 
-/* A LIST PANEL PULLS ITS WHOLE INSET IN, not only its body.
+/* A TOOLBAR IN A LIST PANEL TAKES THE LIST'S INSET; A HEADER DOES NOT.
 
    --list exists so a row's highlight sits near the panel's edge: a row is drawn
-   as an inset object with a radius and a gap, and twelve pixels of margin around
-   it reads as a corridor rather than as air. That was written for a panel whose
-   body is ONLY rows, and it collides with the rule it is an exception to as soon
-   as the panel also has a toolbar or a header — those stand on --region-pad and
-   the rows on --gap-row, so one panel gets two left edges.
+   as an inset object with a radius and a gap, and twelve pixels of margin
+   around it reads as a corridor rather than as air. That was written for a
+   panel whose body is ONLY rows, and it collides with the rule it is an
+   exception to as soon as the panel also carries a toolbar or a header — those
+   stood on --region-pad while the rows stood on --gap-row, and one panel got
+   two left edges.
 
-   Measured on the run console: the segmented control's track at 13 from the
-   panel's edge and the first row's highlight at 7. Both are boxes, six pixels
-   apart, and the eye compares them directly.
+   The first attempt pulled the WHOLE panel in to fix it, and that was half
+   right. A row is drawn as a box whose ink sits --pad-cell-x further in: the
+   box bleeds outward, and that bleed is the inset-object look. What a
+   neighbour should align to therefore depends on what the neighbour is:
 
-   So the panel adopts the list's inset for all of its regions rather than the
-   body alone. One declaration, and everything in the panel stands on one
-   vertical — which is the kit's rule, restored rather than excepted.
+     a toolbar holds CONTROLS, which are boxes  -> align box to box
+     a header holds a TITLE, which is ink with
+       no box to bleed                          -> align ink to ink
 
-   A region NESTED in such a panel is unaffected: a card declares --region-pad on
-   itself through the containment rule above, and an element's own declaration
-   beats an inherited one. The list inset reaches the panel's own regions and
-   stops there.
+   Pulling the whole panel in served the first and broke the second. Measured
+   on the run console before any fix: a segmented control's track at 13 from
+   the panel edge against the first row's highlight at 7 — six pixels apart,
+   both boxes. Measured on the phases panel after pulling the whole panel in:
+   the title's ink at 7 against the first row's chevron ink at 15 — eight
+   pixels apart, though their boxes now agreed perfectly at 7. The fix was
+   right about the pair it was built to measure and wrong about the other one.
+
+   So only the toolbar takes the list's inset. The header keeps the panel's,
+   because it holds ink and not a box. Both pairs then agree: a segmented
+   control's track sits on the row's box, and a title sits within two pixels of
+   a row's ink — 12 against 6 + 8. Those two pixels are the remainder of a
+   row's own measure not dividing the panel's evenly, and they were there
+   before any of this and will stay: they are smaller than the gap a
+   screenshot makes visible.
+
+   A region NESTED in a list panel is unaffected either way: a card declares
+   --region-pad on itself through the containment rule above, and an element's
+   own declaration beats an inherited one.
 
    --gap-row is named twice, here and on --list, and the two are one decision:
-   move either and the panel gets its second edge back. */
-.inst-panel:has(> .inst-panel-body--list) { --region-pad: var(--gap-row); }
+   move either and the panel gets a second edge back. */
+.inst-panel:has(> .inst-panel-body--list) > .inst-toolbar {
+  padding-inline: var(--gap-row);
+}
 
 /* THE RADIUS GOES WHEN THE PADDING GOES.
 

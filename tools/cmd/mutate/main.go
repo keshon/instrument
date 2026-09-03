@@ -136,6 +136,17 @@ var mutations = []mutation{
 		"--region-ground-support: transparent;",
 		"a support region's ground levels with its container"},
 
+	// ── site ───────────────────────────────────────────────────────────────
+	// The site's styles are UNLAYERED and therefore beat every rule in the kit —
+	// the promise the layers exist to make — so a bare .inst-* selector in
+	// docs.css reaches into every live example on the page. It happened: this
+	// very rule put two groups of navigation on different baselines inside the
+	// block previews, and the reference was showing the site rather than the kit.
+	{"the site styles a kit class into the examples", "site", "site/internal/render/assets/docs.css",
+		".inst-shell-aside:not(.demo-stage *) .inst-nav-group + .inst-nav-group {",
+		".inst-shell-aside .inst-nav-group + .inst-nav-group {",
+		"an unlayered rule for the site's own column lands on every example as well"},
+
 	// ── registry ───────────────────────────────────────────────────────────
 	// The region list, guarded from the bookkeeping side. The pixel harness
 	// catches the same edit through the RENDERED tree, and both are wanted: this

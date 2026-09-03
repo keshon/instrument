@@ -29,6 +29,17 @@ var (
 
 	hexColor = regexp.MustCompile(`#[0-9a-fA-F]{3,8}\b`)
 
+	// A RULE SELECTOR IN THE SITE'S OWN STYLESHEET, taken whole so it can be
+	// asked what it is allowed to reach. Everything up to the brace, at the top
+	// level: nested at-rules are opened and closed by their own braces and the
+	// selectors inside them are still matched one by one.
+	cssRule = regexp.MustCompile(`(?m)^([^{}\n][^{}]*)\{`)
+
+	// The site's own names. A rule mentioning one of these cannot walk into an
+	// example: either it is scoped to the site's chrome, or it is scoped out of
+	// the stage by hand.
+	siteScoped = regexp.MustCompile(`\.demo|\.site-|\.doc|\.copy-i`)
+
 	// TWO HALVES, ONE RULE. The Russian half is the pattern the gate was
 	// written with; the English half exists because `src` and `tools` are now
 	// English, and against them the Russian half matches nothing at all. A gate
@@ -127,6 +138,35 @@ func Assets(files map[string]string, tokens map[string]content.Token) []string {
 				"%s  the colour %s bypasses the semantics: one theme is hard-coded", name, m))
 		}
 
+		// A KIT CLASS STYLED WITH NOTHING KEEPING IT OUT OF THE EXAMPLES.
+		//
+		// The site's styles lie OUTSIDE the kit's cascade layers and therefore
+		// beat every rule in it — that is the promise the layers exist to make,
+		// and it is what turns a bare `.inst-*` selector here into a rule that
+		// reaches into every live example on the page.
+		//
+		// It has happened, which is why this is a check and not a preference.
+		// `.inst-shell-aside .inst-nav-group + .inst-nav-group` was written for
+		// this column and reached the block previews as well; in the horizontal
+		// navigation bar the kit resets exactly that margin to zero, and an
+		// unlayered 16px overrode the reset while the `margin-inline-start`
+		// beside it went on applying. Two groups of navigation ended up on
+		// different baselines with different heights, and the reference was
+		// showing the SITE rather than the kit — the one thing it may not do.
+		//
+		// The remedy is one of two, and both are already in the file: scope the
+		// rule to the site's own chrome, or scope it out of the stage by hand
+		// with `:not(.demo-stage *)`.
+		for _, m := range cssRule.FindAllStringSubmatch(code, -1) {
+			sel := strings.Join(strings.Fields(m[1]), " ")
+			if !strings.Contains(sel, ".inst-") || siteScoped.MatchString(sel) {
+				continue
+			}
+			problems = append(problems, fmt.Sprintf(
+				"%s  `%s` styles a kit class with nothing keeping it out of the examples: "+
+					"the site is unlayered and beats the kit, so this reaches every live example. "+
+					"Scope it to the site's chrome or add :not(.demo-stage *)", name, sel))
+		}
 	}
 
 	sort.Strings(problems)
