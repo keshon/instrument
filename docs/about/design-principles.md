@@ -486,9 +486,11 @@ A button, a badge, a tag and a field do not take rank either. They have
 emphasis, which is a different question with an answer of its own, and two axes
 for one question are one axis with two names.
 
-**Rank is not tone, and they combine.** A lead region is the principal one, not
-the good one: `data-rank="lead" data-tone="error"` is an incident that owns its
-screen, and that combination is the point of keeping the axes apart.
+**Rank is not tone.** A lead region is the principal one, not the good one:
+rank says where to look, tone says what a thing means, and neither implies the
+other. A region's own ground does not yet follow its tone — `data-tone` on a
+panel is inert, and the tone is carried by the marks inside it. See
+[rank](../foundations/rank.md).
 
 **A screen has at most one lead.** Two leads is no lead. It is checked on the
 rendered tree by `kitAudit.composition()` rather than by a text gate, because it

@@ -19,7 +19,7 @@ var sections = []struct {
 }{
 	{"start", []string{"install"}},
 	{"foundations", []string{
-		"colors", "typography", "spacing", "elevation", "motion",
+		"colors", "typography", "spacing", "elevation", "rank", "motion",
 		"density", "scale", "icons", "behavior", "utilities", "tokens",
 	}},
 	{"layout", []string{
