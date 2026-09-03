@@ -376,11 +376,11 @@ var cases = []kase{
 	// stack is written out layer by layer, as the recessed pairs above are.
 	{label: "rank: text in a nested support region", fg: "--text-primary",
 		bg: []string{"--surface-raised", "--surface-recessed", "--region-ground-support"}, min: text},
-	{label: "rank: support title in a nested support region", fg: "--text-secondary",
+	{label: "rank: support title in a nested support region", fg: "--text-muted",
 		bg: []string{"--surface-raised", "--surface-recessed", "--region-ground-support"}, min: text},
 
 	// And the same title at depth 0, where the rank film is the only one.
-	{label: "rank: support title on page", fg: "--text-secondary",
+	{label: "rank: support title on page", fg: "--text-muted",
 		bg: []string{"--surface-page", "--region-ground-support"}, min: text},
 }
 

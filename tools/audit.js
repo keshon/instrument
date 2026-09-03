@@ -640,6 +640,76 @@ window.kitAudit = (function () {
       }
     });
 
+
+    /* C6 -- THE LADDER IS MONOTONE, and it builds its own probes rather than
+       asking what the page happens to contain.
+
+       Every other check here measures the document. This one measures the KIT:
+       three ranks of one region kind, side by side, asking whether loudness
+       actually decreases from lead to support. A page that has no support
+       section cannot answer that, and the invariant is true or false regardless
+       of which page you are on.
+
+       It exists because the ladder inverted once and shipped. Rank sets ONE ink
+       for every region while each region's default differs -- a panel's name is
+       primary, a section's label is muted -- so --text-secondary quietened the
+       panel and made the SECTION LOUDER: the size receded and the ink advanced.
+       cmd/contrast could not see it, because it measures thresholds rather than
+       order.
+
+       Loudness is size AND ink together, and neither may rise as rank falls.
+       Ink loudness is distance from the ground: a title further from what it
+       sits on is louder, whichever end of the ramp the theme lives at, so the
+       same comparison works in light and dark without a sign. */
+    var ladder = [
+      { cls: 'inst-panel', title: 'inst-panel-title', head: 'inst-panel-header' },
+      { cls: 'inst-card', title: 'inst-card-title', head: null },
+      { cls: 'inst-section', title: 'inst-section-title', head: 'inst-section-head' }
+    ];
+    var probe = document.createElement('div');
+    probe.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden';
+    document.body.appendChild(probe);
+    ladder.forEach(function (kind) {
+      var seen = [];
+      ['lead', 'default', 'support'].forEach(function (rank) {
+        var region = document.createElement('div');
+        region.className = kind.cls;
+        region.setAttribute('data-rank', rank);
+        var host = region;
+        if (kind.head) {
+          host = document.createElement('div');
+          host.className = kind.head;
+          region.appendChild(host);
+        }
+        var t = document.createElement('span');
+        t.className = kind.title;
+        t.textContent = 'x';
+        host.appendChild(t);
+        probe.appendChild(region);
+        var cs = getComputedStyle(t);
+        seen.push({
+          rank: rank,
+          size: parseFloat(cs.fontSize),
+          ink: Math.abs(lstar(rgba(cs.color)) - lstar(bgOf(region)))
+        });
+      });
+      for (var i = 1; i < seen.length; i++) {
+        var hi = seen[i - 1], lo = seen[i];
+        checked++;
+        if (lo.size > hi.size) {
+          bad.push('C6 ' + kind.cls + ': ' + lo.rank + ' is SET LARGER than ' + hi.rank +
+            ' (' + lo.size + 'px against ' + hi.size + 'px) -- the ladder inverts');
+        }
+        checked++;
+        if (lo.ink > hi.ink + 0.001) {
+          bad.push('C6 ' + kind.cls + ': ' + lo.rank + ' has LOUDER ink than ' + hi.rank +
+            ' (' + lo.ink.toFixed(3) + ' against ' + hi.ink.toFixed(3) +
+            ' from its ground) -- the ladder inverts');
+        }
+      }
+    });
+    probe.remove();
+
     ruler.remove();
     return { checked: checked, failed: bad.length, list: bad };
   }

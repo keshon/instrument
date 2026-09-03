@@ -4561,9 +4561,34 @@ hr {
   --region-title-size: var(--region-title-lead);
 }
 
+/* THE SUPPORT INK IS --text-muted AND NOT --text-secondary, and the difference
+   is a defect this shipped with for one commit.
+
+   Rank sets ONE ink for every region, while each region's default differs: a
+   panel's name is primary, a section's label is muted. --text-secondary is one
+   tier down from primary and one tier UP from muted, so the same declaration
+   quietened a panel and made a SECTION LOUDER — 12.5px in 0.400 against 14px in
+   0.500. The size receded and the ink advanced.
+
+   Nothing caught it, and the reason is worth keeping. cmd/contrast measures
+   thresholds rather than order; its one directional instrument is `alt`, and
+   `alt` was deliberately not used for rank's GROUND — correctly, since default
+   rank has no film to compare — after which nobody asked the same question of
+   the ink. An invariant nobody states is an invariant nobody guards.
+
+   --text-muted is the quietest tier text may be READ in (--text-faint is the
+   decoration threshold and is banned for reading), so it sits below every
+   region default the kit has and the ladder cannot invert whatever a region's
+   default turns out to be. On a panel that is a bigger step than before, which
+   is right: withdrawing is the cheap direction. On a section default and
+   support meet, and the rung carries the whole difference — a section has no
+   ground and no edge to spend either, so that is the same answer three times.
+
+   Guarded by C6 in kitAudit.composition(), which builds its own ladder and
+   refuses one that is not monotone. */
 [data-rank="support"] {
   --region-title-size: var(--region-title-support);
-  --region-title-ink:  var(--text-secondary);
+  --region-title-ink:  var(--text-muted);
   --region-ground:     var(--region-ground-support);
   --region-edge:       var(--region-edge-support);
 }

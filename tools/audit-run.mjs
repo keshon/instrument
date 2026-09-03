@@ -300,7 +300,41 @@ const EXPR = (auditSrc) => `(async () => {
    NO by editing tokens.css, because a token moves both sides of the comparison
    at once. A check the harness cannot turn red is the thing this harness
    exists to forbid, so the harness learned to serve any file of the kit. */
+/* The support block's ink line is NOT unique in surfaces.css -- a section's
+   reset holds the same declaration -- and a replacement takes the first
+   match. Anchored on the line alone, the mutation landed on the reset and
+   produced a ladder that was still monotone, so it was missed and the
+   harness was right to say so. The size line above it is unique, so the
+   anchor carries both. */
+const NL = String.fromCharCode(10);
+const SUPPORT_INK_ANCHOR =
+  ['  --region-title-size: var(--region-title-support);',
+   '  --region-title-ink:  '].join(NL);
+
 const MUTATIONS = [
+  {
+    /* C6, and it can point at any page: the ladder check builds its own probes
+       rather than measuring what the document happens to hold. That is the whole
+       difference from the mutation below, which had to be repointed once because
+       the page it named held no case to answer.
+
+       The value put back here is the one that shipped for a commit. Rank sets ONE
+       ink for every region while region defaults differ, so --text-secondary
+       quietens a panel and makes a SECTION louder. */
+    name: 'the rank ink ladder inverted on a section',
+    section: 'composition',
+    file: 'surfaces.css',
+    page: '/components/display/panel/',
+    /* The anchor carries the line ABOVE it, and it has to. This declaration is
+       not unique in the file -- a section's reset holds the same one -- and a
+       replacement takes the FIRST match, which landed on the reset and produced
+       a ladder that was still monotone. The mutation was missed, and the harness
+       was right to say so: an ambiguous anchor mutates something other than what
+       it names. */
+    from: SUPPORT_INK_ANCHOR + 'var(--text-muted);',
+    to: SUPPORT_INK_ANCHOR + 'var(--text-secondary);',
+    why: 'a support region recedes in size and advances in ink, and no token gate can see order',
+  },
   {
     /* The one law no Go gate can reach. Rank must not cross a region boundary,
        and what holds it is a :where() reset any later edit could quietly drop.
