@@ -8,6 +8,7 @@ api:
   - { name: "inst-card-title", kind: "class", doc: "The heading of an object" }
   - { name: "inst-card-sub", kind: "class", doc: "The caption under the heading" }
   - { name: "inst-card--interactive", kind: "modifier", doc: "A response to hover and focus" }
+  - { name: "inst-card--plain", kind: "modifier", doc: "No edge: the boundary is carried by the step of surface alone. For large regions" }
   - { name: "--surface-raised", kind: "token" }
   - { name: "--border", kind: "token" }
   - { name: "--hairline", kind: "token" }

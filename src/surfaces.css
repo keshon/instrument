@@ -153,6 +153,29 @@
   --region-edge:       var(--region-edge-support);
 }
 
+/* THE EDGE IS A VARIANT, AND IT IS NOT RANK'S AXIS.
+
+   [data-rank="support"] already drops the edge — and takes the ground down with
+   it, because a region that withdraws withdraws in both at once. That coupling
+   left one thing unsayable: a region that KEEPS its ground and its importance
+   and lets the surface alone carry the boundary. An app that wanted it had to
+   write --region-edge: transparent for itself, and a caller re-dressing a
+   component is the kit being short a variant rather than the caller being wrong.
+
+   Measured 2026-09-11, and the measurement is why this is a variant and not a
+   new default. The page↔panel step is 1.068 · 1.071 · 1.071 · 1.071 · 1.121
+   across the five themes, and THE SAME STEP READS DIFFERENTLY BY AREA: on a
+   region of 36 000 px² a borderless panel is lost on dark; on the 201 000 px²
+   of a real screen region — 5.6 times the area, the same tokens — it holds in
+   all five. The edge is owed by small regions and optional on large ones, and
+   only the author knows which one is being written.
+
+   After the rank blocks on purpose: both are (0,1,0), and an author who typed
+   the modifier meant it. */
+.inst-panel--plain, .inst-card--plain {
+  --region-edge: transparent;
+}
+
 /* RANK DOES NOT MOVE THE INSET, and it did for one release. The rules that made
    it are removed rather than tuned, because the error was the axis and not the
    amount.
@@ -649,7 +672,8 @@
 
 .inst-metric-label { font-size: var(--text-xs); color: var(--text-secondary); line-height: var(--leading-ui); }
 
-/* A METRIC MAY NOT OUTRANK THE NAME OF THE SCREEN.
+/* A METRIC INSIDE A REGION MAY NOT OUTRANK THE NAME OF THE SCREEN, and the
+   scope of that sentence is the whole of it.
 
    The value used to be --text-2xl, whose only other user is `h1`. A page
    title is --text-xl, so a number in a tile was set 28 against a heading of
@@ -664,10 +688,21 @@
    component for a labelled value. --text-lg keeps the value/label ratio at
    1.44 — a figure, still under the page title at every rung of the ladder,
    because both are roles in the one type scale and the ordering travels with
-   it.                                                                     */
+   it.
+
+   WHAT THAT MEASUREMENT DID NOT COVER, found 2026-09-11. The reference it was
+   taken against had no summary band under a page header, so the comparison was
+   tile against tile — and the conclusion got written about "a metric". A band
+   under the header is a different object with a different job: it answers "how
+   is this screen", not "what is this value", and it is meant to be read before
+   anything else. That object is --headline below.
+
+   So the size is a CHANNEL rather than a constant. One variable, one axis: how
+   loud the value is. The default is unchanged, and a metric that does not ask
+   is still --text-lg.                                                      */
 .inst-metric-value {
   margin-block-start: var(--space-2);
-  font-size: var(--text-lg);
+  font-size: var(--metric-value-size, var(--text-lg));
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-tight);
   line-height: 1.1;
@@ -731,3 +766,59 @@
      4 · 6 · 8 with the density, as the gap between neighbours should. */
   gap: var(--gap-row);
 }
+
+/* A JOINED ROW IS ONE OBJECT PARTED BY RULES, NOT FOUR PLATES IN A LINE.
+
+   The default row is four recessed tiles with a gap between them: four objects
+   that happen to stand in a line. A summary band under a page header is read as
+   ONE thing — the state of this screen — and its cells are divisions of that
+   thing rather than members of a set. Depth says "these are separate"; a rule
+   says "this is one, divided". Both are correct, and which one is meant is the
+   author's to say.
+
+   No new token. The row takes the raised ground the tiles give up, and the
+   parting line is --border, the same hairline every other divider here uses.
+   The cells take the panel inset rather than the tile's own, because inside one
+   surface a cell is a column of a region and not a plate of its own. */
+.inst-metric-row--joined {
+  gap: 0;
+  background: var(--surface-raised);
+  border-radius: var(--region-radius, var(--radius-lg));
+  overflow: hidden;
+
+  & > .inst-metric {
+    background: none;
+    border-radius: 0;
+    padding: var(--pad-panel);
+  }
+  /* A wrapped row starts a new line with a cell that has nothing to its left;
+     the rule would then hang at the row's edge. */
+  & > .inst-metric + .inst-metric {
+    border-inline-start: var(--hairline) solid var(--border);
+  }
+}
+
+/* THE HEADLINE BAND IS THE ONE PLACE A NUMBER OUTRANKS THE PAGE TITLE, and the
+   licence is narrow on purpose.
+
+   The law above holds for a metric inside a region: there the region's name and
+   the screen's name are what locate the reader, and a number shouting over them
+   leaves the screen without an anchor. Under the page header the anchor is
+   already spent — the breadcrumb names the screen one line higher, and the
+   title repeats it. What is NOT yet answered there is the only question the
+   reader came with: how is it going. The band answers that, so it is read
+   first, so it is the loudest type on the screen.
+
+   --text-2xl is the ceiling of the scale and h1's own step; the band reaches it
+   and stops. There is no step above, and adding one would be a change to the
+   type scale rather than to this component — if a screen needs more than this,
+   that is the argument to measure, not a number to write here.
+
+   AT MOST ONE BAND PER SCREEN, and directly under the page header. Two bands
+   are no band, by the same reasoning that gives a screen one lead region. */
+.inst-metric-row--headline {
+  --metric-value-size: var(--text-2xl);
+
+  & > .inst-metric > .inst-metric-label { font-size: var(--text-2xs); }
+}
+

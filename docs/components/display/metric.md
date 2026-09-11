@@ -6,6 +6,11 @@ source: src/surfaces.css
 api:
   - { name: "inst-metric", kind: "class", doc: "One metric" }
   - { name: "inst-metric-row", kind: "class", doc: "A row of metrics" }
+  - { name: "inst-metric-row--joined", kind: "modifier", doc: "One surface parted by rules instead of separate tiles" }
+  - { name: "inst-metric-row--headline", kind: "modifier", doc: "The band under a page header. The value takes the ceiling of the scale. One per screen" }
+  - { name: "--metric-value-size", kind: "variable", value: "--text-lg", doc: "How loud the value is" }
+  - { name: "--text-2xl", kind: "token" }
+  - { name: "--text-2xs", kind: "token" }
   - { name: "inst-metric-label", kind: "class", doc: "The label above the number" }
   - { name: "inst-metric-value", kind: "class", doc: "The number itself" }
   - { name: "inst-metric-unit", kind: "class", doc: "The unit inside the number: smaller and quieter" }
@@ -47,10 +52,48 @@ parted the eye grabs the number and the "s" recedes.
 </div>
 ```
 
+```html preview
+<div class="inst-metric-row inst-metric-row--joined">
+  <div class="inst-metric">
+    <div class="inst-metric-label">Runs per day</div>
+    <div class="inst-metric-value">128</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Average time</div>
+    <div class="inst-metric-value">4.2<span class="inst-metric-unit">s</span></div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Warnings</div>
+    <div class="inst-metric-value">5</div>
+  </div>
+</div>
+```
+
+```html preview
+<div class="inst-metric-row inst-metric-row--joined inst-metric-row--headline">
+  <div class="inst-metric">
+    <div class="inst-metric-label">Success rate</div>
+    <div class="inst-metric-value">94.2<span class="inst-metric-unit">%</span></div>
+    <div class="inst-metric-delta" data-dir="down" data-tone="warn">1.8 points in a week</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Duration p95</div>
+    <div class="inst-metric-value">4:12<span class="inst-metric-unit">min</span></div>
+    <div class="inst-metric-delta">median 2:48</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">In the queue</div>
+    <div class="inst-metric-value">37</div>
+    <div class="inst-metric-delta" data-dir="up" data-tone="warn">9 waiting over an hour</div>
+  </div>
+</div>
+```
+
 ## Contract
 
 | What | Required | Why |
 |---|---|---|
+| `--joined` for a band that is one fact | yes | Separate tiles say "a set of numbers", one parted surface says "the state of this screen". Picking the wrong one is not a style slip but a wrong sentence |
 | `inst-metric-label` | yes | "128" with no answer to "of what" is not a metric |
 | The sign of the change in words in the delta | yes | The arrow is a second carrier rather than the only one: "↓ 18%" reads without a tone too |
 | An accessible name from the label and the number | yes, if the metric is clickable | Otherwise "128" is spoken with no answer to "of what" |
@@ -63,7 +106,9 @@ parted the eye grabs the number and the "s" recedes.
 | The label and the number | Tied visually by their order. If the metric is clickable, the accessible name has to include both — otherwise "128" is spoken with no answer to "of what" |
 | Not colour alone | The delta carries an arrow **and** the sign of the change in the text. A reader who does not tell tones apart reads "↓ 18%" |
 | Contrast | The delta takes `--tone-ink` — the threshold of text at 4.5:1 rather than of a mark at 3:1 |
-| The size of the number | `--text-2xl` is meant for a hero number **only**. A heading of that size shouts louder than the data |
+| The size of the number | `--text-lg` inside a region, and the tile keeps a value/label ratio of 1.44. A metric there may not outrank the name of the screen it stands on — measured 2026-08-27. The one exception is `--headline`, below |
+| `--headline` only under the page header, never inside a region | yes | There the breadcrumb already names the screen, so the band may answer the question the reader actually came with. Inside a region the name is still doing that work |
+| At most one `--headline` band per screen | yes | Two bands are no band — the same reasoning that gives a screen one lead region |
 | Tabular figures | On by default: a number updating in place does not tug at its neighbours |
 
 ## Anatomy

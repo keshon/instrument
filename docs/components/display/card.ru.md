@@ -8,6 +8,7 @@ api:
   - { name: "inst-card-title", kind: "класс", doc: "Заголовок объекта" }
   - { name: "inst-card-sub", kind: "класс", doc: "Подпись под заголовком" }
   - { name: "inst-card--interactive", kind: "модификатор", doc: "Отклик на наведение и фокус" }
+  - { name: "inst-card--plain", kind: "модификатор", doc: "Без обводки: границу держит один перепад поверхности. Для крупных областей" }
   - { name: "--surface-raised", kind: "токен" }
   - { name: "--border", kind: "токен" }
   - { name: "--hairline", kind: "токен" }

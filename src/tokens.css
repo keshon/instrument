@@ -732,7 +732,11 @@
   --text-md:  1rem;       /* 16px — prose, message bodies, a panel name */
   --text-lg:  1.125rem;   /* 18px */
   --text-xl:  1.375rem;   /* 22px */
-  --text-2xl: 1.75rem;    /* 28px — hero numbers only */
+  --text-2xl: 1.75rem;    /* 28px — the ceiling of the scale. h1, and the one
+                             metric band a screen may put under its header
+                             (.inst-metric-row--headline). A metric inside a
+                             region never reaches it: see the law over
+                             .inst-metric-value in surfaces.css. */
 
   /* Two weights. 700 exists in the font and is forbidden: on a layout of
      hairlines and air it reads as a shout.

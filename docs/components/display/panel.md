@@ -11,6 +11,7 @@ api:
   - { name: "inst-panel-body", kind: "class", doc: "The body, with scrolling" }
   - { name: "inst-panel-body--flush", kind: "modifier", doc: "With no inner padding" }
   - { name: "inst-panel-body--list", kind: "modifier", doc: "Padding on the vertical only" }
+  - { name: "inst-panel--plain", kind: "modifier", doc: "No edge: the boundary is carried by the step of surface alone. For large regions" }
   - { name: "data-rank", kind: "attribute", doc: "How much attention this region asks for: `lead` / `default` / `support`" }
   - { name: "--surface-raised", kind: "token" }
   - { name: "--border", kind: "token" }
@@ -50,10 +51,19 @@ parts it from the data.
 </div>
 ```
 
+```html preview
+<div class="inst-panel inst-panel--plain">
+  <div class="inst-panel-header"><span class="inst-panel-title">Runs</span></div>
+  <div class="inst-panel-body">No edge: the step from the page to the sheet is the
+    boundary. Large regions only.</div>
+</div>
+```
+
 ## Contract
 
 | What | Required | Why |
 |---|---|---|
+| `--plain` only on a large region | yes | The boundary then rests on a step of 1.07 — measured to hold across 201 000 px² and to be lost across 36 000. A small panel owes its edge |
 | `role="region"` and `aria-labelledby` | yes, if the panel is a landmark | Otherwise it will not appear in a screen reader's list of regions |
 | `tabindex="0"` on the body | yes, if there is nothing focusable inside | A scrolling region has to be able to take focus from the keyboard |
 | The width comes from outside | yes | A panel is declared a container; `container-type` switches off the intrinsic size and will collapse an element that takes its width from its content |

@@ -6,6 +6,11 @@ source: src/surfaces.css
 api:
   - { name: "inst-metric", kind: "класс", doc: "Одна метрика" }
   - { name: "inst-metric-row", kind: "класс", doc: "Ряд метрик" }
+  - { name: "inst-metric-row--joined", kind: "модификатор", doc: "Одна поверхность, разделённая линиями, вместо отдельных плиток" }
+  - { name: "inst-metric-row--headline", kind: "модификатор", doc: "Полоса под шапкой страницы. Значение берёт потолок шкалы. Одна на экран" }
+  - { name: "--metric-value-size", kind: "переменная", value: "--text-lg", doc: "Насколько громко значение" }
+  - { name: "--text-2xl", kind: "токен" }
+  - { name: "--text-2xs", kind: "токен" }
   - { name: "inst-metric-label", kind: "класс", doc: "Подпись над числом" }
   - { name: "inst-metric-value", kind: "класс", doc: "Само число" }
   - { name: "inst-metric-unit", kind: "класс", doc: "Единица внутри числа: мельче и тише" }
@@ -47,10 +52,48 @@ api:
 </div>
 ```
 
+```html preview
+<div class="inst-metric-row inst-metric-row--joined">
+  <div class="inst-metric">
+    <div class="inst-metric-label">Прогонов в сутки</div>
+    <div class="inst-metric-value">128</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Среднее время</div>
+    <div class="inst-metric-value">4.2<span class="inst-metric-unit">с</span></div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Предупреждений</div>
+    <div class="inst-metric-value">5</div>
+  </div>
+</div>
+```
+
+```html preview
+<div class="inst-metric-row inst-metric-row--joined inst-metric-row--headline">
+  <div class="inst-metric">
+    <div class="inst-metric-label">Доля успешных</div>
+    <div class="inst-metric-value">94.2<span class="inst-metric-unit">%</span></div>
+    <div class="inst-metric-delta" data-dir="down" data-tone="warn">1.8 пункта за неделю</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">Длительность p95</div>
+    <div class="inst-metric-value">4:12<span class="inst-metric-unit">мин</span></div>
+    <div class="inst-metric-delta">медиана 2:48</div>
+  </div>
+  <div class="inst-metric">
+    <div class="inst-metric-label">В очереди</div>
+    <div class="inst-metric-value">37</div>
+    <div class="inst-metric-delta" data-dir="up" data-tone="warn">9 ждут дольше часа</div>
+  </div>
+</div>
+```
+
 ## Контракт
 
 | Что | Обязательно | Почему |
 |---|---|---|
+| `--joined`, когда полоса — один факт | да | Отдельные плитки говорят «набор чисел», одна разделённая поверхность — «состояние этого экрана». Выбрать не то — не оплошность стиля, а неверная фраза |
 | `inst-metric-label` | да | «128» без ответа на «чего» не является метрикой |
 | Знак изменения словом в дельте | да | Стрелка — второй носитель, а не единственный: «↓ 18%» читается и без тона |
 | Доступное имя из подписи и числа | да, если метрика кликабельна | Иначе прозвучит «128» без ответа на «чего» |
@@ -63,7 +106,9 @@ api:
 | Подпись и число | Связаны визуально порядком. Если метрика кликабельна, доступное имя должно включать оба — иначе прозвучит «128» без ответа на «чего» |
 | Не только цвет | Дельта несёт стрелку **и** знак изменения в тексте. Читатель, не различающий тон, читает «↓ 18%» |
 | Контраст | Дельта берёт `--tone-ink` — порог текста 4.5:1, а не метки 3:1 |
-| Кегль числа | `--text-2xl` предназначен **только** для числа-героя. Заголовок этого размера кричит громче данных |
+| Кегль числа | `--text-lg` внутри области, отношение значения к подписи 1.44. Метрика там не перевешивает имя экрана, на котором стоит — замерено 2026-08-27. Единственное исключение — `--headline` ниже |
+| `--headline` только под шапкой страницы, никогда внутри области | да | Там имя экрана уже названо хлебными крошками, и полоса вправе отвечать на вопрос, с которым читатель пришёл. Внутри области имя ещё делает эту работу |
+| Не больше одной полосы `--headline` на экран | да | Две заглавных — ни одной; то же рассуждение, что даёт экрану одну ведущую область |
 | Табличные цифры | Включены по умолчанию: число, обновляемое на месте, не дёргает соседей |
 
 ## Устройство
