@@ -57,6 +57,24 @@ the library's own, and not a single line of script.
         </div>
       </div>
 
+      <div class="inst-metric-row">
+        <div class="inst-metric">
+          <div class="inst-metric-label">Uptime, 24 hours</div>
+          <div class="inst-metric-value">95.8<span class="inst-metric-unit">%</span></div>
+          <div class="inst-metric-delta" data-dir="down" data-tone="warn">1.4 points against the day before</div>
+        </div>
+        <div class="inst-metric">
+          <div class="inst-metric-label">Checks</div>
+          <div class="inst-metric-value">97</div>
+          <div class="inst-metric-delta">4 with an error</div>
+        </div>
+        <div class="inst-metric">
+          <div class="inst-metric-label">The longest outage</div>
+          <div class="inst-metric-value">14<span class="inst-metric-unit">min</span></div>
+          <div class="inst-metric-delta">at 03:12</div>
+        </div>
+      </div>
+
       <div class="inst-panel" data-rank="lead">
         <div class="inst-panel-header">
           <span class="inst-panel-title">The last 24 hours</span>
@@ -141,22 +159,22 @@ the library's own, and not a single line of script.
             <div class="inst-panel-header"><span class="inst-panel-title">Incidents</span></div>
             <table class="inst-table">
               <thead>
-                <tr><th>Started</th><th>Lasted</th><th>Reason</th></tr>
+                <tr><th>Started</th><th class="inst-num">Lasted</th><th>Reason</th></tr>
               </thead>
               <tbody>
                 <tr>
                   <td>03:12</td>
-                  <td>14 min</td>
+                  <td class="inst-num">14 min</td>
                   <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>timeout</span></td>
                 </tr>
                 <tr>
                   <td>04:01</td>
-                  <td>4 min</td>
+                  <td class="inst-num">4 min</td>
                   <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>502</span></td>
                 </tr>
                 <tr>
                   <td>20:35</td>
-                  <td>3 min</td>
+                  <td class="inst-num">3 min</td>
                   <td><span class="inst-badge" data-tone="warn"><span class="inst-dot"></span>slow</span></td>
                 </tr>
               </tbody>

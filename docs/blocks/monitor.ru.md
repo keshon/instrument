@@ -57,6 +57,24 @@ template: splash
         </div>
       </div>
 
+      <div class="inst-metric-row">
+        <div class="inst-metric">
+          <div class="inst-metric-label">Доступность за сутки</div>
+          <div class="inst-metric-value">95.8<span class="inst-metric-unit">%</span></div>
+          <div class="inst-metric-delta" data-dir="down" data-tone="warn">1.4 пункта против вчера</div>
+        </div>
+        <div class="inst-metric">
+          <div class="inst-metric-label">Проверок</div>
+          <div class="inst-metric-value">97</div>
+          <div class="inst-metric-delta">4 с ошибкой</div>
+        </div>
+        <div class="inst-metric">
+          <div class="inst-metric-label">Самый долгий простой</div>
+          <div class="inst-metric-value">14<span class="inst-metric-unit">мин</span></div>
+          <div class="inst-metric-delta">в 03:12</div>
+        </div>
+      </div>
+
       <div class="inst-panel" data-rank="lead">
         <div class="inst-panel-header">
           <span class="inst-panel-title">Последние 24 часа</span>
@@ -141,22 +159,22 @@ template: splash
             <div class="inst-panel-header"><span class="inst-panel-title">Инциденты</span></div>
             <table class="inst-table">
               <thead>
-                <tr><th>Начался</th><th>Длился</th><th>Причина</th></tr>
+                <tr><th>Начался</th><th class="inst-num">Длился</th><th>Причина</th></tr>
               </thead>
               <tbody>
                 <tr>
                   <td>03:12</td>
-                  <td>14 мин</td>
+                  <td class="inst-num">14 мин</td>
                   <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>таймаут</span></td>
                 </tr>
                 <tr>
                   <td>04:01</td>
-                  <td>4 мин</td>
+                  <td class="inst-num">4 мин</td>
                   <td><span class="inst-badge" data-tone="error"><span class="inst-dot"></span>502</span></td>
                 </tr>
                 <tr>
                   <td>20:35</td>
-                  <td>3 мин</td>
+                  <td class="inst-num">3 мин</td>
                   <td><span class="inst-badge" data-tone="warn"><span class="inst-dot"></span>медленно</span></td>
                 </tr>
               </tbody>
