@@ -37,6 +37,7 @@ media query**.
 | An `inst-split-main` and an `inst-split-side` | yes | Both parts are wanted: a split is about a layout of **differing** importance, and without the second it degenerates into a block |
 | The order in the markup = the order on wrapping | yes | `order` parts the visual order from the keyboard one, and `Tab` starts jumping across the screen |
 | The thresholds through `--split-side` and `--split-main` | yes | Roles of tier 3, overridden on the container rather than inside the component |
+| An `inst-stack` inside a part holding more than one block | yes | A part of a split is a share of the width, not a column of the flow: it has no gap of its own, and two panels stand flush. The gap is put by [the stack](./flow.md); the part cannot put it itself — the class is also worn by a component (`inst-split-side inst-card`), and the gap would then land inside the card |
 | A media query | no | The wrapping is done by the intrinsic size: it works inside a narrow panel and in a modal alike |
 
 ### Accessibility
