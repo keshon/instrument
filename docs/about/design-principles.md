@@ -32,6 +32,26 @@ heading in tracked capitals sounds louder than the number it labels.
 
 ---
 
+## The rule about rules
+
+**A rule derived from a measurement has to name the object the measurement was
+taken on. A generalisation past what was measured is a hypothesis, not a rule.**
+
+The defect this is written for turned up three times in one review, and every
+measurement was honest — what was wrong was the scope.
+
+| Measured | Written down as | What broke |
+|---|---|---|
+| a metric tile inside a panel | a law about "a metric" | the band under a page header, absent from the measurement, came out forbidden |
+| a panel of 36 000 px² | a law about "a panel" | at a real 201 000 px² the conclusion inverts |
+| — | the first one's consequence in `tokens.css`: `--text-2xl` for `h1` only | the note outlived its cause and misled |
+
+Nothing catches this — not a gate and not an eye: the rule is self-consistent
+and carries a number. Only someone arriving with a different object catches it.
+Naming the object inside the rule is the one insurance that costs nothing.
+
+---
+
 ## The vocabulary
 
 Four tiers. Every parameter exists in a single instance: a duplicate means a
@@ -72,6 +92,20 @@ place is not a tier but a name for a constant.
   control) take `--border-strong`, that is 1.69:1 against 3.4:1 on a
   load-bearing one. Everything that is empty inside stays on the load-bearing
   one.
+
+- **A boundary is found by the step AND by the area it covers.** The contrast
+  of a pair of colours is a property of the pair; the findability of an edge is
+  a property of the pair and of how much of the screen it spans. A gate that
+  measures the first and rules on the second will be wrong.
+
+  Measured 2026-09-10, page against panel across the five themes: 1.068 ·
+  1.071 · 1.071 · 1.071 · 1.121 — and the same step read differently at two
+  sizes. On a panel of 36 000 px² a borderless panel is lost on `dark`; on the
+  201 000 px² panel of a real screen — 5.6 times the area, the same tokens —
+  it holds in all five themes.
+
+  So the question "does the panel owe a border" is not settled by the ramp
+  alone, and any probe of it has to be run at the size the panel actually is.
 
 - **An interface link and a link in prose are different things.** In an
   interface an `<a>` inherits the colour and is underlined only under the
