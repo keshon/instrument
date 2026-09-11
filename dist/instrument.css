@@ -2561,20 +2561,36 @@ hr {
    navigation does not go anywhere while a table is being read.
    ────────────────────────────────────────────────────────────────────────── */
 
+/* THE WINDOW HAS FOUR ROWS AND TWO OF THEM ARE USUALLY EMPTY.
+
+   A menu bar above everything and a status bar below it are window furniture,
+   not regions of the work area: both run the full width, under the side column
+   as well, because they report on the window and the window is what the shell
+   is. Declaring their rows unconditionally costs nothing — an auto row with no
+   item in it is zero pixels tall, and the shell sets no row gap — and it avoids
+   the alternative, which is a grid-template-areas for every combination of the
+   three optional parts.
+
+   Both were found in an application rather than here. Without the rows an
+   integrator writes a grid of their own around the shell: it works, and every
+   integrator writes a different one. */
 .inst-shell {
   display: grid;
-  grid-template-areas: "aside header" "aside main";
+  grid-template-areas: "menu menu" "aside header" "aside main" "status status";
   grid-template-columns: var(--aside-w) minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   block-size: 100dvh;
 }
+
+.inst-shell > .inst-menubar { grid-area: menu; }
+.inst-shell > .inst-statusbar { grid-area: status; }
 
 /* A shell with no side column: the header and the work area take the full
    width. Not every instrument has sections — an uptime monitor has two, and
    they fit into the header. Without this rule the column takes its 232 pixels
    and leaves an empty gutter. */
 .inst-shell:not(:has(> .inst-shell-aside)) {
-  grid-template-areas: "header" "main";
+  grid-template-areas: "menu" "header" "main" "status";
   grid-template-columns: minmax(0, 1fr);
 }
 
@@ -2692,9 +2708,9 @@ hr {
    state but does not invent it.                                          */
 @media (width < 60rem) {
   .inst-shell {
-    grid-template-areas: "header" "aside" "main";
+    grid-template-areas: "menu" "header" "aside" "main" "status";
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
   }
 
   /* ── The default: a horizontal bar ─────────────────────────────────────
@@ -3204,6 +3220,80 @@ hr {
   inset-block-end: calc(var(--space-1) * -1);
   inset-inline-end: calc(var(--space-2) * -1);
   pointer-events: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Menu bar
+
+   The strip of a desktop application: File, Edit, View, Help. It is a row of
+   TRIGGERS and nothing else — the menus that drop from it are the kit's own
+   popover and menu, unchanged, and that is the whole reason the component is
+   this small. What was missing was never the menus.
+
+   WHY A KIT FOR DASHBOARDS HAS ONE. Because a screen that is a window rather
+   than a page is read as a window largely through this strip, and a person
+   looks for commands at the top left whatever the kit thinks. An application
+   built on the kit put its commands behind one icon button in the top right,
+   and the owner of the application said it read as unfamiliar. The second
+   attempt put the strip back.
+
+   IT IS NOT A TOOLBAR. A toolbar holds the controls of a panel and stands
+   inside it; this stands above everything, belongs to the window and holds
+   nothing but names. The two look alike for one release and then diverge —
+   which is the reason to separate them before that happens rather than after.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.inst-menubar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-inline: var(--space-2);
+  /* One line: the strip is not where the screen's height should go. It is a
+     rung taller than the status bar, and that is the difference between the
+     two — readings are read and triggers are pressed, and a pressed thing has
+     to clear the tap minimum on the smallest scale as well. */
+  min-block-size: calc(var(--control-h-sm) + var(--space-2));
+  background: var(--surface-sunken);
+  border-block-end: var(--hairline) solid var(--border-subtle);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+/* A trigger is a real button: it opens a menu, it is reached by keyboard, and
+   a row of divs would say none of that. It stands on the same rung as a menu
+   item, because that is what it is the entrance to — and because the rung
+   below fails the tap minimum at the smallest scale, which the gate in
+   cmd/targets is what caught. */
+.inst-menubar-item {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-h-sm);
+  padding-inline: var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-secondary);
+  font: inherit;
+  line-height: var(--leading-ui);
+  cursor: pointer;
+
+  &:hover { background: var(--surface-hover); color: var(--text-primary); }
+
+}
+
+/* AN OPEN MENU HAS TO BE VISIBLE ON ITS OWN TRIGGER. With several menus in a
+   row, the strip is the only thing saying which one is open.
+
+   Two selectors because there are two honest ways to know. A popovertarget
+   button carries its expanded state in the accessibility tree and NOT in the
+   DOM, so there is no attribute to match on: what CSS can see is the popover
+   itself, through a trigger that stands immediately before it. The attribute
+   form is for markup that sets it — a menu driven from script, or a trigger
+   that is not adjacent to its menu. */
+.inst-menubar-item[aria-expanded="true"],
+.inst-menubar-item:has(+ [popover]:popover-open) {
+  background: var(--surface-selected);
+  color: var(--text-primary);
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -5149,6 +5239,24 @@ hr {
 }
 
 .inst-toolbar-spacer { margin-inline-start: auto; }
+
+/* A NAME FOR A GROUP OF CONTROLS.
+
+   The strip had a separator and a spacer but no way to say what the next
+   control is for. A segmented control of four words is unreadable without one:
+   the reader can see the options and not the question. Set at the label rung
+   rather than the base, because the third law holds here too — the name serves
+   the control and has to be quieter than it.
+
+   It is an element rather than a utility because it carries a relation: the
+   control it names should point at it with aria-labelledby, and a class with a
+   role is easier to keep honest than a colour borrowed from somewhere. */
+.inst-toolbar-label {
+  flex: none;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
 
 /* ──────────────────────────────────────────────────────────────────────────
    Metric
@@ -10638,6 +10746,7 @@ html:has(dialog:modal) { overflow: hidden; }
 
   /* The application chrome is not wanted on paper: it is not data. */
   .inst-shell-aside,
+  .inst-menubar,
   .inst-page-actions,
   .inst-form-actions,
   .inst-toolbar,

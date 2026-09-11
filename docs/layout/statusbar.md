@@ -16,7 +16,9 @@ api:
 ---
 
 A strip at the bottom edge with groups at the sides: the branch and the errors
-at the left, the mode and the encoding at the right. What stands here are
+at the left, the mode and the encoding at the right. It stands as a child of
+the [shell](./shell.md), which keeps a full-width row for it under both the
+side column and the work area. What stands here are
 **readings** rather than controls — they are read, though almost every one of
 them can be pressed.
 

@@ -568,6 +568,22 @@
       "cascader",
       "popover",
       "nav",
+      "toolbar",
+      "menubar"
+    ]
+  },
+  "menubar": {
+    "axes": {
+      "flow": "block",
+      "print": "hide",
+      "page": "flow",
+      "forced": "none"
+    },
+    "related": [
+      "shell",
+      "menu",
+      "popover",
+      "statusbar",
       "toolbar"
     ]
   },
@@ -734,7 +750,8 @@
       "cascader",
       "tooltip",
       "dialog",
-      "sheet"
+      "sheet",
+      "menubar"
     ]
   },
   "rail": {
@@ -914,7 +931,8 @@
       "split",
       "container",
       "rail",
-      "statusbar"
+      "statusbar",
+      "menubar"
     ]
   },
   "skeleton": {
@@ -1013,7 +1031,8 @@
     "related": [
       "shell",
       "toolbar",
-      "banner"
+      "banner",
+      "menubar"
     ]
   },
   "step": {
@@ -1218,7 +1237,8 @@
       "menu",
       "section",
       "statusbar",
-      "composer"
+      "composer",
+      "menubar"
     ]
   },
   "tooltip": {

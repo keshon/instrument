@@ -47,6 +47,7 @@
 
   /* The application chrome is not wanted on paper: it is not data. */
   .inst-shell-aside,
+  .inst-menubar,
   .inst-page-actions,
   .inst-form-actions,
   .inst-toolbar,

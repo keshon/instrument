@@ -88,6 +88,7 @@ var targets = []target{
 	{label: "nav item", where: "layout.css .inst-nav-item", w: "--control-h-md", h: "--control-h-md", gap: "--space-1"},
 	{label: "pager item", where: "layout.css .inst-pager-item", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-2"},
 	{label: "menu item", where: "overlay.css .inst-menu-item", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-1"},
+	{label: "menu trigger", where: "layout.css .inst-menubar-item", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-1"},
 	{label: "tree node", where: "text.css .inst-tree-item", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-1"},
 	{label: "calendar day", where: "data.css .inst-calendar-day", w: "--control-h-sm", h: "--control-h-sm", gap: "--space-1"},
 	{label: "segmented item", where: "actions.css .inst-segmented > button", w: "--control-h-md", h: "calc(var(--control-h-md) - var(--space-2))", gap: "--space-1"},

@@ -7,6 +7,7 @@ api:
   - { name: "inst-toolbar", kind: "class", doc: "The strip. A row with a gap of `--space-3` and a line below" }
   - { name: "inst-toolbar-sep", kind: "class", doc: "A vertical divider between groups" }
   - { name: "inst-toolbar-spacer", kind: "class", doc: "Pushes the tail of the strip to the far edge" }
+  - { name: "inst-toolbar-label", kind: "class", doc: "The name of a group of controls. Quieter than what it names, and the control should point at it with `aria-labelledby`" }
   - { name: "--space-2", kind: "token" }
   - { name: "--space-3", kind: "token" }
   - { name: "--row-pad-y", kind: "token" }
@@ -69,10 +70,21 @@ Two service elements that are easy to confuse:
 |---|---|---|
 | `inst-toolbar-sep` | A vertical line the full height of the strip | Between **meaningful groups** of tools: the transforms apart, the display apart |
 | `inst-toolbar-spacer` | `margin-inline-start: auto` — everything after it travels to the far edge | Once per strip, before the tail: a status, a counter, a close button |
+| `inst-toolbar-label` | Names the group that follows it | When the controls alone do not say what the question is |
 
 The divider is an empty `<span>`, that is, pure graphics with no text and no
 role. It shows the grouping to the eye; for a screen reader the grouping is
 carried by the order and by the labels of the buttons.
+
+A label is the opposite: it is there to be read. A segmented control of four
+words shows the options and not the question, and a strip that opens with one is
+unreadable until the reader guesses what is being chosen. The label carries the
+relation as well as the word — the control it names points back at it:
+
+```html
+<span class="inst-toolbar-label" id="tb-act">Action</span>
+<div class="inst-segmented" role="radiogroup" aria-labelledby="tb-act">…</div>
+```
 
 ## Composition
 

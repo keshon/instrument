@@ -4,14 +4,15 @@ group: Layout
 layout: index
 ---
 
-Eight primitives, and not one of them draws — they only place. The difference
-between them is one of **scale**: the shell holds the window, the split and the
+Nine primitives. The difference between them is one of **scale**: the shell
+holds the window, the rail and the two strips are its edges, the split and the
 container hold the screen, the stack and the cluster hold the blocks inside it.
 
 | | what it holds | how many per document |
 |---|---|---|
 | [The shell](./shell.md) | the window entire, regions with independent scrolling | one |
 | [The rail](./rail.md) | a narrow column of sections as glyphs | one, inside the shell |
+| [The menu bar](./menubar.md) | the commands at the top of the window | one |
 | [The status bar](./statusbar.md) | the readings at the bottom of the window | one |
 | [The container](./container.md) | the width and the side fields of the content | any number |
 | [The split](./split.md) | two columns of differing importance | any number |
@@ -37,6 +38,7 @@ line per edit.
 | The heading of a block inside a screen | [The section](./section.md) | A panel has a border, a background and scrolling of its own |
 | Sections as glyphs, when room is worth more than a label | [The rail](./rail.md) | Out of ten similar glyphs a rail does not read — there labels are wanted |
 | Permanent readings of a window: the branch, the encoding, the count of errors | [The status bar](./statusbar.md) | A toolbar holds controls and is therefore twice as tall |
+| The commands of a whole application, grouped by name | [The menu bar](./menubar.md) | A toolbar belongs to a panel and holds that panel's controls |
 
 ## When none of them fits
 
@@ -49,11 +51,19 @@ line per edit.
 | The total of a table | a `tfoot` | It stands under its own data rather than at the bottom of the window |
 | An action rather than a transition | [an icon button](../components/actions/button.md) | An item of a rail leads to an address |
 
-## Common to all eight
+## Common to all nine
 
-**A primitive does not draw.** No border, no background, no shadow: as soon as
-a layout starts painting, it cannot be nested inside something that paints
-otherwise. What draws are the panel and the card, and that is their work.
+**A primitive does not draw — the window's own edges excepted.** No border, no
+background, no shadow: as soon as a layout starts painting, it cannot be nested
+inside something that paints otherwise. What draws are the panel and the card,
+and that is their work.
+
+The rail, the status bar and the menu bar are the exception, and always were.
+They are the **edges of the window** rather than places inside it: nothing is
+nested into them, so there is nothing for their paint to collide with — and a
+strip that did not differ from the work area would not read as an edge at all.
+The exception is named here rather than left for the reader to find by
+measuring `.inst-statusbar`.
 
 **A gap is named by intent rather than by a number.** `--gap-section` between
 sections, `--gap-row` inside one, `--gap-inline` in a row. The `--space-*`

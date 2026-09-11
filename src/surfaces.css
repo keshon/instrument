@@ -632,6 +632,24 @@
 
 .inst-toolbar-spacer { margin-inline-start: auto; }
 
+/* A NAME FOR A GROUP OF CONTROLS.
+
+   The strip had a separator and a spacer but no way to say what the next
+   control is for. A segmented control of four words is unreadable without one:
+   the reader can see the options and not the question. Set at the label rung
+   rather than the base, because the third law holds here too — the name serves
+   the control and has to be quieter than it.
+
+   It is an element rather than a utility because it carries a relation: the
+   control it names should point at it with aria-labelledby, and a class with a
+   role is easier to keep honest than a colour borrowed from somewhere. */
+.inst-toolbar-label {
+  flex: none;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
    Metric
 

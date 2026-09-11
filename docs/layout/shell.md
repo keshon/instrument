@@ -129,6 +129,14 @@ The width of the column is retuned in one line:
 | `inst-shell-header` | The header. A row with required wrapping: on a narrow screen the crumbs and the controls go to a second line rather than pushing the document past the viewport |
 | `inst-shell-main` | The work area. It scrolls by itself, gives the vertical air and is declared the **container** `app` |
 
+Two more rows are kept whether anything stands in them or not: a
+[menu bar](./menubar.md) above everything and a [status bar](./statusbar.md)
+below it, both the full width — they belong to the window rather than to the
+work area. An empty row is zero pixels tall and the shell sets no row gap, so
+keeping them costs nothing and saves the application from writing a grid of its
+own around the shell. Place either as a child of the shell; the order in the
+markup does not matter.
+
 The horizontal air is given not by the work area but by [the container](./container.md)
 inside it: their work differs — one bounds the measure of reading, the other
 holds the scrolling.
